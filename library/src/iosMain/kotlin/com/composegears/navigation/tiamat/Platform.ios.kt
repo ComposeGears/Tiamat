@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 private val globalDataStorage = DataStorage()
 
 // TODO check with iOs ppl
+@Composable
 internal actual fun rootDataStore(): DataStorage = globalDataStorage
 
 /**

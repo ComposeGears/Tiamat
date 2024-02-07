@@ -18,5 +18,6 @@ dependencyResolutionManagement {
 }
 
 include(":library")
+include(":example:composeApp")
 
 project(":library").name = "Tiamat"

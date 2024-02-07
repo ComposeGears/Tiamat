@@ -12,6 +12,7 @@ import androidx.compose.ui.input.key.onKeyEvent
  */
 private val globalDataStorage = DataStorage()
 
+@Composable
 internal actual fun rootDataStore(): DataStorage = globalDataStorage
 
 @Composable

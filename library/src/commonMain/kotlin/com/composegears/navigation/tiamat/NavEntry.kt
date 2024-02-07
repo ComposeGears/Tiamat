@@ -1,7 +1,6 @@
 package com.composegears.navigation.tiamat
 
 import androidx.compose.runtime.saveable.SaveableStateRegistry
-import kotlinx.atomicfu.atomic
 
 /**
  * Internal class
@@ -18,7 +17,7 @@ internal class NavEntry(
 ) {
     companion object {
 
-        private val nextUUID = atomic(0L)
+        private var nextUUID = 0L
 
         private const val KEY_UUID = "uuid"
         private const val KEY_NAME = "name"
@@ -35,7 +34,7 @@ internal class NavEntry(
             savedState = this[KEY_SAVED_STATE] as? Map<String, List<Any?>>?,
         ).also {
             it.uuid = this[KEY_UUID] as Long
-            nextUUID.value = maxOf(nextUUID.value, it.uuid + 1)
+            nextUUID = maxOf(nextUUID, it.uuid + 1)
             if (storageMode == StorageMode.Savable) {
                 it.navArgs = this[KEY_NAV_ARGS]
                 it.navResult = this[KEY_NAV_RESULT]
@@ -43,7 +42,7 @@ internal class NavEntry(
         }
     }
 
-    internal var uuid: Long = nextUUID.getAndIncrement()
+    internal var uuid: Long = nextUUID++
         private set
 
     internal fun saveState() {

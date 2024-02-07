@@ -2,6 +2,7 @@ package com.composegears.navigation.tiamat
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
@@ -87,15 +88,20 @@ private fun <Args> DestinationContent(destination: NavDestination<Args>) {
 }
 
 @Composable
-private fun Overlay() {
-    Box(Modifier.pointerInput(Unit) {
-        awaitPointerEventScope {
-            while (true) {
-                val event = awaitPointerEvent()
-                event.changes.forEach { it.consume() }
+private fun BoxScope.Overlay() {
+    Box(Modifier
+        .matchParentSize()
+        .pointerInput(Unit) {
+            awaitPointerEventScope {
+                while (true) {
+                    val event = awaitPointerEvent()
+                    event.changes.forEach {
+                        it.consume()
+                    }
+                }
             }
         }
-    })
+    )
 }
 
 
@@ -170,8 +176,6 @@ fun Navigation(
         label = "nav_controller_${navController.key?.toString() ?: "no_key"}",
     ) {
         if (it != null) Box {
-            // prevent clicks during transition animation
-            if (transition.currentState != transition.targetState) Overlay()
             // gen save state
             val saveRegistry = remember(it) {
                 val registry = SaveableStateRegistry(it.savedState) { true }
@@ -197,6 +201,8 @@ fun Navigation(
             ) {
                 DestinationContent(it.destination)
             }
+            // prevent clicks during transition animation
+            if (transition.isRunning) Overlay()
         }
     }
 }

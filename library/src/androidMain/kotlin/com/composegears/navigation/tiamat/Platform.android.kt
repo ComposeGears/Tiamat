@@ -21,6 +21,7 @@ internal class RootStorageModel : ViewModel() {
 /**
  * @return platform root data storage object
  */
+@Composable
 internal actual fun rootDataStore(): DataStorage {
     val context = LocalContext.current
     val activity = remember(context) {
