@@ -1,0 +1,21 @@
+name: Generate m2 packages
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
+      - name: Execute Gradle build
+        run: ./gradlew :leviathan:publish -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: m2
+          path: library/build/m2
+          if-no-files-found: error

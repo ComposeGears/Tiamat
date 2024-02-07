@@ -1,0 +1,12 @@
+*.iml
+.gradle
+**/build/
+!src/**/build/
+local.properties
+.idea
+.fleet
+.DS_Store
+captures
+.externalNativeBuild
+.cxx
+publish.bat
