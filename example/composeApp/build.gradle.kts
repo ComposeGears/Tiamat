@@ -23,7 +23,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "ComposeGears-Nav-Example"
+            baseName = "ComposeApp"
             isStatic = true
         }
     }
