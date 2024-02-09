@@ -1,4 +1,4 @@
-package com.composegears.navigation.tiamat
+package com.composegears.tiamat
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

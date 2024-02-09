@@ -6,8 +6,8 @@ plugins {
     signing
 }
 
-val libName = "io.github.composegears.navigation"
-val libVersion = "1.0.0"
+val libName = "io.github.composegears"
+val libVersion = "0.1.0-alpha"
 
 group = libName
 version = libVersion
@@ -72,9 +72,9 @@ publishing {
 
         // Provide artifacts information required by Maven Central
         pom {
-            name.set("Leviathan")
-            description.set("KMM DI library")
-            url.set("https://github.com/ComposeGears/DI")
+            name.set("Tiamat")
+            description.set("KMM Navigation library")
+            url.set("https://github.com/ComposeGears/Tiamat")
 
             licenses {
                 license {
@@ -95,7 +95,7 @@ publishing {
                 }
             }
             scm {
-                url.set("https://github.com/ComposeGears/DI")
+                url.set("https://github.com/ComposeGears/Tiamat")
             }
         }
     }

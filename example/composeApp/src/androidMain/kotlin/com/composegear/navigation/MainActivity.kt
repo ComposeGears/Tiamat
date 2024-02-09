@@ -1,4 +1,4 @@
-package com.compose.gear.navigation
+package com.composegear.navigation
 
 import App
 import android.os.Bundle

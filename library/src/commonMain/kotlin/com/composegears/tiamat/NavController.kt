@@ -1,10 +1,10 @@
-package com.composegears.navigation.tiamat
+package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.composegears.navigation.tiamat.NavEntry.Companion.restoreNavEntry
+import com.composegears.tiamat.NavEntry.Companion.restoreNavEntry
 
 /**
  * Navigation controller class

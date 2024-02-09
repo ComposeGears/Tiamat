@@ -5,10 +5,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.composegears.navigation.tiamat.Navigation
-import com.composegears.navigation.tiamat.navController
-import com.composegears.navigation.tiamat.navDestination
-import com.composegears.navigation.tiamat.rememberNavController
+import com.composegears.tiamat.Navigation
+import com.composegears.tiamat.navController
+import com.composegears.tiamat.navDestination
+import com.composegears.tiamat.rememberNavController
 
 
 val s1 by navDestination<Unit> {

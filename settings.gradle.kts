@@ -1,4 +1,4 @@
-rootProject.name = "Navigation"
+rootProject.name = "TiamatApp"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 include(":library")
 include(":example:composeApp")
 
-project(":library").name = "Tiamat"
+project(":library").name = "tiamat"

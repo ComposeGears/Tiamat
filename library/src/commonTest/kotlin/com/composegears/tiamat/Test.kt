@@ -1,4 +1,4 @@
-package com.composegears.navigation.tiamat
+package com.composegears.tiamat
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

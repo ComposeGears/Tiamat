@@ -8,7 +8,7 @@
             android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
                 android:exported="true"
-                android:name="com.compose.gear.navigation.MainActivity">
+                android:name="com.composegear.navigation.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -1,4 +1,4 @@
-package com.composegears.navigation.tiamat
+package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
