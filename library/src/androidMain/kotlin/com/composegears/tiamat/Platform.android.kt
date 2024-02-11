@@ -36,6 +36,6 @@ internal actual fun rootDataStore(): DataStorage {
 }
 
 @Composable
-internal actual fun PlatformBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
+actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     BackHandler(enabled, onBackEvent)
 }

@@ -33,6 +33,7 @@ class NavController internal constructor(
 
     private val backStack: ArrayList<NavEntry> = ArrayList()
     private var onCloseEntryListener: ((NavEntry) -> Unit)? = null
+    private var pendingBackTransition: ContentTransform? = null
 
     internal var currentNavEntry by mutableStateOf<NavEntry?>(null)
         private set
@@ -72,6 +73,7 @@ class NavController internal constructor(
         if (notifyClosed) currentNavEntry?.notifyClosed()
         currentNavEntry = navEntry
         current = navEntry?.destination
+        pendingBackTransition = null
     }
 
     private fun replaceInternal(
@@ -87,6 +89,13 @@ class NavController internal constructor(
 
     internal fun setOnCloseEntryListener(listener: ((NavEntry) -> Unit)?) {
         onCloseEntryListener = listener
+    }
+
+    /**
+     * Set default value for next [back] nav transition
+     */
+    fun setPendingBackTransition(transition: ContentTransform? = null) {
+        this.pendingBackTransition = transition
     }
 
     /**
@@ -159,7 +168,7 @@ class NavController internal constructor(
     fun back(
         result: Any? = null,
         to: NavDestination<*>? = null,
-        transition: ContentTransform? = null
+        transition: ContentTransform? = pendingBackTransition
     ): Boolean {
         isForwardTransition = false
         isInitialTransition = currentNavEntry == null

@@ -1,11 +1,10 @@
 package com.composegears.tiamat
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalNavBackHandler = staticCompositionLocalOf { NavBackHandler() }
 
 /**
  * Global in-memory data storage
@@ -16,11 +15,15 @@ private val globalDataStorage = DataStorage()
 internal actual fun rootDataStore(): DataStorage = globalDataStorage
 
 @Composable
-internal actual fun PlatformBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
-    Box(Modifier.onKeyEvent {
-        if (it.key == Key.Escape && enabled) {
-            onBackEvent()
-            true
-        } else false
-    })
+actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
+    if (enabled) {
+        val backHandler = LocalNavBackHandler.current
+        DisposableEffect(Unit) {
+            val callback = { onBackEvent() }
+            backHandler.add(callback)
+            onDispose {
+                backHandler.remove(callback)
+            }
+        }
+    }
 }

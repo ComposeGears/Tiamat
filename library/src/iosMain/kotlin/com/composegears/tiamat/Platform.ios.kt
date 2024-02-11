@@ -15,4 +15,4 @@ internal actual fun rootDataStore(): DataStorage = globalDataStorage
  * No back button
  */
 @Composable
-internal actual fun PlatformBackHandler(enabled: Boolean, onBackEvent: () -> Unit)  = Unit
+actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit)  = Unit

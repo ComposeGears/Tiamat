@@ -14,6 +14,13 @@ fun navigationSlideInOut(isForward: Boolean): ContentTransform =
 fun navigationFadeInOut(): ContentTransform =
     fadeIn(tween(220, delayMillis = 90)) togetherWith fadeOut(tween(90))
 
-fun navigationSlideInFromBottom() = slideInVertically(tween()) togetherWith fadeOut()
+fun navigationSlideInFromBottom() = ContentTransform(
+    targetContentEnter = slideInVertically(tween()) { it },
+    initialContentExit = fadeOut(tween(), targetAlpha = 0.999f),
+)
 
-fun navigationSlideOutToBottom() = fadeIn() togetherWith slideOutVertically(tween())
+fun navigationSlideOutToBottom() = ContentTransform(
+    targetContentEnter = EnterTransition.None,
+    initialContentExit = slideOutVertically(tween()) { it },
+    targetContentZIndex = -1f
+)

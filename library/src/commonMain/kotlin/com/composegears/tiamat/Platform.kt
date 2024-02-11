@@ -12,4 +12,4 @@ internal expect fun rootDataStore(): DataStorage
  * Platform provided system back handler
  */
 @Composable
-internal expect fun PlatformBackHandler(enabled: Boolean, onBackEvent: () -> Unit)
+expect fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit)

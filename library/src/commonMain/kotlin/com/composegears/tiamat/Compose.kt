@@ -134,7 +134,7 @@ fun Navigation(
 ) {
     if (handleSystemBackEvent) {
         val canGoBack by remember(navController.current) { derivedStateOf { navController.canGoBack() } }
-        PlatformBackHandler(canGoBack, navController::back)
+        NavBackHandler(canGoBack, navController::back)
     }
     // listen to entries being closed/removed from backstack and clear storage/models recursively
     DisposableEffect(navController) {
@@ -189,7 +189,7 @@ fun Navigation(
                     if (it.navArgs != null) storage.data[KEY_NAV_ARGS] = it.navArgs
                     storage
                 } as DataStorage
-                if (it.navResult != null) storage.data[KEY_NAV_RESULT] = it.navResult
+                storage.data[KEY_NAV_RESULT] = it.navResult
                 it.entryStorage = storage
                 storage
             }
