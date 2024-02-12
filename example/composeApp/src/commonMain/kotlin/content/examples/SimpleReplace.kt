@@ -1,14 +1,22 @@
 package content.examples
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import content.examples.common.TextCaption
+import content.examples.common.NextButton
+import content.examples.common.BackButton
 import content.examples.common.SimpleScreen
 
 @Composable
@@ -18,16 +26,16 @@ private fun NavDestinationScope<*>.Screen(
 ) {
     val navController = navController()
     SimpleScreen(title) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             if (nextScreen != null) {
-                Button(onClick = { navController.replace(nextScreen) }) {
-                    Text("Replace with next -> ")
-                }
+                NextButton("Replace with next", onClick = { navController.replace(nextScreen) })
+                Spacer(Modifier.height(16.dp))
             }
-            Text("Click button or press system `back` button to go back (ESC for desktop)")
-            Button(onClick = navController::back) {
-                Text(" <- Go back")
-            }
+            BackButton(onClick = navController::back)
+            TextCaption("Click button or press system `back` button to go back (ESC for desktop)")
         }
     }
 }
@@ -35,12 +43,15 @@ private fun NavDestinationScope<*>.Screen(
 val SimpleReplaceRoot by navDestination<Unit> {
     val navController = navController()
     SimpleScreen("Simple navigation: Replace") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("The screens next from this will replace each other")
-            Text("Clicking `back` on either of them will back to this one")
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(onClick = { navController.navigate(SimpleReplaceScreen1) }) {
                 Text("Go to 1st")
             }
+            TextCaption(text = "The screens next from this will replace each other")
+            TextCaption(text = "Clicking `back` on either of them will back to this one")
         }
     }
 }

@@ -19,7 +19,7 @@ fun main() = application {
         onKeyEvent = {
            it.key == Key.Escape && it.type== KeyEventType.KeyUp && backHandler.back()
         },
-        title = "ComposeGears-Nav-Example"
+        title = "Tiamat Nav-Example"
     ) {
         App()
     }

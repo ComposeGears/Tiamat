@@ -3,19 +3,18 @@ package content
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.*
-
 
 val MainScreen by navDestination<Unit> {
     val navController = navController()
@@ -23,29 +22,34 @@ val MainScreen by navDestination<Unit> {
         listOf(
             "Simple forward/back" to { navController.navigate(SimpleForwardBackRoot) },
             "Simple replace" to { navController.navigate(SimpleReplaceRoot) },
-            "BottomBar Tabs + custom back" to { navController.navigate(SimpleTabsRoot) },
+            "NavigationBar + custom back handling" to { navController.navigate(SimpleTabsRoot) },
             "Nested navigation" to { navController.navigate(NestedNavigationRoot) },
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
-            "View models" to { navController.navigate(ViewModelsRoot) },
+            "ViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) }
         )
     }
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(8.dp),
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        items(content) { (name, action) ->
-            Column(Modifier) {
-                Button(action, Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                    Row {
-                        Text(name, Modifier.weight(1f))
-                        Icon(Icons.Default.ArrowForward, contentDescription = "")
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(content) { (name, action) ->
+                Button(
+                    modifier = Modifier.widthIn(max = 450.dp),
+                    onClick = action,
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(modifier = Modifier.weight(1f), text = name)
+                        Icon(Icons.Default.NavigateNext, "")
                     }
                 }
-                Divider()
             }
         }
     }
 }
-

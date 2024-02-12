@@ -1,16 +1,17 @@
 package content.examples
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.MainScreen
-import content.examples.common.SimpleScreen
+import content.examples.common.*
 
 @Composable
 private fun NavDestinationScope<*>.Screen(
@@ -19,20 +20,19 @@ private fun NavDestinationScope<*>.Screen(
 ) {
     val navController = navController()
     SimpleScreen(title) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             if (nextScreen != null) {
-                Button(onClick = { navController.navigate(nextScreen) }) {
-                    Text("Go forward -> ")
-                }
+                NextButton(onClick = { navController.navigate(nextScreen) })
+                Spacer()
             }
-            Text("Click button or press system `back` button to go back (ESC for desktop)")
-            Button(onClick = navController::back) {
-                Text(" <- Go back")
-            }
-            Text("Exit back to Main screen")
-            Button(onClick = { navController.back(to = MainScreen) }) {
-                Text(" <- Exit")
-            }
+            BackButton(text = "Previous", onClick = navController::back)
+            TextCaption(text = "Click button or press system `back` button to go back (ESC for desktop)")
+            Spacer()
+            ExitButton(text = "Exit", onClick = { navController.back(to = MainScreen) })
+            TextCaption(text = "Exit back to Main screen")
         }
     }
 }

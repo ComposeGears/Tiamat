@@ -1,30 +1,35 @@
 package content.examples
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.ComposeViewModel
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberViewModel
-import content.examples.common.SimpleScreen
+import content.examples.common.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class ViewModelsRootViewModel : ComposeViewModel() {
     private val _counter = MutableStateFlow(1)
     val counter = _counter.asStateFlow()
 
     fun inc() {
-        _counter.tryEmit(_counter.value + 1)
+        _counter.update { _counter.value + 1 }
     }
 
     fun dec() {
-        _counter.tryEmit(_counter.value - 1)
+        _counter.update { _counter.value - 1 }
     }
 }
 
@@ -32,19 +37,27 @@ val ViewModelsRoot by navDestination<Unit> {
     val navController = navController()
     val viewModel = rememberViewModel { ViewModelsRootViewModel() }
     SimpleScreen("View Model's") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("ViewModel address:\n$viewModel")
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextBody("ViewModel address:\n$viewModel")
+            Spacer()
+
             val count by viewModel.counter.collectAsState()
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button({ viewModel.dec() }) { Text("-") }
-                Text("Value: $count")
-                Button({ viewModel.inc() }) { Text("+") }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CircleButton("-") { viewModel.dec() }
+                Text(text = "Value: $count", style = MaterialTheme.typography.bodyMedium)
+                CircleButton("+") { viewModel.inc() }
             }
-            Text("\nYou can open another screen and go back to verify")
-            Text("that there is same instance of ViewModel")
-            Button({ navController.navigate(ViewModelsScreen) }) {
-                Text("Go forward -> ")
-            }
+
+            Spacer()
+            NextButton(onClick = { navController.navigate(ViewModelsScreen) })
+            TextCaption("You can open another screen and go back to verify")
+            TextCaption("that there is same instance of ViewModel")
         }
     }
 }
@@ -52,8 +65,6 @@ val ViewModelsRoot by navDestination<Unit> {
 val ViewModelsScreen by navDestination<Unit> {
     val navController = navController()
     SimpleScreen("View Model's - Screen") {
-        Button(onClick = navController::back) {
-            Text(" <- Go back")
-        }
+        BackButton(onClick = navController::back)
     }
 }
