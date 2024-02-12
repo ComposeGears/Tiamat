@@ -21,13 +21,14 @@ val MainScreen by navDestination<Unit> {
     val content = remember {
         listOf(
             "Simple forward/back" to { navController.navigate(SimpleForwardBackRoot) },
-            "Simple replace" to { navController.navigate(SimpleReplaceRoot) },
+            "Simple replace & circular screen dependencies" to { navController.navigate(SimpleReplaceRoot) },
             "NavigationBar + custom back handling" to { navController.navigate(SimpleTabsRoot) },
             "Nested navigation" to { navController.navigate(NestedNavigationRoot) },
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
             "ViewModel" to { navController.navigate(ViewModelsRoot) },
-            "Custom transition" to { navController.navigate(CustomTransitionRoot) }
+            "Custom transition" to { navController.navigate(CustomTransitionRoot) },
+            "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }
     Box(

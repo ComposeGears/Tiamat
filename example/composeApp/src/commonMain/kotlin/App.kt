@@ -4,6 +4,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.Navigation
+import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import content.MainScreen
 import content.examples.*
@@ -14,6 +15,7 @@ fun App() {
         Surface {
             val rootNavController = rememberNavController(
                 key = "rootNavController",
+                storageMode = StorageMode.DataStore.ResetOnDataLoss,
                 startDestination = MainScreen,
                 destinations = arrayOf(
                     MainScreen,
@@ -36,6 +38,7 @@ fun App() {
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
+                    PlatformExample
                 )
             )
             Navigation(

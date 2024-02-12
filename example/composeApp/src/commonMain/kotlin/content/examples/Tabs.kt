@@ -51,6 +51,7 @@ private fun NavDestinationScope<*>.Screen(
                     navController.canGoBack() || navController.current != Tab1
                 }
             }
+            // custom back handler for system `back` event
             NavBackHandler(canGoBack, backAction)
             BackButton(onClick = backAction)
         }

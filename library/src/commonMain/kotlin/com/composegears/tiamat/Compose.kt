@@ -11,6 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import com.composegears.tiamat.StorageMode.DataStore.IgnoreDataLoss
+import com.composegears.tiamat.StorageMode.DataStore.ResetOnDataLoss
 
 private const val KEY_NAV_ARGS = "args"
 private const val KEY_NAV_RESULT = "result"
@@ -18,16 +20,30 @@ private const val KEY_NAV_RESULT = "result"
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalDataStore = staticCompositionLocalOf<DataStorage?> { null }
 
-enum class StorageMode {
+sealed interface StorageMode {
     /**
      * Savable storage, persist internal cleanups
      */
-    Savable,
+    data object Savable : StorageMode
 
     /**
-     * In memory data storage, navController will reset on data loss
+     * In memory data storage with predefined data loss policy
+     *
+     * @see [ResetOnDataLoss]
+     * @see [IgnoreDataLoss]
      */
-    DataStore
+    sealed interface DataStore : StorageMode {
+
+        /**
+         * In memory data storage, navController will reset on data loss
+         */
+        data object ResetOnDataLoss : DataStore
+
+        /**
+         * In memory data storage, navController will reset on data loss
+         */
+        data object IgnoreDataLoss : DataStore
+    }
 }
 
 internal data class DataStorage(val data: HashMap<String, Any?> = hashMapOf())
@@ -38,7 +54,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key key to be bind to created NavController
- * @param storageMode data storage mode [StorageMode.Savable] or [StorageMode.DataStore]
+ * @param storageMode data storage mode
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
  */
@@ -46,7 +62,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
 @Suppress("ComposableParamOrder")
 fun rememberNavController(
     key: Any? = null,
-    storageMode: StorageMode = StorageMode.DataStore,
+    storageMode: StorageMode = ResetOnDataLoss,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>
 ): NavController {
@@ -69,7 +85,7 @@ fun rememberNavController(
             dataStorage = navDataStore,
             destinations = destinations
         ).apply {
-            if (storageMode == StorageMode.DataStore && navDataStore.data.isEmpty()) reset()
+            if (storageMode == ResetOnDataLoss && navDataStore.data.isEmpty()) reset()
             else restoreFromSavedState()
         }
     return rememberSaveable(

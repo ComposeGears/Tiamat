@@ -1,7 +1,7 @@
 package content.examples
 
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -38,8 +38,7 @@ val CustomTransitionScreen1 by navDestination<Unit> {
             NextButton(onClick = {
                 navController.navigate(
                     CustomTransitionScreen2,
-                    transition = expandIn(expandFrom = Alignment.Center) togetherWith
-                            shrinkOut(shrinkTowards = Alignment.Center)
+                    transition = scaleIn() togetherWith scaleOut()
                 )
             })
             TextCaption("Open Screen2 with custom animation")
@@ -67,8 +66,7 @@ val CustomTransitionScreen2 by navDestination<Unit> {
         ) {
             LaunchedEffect(Unit) {
                 navController.setPendingBackTransition(
-                    expandIn(expandFrom = Alignment.Center) togetherWith
-                            shrinkOut(shrinkTowards = Alignment.Center)
+                    scaleIn() togetherWith scaleOut()
                 )
             }
             BackButton(onClick = navController::back)

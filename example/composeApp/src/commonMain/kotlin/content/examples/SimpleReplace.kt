@@ -14,10 +14,10 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import content.examples.common.TextCaption
-import content.examples.common.NextButton
 import content.examples.common.BackButton
+import content.examples.common.NextButton
 import content.examples.common.SimpleScreen
+import content.examples.common.TextCaption
 
 @Composable
 private fun NavDestinationScope<*>.Screen(
@@ -56,7 +56,10 @@ val SimpleReplaceRoot by navDestination<Unit> {
     }
 }
 
-val SimpleReplaceScreen1 by navDestination<Unit> {
+// In case some of your screens made `Loop` there will be known type-checking-recursive-problems
+// you may read about it here: https://youtrack.jetbrains.com/issue/KT-10716/Type-checking-recursive-problems
+// Simple solution is to explicitly declare nav destination type (  val Screen : NavDestination<Params> by ...)
+val SimpleReplaceScreen1: NavDestination<Unit> by navDestination {
     Screen("Simple navigation: Replace (Screen 1)", SimpleReplaceScreen2)
 }
 
@@ -65,6 +68,5 @@ val SimpleReplaceScreen2 by navDestination<Unit> {
 }
 
 val SimpleReplaceScreen3 by navDestination<Unit> {
-    Screen("Simple navigation: Replace (Screen 3)", null)
+    Screen("Simple navigation: Replace (Screen 3)", SimpleReplaceScreen1)
 }
-
