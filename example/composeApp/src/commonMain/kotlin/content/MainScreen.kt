@@ -28,6 +28,7 @@ val MainScreen by navDestination<Unit> {
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
             "ViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
+            "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }
