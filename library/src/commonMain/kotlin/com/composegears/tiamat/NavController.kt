@@ -134,6 +134,7 @@ class NavController internal constructor(
         navArgs: Args? = null,
         transition: ContentTransform? = null
     ) {
+        if (currentNavEntry?.destination?.name == dest.name) return
         val entry = backStack.find { it.destination.name == dest.name }
         if (entry != null) {
             if (currentNavEntry != null) backStack.add(currentNavEntry!!.apply { saveState() })

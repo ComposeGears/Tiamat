@@ -7,7 +7,7 @@ plugins {
 }
 
 val libName = "io.github.composegears"
-val libVersion = "0.1.0-alpha"
+val libVersion = "0.1.0-alpha02"
 
 group = libName
 version = libVersion
