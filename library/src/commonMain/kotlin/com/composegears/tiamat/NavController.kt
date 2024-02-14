@@ -104,6 +104,13 @@ class NavController internal constructor(
     fun getBackStack() = backStack.map { it.destination }
 
     /**
+     * Edit current back stack
+     */
+    fun editBackStack(actions: BackStackEditScope.() -> Unit) {
+        BackStackEditScope().actions()
+    }
+
+    /**
      * Place current destination in back stack and open new one
      *
      * @param dest entry to open
@@ -220,6 +227,33 @@ class NavController internal constructor(
             (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
                 .mapTo(backStack) { it.restoreNavEntry(storageMode, destinations) }
             setCurrentNavEntry(currentNavEntry, false)
+        }
+    }
+
+    inner class BackStackEditScope internal constructor() {
+        fun <Args> add(
+            dest: NavDestination<Args>,
+            navArgs: Args? = null
+        ) {
+            backStack.add(NavEntry(dest, navArgs))
+        }
+
+        fun <Args> add(
+            index: Int,
+            dest: NavDestination<Args>,
+            navArgs: Args? = null
+        ) {
+            backStack.add(index, NavEntry(dest, navArgs))
+        }
+
+        fun removeAt(index: Int) {
+            backStack.removeAt(index).notifyClosed()
+        }
+
+        fun clear() {
+            while (backStack.isNotEmpty()) {
+                backStack.removeLast().notifyClosed()
+            }
         }
     }
 }

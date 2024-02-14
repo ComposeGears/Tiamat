@@ -118,11 +118,21 @@ fun ExitButton(text: String, onClick: () -> Unit) {
 }
 
 @Composable
+fun TextButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        contentPadding = PaddingValues(8.dp)
+    ) {
+        Text(text)
+    }
+}
+
+@Composable
 fun CircleButton(text: String, onClick: () -> Unit) {
     Button(
         modifier = Modifier.size(40.dp),
         onClick = onClick,
-        contentPadding = PaddingValues( )
+        contentPadding = PaddingValues()
     ) {
         Text(text)
     }

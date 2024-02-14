@@ -38,6 +38,7 @@ fun App() {
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
+                    BackStackAlterationRoot,
                     PlatformExample
                 )
             )
