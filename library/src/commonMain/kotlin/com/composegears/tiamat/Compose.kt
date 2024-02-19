@@ -54,7 +54,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key key to be bind to created NavController
- * @param storageMode data storage mode
+ * @param storageMode data storage mode, default is parent mode or if it is root [ResetOnDataLoss]
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
  */
@@ -62,7 +62,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
 @Suppress("ComposableParamOrder")
 fun rememberNavController(
     key: Any? = null,
-    storageMode: StorageMode = ResetOnDataLoss,
+    storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>
 ): NavController {
@@ -79,7 +79,7 @@ fun rememberNavController(
         NavController(
             parent = parent,
             key = key,
-            storageMode = storageMode,
+            storageMode =storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
             startDestination = startDestination,
             savedState = state,
             dataStorage = navDataStore,
