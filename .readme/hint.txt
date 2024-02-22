@@ -1,0 +1,3 @@
+records compress:
+
+ffmpeg -i 1.mov -c:v libvpx-vp9 -crf 40 -vf scale=3840:-2 -deadline best -an 1.webm
