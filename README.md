@@ -90,12 +90,8 @@ classes and theis understanding
 
 Samples
 -------
-https://github.com/ComposeGears/Tiamat/blob/feature/readme/.readme/1-simple-fb.webm
 
-A1
-[name](https://github.com/ComposeGears/Tiamat/blob/feature/readme/.readme/1-simple-fb.webm)
-
-[1-simple-fb.webm](.readme/1-simple-fb.webm)
+[Simple forward/back](.readme/1-simple-fb.mp4)
 
 [2-bot-bar.webm](.readme/2-bot-bar.webm)
 
