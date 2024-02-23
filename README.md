@@ -92,24 +92,7 @@ Samples
 -------
 1
 
-![Simple forward/back](.readme/1-simple-fb.mp4)
-2
-
-[Simple forward/back](.readme/1-simple-fb.mp4)
-3
-
-[](.readme/1-simple-fb.mp4)
-4
-
-![](.readme/1-simple-fb.mp4)
-5
-
-![](.readme/1-simple-fb.mp4)
-
-.readme/1-simple-fb.mp4
-
-https://github.com/ComposeGears/Tiamat/blob/feature/readme/.readme/1-simple-fb.mp4
-
+<video src='.readme/1-simple-fb.mp4' width=512/>
 
 
 ### Run sample
