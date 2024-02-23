@@ -47,6 +47,7 @@ Setup
        object Screen : NavDestination<Unit> {
            override val name: String = "ScreenName"
     
+           @Composable
            override fun NavDestinationScope<Unit>.Content() {
                // content
            }
@@ -89,8 +90,36 @@ Overview
 --------
 ### Screen
 
-todo: explain screen params & args
+The screens in `Tiamat` should be an entities (similar to composable functions)
 
+the `Args` generic define the type of data, acceptable by screen as `input parameters` in the `NavController:navigate` fun
+
+```kotlin
+val RootScreen by navDestination<Unit> {
+    // ...
+    val nc = navController()
+    // ...
+    nc.navigate(DataScreen, DataScreenArgs(1))
+    // ...
+}
+
+data class DataScreenArgs(val t: Int)
+
+val DataScreen by navDestination<DataScreenArgs> {
+    val args = navArgs()
+}
+
+```
+----
+The screen content scoped in `NavDestinationScope<Args>`
+
+The scope provides a number of composable functions:
+
+- `navController` - provides current NavController to navigate back/further
+- `navArgs` - the arguments provided to this screen by `NavControllr:navigate(screen, args)` fun
+- `navArgsOrNull` - same as `navArgs` but provides `null` if there is no data passed or if it was lost
+- `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
+- `rememberViewModel` - create or provide view model scoped(linked) to current screen
 
 ### NavController
 
@@ -105,7 +134,7 @@ fun rememberNavController(
 )
 ```
 
-NavController will keep the screens data, view models, and stated during navigation
+NavController will keep the screens data, view models, and states during navigation
 
 > [!IMPORTANT]
 > The data may be cleared by system (eg: Android may clear memory)
@@ -114,19 +143,19 @@ NavController will keep the screens data, view models, and stated during navigat
 
 ### Storage mode
 
-- `null` - will take parent NavController mode or ResetOnDataLoss for root controller
+- `null` - will take parent NavController mode or `ResetOnDataLoss` for root controller
 - `StorageMode.Savable` - will store data in `savable` storage (eg: Android -> Bundle) 
 > [!IMPORTANT]
 > Only 'Savable' types of params & args will be available to use
 >
 > eg: Android - Parcelable + any bundlable primitives
-- `StorageMode.ResetOnDataLoss` - store data in memory, reset nav controller upon data loss
-- `StorageMode.IgnoreDataLoss` - store data in memory, restore nav back stack, ignore data loss
+- `StorageMode.ResetOnDataLoss` - store data in memory, allow to use any types of args & params (including lambdas). Reset nav controller upon data loss
+- `StorageMode.IgnoreDataLoss` - store data in memory, allow to use any types of args & params (including lambdas). Restore nav back stack, ignore data loss
 
 ### Known limitations
  
 > [!IMPORTANT] 
->  Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly
+>  `Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly` ide error.
 > 
 > 
 > ```kotlin
@@ -166,7 +195,6 @@ NavController will keep the screens data, view models, and stated during navigat
 > 
 > Solution: there is safe version `val navArgs = navArgsOrNull()` 
 
-
 Samples
 -------
 
@@ -189,6 +217,18 @@ Samples
 Custom transition:
 
 [5-custom-transition.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/9bfe1545-a321-495f-8d64-8d928746bc81)
+
+### Examples code
+
+- [SimpleForwardBack.kt](example/composeApp/src/commonMain/kotlin/content/examples/SimpleForwardBack.kt) - Simple back and forward navigation
+- [SimpleReplace.kt](example/composeApp/src/commonMain/kotlin/content/examples/SimpleReplace.kt) - Example of `replace` navigation
+- [NestedNavigation.kt](example/composeApp/src/commonMain/kotlin/content/examples/NestedNavigation.kt) - Nested nav controller interaction
+- [Tabs.kt](example/composeApp/src/commonMain/kotlin/content/examples/Tabs.kt) - Bottom navigation example
+- [DataPassingParams.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingParams.kt) - How to pass data to next screen
+- [DataPassingResult.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingResult.kt) - How to provide result
+- [CustomTransition.kt](example/composeApp/src/commonMain/kotlin/content/examples/CustomTransition.kt) - Custom animations/transition
+- [BackStackAlteration.kt](example/composeApp/src/commonMain/kotlin/content/examples/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
+- [ViewModels.kt](example/composeApp/src/commonMain/kotlin/content/examples/ViewModels.kt) - ViewModels usage
 
 ### Run/Build sample
 
