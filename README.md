@@ -134,6 +134,18 @@ fun rememberNavController(
 )
 ```
 
+and display as part of any composable function
+```kotlin
+@Composable
+fun content(){
+    val navController = rememberNavController(...)
+    Navigation(
+        navController = navController,
+        modifier = Modifier.fillMaxSize().systemBarsPadding()
+    )
+}
+```
+
 NavController will keep the screens data, view models, and states during navigation
 
 > [!IMPORTANT]
