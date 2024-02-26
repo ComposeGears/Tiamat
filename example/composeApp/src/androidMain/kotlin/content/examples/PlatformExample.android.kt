@@ -2,24 +2,36 @@ package content.examples
 
 import android.os.Parcelable
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import content.examples.common.*
 import kotlinx.parcelize.Parcelize
 
+val t = 1
+
 actual val PlatformExample: NavDestination<Unit> by navDestination {
     SimpleScreen("Platform Android") {
-        Column(
+
+        if (t == 1) Column{
+            val lf = LocalLifecycleOwner.current
+            val lfstate by lf.lifecycle.currentStateFlow.collectAsState()
+            Text("Lifecycle: $lfstate")
+        } else Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
