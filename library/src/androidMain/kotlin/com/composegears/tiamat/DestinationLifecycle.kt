@@ -1,5 +1,6 @@
 package com.composegears.tiamat
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -22,17 +23,20 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
     override val lifecycle: Lifecycle get() = registry
 
     fun onAttach() {
+        Log.i("AAA", "onAttach")
         isActive = true
         updateState()
     }
 
     fun onDispose() {
+        Log.i("AAA", "onDispose")
         isActive = false
         parentState = null
         updateState()
     }
 
     override fun onClosed() {
+        Log.i("AAA", "onClosed")
         super.onClosed()
         isClosed = true
         updateState()
@@ -40,7 +44,9 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
 
     // observe parent lifecycle changes
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        Log.i("AAA", "onStateChanged = $event | ${event.targetState}")
         parentState = event.targetState
+        updateState()
     }
 
     private fun updateState() {
