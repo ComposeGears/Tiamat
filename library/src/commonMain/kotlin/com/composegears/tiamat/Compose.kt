@@ -79,7 +79,7 @@ fun rememberNavController(
         NavController(
             parent = parent,
             key = key,
-            storageMode =storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
+            storageMode = storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
             startDestination = startDestination,
             savedState = state,
             dataStorage = navDataStore,
@@ -100,7 +100,11 @@ fun rememberNavController(
 @Composable
 private fun <Args> DestinationContent(destination: NavDestination<Args>) {
     val scope = remember(destination) { NavDestinationScopeImpl<Args>() }
-    with(destination) { scope.Content() }
+    with(destination) {
+        scope.PlatformContentWrapper {
+            Content()
+        }
+    }
 }
 
 @Composable
@@ -161,7 +165,7 @@ fun Navigation(
                 detachList.removeAt(0)?.data?.onEach { (_, value) ->
                     when (value) {
                         is DataStorage -> detachList.add(value)
-                        is ComposeViewModel -> value.close()
+                        is TiamatViewModel -> value.close()
                     }
                 }
             }
@@ -283,7 +287,7 @@ fun <Result> NavDestinationScope<*>.navResult(): Result? {
  */
 @Composable
 @Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
-fun <Model : ComposeViewModel> NavDestinationScope<*>.rememberViewModel(
+fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String? = null,
     provider: () -> Model
 ): Model {

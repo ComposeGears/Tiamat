@@ -1,40 +1,34 @@
 package com.composegears.tiamat
 
-import android.content.ContextWrapper
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModel
-
-/**
- * Internal view model
- *
- * Holds in-memory data storage
- */
-internal class RootStorageModel : ViewModel() {
-    val storage = DataStorage()
-}
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLifecycleOwner
 
 /**
  * @return platform root data storage object
  */
 @Composable
-internal actual fun rootDataStore(): DataStorage {
-    val context = LocalContext.current
-    val activity = remember(context) {
-        var ctx = context
-        while (ctx !is ComponentActivity) {
-            ctx = (ctx as ContextWrapper).baseContext
-        }
-        ctx
-    }
-    val storageModel by activity.viewModels<RootStorageModel>()
-    return storageModel.storage
+internal actual fun rootDataStore(): DataStorage = rememberRootDataStore()
+
+/**
+ * Wrap platform content and provides additional info/providable-s
+ */
+@Composable
+internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
+    content: @Composable NavDestinationScope<Args>.() -> Unit
+) {
+//    val lifecycleOwner = rememberDestinationLifecycleOwner()
+//    CompositionLocalProvider(
+//        LocalLifecycleOwner provides lifecycleOwner
+//    ) {
+        content()
+//    }
 }
 
+/**
+ * Platform provided system back handler
+ */
 @Composable
 actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     BackHandler(enabled, onBackEvent)

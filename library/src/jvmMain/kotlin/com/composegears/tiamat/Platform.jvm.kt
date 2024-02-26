@@ -14,6 +14,19 @@ private val globalDataStorage = DataStorage()
 @Composable
 internal actual fun rootDataStore(): DataStorage = globalDataStorage
 
+/**
+ * Wrap platform content and provides additional info/providable-s
+ */
+@Composable
+internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
+    content: @Composable NavDestinationScope<Args>.() -> Unit
+) {
+    content()
+}
+
+/**
+ * Platform provided system back handler
+ */
 @Composable
 actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     if (enabled) {
