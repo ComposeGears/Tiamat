@@ -18,12 +18,12 @@ internal actual fun rootDataStore(): DataStorage = rememberRootDataStore()
 internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
     content: @Composable NavDestinationScope<Args>.() -> Unit
 ) {
-//    val lifecycleOwner = rememberDestinationLifecycleOwner()
-//    CompositionLocalProvider(
-//        LocalLifecycleOwner provides lifecycleOwner
-//    ) {
+    val lifecycleOwner = rememberDestinationLifecycleOwner()
+    CompositionLocalProvider(
+        LocalLifecycleOwner provides lifecycleOwner
+    ) {
         content()
-//    }
+    }
 }
 
 /**

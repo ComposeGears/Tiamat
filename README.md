@@ -242,10 +242,22 @@ Custom transition:
 - [BackStackAlteration.kt](example/composeApp/src/commonMain/kotlin/content/examples/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
 - [ViewModels.kt](example/composeApp/src/commonMain/kotlin/content/examples/ViewModels.kt) - ViewModels usage
 
+Hint
+----
+
+### Desktop
+How to add keyboard global back action
+
+### Android
+Hint about lifecycle aware components
+
+### iOS
+waiting you feedbacks/PR's
+
 ### Run/Build sample
 
 Android: `./gradlew example:composeApp:assembleDebug`
 
 Desktop: `./gradlew example:composeApp:run`
 
-iOs: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOs target
+iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
