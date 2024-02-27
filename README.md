@@ -12,7 +12,7 @@
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
-#### Android
+#### Android / jvm
 ```kotlin
 dependencies {
    implementation("io.github.composegears:tiamat:$version")
