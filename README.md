@@ -5,13 +5,14 @@
     <a target="_blank" href="https://github.com/ComposeGears/Tiamat/stargazers"><img src="https://img.shields.io/github/stars/ComposeGears/Tiamat.svg"></a>
     <a href="https://github.com/ComposeGears/Tiamat/network"><img alt="API" src="https://img.shields.io/github/forks/ComposeGears/Tiamat.svg"/></a>
     <a target="_blank" href="https://github.com/ComposeGears/Tiamat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ComposeGears/Tiamat.svg"></a>
-   <a target="_blank" href="https://central.sonatype.com/artifact/io.github.composegears/tiamat"><img src="https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square" ></img></a>
+   <a target="_blank" href="https://central.sonatype.com/artifact/io.github.composegears/tiamat"><img src="https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square"></a>
 </p>
 
 ![](.readme/promo.jpeg)
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
-#### Android only
+
+#### Android
 ```kotlin
 dependencies {
    implementation("io.github.composegears:tiamat:$version")
@@ -262,13 +263,34 @@ Hint
 ----
 
 ### Desktop
-How to add keyboard global back action
+
+There is no default 'back' action on desktop
+
+If you want to add one into the `Tiamat` navigation just use the code below:
+
+```kotlin
+fun main() = application {
+    val backHandler = LocalNavBackHandler.current // < get ref to Global back handler
+    Window(
+        // ...
+        onKeyEvent = { // < add global key event handler
+           it.key == Key.Escape && it.type== KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
+        },
+        // ...
+    ) {
+        App()
+    }
+}
+```
 
 ### Android
-Hint about lifecycle aware components
+`Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
+
+See an example of camera usage: [AndroidViewLifecycleExample.kt](example/composeApp/src/androidMain/kotlin/content/examples/platform/AndroidViewLifecycleExample.kt)
 
 ### iOS
-waiting you feedbacks/PR's
+
+Nothing specific (yet)
 
 ### Run/Build sample
 

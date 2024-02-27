@@ -38,11 +38,12 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.common.BackButton
 import content.examples.common.NextButton
+import content.examples.common.SimpleScreen
 import content.examples.common.TextBody
 
 val AndroidViewLifecycleScreen by navDestination<Unit> {
     val context = LocalContext.current
-    val navColor = navController()
+    val navController = navController()
 
     var isPermissionGranted by remember { mutableStateOf(false) }
 
@@ -57,27 +58,28 @@ val AndroidViewLifecycleScreen by navDestination<Unit> {
             else -> requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
-
-    if (isPermissionGranted) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val lf = LocalLifecycleOwner.current
-            TextBody("Lifecycle State: ${lf.lifecycle.currentState}")
-
-            Box(
-                modifier = Modifier.fillMaxSize(0.8f),
-                contentAlignment = Alignment.Center
+    SimpleScreen("AndroidView + Lifecycle handle") {
+        if (isPermissionGranted) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CameraView()
+                val lf = LocalLifecycleOwner.current
+                TextBody("Lifecycle State: ${lf.lifecycle.currentState}")
+
+                Box(
+                    modifier = Modifier.fillMaxSize(0.8f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CameraView()
+                }
+                BackButton(onClick = navController::back)
             }
-            BackButton(onClick = navColor::back)
-        }
-    } else {
-        PermissionDeclined {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        } else {
+            PermissionDeclined {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
         }
     }
 }

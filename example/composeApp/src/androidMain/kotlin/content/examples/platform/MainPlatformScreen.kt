@@ -1,6 +1,9 @@
 package content.examples.platform
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -14,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import content.examples.common.SimpleScreen
 
 val MainPlatformScreen by navDestination<Unit> {
     val navController = navController()
@@ -24,11 +28,7 @@ val MainPlatformScreen by navDestination<Unit> {
             "AndroidView + Lifecycle handle" to { navController.navigate(AndroidViewLifecycleScreen) },
         )
     }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    SimpleScreen("Platform samples") {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)

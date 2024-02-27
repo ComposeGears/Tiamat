@@ -99,7 +99,7 @@ fun rememberNavController(
 
 @Composable
 private fun <Args> DestinationContent(destination: NavDestination<Args>) {
-    val scope = remember(destination) { NavDestinationScopeImpl<Args>() }
+    val scope = remember(destination) { NavDestinationScopeImpl(destination) }
     with(destination) {
         scope.PlatformContentWrapper {
             Content()

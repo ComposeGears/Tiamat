@@ -1,6 +1,7 @@
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -9,12 +10,16 @@ import kotlin.reflect.KProperty
  * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity
  */
 @Stable
-interface NavDestinationScope<Args>
+interface NavDestinationScope<Args> {
+    val destination: NavDestination<Args>
+}
 
 /**
  * Internal NavDestinationScope impl
  */
-internal open class NavDestinationScopeImpl<Args> : NavDestinationScope<Args>
+internal open class NavDestinationScopeImpl<Args>(
+    override val destination: NavDestination<Args>
+) : NavDestinationScope<Args>
 
 /**
  * Destination base interface

@@ -1,6 +1,5 @@
 package com.composegears.tiamat
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -23,20 +22,17 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
     override val lifecycle: Lifecycle get() = registry
 
     fun onAttach() {
-        Log.i("AAA", "onAttach")
         isActive = true
         updateState()
     }
 
     fun onDispose() {
-        Log.i("AAA", "onDispose")
         isActive = false
-        parentState = null
         updateState()
+        parentState = null
     }
 
     override fun onClosed() {
-        Log.i("AAA", "onClosed")
         super.onClosed()
         isClosed = true
         updateState()
@@ -44,18 +40,21 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
 
     // observe parent lifecycle changes
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-        Log.i("AAA", "onStateChanged = $event | ${event.targetState}")
         parentState = event.targetState
         updateState()
     }
 
     private fun updateState() {
-        if (parentState != null) {
-            registry.currentState = parentState!!
-            // todo handle base on isActive
-        } else {
-            if (isClosed) registry.currentState = Lifecycle.State.DESTROYED
-            else registry.currentState = Lifecycle.State.INITIALIZED
+        val current = registry.currentState
+        val isCreated = parentState?.isAtLeast(Lifecycle.State.CREATED) ?: false
+        val newState = when {
+            isClosed -> Lifecycle.State.DESTROYED
+            isCreated && isActive -> parentState!!
+            isCreated && !isActive -> Lifecycle.State.CREATED
+            else -> current
+        }
+        if (newState != current) {
+            registry.currentState = newState
         }
     }
 }
