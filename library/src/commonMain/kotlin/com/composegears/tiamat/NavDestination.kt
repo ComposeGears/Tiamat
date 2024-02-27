@@ -1,7 +1,6 @@
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
