@@ -1,14 +1,30 @@
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)
+<h1 align="center">Tiamat</h1>
+<h2 align="center">Compose multiplatform navigation library</h2>
 
-Tiamat
-======
-
-`Tiamat` is a kmm navigation library
+<p align="center">
+    <a target="_blank" href="https://github.com/ComposeGears/Tiamat/stargazers"><img src="https://img.shields.io/github/stars/ComposeGears/Tiamat.svg"></a>
+    <a href="https://github.com/ComposeGears/Tiamat/network"><img alt="API" src="https://img.shields.io/github/forks/ComposeGears/Tiamat.svg"/></a>
+    <a target="_blank" href="https://github.com/ComposeGears/Tiamat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ComposeGears/Tiamat.svg"></a>
+   <a target="_blank" href="https://central.sonatype.com/artifact/io.github.composegears/tiamat"><img src="https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square" ></img></a>
+</p>
 
 ![](.readme/promo.jpeg)
 
+Add the dependency below to your **module**'s `build.gradle.kts` file:
+#### Android only
 ```kotlin
-implementation("io.github.composegears:tiamat:0.1.0-alpha02")
+dependencies {
+   implementation("io.github.composegears:tiamat:$version")
+}
+```
+
+#### Multiplatform
+```kotlin
+sourceSets {
+    commonMain.dependencies {
+        implementation("io.github.composegears:tiamat:$version")
+    }
+}
 ```
 
 Why Tiamat?
@@ -261,3 +277,21 @@ Android: `./gradlew example:composeApp:assembleDebug`
 Desktop: `./gradlew example:composeApp:run`
 
 iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
+
+
+# License
+```xml
+Developed by ComposeGears 2024
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
