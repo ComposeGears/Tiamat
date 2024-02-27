@@ -92,9 +92,7 @@ Setup
         val navController = navController()
         Column {
             Text("Screen")
-            Button(onClick = {
-                navController.navigate(AnotherScreen)
-            }){
+            Button(onClick = { navController.navigate(AnotherScreen) }){
                 Text("Navigate")
             }
         }
