@@ -38,7 +38,6 @@ Why Tiamat?
 - Easy to use
 - Allow to pass ANY types as data, even lambdas (!under small condition)
 - Customizable transitions
-- No lifecycle. Just use compose DisposableEffect.
 
 Setup
 -----

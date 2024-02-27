@@ -31,6 +31,12 @@ class NavController internal constructor(
     var current by mutableStateOf<NavDestination<*>?>(null)
         private set
 
+    /**
+     * @return true if there is entities in back stack, false otherwise
+     */
+    var canGoBack by mutableStateOf(false)
+        private set
+
     private val backStack: ArrayList<NavEntry> = ArrayList()
     private var onCloseEntryListener: ((NavEntry) -> Unit)? = null
     private var pendingBackTransition: ContentTransform? = null
@@ -74,6 +80,7 @@ class NavController internal constructor(
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null
+        canGoBack = backStack.isNotEmpty()
     }
 
     private fun replaceInternal(
@@ -108,6 +115,7 @@ class NavController internal constructor(
      */
     fun editBackStack(actions: BackStackEditScope.() -> Unit) {
         BackStackEditScope().actions()
+        canGoBack = backStack.isNotEmpty()
     }
 
     /**
@@ -193,11 +201,6 @@ class NavController internal constructor(
             parent?.back(result, to, transition) ?: false
         }
     }
-
-    /**
-     * @return true if there is entities in back stack, false otherwise
-     */
-    fun canGoBack() = backStack.isNotEmpty()
 
     internal fun reset() {
         backStack.clear()

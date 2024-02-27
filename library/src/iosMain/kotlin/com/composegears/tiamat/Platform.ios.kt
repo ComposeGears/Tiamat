@@ -21,7 +21,6 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
     content()
 }
 
-
 /**
  * No back button
  */

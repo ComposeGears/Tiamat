@@ -152,10 +152,7 @@ fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() }
 ) {
-    if (handleSystemBackEvent) {
-        val canGoBack by remember(navController.current) { derivedStateOf { navController.canGoBack() } }
-        NavBackHandler(canGoBack, navController::back)
-    }
+    if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // listen to entries being closed/removed from backstack and clear storage/models recursively
     DisposableEffect(navController) {
         val entryCloseDispatcher: (NavEntry) -> Unit = {
