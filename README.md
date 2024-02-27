@@ -90,7 +90,7 @@ Setup
     ```kotlin
     val Screen by navDestination<Unit> {
         val navController = navController()
-        Column{
+        Column {
             Text("Screen")
             Button(onClick = {
                 navController.navigate(AnotherScreen)
