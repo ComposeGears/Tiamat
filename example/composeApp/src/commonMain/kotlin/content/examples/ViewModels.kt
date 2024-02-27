@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.ComposeViewModel
+import com.composegears.tiamat.TiamatViewModel
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberViewModel
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ViewModelsRootViewModel : ComposeViewModel() {
+class ViewModelsRootViewModel : TiamatViewModel() {
     private val _counter = MutableStateFlow(1)
     val counter = _counter.asStateFlow()
 

@@ -9,7 +9,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * ViewModels base class
  */
-abstract class ComposeViewModel {
+abstract class TiamatViewModel {
 
     protected val viewModelScope = ComposeModelCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 

@@ -17,7 +17,7 @@ fun main() = application {
             position = WindowPosition.Aligned(Alignment.Center)
         ),
         onKeyEvent = {
-           it.key == Key.Escape && it.type== KeyEventType.KeyUp && backHandler.back()
+            it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back()
         },
         title = "Tiamat Nav-Example"
     ) {

@@ -54,7 +54,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key key to be bind to created NavController
- * @param storageMode data storage mode
+ * @param storageMode data storage mode, default is parent mode or if it is root [ResetOnDataLoss]
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
  */
@@ -62,7 +62,7 @@ private fun NavEntry.storageKey() = "EntryStorage#$uuid"
 @Suppress("ComposableParamOrder")
 fun rememberNavController(
     key: Any? = null,
-    storageMode: StorageMode = ResetOnDataLoss,
+    storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>
 ): NavController {
@@ -79,7 +79,7 @@ fun rememberNavController(
         NavController(
             parent = parent,
             key = key,
-            storageMode = storageMode,
+            storageMode = storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
             startDestination = startDestination,
             savedState = state,
             dataStorage = navDataStore,
@@ -99,8 +99,12 @@ fun rememberNavController(
 
 @Composable
 private fun <Args> DestinationContent(destination: NavDestination<Args>) {
-    val scope = remember(destination) { NavDestinationScopeImpl<Args>() }
-    with(destination) { scope.Content() }
+    val scope = remember(destination) { NavDestinationScopeImpl(destination) }
+    with(destination) {
+        scope.PlatformContentWrapper {
+            Content()
+        }
+    }
 }
 
 @Composable
@@ -148,10 +152,7 @@ fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() }
 ) {
-    if (handleSystemBackEvent) {
-        val canGoBack by remember(navController.current) { derivedStateOf { navController.canGoBack() } }
-        NavBackHandler(canGoBack, navController::back)
-    }
+    if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // listen to entries being closed/removed from backstack and clear storage/models recursively
     DisposableEffect(navController) {
         val entryCloseDispatcher: (NavEntry) -> Unit = {
@@ -161,7 +162,7 @@ fun Navigation(
                 detachList.removeAt(0)?.data?.onEach { (_, value) ->
                     when (value) {
                         is DataStorage -> detachList.add(value)
-                        is ComposeViewModel -> value.close()
+                        is TiamatViewModel -> value.close()
                     }
                 }
             }
@@ -283,7 +284,7 @@ fun <Result> NavDestinationScope<*>.navResult(): Result? {
  */
 @Composable
 @Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
-fun <Model : ComposeViewModel> NavDestinationScope<*>.rememberViewModel(
+fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String? = null,
     provider: () -> Model
 ): Model {

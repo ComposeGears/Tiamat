@@ -38,7 +38,7 @@ private fun NavDestinationScope<*>.Screen(
                     // if there is last screen (empty backstack) and it is not a 1st tab
                     // then we open 1st tab, else just perform regular back
                     // having this we will always come back to 1st tab before exit tabs screen
-                    if (!navController.canGoBack() && navController.current != Tab1) {
+                    if (!navController.canGoBack && navController.current != Tab1) {
                         navController.replace(Tab1)
                     } else {
                         navController.back()
@@ -48,7 +48,7 @@ private fun NavDestinationScope<*>.Screen(
             // we can go back if there is smth in backstack or if it is not first tab
             val canGoBack by remember {
                 derivedStateOf { // prevent extra recompositions
-                    navController.canGoBack() || navController.current != Tab1
+                    navController.canGoBack || navController.current != Tab1
                 }
             }
             // custom back handler for system `back` event
