@@ -33,8 +33,12 @@ kotlin {
         val desktopMain by getting
 
         androidMain.dependencies {
-            implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
+            implementation(libs.androidx.concurrent.futures)
+            implementation(libs.compose.ui.tooling.preview)
         }
         commonMain.dependencies {
             implementation(projects.tiamat)
