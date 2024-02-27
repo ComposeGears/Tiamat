@@ -154,7 +154,7 @@ fun rememberNavController(
 and display as part of any composable function
 ```kotlin
 @Composable
-fun content(){
+fun Content() {
     val navController = rememberNavController(...)
     Navigation(
         navController = navController,
@@ -210,7 +210,7 @@ NavController will keep the screens data, view models, and states during navigat
 > Solution: just define types of root(any in chain) screens explicitly 
 > 
 > ```kotlin
-> val SomeScreen1: NavDestination<Unit> by navDestination { // ...
+> val SomeScreen1: NavDestination<Unit> by navDestination { // ... }
 > ```
 
 > [!IMPORTANT]
@@ -274,7 +274,7 @@ fun main() = application {
     Window(
         // ...
         onKeyEvent = { // < add global key event handler
-           it.key == Key.Escape && it.type== KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
+           it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
         },
         // ...
     ) {
