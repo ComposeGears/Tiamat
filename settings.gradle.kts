@@ -18,6 +18,7 @@ dependencyResolutionManagement {
 }
 
 include(":library")
+include(":tiamat-koin")
 include(":example:composeApp")
 
 project(":library").name = "tiamat"
