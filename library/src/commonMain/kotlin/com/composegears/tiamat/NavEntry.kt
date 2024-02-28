@@ -7,13 +7,10 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
  *
  * Hold nav entry information and allow to save/restore state base on storage mode
  */
-internal class NavEntry(
+internal class NavEntry private constructor(
+    val uuid: Long,
     val destination: NavDestination<*>,
     var navArgs: Any? = null,
-    var navResult: Any? = null,
-    var entryStorage: DataStorage? = null,
-    var savedState: Map<String, List<Any?>>? = null,
-    var savedStateRegistry: SaveableStateRegistry? = null,
 ) {
     companion object {
 
@@ -30,11 +27,12 @@ internal class NavEntry(
             storageMode: StorageMode,
             destinations: Array<NavDestination<*>>,
         ) = NavEntry(
+            uuid = this[KEY_UUID] as Long,
             destination = (this[KEY_NAME] as String).let { name -> destinations.first { it.name == name } },
-            savedState = this[KEY_SAVED_STATE] as? Map<String, List<Any?>>?,
         ).also {
-            it.uuid = this[KEY_UUID] as Long
+            // ensure next uuid will be unique after restoring state of this one
             nextUUID = maxOf(nextUUID, it.uuid + 1)
+            it.savedState = this[KEY_SAVED_STATE] as? Map<String, List<Any?>>?
             if (storageMode == StorageMode.Savable) {
                 it.navArgs = this[KEY_NAV_ARGS]
                 it.navResult = this[KEY_NAV_RESULT]
@@ -42,8 +40,15 @@ internal class NavEntry(
         }
     }
 
-    internal var uuid: Long = nextUUID++
-        private set
+    var navResult: Any? = null
+    var entryStorage: DataStorage? = null
+    var savedState: Map<String, List<Any?>>? = null
+    var savedStateRegistry: SaveableStateRegistry? = null
+
+    constructor(
+        destination: NavDestination<*>,
+        navArgs: Any? = null,
+    ) : this(nextUUID++, destination, navArgs)
 
     internal fun saveState() {
         savedState = savedStateRegistry?.performSave()
