@@ -27,29 +27,21 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
-            }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.androidx.lifecycle.runtime)
-            }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.lifecycle.runtime)
         }
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-            }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.kotlin.test)
-            }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
     }
 }
