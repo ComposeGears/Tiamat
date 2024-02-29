@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import com.composegears.tiamat.StorageMode.DataStore.IgnoreDataLoss
 import com.composegears.tiamat.StorageMode.DataStore.ResetOnDataLoss
-import kotlin.reflect.KClass
 
 private const val KEY_NAV_ARGS = "args"
 private const val KEY_NAV_RESULT = "result"
@@ -274,11 +273,12 @@ fun <Result> NavDestinationScope<*>.navResult(): Result? {
  * @param key provides unique key to create viewModel
  * @param provider default viewModel instance provider
  */
+
 @Composable
 inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String? = null,
     noinline provider: () -> Model
-): Model = rememberViewModel(key, Model::class, provider)
+): Model = rememberViewModel(className<Model>(), key, provider)
 
 /**
  * Recommended to use `rememberViewModel(key, provider)` instead
@@ -292,13 +292,13 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberView
 @Composable
 @Suppress("UNCHECKED_CAST", "UnusedReceiverParameter")
 fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    key: String? = null,
-    modelClass: KClass<Model>,
+    modelKey: String,
+    instanceKey: String? = null,
     provider: () -> Model
 ): Model {
     val store = LocalDataStore.current ?: error("Store not bound")
     return remember {
-        val storeKey = "Model#${modelClass.qualifiedName}" + (key?.let { "#$it" } ?: "")
+        val storeKey = "Model#$modelKey" + (instanceKey?.let { "#$it" } ?: "")
         store.data.getOrPut(storeKey, provider) as Model
     }
 }
