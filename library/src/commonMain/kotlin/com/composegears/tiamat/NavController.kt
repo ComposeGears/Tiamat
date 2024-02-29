@@ -212,10 +212,10 @@ class NavController internal constructor(
         }
     }
 
-    internal fun toSavedState() = currentNavEntry?.let {
+    internal fun toSavedState() = currentNavEntry?.let { entry ->
         mapOf(
             KEY_UUID to uuid,
-            KEY_CURRENT to currentNavEntry?.apply { saveState() }?.toSavedState(storageMode),
+            KEY_CURRENT to entry.apply { saveState() }.toSavedState(storageMode),
             KEY_BACKSTACK to backStack.map { it.toSavedState(storageMode) }
         )
     }

@@ -37,18 +37,18 @@ val NestedNavigationRoot by navDestination<Unit> {
                 )
             )
             Navigation(
-                nestedNavController1,
-                Modifier
+                navController = nestedNavController1,
+                modifier = Modifier
                     .weight(1f)
-                    .padding(32.dp)
+                    .padding(8.dp)
                     .border(4.dp, MaterialTheme.colorScheme.onSurface)
                     .padding(4.dp)
             )
             Navigation(
-                nestedNavController2,
-                Modifier
+                navController = nestedNavController2,
+                modifier = Modifier
                     .weight(1f)
-                    .padding(32.dp)
+                    .padding(8.dp)
                     .border(4.dp, MaterialTheme.colorScheme.onSurface)
                     .padding(4.dp)
             )

@@ -276,9 +276,8 @@ fun <Result> NavDestinationScope<*>.navResult(): Result? {
 
 @Composable
 inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    key: String? = null,
     noinline provider: () -> Model
-): Model = rememberViewModel(className<Model>(), key, provider)
+): Model = rememberViewModel(className<Model>(), provider)
 
 /**
  * Recommended to use `rememberViewModel(key, provider)` instead
@@ -292,13 +291,12 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberView
 @Composable
 @Suppress("UNCHECKED_CAST", "UnusedReceiverParameter")
 fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    modelKey: String,
-    instanceKey: String? = null,
+    key: String,
     provider: () -> Model
 ): Model {
     val store = LocalDataStore.current ?: error("Store not bound")
     return remember {
-        val storeKey = "Model#$modelKey" + (instanceKey?.let { "#$it" } ?: "")
+        val storeKey = "Model#$key"
         store.data.getOrPut(storeKey, provider) as Model
     }
 }
