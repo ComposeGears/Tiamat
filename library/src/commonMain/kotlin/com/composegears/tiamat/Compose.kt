@@ -263,14 +263,12 @@ fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? {
 @Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
 fun <Result> NavDestinationScope<*>.navResult(): Result? {
     val store = LocalDataStore.current ?: error("Store not bound")
-    val result = remember { store.data[KEY_NAV_RESULT] as Result? }
-    return result
+    return remember { store.data[KEY_NAV_RESULT] as Result? }
 }
 
 /**
  * Provide (create or restore) viewModel instance bound to navigation entry
  *
- * @param key provides unique key to create viewModel
  * @param provider default viewModel instance provider
  */
 
@@ -285,7 +283,6 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberView
  * Provide (create or restore) viewModel instance bound to navigation entry
  *
  * @param key provides unique key part
- * @param modelClass class reference, required to generate unique key part
  * @param provider default viewModel instance provider
  */
 @Composable
