@@ -67,14 +67,7 @@ fun rememberNavController(
     destinations: Array<NavDestination<*>>
 ): NavController {
     val parent = LocalNavController.current
-    val parentDataStorage = LocalDataStore.current
-    val navDataStore =
-        if (parentDataStorage == null) rootDataStore()
-        else {
-            val storageKey = "DataStore#" + currentCompositeKeyHash.toString(16)
-            parentDataStorage.data.getOrPut(storageKey) { DataStorage() } as DataStorage
-        }
-
+    val parentDataStorage = LocalDataStore.current ?: rootDataStore()
     fun createNavController(state: Map<String, Any?>?) =
         NavController(
             parent = parent,
@@ -82,11 +75,9 @@ fun rememberNavController(
             storageMode = storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
             startDestination = startDestination,
             savedState = state,
-            dataStorage = navDataStore,
             destinations = destinations
         ).apply {
-            if (storageMode == ResetOnDataLoss && navDataStore.data.isEmpty()) reset()
-            else restoreFromSavedState()
+            restoreState(parentDataStorage)
         }
     return rememberSaveable(
         saver = Saver(
@@ -214,7 +205,7 @@ fun Navigation(
             CompositionLocalProvider(
                 LocalSaveableStateRegistry provides saveRegistry,
                 LocalDataStore provides entryStorage,
-                LocalNavController provides navController
+                LocalNavController provides navController,
             ) {
                 DestinationContent(it.destination)
             }
@@ -272,26 +263,37 @@ fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? {
 @Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
 fun <Result> NavDestinationScope<*>.navResult(): Result? {
     val store = LocalDataStore.current ?: error("Store not bound")
-    val result = remember { store.data[KEY_NAV_RESULT] as Result? }
-    return result
+    return remember { store.data[KEY_NAV_RESULT] as Result? }
 }
 
 /**
  * Provide (create or restore) viewModel instance bound to navigation entry
  *
- * @param key provides unique key to create viewModel
+ * @param provider default viewModel instance provider
+ */
+
+@Composable
+inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
+    noinline provider: () -> Model
+): Model = rememberViewModel(className<Model>(), provider)
+
+/**
+ * Recommended to use `rememberViewModel(key, provider)` instead
+ *
+ * Provide (create or restore) viewModel instance bound to navigation entry
+ *
+ * @param key provides unique key part
  * @param provider default viewModel instance provider
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
+@Suppress("UNCHECKED_CAST", "UnusedReceiverParameter")
 fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    key: String? = null,
+    key: String,
     provider: () -> Model
 ): Model {
     val store = LocalDataStore.current ?: error("Store not bound")
-    val compositionHash = currentCompositeKeyHash
     return remember {
-        val storeKey = "Model#" + (key ?: compositionHash.toString(16))
+        val storeKey = "Model#$key"
         store.data.getOrPut(storeKey, provider) as Model
     }
 }

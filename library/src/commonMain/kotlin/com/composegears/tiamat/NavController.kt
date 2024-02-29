@@ -16,14 +16,20 @@ class NavController internal constructor(
     val key: Any?,
     val storageMode: StorageMode,
     val startDestination: NavDestination<*>?,
-    internal val dataStorage: DataStorage,
     private val savedState: Map<String, Any?>?,
     private val destinations: Array<NavDestination<*>>
 ) {
     companion object {
+
+        private var nextUUID = 0L
+
         const val KEY_CURRENT = "current"
         const val KEY_BACKSTACK = "backStack"
+        const val KEY_UUID = "uuid"
     }
+
+    // needs to be restored asap not to rent extra uuid's
+    private val uuid: Long = (savedState?.get(KEY_UUID) as? Long) ?: nextUUID++
 
     /**
      * provides current active NavDestination as State object
@@ -43,6 +49,8 @@ class NavController internal constructor(
 
     internal var currentNavEntry by mutableStateOf<NavEntry?>(null)
         private set
+    internal var dataStorage: DataStorage = DataStorage()
+        private set
     internal var isForwardTransition = true
         private set
     internal var isInitialTransition = true
@@ -51,6 +59,8 @@ class NavController internal constructor(
         private set
 
     init {
+        // ensure next uuid will be unique after restoring state of this one
+        nextUUID = maxOf(nextUUID, uuid + 1)
         val namesSet = mutableSetOf<String>()
         val duplicates = arrayListOf<String>()
         destinations.onEach {
@@ -202,23 +212,31 @@ class NavController internal constructor(
         }
     }
 
-    internal fun reset() {
+    internal fun toSavedState() = currentNavEntry?.let { entry ->
+        mapOf(
+            KEY_UUID to uuid,
+            KEY_CURRENT to entry.apply { saveState() }.toSavedState(storageMode),
+            KEY_BACKSTACK to backStack.map { it.toSavedState(storageMode) }
+        )
+    }
+
+    internal fun restoreState(parentDataStorage: DataStorage) {
+        val storageKey = "DataStore#$uuid"
+        dataStorage = parentDataStorage.data.getOrPut(storageKey) { DataStorage() } as DataStorage
+        if (storageMode == StorageMode.DataStore.ResetOnDataLoss && dataStorage.data.isEmpty()) reset()
+        else restoreFromSavedState()
+    }
+
+    private fun reset() {
         backStack.clear()
         setCurrentNavEntry(null, false)
         if (startDestination != null) navigate(startDestination)
     }
 
-    internal fun restoreFromSavedState() {
+    private fun restoreFromSavedState() {
         savedState?.let(::restoreFromSavedState)
         if (currentNavEntry == null && startDestination != null)
             navigate(startDestination)
-    }
-
-    internal fun toSavedState() = currentNavEntry?.let {
-        mapOf(
-            KEY_CURRENT to currentNavEntry?.apply { saveState() }?.toSavedState(storageMode),
-            KEY_BACKSTACK to backStack.map { it.toSavedState(storageMode) }
-        )
     }
 
     @Suppress("UNCHECKED_CAST")
