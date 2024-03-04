@@ -11,6 +11,7 @@ internal class NavEntry private constructor(
     val uuid: Long,
     val destination: NavDestination<*>,
     var navArgs: Any? = null,
+    var freeArgs: Any? = null,
 ) {
     companion object {
 
@@ -19,6 +20,7 @@ internal class NavEntry private constructor(
         private const val KEY_UUID = "uuid"
         private const val KEY_NAME = "name"
         private const val KEY_NAV_ARGS = "navArgs"
+        private const val KEY_FREE_ARGS = "freeArgs"
         private const val KEY_NAV_RESULT = "navResult"
         private const val KEY_SAVED_STATE = "savedState"
 
@@ -35,6 +37,7 @@ internal class NavEntry private constructor(
             it.savedState = this[KEY_SAVED_STATE] as? Map<String, List<Any?>>?
             if (storageMode == StorageMode.Savable) {
                 it.navArgs = this[KEY_NAV_ARGS]
+                it.freeArgs = this[KEY_FREE_ARGS]
                 it.navResult = this[KEY_NAV_RESULT]
             }
         }
@@ -48,7 +51,13 @@ internal class NavEntry private constructor(
     constructor(
         destination: NavDestination<*>,
         navArgs: Any? = null,
-    ) : this(nextUUID++, destination, navArgs)
+        freeArgs: Any? = null,
+    ) : this(
+        uuid = nextUUID++,
+        destination = destination,
+        navArgs = navArgs,
+        freeArgs = freeArgs
+    )
 
     internal fun saveState() {
         savedState = savedStateRegistry?.performSave()
@@ -64,6 +73,7 @@ internal class NavEntry private constructor(
         )
         if (storageMode == StorageMode.Savable) {
             state[KEY_NAV_ARGS] = navArgs
+            state[KEY_FREE_ARGS] = freeArgs
             state[KEY_NAV_RESULT] = navResult
         }
         return state

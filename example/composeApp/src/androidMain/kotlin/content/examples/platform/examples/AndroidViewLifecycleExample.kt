@@ -1,4 +1,4 @@
-package content.examples.platform
+package content.examples.platform.examples
 
 import android.Manifest
 import android.app.Activity

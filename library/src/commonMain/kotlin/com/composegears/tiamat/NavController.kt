@@ -133,16 +133,18 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> navigate(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
         requireKnownDestination(dest)
         if (currentNavEntry != null) backStack.add(currentNavEntry!!.apply { saveState() })
-        replaceInternal(NavEntry(dest, navArgs), false, transition)
+        replaceInternal(NavEntry(dest, navArgs, freeArgs), false, transition)
     }
 
     /**
@@ -152,11 +154,13 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> popToTop(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
         if (currentNavEntry?.destination?.name == dest.name) return
@@ -165,7 +169,7 @@ class NavController internal constructor(
             if (currentNavEntry != null) backStack.add(currentNavEntry!!.apply { saveState() })
             backStack.remove(entry)
             replaceInternal(entry, false, transition)
-        } else navigate(dest, navArgs, transition)
+        } else navigate(dest, navArgs, freeArgs, transition)
     }
 
     /**
@@ -173,14 +177,16 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> replace(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
-        replaceInternal(NavEntry(dest, navArgs), true, transition)
+        replaceInternal(NavEntry(dest, navArgs, freeArgs), true, transition)
     }
 
     /**
@@ -252,25 +258,51 @@ class NavController internal constructor(
     }
 
     inner class BackStackEditScope internal constructor() {
+
+        /**
+         * Add destination into backstack
+         *
+         * @param dest entry to open
+         * @param navArgs args to be provided to destination
+         * @param freeArgs free args to be provided to destination
+         */
         fun <Args> add(
             dest: NavDestination<Args>,
-            navArgs: Args? = null
+            navArgs: Args? = null,
+            freeArgs: Any? = null,
         ) {
-            backStack.add(NavEntry(dest, navArgs))
+            backStack.add(NavEntry(dest, navArgs, freeArgs))
         }
 
+        /**
+         * Add destination into backstack at specific position
+         *
+         * @param index position
+         * @param dest entry to open
+         * @param navArgs args to be provided to destination
+         * @param freeArgs free args to be provided to destination
+         */
         fun <Args> add(
             index: Int,
             dest: NavDestination<Args>,
-            navArgs: Args? = null
+            navArgs: Args? = null,
+            freeArgs: Any? = null,
         ) {
-            backStack.add(index, NavEntry(dest, navArgs))
+            backStack.add(index, NavEntry(dest, navArgs, freeArgs))
         }
 
+        /**
+         * Remove backstack entry at specific position
+         *
+         * @param index position
+         */
         fun removeAt(index: Int) {
             backStack.removeAt(index).notifyClosed()
         }
 
+        /**
+         * Clear backstack
+         */
         fun clear() {
             while (backStack.isNotEmpty()) {
                 backStack.removeLast().notifyClosed()

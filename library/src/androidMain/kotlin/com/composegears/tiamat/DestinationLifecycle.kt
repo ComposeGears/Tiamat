@@ -21,6 +21,10 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
 
     override val lifecycle: Lifecycle get() = registry
 
+    init {
+        registry.currentState = Lifecycle.State.CREATED
+    }
+
     fun onAttach() {
         isActive = true
         updateState()

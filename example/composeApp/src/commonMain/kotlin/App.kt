@@ -31,6 +31,8 @@ fun App() {
                     NestedNavigationRoot,
                     DataPassingParamsRoot,
                     DataPassingParamsScreen,
+                    DataPassingFreeArgsRoot,
+                    DataPassingFreeArgsScreen,
                     DataPassingResultRoot,
                     DataPassingResultScreen,
                     ViewModelsRoot,

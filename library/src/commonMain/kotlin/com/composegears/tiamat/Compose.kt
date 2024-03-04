@@ -14,8 +14,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.composegears.tiamat.StorageMode.DataStore.IgnoreDataLoss
 import com.composegears.tiamat.StorageMode.DataStore.ResetOnDataLoss
 
-private const val KEY_NAV_ARGS = "args"
-private const val KEY_NAV_RESULT = "result"
+private const val KEY_NAV_ARGS = "navArgs"
+private const val KEY_FREE_ARGS = "freeArgs"
+private const val KEY_NAV_RESULT = "navResult"
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalDataStore = staticCompositionLocalOf<DataStorage?> { null }
@@ -195,6 +196,7 @@ fun Navigation(
                 val storage = navController.dataStorage.data.getOrPut(it.storageKey()) {
                     val storage = DataStorage()
                     if (it.navArgs != null) storage.data[KEY_NAV_ARGS] = it.navArgs
+                    if (it.freeArgs != null) storage.data[KEY_FREE_ARGS] = it.freeArgs
                     storage
                 } as DataStorage
                 storage.data[KEY_NAV_RESULT] = it.navResult
@@ -252,6 +254,21 @@ fun <Args> NavDestinationScope<Args>.navArgs(): Args {
 fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? {
     val store = LocalDataStore.current ?: error("Store not bound")
     return remember { store.data[KEY_NAV_ARGS] as Args? }
+}
+
+/**
+ * Provides free nav arguments passed into navigate forward function for current destination
+ *
+ * @see [NavController.navigate]
+ * @see [NavController.replace]
+ *
+ * @return free nav arguments provided to [NavController.navigate] function or null
+ */
+@Composable
+@Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
+fun <T> NavDestinationScope<*>.freeArgs(): T? {
+    val store = LocalDataStore.current ?: error("Store not bound")
+    return remember { store.data[KEY_FREE_ARGS] as T? }
 }
 
 /**

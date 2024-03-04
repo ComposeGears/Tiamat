@@ -132,6 +132,7 @@ The scope provides a number of composable functions:
 - `navController` - provides current NavController to navigate back/further
 - `navArgs` - the arguments provided to this screen by `NavControllr:navigate(screen, args)` fun
 - `navArgsOrNull` - same as `navArgs` but provides `null` if there is no data passed or if it was lost
+- `freeArgs` - free type arguments, useful to store metadata or pass deeplink info
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
 
@@ -251,6 +252,7 @@ Custom transition:
 - [NestedNavigation.kt](example/composeApp/src/commonMain/kotlin/content/examples/NestedNavigation.kt) - Nested nav controller interaction
 - [Tabs.kt](example/composeApp/src/commonMain/kotlin/content/examples/Tabs.kt) - Bottom navigation example
 - [DataPassingParams.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingParams.kt) - How to pass data to next screen
+- [DataPassingFreeArgs.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingFreeArgs.kt) - How to pass addition type-free data to next screen (useful to metadata/deeplink)
 - [DataPassingResult.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingResult.kt) - How to provide result
 - [CustomTransition.kt](example/composeApp/src/commonMain/kotlin/content/examples/CustomTransition.kt) - Custom animations/transition
 - [BackStackAlteration.kt](example/composeApp/src/commonMain/kotlin/content/examples/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)

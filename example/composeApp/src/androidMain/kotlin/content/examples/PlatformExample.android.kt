@@ -6,9 +6,9 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
-import content.examples.platform.AndroidViewLifecycleScreen
+import content.examples.platform.examples.AndroidViewLifecycleScreen
 import content.examples.platform.MainPlatformScreen
-import content.examples.platform.SavedStateScreen
+import content.examples.platform.examples.SavedStateScreen
 
 actual val PlatformExample: NavDestination<Unit> by navDestination {
     val platformNavController = rememberNavController(
