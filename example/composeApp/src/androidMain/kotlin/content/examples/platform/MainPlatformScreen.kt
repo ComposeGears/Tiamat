@@ -19,6 +19,7 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.common.SimpleScreen
 import content.examples.platform.examples.AndroidViewLifecycleScreen
+import content.examples.platform.examples.DeeplinkScreen
 import content.examples.platform.examples.SavedStateScreen
 
 val MainPlatformScreen by navDestination<Unit> {
@@ -28,6 +29,7 @@ val MainPlatformScreen by navDestination<Unit> {
         listOf(
             "Android SavedState" to { navController.navigate(SavedStateScreen) },
             "AndroidView + Lifecycle handle" to { navController.navigate(AndroidViewLifecycleScreen) },
+            "Deeplink" to { navController.navigate(DeeplinkScreen) }
         )
     }
     SimpleScreen("Platform samples") {
