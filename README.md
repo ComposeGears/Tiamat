@@ -133,6 +133,7 @@ The scope provides a number of composable functions:
 - `navArgs` - the arguments provided to this screen by `NavControllr:navigate(screen, args)` fun
 - `navArgsOrNull` - same as `navArgs` but provides `null` if there is no data passed or if it was lost
 - `freeArgs` - free type arguments, useful to store metadata or pass deeplink info
+- `clearFreeArgs` - clear free type arguments (eg: clear handled deeplink info)
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
 
@@ -142,7 +143,7 @@ You may create NavController using `rememberNavController` function:
 
 ```kotlin
 fun rememberNavController(
-    key: Any? = null,
+    key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>
@@ -214,13 +215,20 @@ NavController will keep the screens data, view models, and states during navigat
 > [!IMPORTANT]
 > No data exception
 > 
-> Using  `storageMode = StorageMode.DataStore.IgnoreDataLoss` in the `rememberNavController`
+> Using  `storageMode = StorageMode.IgnoreDataLoss` in the `rememberNavController`
 > 
 > Within screens `val navArgs = navArgs()` 
 > 
 > May cause error in case internal data storage where cleared (eg: Android may release memory of activity)
 > 
 > Solution: there is safe version `val navArgs = navArgsOrNull()` 
+
+> [!IMPORTANT]
+> Why is my system back button works wired with custom back handler?
+> 
+> Using custom back handler do not forget 2 rules
+> 1) Always place `NavBackHandler` before `Navigation`
+> 2) use `Navigation(handleSystemBackEvent = false)` flag to disable extra back handler
 
 Samples
 -------

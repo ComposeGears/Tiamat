@@ -20,7 +20,7 @@ fun App(
         Surface {
             val rootNavController = rememberNavController(
                 key = "rootNavController",
-                storageMode = StorageMode.DataStore.ResetOnDataLoss,
+                storageMode = StorageMode.ResetOnDataLoss,
                 startDestination = MainScreen,
                 destinations = arrayOf(
                     MainScreen,
