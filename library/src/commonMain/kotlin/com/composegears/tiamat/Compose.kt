@@ -168,7 +168,7 @@ fun Navigation(
                 else -> contentTransformProvider(navController.isForwardTransition)
             }
         },
-        label = "nav_controller_${navController.key?.toString() ?: "no_key"}",
+        label = "nav_controller_${navController.key ?: "no_key"}",
     ) {
         if (it != null) Box {
             // gen save state
