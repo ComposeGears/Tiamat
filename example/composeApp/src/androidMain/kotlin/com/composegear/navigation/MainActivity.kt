@@ -6,47 +6,47 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import content.examples.model.DeeplinkData
+import androidx.compose.runtime.DisposableEffect
+import com.composegears.tiamat.navigationFadeInOut
+import content.MainScreen
+import content.examples.PlatformExample
 
 class MainActivity : ComponentActivity() {
 
-    private var deeplinkData by mutableStateOf<DeeplinkData?>(null)
+    private val deepLinkController = DeepLinkController()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        handleIntent(intent)
-
+        deepLinkController.onIntent(intent)
         setContent {
-            App(
-                deeplinkData = deeplinkData,
-                onDeeplinkHandled = { deeplinkData = null }
-            )
+            App { rootNavController ->
+                // pass deeplink deeper and handle inside screen
+                val deeplink = deepLinkController.deeplink
+                // using disposable effect as it runs faster then LaunchedEffect
+                DisposableEffect(deeplink) {
+                    if (deeplink != null) {
+                        rootNavController.editBackStack {
+                            clear()
+                            add(MainScreen)
+                        }
+                        rootNavController.replace(
+                            dest = PlatformExample,
+                            freeArgs = deeplink,
+                            // we only animate root content switch
+                            // all nested items should use navigationNone() transition to prevent `blink`
+                            transition = navigationFadeInOut()
+                        )
+                        deepLinkController.clearDeepLink()
+                    }
+                    onDispose { }
+                }
+            }
         }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent ?: return
-
-        handleIntent(intent)
-    }
-
-    private fun handleIntent(intent: Intent) {
-        val appLinkData = intent.data ?: return
-
-        val categoryId = appLinkData.getQueryParameter("category_id").orEmpty()
-        val productId = appLinkData.getQueryParameter("product_id").orEmpty()
-        val title = appLinkData.getQueryParameter("title").orEmpty()
-
-        deeplinkData = DeeplinkData(
-            categoryId = categoryId,
-            productId = productId,
-            productName = title
-        )
+        intent?.let(deepLinkController::onIntent)
     }
 }

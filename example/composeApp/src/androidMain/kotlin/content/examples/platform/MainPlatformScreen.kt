@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NavigateNext
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,7 +45,7 @@ val MainPlatformScreen by navDestination<Unit> {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(modifier = Modifier.weight(1f), text = name)
-                        Icon(Icons.Default.NavigateNext, "")
+                        Icon(Icons.AutoMirrored.Filled.NavigateNext, "")
                     }
                 }
             }

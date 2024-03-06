@@ -1,17 +1,16 @@
 package content.examples
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import com.composegear.navigation.DeeplinkData
 import com.composegears.tiamat.*
-import content.examples.model.DeeplinkData
 import content.examples.platform.MainPlatformScreen
 import content.examples.platform.examples.AndroidViewLifecycleScreen
 import content.examples.platform.examples.DeeplinkScreen
 import content.examples.platform.examples.SavedStateScreen
 
 actual val PlatformExample: NavDestination<Unit> by navDestination {
-    val deeplinkData = freeArgs<DeeplinkData>()
 
     val platformNavController = rememberNavController(
         key = "platformNavController",
@@ -24,17 +23,22 @@ actual val PlatformExample: NavDestination<Unit> by navDestination {
         )
     )
 
-    LaunchedEffect(deeplinkData) {
-        deeplinkData ?: return@LaunchedEffect
-        if (deeplinkData != null) {
-            with(platformNavController) {
-                editBackStack {
-                    clear()
-                    add(MainPlatformScreen)
-                }
-                replace(dest = DeeplinkScreen, freeArgs = deeplinkData)
+    // pass deeplink deeper and handle inside screen
+    val deeplink = freeArgs<DeeplinkData>()
+    DisposableEffect(deeplink) {
+        if (deeplink != null) {
+            platformNavController.editBackStack {
+                clear()
+                add(MainPlatformScreen)
             }
+            platformNavController.replace(
+                dest = DeeplinkScreen,
+                freeArgs = deeplink,
+                transition = navigationNone()
+            )
+            clearFreeArgs() // clear deeplink to prevent double processing
         }
+        onDispose { }
     }
 
     Navigation(

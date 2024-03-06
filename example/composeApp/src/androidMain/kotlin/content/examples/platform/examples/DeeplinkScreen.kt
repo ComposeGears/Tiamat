@@ -4,46 +4,46 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composegear.navigation.DeeplinkData
 import com.composegears.tiamat.*
 import content.examples.common.BackButton
 import content.examples.common.NextButton
 import content.examples.common.SimpleScreen
 import content.examples.common.TextBody
-import content.examples.model.DeeplinkData
 
 /**
  * To run sample from adb, run in terminal:
  *
  * adb shell am start -W -a android.intent.action.VIEW -d "tiamat://deeplink?category_id=20202\&product_id=92\&title=Awesome\ product"
- *
  */
 
 val DeeplinkScreen by navDestination<Unit> {
-    val deeplinkData = freeArgs<DeeplinkData>()
-
     val deeplinkNavController = rememberNavController(
+        key = "deeplinkNavController",
         startDestination = ShopScreen,
         destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
     )
 
-    LaunchedEffect(deeplinkData) {
-        deeplinkData ?: return@LaunchedEffect
-
-        with(deeplinkNavController) {
-            editBackStack {
+    // handle deeplink
+    val deeplink = freeArgs<DeeplinkData>()
+    DisposableEffect(deeplink) {
+        if (deeplink != null) {
+            deeplinkNavController.editBackStack {
                 clear()
                 add(ShopScreen)
-                add(CategoryScreen, deeplinkData.categoryId)
+                add(CategoryScreen, deeplink.categoryId)
             }
-            replace(
+            deeplinkNavController.replace(
                 dest = DetailScreen,
-                navArgs = DetailParams(deeplinkData.productName, deeplinkData.productId),
+                navArgs = DetailParams(deeplink.productName, deeplink.productId),
+                transition = navigationNone()
             )
         }
+        onDispose { }
     }
 
     Navigation(modifier = Modifier.fillMaxSize(), navController = deeplinkNavController)

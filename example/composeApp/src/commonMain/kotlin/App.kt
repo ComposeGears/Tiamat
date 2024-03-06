@@ -2,20 +2,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import com.composegears.tiamat.NavController
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import content.MainScreen
 import content.examples.*
-import content.examples.model.DeeplinkData
 
 @Composable
-fun App(
-    deeplinkData: DeeplinkData? = null,
-    onDeeplinkHandled: () -> Unit = {}
-) {
+fun App(configure: @Composable (NavController) -> Unit = {}) {
     AppTheme {
         Surface {
             val rootNavController = rememberNavController(
@@ -49,20 +45,7 @@ fun App(
                     PlatformExample
                 )
             )
-
-            LaunchedEffect(deeplinkData) {
-                deeplinkData ?: return@LaunchedEffect
-
-                with(rootNavController) {
-                    editBackStack {
-                        clear()
-                        add(MainScreen)
-                    }
-                    replace(dest = PlatformExample, freeArgs = deeplinkData)
-                }
-                onDeeplinkHandled()
-            }
-
+            configure(rootNavController)
             Navigation(
                 navController = rootNavController,
                 modifier = Modifier.fillMaxSize().systemBarsPadding()
