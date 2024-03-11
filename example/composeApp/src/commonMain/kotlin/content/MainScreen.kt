@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.*
+import content.examples.koin.KoinIntegration
 
 val MainScreen by navDestination<Unit> {
     val navController = navController()
@@ -29,6 +30,7 @@ val MainScreen by navDestination<Unit> {
             "ViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
+            "Koin integration" to { navController.navigate(KoinIntegration) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }
