@@ -1,10 +1,10 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
-    id("kotlin-parcelize")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 kotlin {
@@ -41,14 +41,19 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.tiamat)
+            implementation(projects.tiamatKoin)
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
+
+            implementation(libs.koin.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlin.coroutines.swing)
         }
     }
 }
@@ -71,9 +76,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    dependencies {
-        debugImplementation(libs.compose.ui.tooling)
     }
 }
 

@@ -9,6 +9,7 @@ import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import content.MainScreen
 import content.examples.*
+import content.examples.koin.KoinIntegration
 
 @Composable
 fun App(configure: @Composable (NavController) -> Unit = {}) {
@@ -42,6 +43,7 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
                     BackStackAlterationRoot,
+                    KoinIntegration,
                     PlatformExample
                 )
             )

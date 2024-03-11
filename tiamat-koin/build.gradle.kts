@@ -1,13 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.jetbrains.compose)
     id("maven-publish")
     signing
 }
 
 val libName = "io.github.composegears"
-val libVersion = "1.0.2"
+val libVersion = "1.0.0"
 
 group = libName
 version = libVersion
@@ -28,20 +28,12 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.tiamat)
+
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+
             implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.lifecycle.runtime)
-        }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
         }
     }
 }

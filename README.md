@@ -265,6 +265,7 @@ Custom transition:
 - [CustomTransition.kt](example/composeApp/src/commonMain/kotlin/content/examples/CustomTransition.kt) - Custom animations/transition
 - [BackStackAlteration.kt](example/composeApp/src/commonMain/kotlin/content/examples/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
 - [ViewModels.kt](example/composeApp/src/commonMain/kotlin/content/examples/ViewModels.kt) - ViewModels usage
+- [KoinIntegration.kt](example/composeApp/src/commonMain/kotlin/content/examples/koin/KoinIntegration.kt) - Koin integration
 
 Hint
 ----
