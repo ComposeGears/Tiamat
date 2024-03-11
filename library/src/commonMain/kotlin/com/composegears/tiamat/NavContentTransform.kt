@@ -1,8 +1,18 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.unit.IntOffset
+
+fun navigationNone(): ContentTransform =
+    fadeIn(keyframes {
+        durationMillis = 0
+        0f at 0
+    }) togetherWith fadeOut(keyframes {
+        durationMillis = 0
+        1f at 0
+    })
 
 fun navigationSlideInOut(isForward: Boolean): ContentTransform =
     slideIn(tween()) {

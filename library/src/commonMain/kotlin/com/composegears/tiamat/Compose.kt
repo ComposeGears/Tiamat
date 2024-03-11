@@ -11,11 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import com.composegears.tiamat.StorageMode.DataStore.IgnoreDataLoss
-import com.composegears.tiamat.StorageMode.DataStore.ResetOnDataLoss
-
-private const val KEY_NAV_ARGS = "args"
-private const val KEY_NAV_RESULT = "result"
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalDataStore = staticCompositionLocalOf<DataStorage?> { null }
@@ -27,41 +22,42 @@ sealed interface StorageMode {
     data object Savable : StorageMode
 
     /**
-     * In memory data storage with predefined data loss policy
-     *
-     * @see [ResetOnDataLoss]
-     * @see [IgnoreDataLoss]
+     * In memory data storage, navController will reset on data loss
      */
-    sealed interface DataStore : StorageMode {
+    data object ResetOnDataLoss : StorageMode
 
-        /**
-         * In memory data storage, navController will reset on data loss
-         */
-        data object ResetOnDataLoss : DataStore
-
-        /**
-         * In memory data storage, navController will reset on data loss
-         */
-        data object IgnoreDataLoss : DataStore
-    }
+    /**
+     * In memory data storage, navController will reset on data loss
+     */
+    data object IgnoreDataLoss : StorageMode
 }
 
-internal data class DataStorage(val data: HashMap<String, Any?> = hashMapOf())
-
-private fun NavEntry.storageKey() = "EntryStorage#$uuid"
+internal data class DataStorage(val data: HashMap<String, Any?> = hashMapOf()) {
+    fun close() {
+        val closable = mutableListOf(this)
+        while (closable.isNotEmpty()) {
+            closable.removeAt(0).data.onEach { (_, value) ->
+                when (value) {
+                    is DataStorage -> closable.add(value)
+                    is TiamatViewModel -> value.close()
+                }
+            }
+        }
+    }
+}
 
 /**
  * Create and provide [NavController] instance to be used in [Navigation]
  *
- * @param key key to be bind to created NavController
- * @param storageMode data storage mode, default is parent mode or if it is root [ResetOnDataLoss]
+ * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
+ * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
  */
 @Composable
 @Suppress("ComposableParamOrder")
 fun rememberNavController(
-    key: Any? = null,
+    key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>
@@ -72,25 +68,35 @@ fun rememberNavController(
         NavController(
             parent = parent,
             key = key,
-            storageMode = storageMode ?: parent?.storageMode ?: ResetOnDataLoss,
+            storageMode = storageMode ?: parent?.storageMode ?: StorageMode.ResetOnDataLoss,
             startDestination = startDestination,
             savedState = state,
             destinations = destinations
         ).apply {
             restoreState(parentDataStorage)
         }
-    return rememberSaveable(
+
+    val navController = rememberSaveable(
         saver = Saver(
-            { navController -> navController.toSavedState() },
+            { navController -> navController.saveState() },
             { savedState: Map<String, Any?> -> createNavController(savedState) }
         ),
         init = { createNavController(null) }
     )
+    if (parent == null) DisposableEffect(navController) {
+        onDispose {
+            navController.close()
+        }
+    }
+    return navController
 }
 
 @Composable
-private fun <Args> DestinationContent(destination: NavDestination<Args>) {
-    val scope = remember(destination) { NavDestinationScopeImpl(destination) }
+private fun <Args> DestinationContent(
+    entry: NavEntry,
+    destination: NavDestination<Args>
+) {
+    val scope = remember(destination) { NavDestinationScopeImpl(entry, destination) }
     with(destination) {
         scope.PlatformContentWrapper {
             Content()
@@ -144,29 +150,10 @@ fun Navigation(
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() }
 ) {
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
-    // listen to entries being closed/removed from backstack and clear storage/models recursively
-    DisposableEffect(navController) {
-        val entryCloseDispatcher: (NavEntry) -> Unit = {
-            navController.dataStorage.data.remove(it.storageKey())
-            val detachList = mutableListOf(it.entryStorage)
-            while (detachList.isNotEmpty()) {
-                detachList.removeAt(0)?.data?.onEach { (_, value) ->
-                    when (value) {
-                        is DataStorage -> detachList.add(value)
-                        is TiamatViewModel -> value.close()
-                    }
-                }
-            }
-        }
-        navController.setOnCloseEntryListener(entryCloseDispatcher)
-        onDispose {
-            navController.setOnCloseEntryListener(null)
-        }
-    }
     // display current entry + animate enter/exit
     AnimatedContent(
         targetState = navController.currentNavEntry,
-        contentKey = { it?.destination?.name ?: "" },
+        contentKey = { it?.let { "${it.destination.name}:${it.uuid}" } ?: "" },
         contentAlignment = Alignment.Center,
         modifier = modifier,
         transitionSpec = {
@@ -181,7 +168,7 @@ fun Navigation(
                 else -> contentTransformProvider(navController.isForwardTransition)
             }
         },
-        label = "nav_controller_${navController.key?.toString() ?: "no_key"}",
+        label = "nav_controller_${navController.key ?: "no_key"}",
     ) {
         if (it != null) Box {
             // gen save state
@@ -190,24 +177,13 @@ fun Navigation(
                 it.savedStateRegistry = registry
                 registry
             }
-            // gen storage
-            val entryStorage = remember(it) {
-                val storage = navController.dataStorage.data.getOrPut(it.storageKey()) {
-                    val storage = DataStorage()
-                    if (it.navArgs != null) storage.data[KEY_NAV_ARGS] = it.navArgs
-                    storage
-                } as DataStorage
-                storage.data[KEY_NAV_RESULT] = it.navResult
-                it.entryStorage = storage
-                storage
-            }
             // display content
             CompositionLocalProvider(
                 LocalSaveableStateRegistry provides saveRegistry,
-                LocalDataStore provides entryStorage,
+                LocalDataStore provides it.entryStorage,
                 LocalNavController provides navController,
             ) {
-                DestinationContent(it.destination)
+                DestinationContent(it, it.destination)
             }
             // prevent clicks during transition animation
             if (transition.isRunning) Overlay()
@@ -232,11 +208,9 @@ fun NavDestinationScope<*>.navController(): NavController =
  * @return navigation arguments provided to [NavController.navigate] function or exception
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
-fun <Args> NavDestinationScope<Args>.navArgs(): Args {
-    val store = LocalDataStore.current ?: error("Store not bound")
-    return remember { store.data[KEY_NAV_ARGS] as Args? }
-        ?: error("args not provided or null, consider use navArgsOrNull()")
+@Suppress("UNCHECKED_CAST", "CastToNullableType")
+fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
+    (navEntry.navArgs as Args?) ?: error("args not provided or null, consider use navArgsOrNull()")
 }
 
 /**
@@ -248,10 +222,30 @@ fun <Args> NavDestinationScope<Args>.navArgs(): Args {
  * @return navigation arguments provided to [NavController.navigate] function or null
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
-fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? {
-    val store = LocalDataStore.current ?: error("Store not bound")
-    return remember { store.data[KEY_NAV_ARGS] as Args? }
+@Suppress("UNCHECKED_CAST", "CastToNullableType")
+fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
+    navEntry.navArgs as Args?
+}
+
+/**
+ * Provides free nav arguments passed into navigate forward function for current destination
+ *
+ * @see [NavController.navigate]
+ * @see [NavController.replace]
+ *
+ * @return free nav arguments provided to [NavController.navigate] function or null
+ */
+@Composable
+@Suppress("UNCHECKED_CAST", "CastToNullableType")
+fun <T> NavDestinationScope<*>.freeArgs(): T? = remember {
+    navEntry.freeArgs as T?
+}
+
+/**
+ * Clear provided free args
+ */
+fun NavDestinationScope<*>.clearFreeArgs() {
+    navEntry.freeArgs = null
 }
 
 /**
@@ -260,10 +254,9 @@ fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? {
  * @see [NavController.back]
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType", "UnusedReceiverParameter")
-fun <Result> NavDestinationScope<*>.navResult(): Result? {
-    val store = LocalDataStore.current ?: error("Store not bound")
-    return remember { store.data[KEY_NAV_RESULT] as Result? }
+@Suppress("UNCHECKED_CAST", "CastToNullableType")
+fun <Result> NavDestinationScope<*>.navResult(): Result? = remember {
+    navEntry.navResult as Result?
 }
 
 /**
@@ -286,14 +279,11 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberView
  * @param provider default viewModel instance provider
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "UnusedReceiverParameter")
+@Suppress("UNCHECKED_CAST")
 fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String,
     provider: () -> Model
-): Model {
-    val store = LocalDataStore.current ?: error("Store not bound")
-    return remember {
-        val storeKey = "Model#$key"
-        store.data.getOrPut(storeKey, provider) as Model
-    }
+): Model = remember {
+    val storeKey = "Model#$key"
+    navEntry.entryStorage.data.getOrPut(storeKey, provider) as Model
 }

@@ -9,16 +9,18 @@ import kotlin.reflect.KProperty
  * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity
  */
 @Stable
-interface NavDestinationScope<Args> {
-    val destination: NavDestination<Args>
+abstract class NavDestinationScope<Args> internal constructor() {
+    internal abstract val navEntry: NavEntry
+    abstract val destination: NavDestination<Args>
 }
 
 /**
  * Internal NavDestinationScope impl
  */
 internal open class NavDestinationScopeImpl<Args>(
+    override val navEntry: NavEntry,
     override val destination: NavDestination<Args>
-) : NavDestinationScope<Args>
+) : NavDestinationScope<Args>()
 
 /**
  * Destination base interface

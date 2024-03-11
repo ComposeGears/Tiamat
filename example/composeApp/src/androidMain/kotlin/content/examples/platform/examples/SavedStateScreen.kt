@@ -1,4 +1,4 @@
-package content.examples.platform
+package content.examples.platform.examples
 
 import android.os.Parcelable
 import androidx.compose.foundation.border

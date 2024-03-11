@@ -4,7 +4,6 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.composegears.tiamat.NavEntry.Companion.restoreNavEntry
 
 /**
  * Navigation controller class
@@ -13,7 +12,7 @@ import com.composegears.tiamat.NavEntry.Companion.restoreNavEntry
  */
 class NavController internal constructor(
     val parent: NavController?,
-    val key: Any?,
+    val key: String?,
     val storageMode: StorageMode,
     val startDestination: NavDestination<*>?,
     private val savedState: Map<String, Any?>?,
@@ -23,9 +22,9 @@ class NavController internal constructor(
 
         private var nextUUID = 0L
 
-        const val KEY_CURRENT = "current"
-        const val KEY_BACKSTACK = "backStack"
-        const val KEY_UUID = "uuid"
+        const val KEY_UUID = "NavController#uuid"
+        const val KEY_CURRENT = "NavController#current"
+        const val KEY_BACKSTACK = "NavController#backStack"
     }
 
     // needs to be restored asap not to rent extra uuid's
@@ -44,7 +43,6 @@ class NavController internal constructor(
         private set
 
     private val backStack: ArrayList<NavEntry> = ArrayList()
-    private var onCloseEntryListener: ((NavEntry) -> Unit)? = null
     private var pendingBackTransition: ContentTransform? = null
 
     internal var currentNavEntry by mutableStateOf<NavEntry?>(null)
@@ -78,15 +76,11 @@ class NavController internal constructor(
         }
     }
 
-    private fun NavEntry.notifyClosed() {
-        onCloseEntryListener?.invoke(this)
-    }
-
     private fun setCurrentNavEntry(
         navEntry: NavEntry?,
-        notifyClosed: Boolean,
+        closeEntry: Boolean,
     ) {
-        if (notifyClosed) currentNavEntry?.notifyClosed()
+        if (closeEntry) currentNavEntry?.close()
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null
@@ -95,17 +89,13 @@ class NavController internal constructor(
 
     private fun replaceInternal(
         entry: NavEntry,
-        notifyClosed: Boolean,
+        closeEntry: Boolean,
         transition: ContentTransform? = null
     ) {
         isForwardTransition = true
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
-        setCurrentNavEntry(entry, notifyClosed)
-    }
-
-    internal fun setOnCloseEntryListener(listener: ((NavEntry) -> Unit)?) {
-        onCloseEntryListener = listener
+        setCurrentNavEntry(entry, closeEntry)
     }
 
     /**
@@ -133,16 +123,18 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> navigate(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
         requireKnownDestination(dest)
         if (currentNavEntry != null) backStack.add(currentNavEntry!!.apply { saveState() })
-        replaceInternal(NavEntry(dest, navArgs), false, transition)
+        replaceInternal(NavEntry(dest, dataStorage, navArgs, freeArgs), false, transition)
     }
 
     /**
@@ -152,11 +144,13 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> popToTop(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
         if (currentNavEntry?.destination?.name == dest.name) return
@@ -165,7 +159,7 @@ class NavController internal constructor(
             if (currentNavEntry != null) backStack.add(currentNavEntry!!.apply { saveState() })
             backStack.remove(entry)
             replaceInternal(entry, false, transition)
-        } else navigate(dest, navArgs, transition)
+        } else navigate(dest, navArgs, freeArgs, transition)
     }
 
     /**
@@ -173,14 +167,16 @@ class NavController internal constructor(
      *
      * @param dest entry to open
      * @param navArgs args to be provided to destination
+     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
     fun <Args> replace(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
+        freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
-        replaceInternal(NavEntry(dest, navArgs), true, transition)
+        replaceInternal(NavEntry(dest, dataStorage, navArgs, freeArgs), true, transition)
     }
 
     /**
@@ -200,7 +196,7 @@ class NavController internal constructor(
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
         if (to != null) while (backStack.isNotEmpty() && backStack.last().destination != to) {
-            backStack.removeLast().notifyClosed()
+            backStack.removeLast().close()
         }
         return if (backStack.isNotEmpty()) {
             val target = backStack.removeLast()
@@ -212,68 +208,116 @@ class NavController internal constructor(
         }
     }
 
-    internal fun toSavedState() = currentNavEntry?.let { entry ->
-        mapOf(
-            KEY_UUID to uuid,
-            KEY_CURRENT to entry.apply { saveState() }.toSavedState(storageMode),
-            KEY_BACKSTACK to backStack.map { it.toSavedState(storageMode) }
-        )
+    /**
+     * If storageMode is Savable - generate full save data,
+     * otherwise write the data into data storage and provide minimal restoration info
+     * to be saved (mostly nav stack + uuids & keys)
+     */
+    internal fun saveState(): Map<String, Any?> {
+        if (storageMode == StorageMode.Savable) {
+            return mapOf(
+                KEY_UUID to uuid,
+                KEY_CURRENT to currentNavEntry?.apply { saveState() }?.toFullSavedState(),
+                KEY_BACKSTACK to backStack.map { it.toFullSavedState() }
+            )
+        } else {
+            dataStorage.data[KEY_CURRENT] = currentNavEntry?.apply { saveState() }?.toFullSavedState()
+            dataStorage.data[KEY_BACKSTACK] = backStack.map { it.toFullSavedState() }
+            return mapOf(
+                KEY_UUID to uuid,
+                KEY_CURRENT to currentNavEntry?.apply { saveState() }?.toShortSavedState(),
+                KEY_BACKSTACK to backStack.map { it.toShortSavedState() }
+            )
+        }
     }
 
     internal fun restoreState(parentDataStorage: DataStorage) {
-        val storageKey = "DataStore#$uuid"
+        val storageKey = "NavController#${key ?: "NoKey"}#$uuid"
+        val isStateLost = parentDataStorage.data[storageKey] == null
         dataStorage = parentDataStorage.data.getOrPut(storageKey) { DataStorage() } as DataStorage
-        if (storageMode == StorageMode.DataStore.ResetOnDataLoss && dataStorage.data.isEmpty()) reset()
-        else restoreFromSavedState()
+        when {
+            storageMode == StorageMode.Savable -> restoreFromSavedState(savedState)
+            storageMode == StorageMode.IgnoreDataLoss && isStateLost -> restoreFromSavedState(savedState)
+            storageMode == StorageMode.ResetOnDataLoss && isStateLost -> reset()
+            else -> restoreFromSavedState(dataStorage.data)
+        }
     }
 
     private fun reset() {
-        backStack.clear()
-        setCurrentNavEntry(null, false)
+        editBackStack { clear() }
+        setCurrentNavEntry(null, true)
         if (startDestination != null) navigate(startDestination)
     }
 
-    private fun restoreFromSavedState() {
-        savedState?.let(::restoreFromSavedState)
+    @Suppress("UNCHECKED_CAST")
+    private fun restoreFromSavedState(savedState: Map<String, Any?>?) {
+        if (savedState != null) runCatching {
+            editBackStack { clear() }
+            val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
+                ?.let { NavEntry.restoreNavEntry(it, dataStorage, destinations) }
+            (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
+                .mapTo(backStack) { NavEntry.restoreNavEntry(it, dataStorage, destinations) }
+            setCurrentNavEntry(currentNavEntry, true)
+        }
         if (currentNavEntry == null && startDestination != null)
             navigate(startDestination)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun restoreFromSavedState(savedState: Map<String, Any?>) {
-        runCatching {
-            backStack.clear()
-            val currentNavEntry = (savedState[KEY_CURRENT] as Map<String, Any?>)
-                .restoreNavEntry(storageMode, destinations)
-            (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
-                .mapTo(backStack) { it.restoreNavEntry(storageMode, destinations) }
-            setCurrentNavEntry(currentNavEntry, false)
-        }
+    internal fun close() {
+        editBackStack { clear() }
+        setCurrentNavEntry(null, true)
+        dataStorage.close()
     }
 
     inner class BackStackEditScope internal constructor() {
+
+        /**
+         * Add destination into backstack
+         *
+         * @param dest entry to open
+         * @param navArgs args to be provided to destination
+         * @param freeArgs free args to be provided to destination
+         */
         fun <Args> add(
             dest: NavDestination<Args>,
-            navArgs: Args? = null
+            navArgs: Args? = null,
+            freeArgs: Any? = null,
         ) {
-            backStack.add(NavEntry(dest, navArgs))
+            backStack.add(NavEntry(dest, dataStorage, navArgs, freeArgs))
         }
 
+        /**
+         * Add destination into backstack at specific position
+         *
+         * @param index position
+         * @param dest entry to open
+         * @param navArgs args to be provided to destination
+         * @param freeArgs free args to be provided to destination
+         */
         fun <Args> add(
             index: Int,
             dest: NavDestination<Args>,
-            navArgs: Args? = null
+            navArgs: Args? = null,
+            freeArgs: Any? = null,
         ) {
-            backStack.add(index, NavEntry(dest, navArgs))
+            backStack.add(index, NavEntry(dest, dataStorage, navArgs, freeArgs))
         }
 
+        /**
+         * Remove backstack entry at specific position
+         *
+         * @param index position
+         */
         fun removeAt(index: Int) {
-            backStack.removeAt(index).notifyClosed()
+            backStack.removeAt(index).close()
         }
 
+        /**
+         * Clear backstack
+         */
         fun clear() {
             while (backStack.isNotEmpty()) {
-                backStack.removeLast().notifyClosed()
+                backStack.removeLast().close()
             }
         }
     }
