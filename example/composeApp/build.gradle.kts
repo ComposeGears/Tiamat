@@ -38,7 +38,6 @@ kotlin {
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.camera.view)
             implementation(libs.androidx.concurrent.futures)
-            implementation(libs.compose.ui.tooling.preview)
         }
         commonMain.dependencies {
             implementation(projects.tiamat)

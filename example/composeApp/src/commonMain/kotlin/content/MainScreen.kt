@@ -26,6 +26,7 @@ val MainScreen by navDestination<Unit> {
             "NavigationBar + custom back handling" to { navController.navigate(SimpleTabsRoot) },
             "Nested navigation" to { navController.navigate(NestedNavigationRoot) },
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
+            "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
             "ViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },

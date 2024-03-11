@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.navArgs
+import com.composegears.tiamat.navArgsOrNull
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.common.BackButton
@@ -48,7 +48,7 @@ val DataPassingParamsRoot by navDestination<Unit> {
 
 val DataPassingParamsScreen by navDestination<NavArgsData> {
     val navController = navController()
-    val args = navArgs()
+    val args = navArgsOrNull()
     SimpleScreen("Data passing: Params - Data") {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
