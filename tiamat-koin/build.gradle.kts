@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.jetbrains.compose)
-    id(libs.plugins.m2p.get().pluginId)
+    alias(libs.plugins.m2p)
 }
 
 val libName = "io.github.composegears"
