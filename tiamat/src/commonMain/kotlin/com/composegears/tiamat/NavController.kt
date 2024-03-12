@@ -3,6 +3,7 @@ package com.composegears.tiamat
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.neverEqualPolicy
 import androidx.compose.runtime.setValue
 
 /**
@@ -33,7 +34,7 @@ class NavController internal constructor(
     /**
      * provides current active NavDestination as State object
      */
-    var current by mutableStateOf<NavDestination<*>?>(null)
+    var current by mutableStateOf<NavDestination<*>?>(null, neverEqualPolicy())
         private set
 
     /**
