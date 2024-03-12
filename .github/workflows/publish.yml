@@ -13,9 +13,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v3
       - name: Execute Gradle build
-        run: ./gradlew :tiamat:publish -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
+        run: ./gradlew createM2Zip -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
       - uses: actions/upload-artifact@v4
         with:
           name: m2
-          path: library/build/m2
+          path: build/m2
           if-no-files-found: error
