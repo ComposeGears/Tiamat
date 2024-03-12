@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.m2p)
 }
 
 val libName = "io.github.composegears"
-val libVersion = "1.0.0"
+val libVersion = "1.0.2"
 
 group = libName
 version = libVersion
