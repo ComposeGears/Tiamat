@@ -1,8 +1,4 @@
-rootProject.name = "TiamatApp"
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
 pluginManagement {
-    includeBuild("plugins")
     repositories {
         google()
         gradlePluginPortal()
@@ -17,8 +13,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
-include(":tiamat")
-include(":tiamat-koin")
-
-include(":example:composeApp")

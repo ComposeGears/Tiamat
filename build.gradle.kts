@@ -4,4 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.m2p) apply false
 }
+
+createM2PTask()
