@@ -12,21 +12,21 @@
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
-#### Android / jvm
-```kotlin
-dependencies {
-   implementation("io.github.composegears:tiamat:$version")
-}
-```
-
 #### Multiplatform
 ```kotlin
 sourceSets {
     commonMain.dependencies {
+        // core library
         implementation("io.github.composegears:tiamat:$version")
+        // Koin integration (https://github.com/InsertKoinIO/koin) 
+        implementation("io.github.composegears:tiamat-koin:$version")
     }
 }
 ```
+
+#### Android / jvm
+
+Use same dependencies in the `dependencies { ... }` section
 
 Why Tiamat?
 -----------
