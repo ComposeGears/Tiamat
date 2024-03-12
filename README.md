@@ -154,7 +154,7 @@ and display as part of any composable function
 ```kotlin
 @Composable
 fun Content() {
-    val navController = rememberNavController(...)
+    val navController = rememberNavController( /*... */)
     Navigation(
         navController = navController,
         modifier = Modifier.fillMaxSize().systemBarsPadding()
@@ -209,7 +209,7 @@ NavController will keep the screens data, view models, and states during navigat
 > Solution: just define types of root(any in chain) screens explicitly 
 > 
 > ```kotlin
-> val SomeScreen1: NavDestination<Unit> by navDestination { // ... }
+> val SomeScreen1: NavDestination<Unit> by navDestination {  /* ... */ }
 > ```
 
 > [!IMPORTANT]
@@ -294,7 +294,7 @@ fun main() = application {
 ### Android
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleExample.kt](example/composeApp/src/androidMain/kotlin/content/examples/platform/AndroidViewLifecycleExample.kt)
+See an example of camera usage: [AndroidViewLifecycleExample.kt](example/composeApp/src/androidMain/kotlin/content/examples/platform/examples/AndroidViewLifecycleScreen.kt)
 
 ### iOS
 
@@ -310,7 +310,7 @@ iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14
 
 
 # License
-```xml
+```
 Developed by ComposeGears 2024
 
 Licensed under the Apache License, Version 2.0 (the "License");

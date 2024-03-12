@@ -75,6 +75,26 @@ fun Project.m2p(action: M2PExtension.() -> Unit) {
     configure<M2PExtension>(action)
 }
 
-fun Project.m2pPublishTasks() = allprojects
-    .filter { it.extensions.findByType<M2PExtension>() != null }
-    .map { it.tasks["publish"] }
+fun Project.createM2PTask() {
+    rootProject.tasks.register("createLocalM2") {
+        val publishTasks = allprojects
+            .filter { it.extensions.findByType<M2PExtension>() != null }
+            .map { it.tasks["publish"] }
+        dependsOn(publishTasks)
+        doLast {
+            val m2Dir = rootProject.layout.buildDirectory.dir("m2")
+            fileTree(m2Dir).files.onEach {
+                if (
+                    it.name.endsWith(".asc.md5") or
+                    it.name.endsWith(".asc.sha1") or
+                    it.name.endsWith(".sha256") or
+                    it.name.endsWith(".sha256") or
+                    it.name.endsWith(".sha512") or
+                    it.name.equals("maven-metadata.xml.sha1") or
+                    it.name.equals("maven-metadata.xml.md5") or
+                    it.name.equals("maven-metadata.xml")
+                ) it.delete()
+            }
+        }
+    }
+}

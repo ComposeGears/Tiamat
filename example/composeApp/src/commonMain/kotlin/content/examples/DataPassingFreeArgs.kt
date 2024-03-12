@@ -15,7 +15,7 @@ import com.composegears.tiamat.navDestination
 import content.examples.common.BackButton
 import content.examples.common.SimpleScreen
 
-class FreeArgsData()
+class FreeArgsData
 
 val DataPassingFreeArgsRoot by navDestination<Unit> {
     val navController = navController()
