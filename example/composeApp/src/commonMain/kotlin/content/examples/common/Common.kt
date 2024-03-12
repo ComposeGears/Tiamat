@@ -2,10 +2,10 @@ package content.examples.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.NavigateBefore
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.NavigateBefore
-import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +30,7 @@ fun NavDestinationScope<*>.SimpleScreen(
             Surface(shadowElevation = 8.dp) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(navController::back) {
-                        Icon(Icons.Default.ArrowBack, "")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
                     }
                     Text(
                         text = title,
@@ -66,7 +66,7 @@ fun NextButton(text: String = "Next", onClick: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(text)
-            Icon(Icons.Default.NavigateNext, "")
+            Icon(Icons.AutoMirrored.Filled.NavigateNext, "")
         }
     }
 }
@@ -86,7 +86,7 @@ fun BackButton(text: String = "Back", onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Icon(Icons.Default.NavigateBefore, "")
+            Icon(Icons.AutoMirrored.Filled.NavigateBefore, "")
             Text(text)
         }
     }
