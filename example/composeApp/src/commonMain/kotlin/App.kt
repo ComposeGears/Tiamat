@@ -43,6 +43,7 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
                     BackStackAlterationRoot,
+                    MasterExampleRoot,
                     KoinIntegration,
                     PlatformExample
                 )
