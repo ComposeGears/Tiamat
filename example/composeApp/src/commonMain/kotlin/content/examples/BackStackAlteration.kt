@@ -50,7 +50,7 @@ val BackStackAlterationRoot by navDestination<Unit> {
                     ScreenLast,
                 )
             )
-            var backstackKey by remember { mutableStateOf(Unit, neverEqualPolicy()) }
+            var backstackKey by remember { mutableStateOf(0) }
             TextCaption("Actions:")
             Spacer(16.dp)
             // actions
@@ -63,7 +63,7 @@ val BackStackAlterationRoot by navDestination<Unit> {
                         nestedNavController.editBackStack {
                             removeAt(0)
                         }
-                    backstackKey = Unit
+                    backstackKey++
                 }
                 TextButton("Add at index 0") {
                     nestedNavController.editBackStack {
@@ -71,13 +71,13 @@ val BackStackAlterationRoot by navDestination<Unit> {
                             add(0, ScreenAt0)
                         } else add(ScreenAt0)
                     }
-                    backstackKey = Unit
+                    backstackKey++
                 }
                 TextButton("Add last") {
                     nestedNavController.editBackStack {
                         add(ScreenLast)
                     }
-                    backstackKey = Unit
+                    backstackKey++
                 }
                 TextButton("Make 1-2-3-4") {
                     nestedNavController.editBackStack {
@@ -87,7 +87,7 @@ val BackStackAlterationRoot by navDestination<Unit> {
                         add(Screen3)
                         add(Screen4)
                     }
-                    backstackKey = Unit
+                    backstackKey++
                 }
             }
             Spacer(16.dp)

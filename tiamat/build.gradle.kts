@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
@@ -55,4 +57,20 @@ android {
 
 m2p {
     description = "KMM Navigation library"
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    val outPath = layout.buildDirectory.dir("compose_compiler").get().asFile.absoluteFile
+    kotlinOptions {
+        if (project.findProperty("composeCompilerReports") == "true") {
+            freeCompilerArgs += listOf(
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$outPath"
+            )
+        }
+        if (project.findProperty("composeCompilerMetrics") == "true") {
+            freeCompilerArgs += listOf(
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$outPath"
+            )
+        }
+    }
 }

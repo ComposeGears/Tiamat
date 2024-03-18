@@ -1,5 +1,6 @@
 package com.composegears.tiamat
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.SaveableStateRegistry
 
 /**
@@ -7,6 +8,7 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
  *
  * Hold nav entry information and allow to save/restore state base on storage mode
  */
+@Stable
 internal class NavEntry<Args> private constructor(
     val uuid: Long,
     val destination: NavDestination<Args>,

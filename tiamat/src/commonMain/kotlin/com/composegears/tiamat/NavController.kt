@@ -1,16 +1,14 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 
 /**
  * Navigation controller class
  *
  * Provides navigation action
  */
+@Stable
 class NavController internal constructor(
     val parent: NavController?,
     val key: String?,

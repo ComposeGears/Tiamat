@@ -50,10 +50,7 @@ val TwoPaneResizableRoot by navDestination<Unit> {
             // details content
             val detailsContent = remember(activeItem) {
                 movableContentOf {
-                    Column {
-                        if (!isWideScreen && activeItem != null) BackButton { activeItem = null }
-                        ItemDetailContent(activeItem)
-                    }
+                    ItemDetailContent(activeItem)
                 }
             }
             // placements
@@ -77,7 +74,10 @@ val TwoPaneResizableRoot by navDestination<Unit> {
                     contentKey = { activeItem?.name ?: "#nothing" }
                 ) {
                     if (it == null) listComposable()
-                    else detailsContent()
+                    else Column {
+                        if (activeItem != null) BackButton { activeItem = null }
+                        detailsContent()
+                    }
                 }
             }
         }
