@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 class NavController internal constructor(
     val parent: NavController?,
     val key: String?,
-    val storageMode: StorageMode,
-    val startDestination: NavDestination<*>?,
+    internal val storageMode: StorageMode,
+    private val startDestination: NavDestinationEntry<*>?,
     private val savedState: Map<String, Any?>?,
     private val destinations: Array<NavDestination<*>>
 ) {
@@ -69,6 +69,21 @@ class NavController internal constructor(
         require(duplicates.isEmpty()) {
             "All destinations should have unique name. Duplicate: $duplicates"
         }
+        if (startDestination != null) requireKnownDestination(startDestination.destination)
+    }
+
+    /**
+     * @param key nav controller's key to search for
+     *
+     * @return NavController instance with same key (current or one of parents), null if no one match
+     */
+    fun findNavController(key: String): NavController? {
+        var nc: NavController? = this
+        while (nc != null) {
+            if (nc.key == key) return nc
+            else nc = nc.parent
+        }
+        return null
     }
 
     private fun requireKnownDestination(dest: NavDestination<*>) {
@@ -244,10 +259,18 @@ class NavController internal constructor(
         }
     }
 
+    private fun NavDestinationEntry<*>.toNavEntry() = NavEntry(
+        destination = this.destination,
+        parentDataStorage = dataStorage,
+        navArgs = this.navArgs,
+        freeArgs = this.freeArgs
+    )
+
     private fun reset() {
         editBackStack { clear() }
         setCurrentNavEntry(null, true)
-        if (startDestination != null) navigate(startDestination)
+        if (startDestination != null)
+            replaceInternal(startDestination.toNavEntry(), true)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -260,8 +283,7 @@ class NavController internal constructor(
                 .mapTo(backStack) { NavEntry.restoreNavEntry(it, dataStorage, destinations) }
             setCurrentNavEntry(currentNavEntry, true)
         }
-        if (currentNavEntry == null && startDestination != null)
-            navigate(startDestination)
+        if (currentNavEntry == null && backStack.isNotEmpty()) reset()
     }
 
     internal fun close() {

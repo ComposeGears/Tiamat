@@ -31,7 +31,7 @@ val MainScreen by navDestination<Unit> {
             "ViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
-            "Master example (resizable)" to { navController.navigate(MasterExampleRoot) },
+            "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },
             "Koin integration" to { navController.navigate(KoinIntegration) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
