@@ -10,16 +10,14 @@ import kotlin.reflect.KProperty
  */
 @Stable
 abstract class NavDestinationScope<Args> internal constructor() {
-    internal abstract val navEntry: NavEntry
-    abstract val destination: NavDestination<Args>
+    internal abstract val navEntry: NavEntry<Args>
 }
 
 /**
  * Internal NavDestinationScope impl
  */
 internal open class NavDestinationScopeImpl<Args>(
-    override val navEntry: NavEntry,
-    override val destination: NavDestination<Args>
+    override val navEntry: NavEntry<Args>,
 ) : NavDestinationScope<Args>()
 
 /**

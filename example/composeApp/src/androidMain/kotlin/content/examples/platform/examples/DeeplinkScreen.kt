@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,28 +21,26 @@ import content.examples.common.TextBody
  */
 
 val DeeplinkScreen by navDestination<Unit> {
+    val deeplink = freeArgs<DeeplinkData>()
+
     val deeplinkNavController = rememberNavController(
         key = "deeplinkNavController",
         startDestination = ShopScreen,
         destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
-    )
-
-    // handle deeplink
-    val deeplink = freeArgs<DeeplinkData>()
-    DisposableEffect(deeplink) {
+    ) {
         if (deeplink != null) {
-            deeplinkNavController.editBackStack {
+            editBackStack {
                 clear()
                 add(ShopScreen)
                 add(CategoryScreen, deeplink.categoryId)
             }
-            deeplinkNavController.replace(
+            replace(
                 dest = DetailScreen,
                 navArgs = DetailParams(deeplink.productName, deeplink.productId),
                 transition = navigationNone()
             )
+            clearFreeArgs()
         }
-        onDispose { }
     }
 
     Navigation(modifier = Modifier.fillMaxSize(), navController = deeplinkNavController)

@@ -43,10 +43,10 @@ class NavController internal constructor(
     var canGoBack by mutableStateOf(false)
         private set
 
-    private val backStack: ArrayList<NavEntry> = ArrayList()
+    private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     private var pendingBackTransition: ContentTransform? = null
 
-    internal var currentNavEntry by mutableStateOf<NavEntry?>(null)
+    internal var currentNavEntry by mutableStateOf<NavEntry<*>?>(null)
         private set
     internal var dataStorage: DataStorage = DataStorage()
         private set
@@ -93,7 +93,7 @@ class NavController internal constructor(
     }
 
     private fun setCurrentNavEntry(
-        navEntry: NavEntry?,
+        navEntry: NavEntry<*>?,
         closeEntry: Boolean,
     ) {
         if (closeEntry) currentNavEntry?.close()
@@ -104,7 +104,7 @@ class NavController internal constructor(
     }
 
     private fun replaceInternal(
-        entry: NavEntry,
+        entry: NavEntry<*>,
         closeEntry: Boolean,
         transition: ContentTransform? = null
     ) {
@@ -125,6 +125,13 @@ class NavController internal constructor(
      * @return current backstack destinations list
      */
     fun getBackStack() = backStack.map { it.destination }
+
+    /**
+     * @return current backstack destinations entries list
+     *
+     * @see [NavDestinationEntry]
+     */
+    fun getBackStackEntries() = backStack.map { it.toNavDestinationEntry() }
 
     /**
      * Edit current back stack
@@ -259,13 +266,6 @@ class NavController internal constructor(
         }
     }
 
-    private fun NavDestinationEntry<*>.toNavEntry() = NavEntry(
-        destination = this.destination,
-        parentDataStorage = dataStorage,
-        navArgs = this.navArgs,
-        freeArgs = this.freeArgs
-    )
-
     private fun reset() {
         editBackStack { clear() }
         setCurrentNavEntry(null, true)
@@ -291,6 +291,19 @@ class NavController internal constructor(
         setCurrentNavEntry(null, true)
         dataStorage.close()
     }
+
+    private fun <Args> NavDestinationEntry<Args>.toNavEntry() = NavEntry(
+        destination = this.destination,
+        parentDataStorage = dataStorage,
+        navArgs = this.navArgs,
+        freeArgs = this.freeArgs
+    )
+
+    private fun <Args> NavEntry<Args>.toNavDestinationEntry() = NavDestinationEntry(
+        destination = this.destination,
+        navArgs = this.navArgs,
+        freeArgs = this.freeArgs
+    )
 
     inner class BackStackEditScope internal constructor() {
 

@@ -60,12 +60,14 @@ fun rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
-    destinations: Array<NavDestination<*>>
+    destinations: Array<NavDestination<*>>,
+    onCreated: NavController.() -> Unit = {}
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
     startDestination = startDestination?.toEntry(),
     destinations = destinations,
+    onCreated = onCreated
 )
 
 /**
@@ -86,7 +88,8 @@ fun <T> rememberNavController(
     startDestination: NavDestination<T>?,
     startDestinationNavArgs: T? = null,
     startDestinationFreeArgs: Any? = null,
-    destinations: Array<NavDestination<*>>
+    destinations: Array<NavDestination<*>>,
+    onCreated: NavController.() -> Unit = {}
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
@@ -95,6 +98,7 @@ fun <T> rememberNavController(
         freeArgs = startDestinationFreeArgs
     ),
     destinations = destinations,
+    onCreated = onCreated
 )
 
 /**
@@ -112,6 +116,7 @@ fun <T> rememberNavController(
     storageMode: StorageMode? = null,
     startDestination: NavDestinationEntry<T>?,
     destinations: Array<NavDestination<*>>,
+    onCreated: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
     val parentDataStorage = LocalDataStore.current ?: rootDataStore()
@@ -125,6 +130,7 @@ fun <T> rememberNavController(
             destinations = destinations
         ).apply {
             restoreState(parentDataStorage)
+            onCreated()
         }
 
     val navController = rememberSaveable(
@@ -143,12 +149,9 @@ fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> DestinationContent(
-    entry: NavEntry,
-    destination: NavDestination<Args>
-) {
-    val scope = remember(destination) { NavDestinationScopeImpl(entry, destination) }
-    with(destination) {
+private fun <Args> DestinationContent(entry: NavEntry<Args>) {
+    val scope = remember(entry) { NavDestinationScopeImpl(entry) }
+    with(entry.destination) {
         scope.PlatformContentWrapper {
             Content()
         }
@@ -234,7 +237,7 @@ fun Navigation(
                 LocalDataStore provides it.entryStorage,
                 LocalNavController provides navController,
             ) {
-                DestinationContent(it, it.destination)
+                DestinationContent(it)
             }
             // prevent clicks during transition animation
             if (transition.isRunning) Overlay()
@@ -259,9 +262,9 @@ fun NavDestinationScope<*>.navController(): NavController =
  * @return navigation arguments provided to [NavController.navigate] function or exception
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
+@Suppress("CastToNullableType")
 fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
-    (navEntry.navArgs as Args?) ?: error("args not provided or null, consider use navArgsOrNull()")
+    navEntry.navArgs ?: error("args not provided or null, consider use navArgsOrNull()")
 }
 
 /**
@@ -273,9 +276,9 @@ fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
  * @return navigation arguments provided to [NavController.navigate] function or null
  */
 @Composable
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
+@Suppress("CastToNullableType")
 fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
-    navEntry.navArgs as Args?
+    navEntry.navArgs
 }
 
 /**

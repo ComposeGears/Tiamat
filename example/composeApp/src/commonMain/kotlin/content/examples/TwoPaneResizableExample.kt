@@ -8,9 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import content.examples.common.BackButton
@@ -37,13 +35,11 @@ class Model : TiamatViewModel() {
     )
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 val TwoPaneResizableRoot by navDestination<Unit> {
     SimpleScreen("2 Pane") {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val model = rememberViewModel { Model() }
-            val wi = LocalWindowInfo.current
-            val isWideScreen by derivedStateOf { wi.containerSize.width > 600 }
+            val isWideScreen by derivedStateOf { maxWidth > 600.dp }
             var activeItem by remember { mutableStateOf<MasterItem?>(null) }
             // list content
             val listComposable = remember {
