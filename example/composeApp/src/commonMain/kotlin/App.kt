@@ -10,6 +10,7 @@ import com.composegears.tiamat.rememberNavController
 import content.MainScreen
 import content.examples.*
 import content.examples.koin.KoinIntegration
+import content.examples.multimodule.MultiModuleRoot
 
 @Composable
 fun App(configure: @Composable (NavController) -> Unit = {}) {
@@ -42,6 +43,7 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
+                    MultiModuleRoot,
                     BackStackAlterationRoot,
                     TwoPaneResizableRoot,
                     KoinIntegration,
