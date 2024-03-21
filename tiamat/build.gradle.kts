@@ -7,11 +7,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-val libName = "io.github.composegears"
-val libVersion = "1.0.2"
-
-group = libName
-version = libVersion
+version = "1.0.2"
 
 kotlin {
     jvm()
@@ -48,7 +44,7 @@ kotlin {
 }
 
 android {
-    namespace = libName
+    namespace = "io.github.composegears.tiamat"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
@@ -57,20 +53,4 @@ android {
 
 m2p {
     description = "KMM Navigation library"
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    val outPath = layout.buildDirectory.dir("compose_compiler").get().asFile.absoluteFile
-    kotlinOptions {
-        if (project.findProperty("composeCompilerReports") == "true") {
-            freeCompilerArgs += listOf(
-                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$outPath"
-            )
-        }
-        if (project.findProperty("composeCompilerMetrics") == "true") {
-            freeCompilerArgs += listOf(
-                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$outPath"
-            )
-        }
-    }
 }

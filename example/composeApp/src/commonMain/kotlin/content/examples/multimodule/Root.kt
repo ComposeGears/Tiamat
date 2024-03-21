@@ -32,31 +32,31 @@ val MultiModuleRoot by navDestination<Unit> {
             startDestination = MultiModuleFeature1,
             destinations = arrayOf(MultiModuleFeature1, MultiModuleFeature2)
         )
-        var message by remember { mutableStateOf("<no messages>") }
+        var lastSignal by remember { mutableStateOf("none") }
         SignalEffect {
             when (it) {
                 is KnownSignals.ExitFlow -> {
+                    lastSignal = it.toString()
                     nc.back()
                     true
                 }
-
                 is KnownSignals.ReopenFeature1 -> {
+                    lastSignal = it.toString()
+
                     multiModuleNavController.editBackStack { clear() }
                     multiModuleNavController.replace(MultiModuleFeature1)
                     true
                 }
-
                 is KnownSignals.ShowMessage -> {
-                    message = it.message
+                    lastSignal = it.toString()
                     true
                 }
-
                 else -> false
             }
         }
         Column {
             Text(
-                "Current message: $message",
+                "Last signal: $lastSignal",
                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
                 textAlign = TextAlign.Center
             )

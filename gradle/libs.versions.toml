@@ -4,8 +4,8 @@ android-compileSdk = "34"
 android-minSdk = "21"
 android-targetSdk = "34"
 
-jetbrains-compose = "1.6.0"
-kotlin = "1.9.22"
+jetbrains-compose = "1.6.1"
+kotlin = "1.9.23"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"

@@ -19,7 +19,7 @@ class M2P : Plugin<Project> {
         configure<PublishingExtension> {
             publications.withType<MavenPublication> {
                 // Stub javadoc.jar artifact
-                artifact(tasks.register("${name}JavadocJar", Jar::class) {
+                artifact(tasks.register<Jar>("${name}JavadocJar") {
                     archiveClassifier.set("javadoc")
                     archiveAppendix.set(this@withType.name)
                 })

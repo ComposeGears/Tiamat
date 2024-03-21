@@ -50,7 +50,7 @@ val BackStackAlterationRoot by navDestination<Unit> {
                     ScreenLast,
                 )
             )
-            var backstackKey by remember { mutableStateOf(0) }
+            var backstackKey by remember { mutableIntStateOf(0) }
             TextCaption("Actions:")
             Spacer(16.dp)
             // actions
