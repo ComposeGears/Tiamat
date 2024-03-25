@@ -139,14 +139,15 @@ The scope provides a number of composable functions:
 
 ### NavController
 
-You may create NavController using `rememberNavController` function:
+You may create NavController using one of `rememberNavController` functions:
 
 ```kotlin
 fun rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
-    destinations: Array<NavDestination<*>>
+    destinations: Array<NavDestination<*>>,
+    onCreated: NavController.() -> Unit = {}
 )
 ```
 
@@ -271,6 +272,38 @@ Custom transition:
 
 Hint
 ----
+
+### Multiplatform
+
+I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame of animation
+```kotlin
+    // LaunchEffect & DisposableEffect are executed on `next` frame, so you may see 1 frame of animation
+    // to avoid this effect use `onCreated` lambda within `rememberNavController` fun
+    // see DeeplinkScreen.kt
+
+    val deeplinkNavController = rememberNavController(
+        key = "deeplinkNavController",
+        startDestination = ShopScreen,
+        destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
+    ) { // executed right after being created or restored
+        // we can do nav actions before 1st screen bing draw without seeing 1st frame
+        if (deeplink != null) {
+            editBackStack {
+                clear()
+                add(ShopScreen)
+                add(CategoryScreen, deeplink.categoryId)
+            }
+            replace(
+                dest = DetailScreen,
+                navArgs = DetailParams(deeplink.productName, deeplink.productId),
+                transition = navigationNone()
+            )
+            clearFreeArgs()
+        }
+    }
+
+``` 
+
 
 ### Desktop
 

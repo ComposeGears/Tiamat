@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
@@ -7,7 +5,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.2"
+version = "1.0.3"
 
 kotlin {
     jvm()
