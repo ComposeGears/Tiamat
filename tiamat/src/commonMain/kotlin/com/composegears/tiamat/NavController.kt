@@ -1,21 +1,19 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.neverEqualPolicy
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 
 /**
  * Navigation controller class
  *
  * Provides navigation action
  */
+@Stable
 class NavController internal constructor(
     val parent: NavController?,
     val key: String?,
-    val storageMode: StorageMode,
-    val startDestination: NavDestination<*>?,
+    internal val storageMode: StorageMode,
+    private val startDestination: NavDestinationEntry<*>?,
     private val savedState: Map<String, Any?>?,
     private val destinations: Array<NavDestination<*>>
 ) {
@@ -43,10 +41,10 @@ class NavController internal constructor(
     var canGoBack by mutableStateOf(false)
         private set
 
-    private val backStack: ArrayList<NavEntry> = ArrayList()
+    private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     private var pendingBackTransition: ContentTransform? = null
 
-    internal var currentNavEntry by mutableStateOf<NavEntry?>(null)
+    internal var currentNavEntry by mutableStateOf<NavEntry<*>?>(null)
         private set
     internal var dataStorage: DataStorage = DataStorage()
         private set
@@ -69,6 +67,21 @@ class NavController internal constructor(
         require(duplicates.isEmpty()) {
             "All destinations should have unique name. Duplicate: $duplicates"
         }
+        if (startDestination != null) requireKnownDestination(startDestination.destination)
+    }
+
+    /**
+     * @param key nav controller's key to search for
+     *
+     * @return NavController instance with same key (current or one of parents), null if no one match
+     */
+    fun findNavController(key: String): NavController? {
+        var nc: NavController? = this
+        while (nc != null) {
+            if (nc.key == key) return nc
+            else nc = nc.parent
+        }
+        return null
     }
 
     private fun requireKnownDestination(dest: NavDestination<*>) {
@@ -78,7 +91,7 @@ class NavController internal constructor(
     }
 
     private fun setCurrentNavEntry(
-        navEntry: NavEntry?,
+        navEntry: NavEntry<*>?,
         closeEntry: Boolean,
     ) {
         if (closeEntry) currentNavEntry?.close()
@@ -89,7 +102,7 @@ class NavController internal constructor(
     }
 
     private fun replaceInternal(
-        entry: NavEntry,
+        entry: NavEntry<*>,
         closeEntry: Boolean,
         transition: ContentTransform? = null
     ) {
@@ -110,6 +123,13 @@ class NavController internal constructor(
      * @return current backstack destinations list
      */
     fun getBackStack() = backStack.map { it.destination }
+
+    /**
+     * @return current backstack destinations entries list
+     *
+     * @see [NavDestinationEntry]
+     */
+    fun getBackStackEntries() = backStack.map { it.toNavDestinationEntry() }
 
     /**
      * Edit current back stack
@@ -247,7 +267,8 @@ class NavController internal constructor(
     private fun reset() {
         editBackStack { clear() }
         setCurrentNavEntry(null, true)
-        if (startDestination != null) navigate(startDestination)
+        if (startDestination != null)
+            replaceInternal(startDestination.toNavEntry(), true)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -260,8 +281,7 @@ class NavController internal constructor(
                 .mapTo(backStack) { NavEntry.restoreNavEntry(it, dataStorage, destinations) }
             setCurrentNavEntry(currentNavEntry, true)
         }
-        if (currentNavEntry == null && startDestination != null)
-            navigate(startDestination)
+        if (currentNavEntry == null && backStack.isNotEmpty()) reset()
     }
 
     internal fun close() {
@@ -269,6 +289,19 @@ class NavController internal constructor(
         setCurrentNavEntry(null, true)
         dataStorage.close()
     }
+
+    private fun <Args> NavDestinationEntry<Args>.toNavEntry() = NavEntry(
+        destination = this.destination,
+        parentDataStorage = dataStorage,
+        navArgs = this.navArgs,
+        freeArgs = this.freeArgs
+    )
+
+    private fun <Args> NavEntry<Args>.toNavDestinationEntry() = NavDestinationEntry(
+        destination = this.destination,
+        navArgs = this.navArgs,
+        freeArgs = this.freeArgs
+    )
 
     inner class BackStackEditScope internal constructor() {
 

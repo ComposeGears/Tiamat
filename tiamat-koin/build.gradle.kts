@@ -5,11 +5,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-val libName = "io.github.composegears"
-val libVersion = "1.0.2"
-
-group = libName
-version = libVersion
+version = "1.0.3"
 
 kotlin {
     jvm()
@@ -38,7 +34,7 @@ kotlin {
 }
 
 android {
-    namespace = libName
+    namespace = "io.github.composegears.tiamat.koin"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

@@ -1,5 +1,6 @@
 package com.composegears.tiamat
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.saveable.SaveableStateRegistry
 
 /**
@@ -7,11 +8,12 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
  *
  * Hold nav entry information and allow to save/restore state base on storage mode
  */
-internal class NavEntry private constructor(
+@Stable
+internal class NavEntry<Args> private constructor(
     val uuid: Long,
-    val destination: NavDestination<*>,
+    val destination: NavDestination<Args>,
     val parentDataStorage: DataStorage,
-    var navArgs: Any? = null,
+    var navArgs: Args? = null,
     var freeArgs: Any? = null,
 ) {
     companion object {
@@ -25,16 +27,25 @@ internal class NavEntry private constructor(
         private const val KEY_NAV_RESULT = "navResult"
         private const val KEY_SAVED_STATE = "savedState"
 
-        @Suppress("UNCHECKED_CAST")
         internal fun restoreNavEntry(
             savedState: Map<String, Any?>,
             parentDataStorage: DataStorage,
             destinations: Array<NavDestination<*>>,
+        ): NavEntry<*> {
+            val destination = (savedState[KEY_NAME] as String).let { name -> destinations.first { it.name == name } }
+            return restoreNavEntry(destination, savedState, parentDataStorage)
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        private fun <Args> restoreNavEntry(
+            destination: NavDestination<Args>,
+            savedState: Map<String, Any?>,
+            parentDataStorage: DataStorage,
         ) = NavEntry(
             uuid = savedState[KEY_UUID] as Long,
-            destination = (savedState[KEY_NAME] as String).let { name -> destinations.first { it.name == name } },
+            destination = destination,
             parentDataStorage = parentDataStorage,
-            navArgs = savedState[KEY_NAV_ARGS],
+            navArgs = savedState[KEY_NAV_ARGS] as Args,
             freeArgs = savedState[KEY_FREE_ARGS],
         ).also {
             it.savedState = savedState[KEY_SAVED_STATE] as? Map<String, List<Any?>>?
@@ -51,9 +62,9 @@ internal class NavEntry private constructor(
     var savedStateRegistry: SaveableStateRegistry? = null
 
     constructor(
-        destination: NavDestination<*>,
+        destination: NavDestination<Args>,
         parentDataStorage: DataStorage,
-        navArgs: Any? = null,
+        navArgs: Args? = null,
         freeArgs: Any? = null,
     ) : this(
         uuid = nextUUID++,
