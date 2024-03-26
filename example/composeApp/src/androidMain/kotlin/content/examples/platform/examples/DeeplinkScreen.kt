@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package content.examples.platform.examples
 
 import androidx.compose.foundation.layout.Arrangement

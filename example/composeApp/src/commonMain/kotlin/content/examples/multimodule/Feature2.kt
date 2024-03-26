@@ -34,4 +34,3 @@ val MultiModuleFeature2 by navDestination<Unit> {
         }
     }
 }
-

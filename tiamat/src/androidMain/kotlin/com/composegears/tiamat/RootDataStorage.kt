@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package com.composegears.tiamat
 
 import android.content.ContextWrapper

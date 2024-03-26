@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package content.examples
 
 import androidx.compose.foundation.layout.Arrangement

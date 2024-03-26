@@ -1,3 +1,11 @@
+@file:Suppress(
+    "MaximumLineLength",
+    "ParameterListSpacing",
+    "ParameterListWrapping",
+    "ParameterWrapping",
+    "MaxLineLength"
+)
+
 package com.composegears.tiamat.koin
 
 import com.composegears.tiamat.TiamatViewModel

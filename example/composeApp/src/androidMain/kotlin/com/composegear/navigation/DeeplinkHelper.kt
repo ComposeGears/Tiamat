@@ -27,7 +27,6 @@ class DeepLinkController {
             productId = productId,
             productName = title
         )
-
     }
 
     fun clearDeepLink() {
