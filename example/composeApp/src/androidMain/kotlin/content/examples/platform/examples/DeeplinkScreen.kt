@@ -1,5 +1,3 @@
-@file:Suppress("MaxLineLength")
-
 package content.examples.platform.examples
 
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +14,7 @@ import content.examples.common.NextButton
 import content.examples.common.SimpleScreen
 import content.examples.common.TextBody
 
-/**
+/*
  * To run sample from adb, run in terminal:
  *
  * adb shell am start -W -a android.intent.action.VIEW -d "tiamat://deeplink?category_id=20202\&product_id=92\&title=Awesome\ product"

@@ -1,5 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import io.gitlab.arturbosch.detekt.DetektPlugin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -25,11 +25,13 @@ allprojects {
         buildUponDefaultConfig = true
         parallel = true
         autoCorrect = true
-        source = files(
-            "src/commonMain/kotlin",
-            "src/jvmMain/kotlin",
-            "src/androidMain/kotlin",
-            "src/iosMain/kotlin",
+        source.from(
+            files(
+                "src/commonMain/kotlin",
+                "src/jvmMain/kotlin",
+                "src/androidMain/kotlin",
+                "src/iosMain/kotlin",
+            )
         )
     }
 
