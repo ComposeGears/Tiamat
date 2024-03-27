@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
@@ -20,6 +22,12 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        binaries.executable()
+        nodejs()
+    }
 
     sourceSets {
         commonMain.dependencies {

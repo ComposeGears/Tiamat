@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
  */
 private val globalDataStorage = DataStorage()
 
-// TODO check with iOs ppl
 @Composable
 internal actual fun rootDataStore(): DataStorage = globalDataStorage
 
@@ -32,4 +31,4 @@ actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) = Unit
  *
  * workaround is to call it outside of @Composable via regular inline fun
  */
-actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!
+actual inline fun <reified T : Any> className(): String = T::class.simpleName!!
