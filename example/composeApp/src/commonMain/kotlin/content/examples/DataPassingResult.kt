@@ -1,3 +1,5 @@
+@file:Suppress("MatchingDeclarationName")
+
 package content.examples
 
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +33,8 @@ val DataPassingResultRoot by navDestination<Unit> {
 
             NextButton(
                 text = "Open for result",
-                onClick = { navController.navigate(DataPassingResultScreen) })
+                onClick = { navController.navigate(DataPassingResultScreen) }
+            )
         }
     }
 }
@@ -59,7 +62,8 @@ val DataPassingResultScreen by navDestination<Unit> {
                 )
                 BackButton(
                     text = "Back with result",
-                    onClick = { navController.back(NavResult(counter)) })
+                    onClick = { navController.back(NavResult(counter)) }
+                )
             }
         }
     }

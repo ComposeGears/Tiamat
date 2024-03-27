@@ -17,6 +17,7 @@ class NavController internal constructor(
     private val savedState: Map<String, Any?>?,
     private val destinations: Array<NavDestination<*>>
 ) {
+
     companion object {
 
         private var nextUUID = 0L
@@ -27,7 +28,7 @@ class NavController internal constructor(
     }
 
     // needs to be restored asap not to rent extra uuid's
-    private val uuid: Long = (savedState?.get(KEY_UUID) as? Long) ?: nextUUID++
+    private val uuid: Long = savedState?.get(KEY_UUID) as? Long ?: nextUUID++
 
     /**
      * provides current active NavDestination as State object

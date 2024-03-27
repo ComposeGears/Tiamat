@@ -32,6 +32,7 @@ sealed interface StorageMode {
     data object IgnoreDataLoss : StorageMode
 }
 
+@Suppress("DataClassContainsFunctions")
 internal data class DataStorage(val data: HashMap<String, Any?> = hashMapOf()) {
     fun close() {
         val closable = mutableListOf(this)
@@ -160,21 +161,21 @@ private fun <Args> DestinationContent(entry: NavEntry<Args>) {
 
 @Composable
 private fun BoxScope.Overlay() {
-    Box(Modifier
-        .matchParentSize()
-        .pointerInput(Unit) {
-            awaitPointerEventScope {
-                while (true) {
-                    val event = awaitPointerEvent()
-                    event.changes.forEach {
-                        it.consume()
+    Box(
+        modifier = Modifier
+            .matchParentSize()
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        val event = awaitPointerEvent()
+                        event.changes.forEach {
+                            it.consume()
+                        }
                     }
                 }
             }
-        }
     )
 }
-
 
 /**
  * Created a content of [NavController] (see [rememberNavController])

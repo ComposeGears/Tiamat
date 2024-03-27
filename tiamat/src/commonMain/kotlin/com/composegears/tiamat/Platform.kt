@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 @Composable
 internal expect fun rootDataStore(): DataStorage
 
-
 /**
  * Wrap platform content and provides additional info/providable-s
  */
