@@ -282,7 +282,7 @@ class NavController internal constructor(
                 .mapTo(backStack) { NavEntry.restoreNavEntry(it, dataStorage, destinations) }
             setCurrentNavEntry(currentNavEntry, true)
         }
-        if (currentNavEntry == null && backStack.isNotEmpty()) reset()
+        if (currentNavEntry == null && backStack.isEmpty()) reset()
     }
 
     internal fun close() {

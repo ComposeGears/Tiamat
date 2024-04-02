@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.3"
+version = "1.0.4"
 
 kotlin {
     jvm()
