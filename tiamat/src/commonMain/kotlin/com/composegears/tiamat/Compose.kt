@@ -107,14 +107,15 @@ fun <T> rememberNavController(
     // attach to system save logic and perform model save on it
     if (parent == null) rememberSaveable(
         saver = Saver(
-            save = { navControllersStorage.save(); it },
-            restore = { it }
+            save = { navControllersStorage.saveToSaveState().also { println("AAA: save state --> $it") } },
+            restore = { navControllersStorage.restoreFromSavedState(it.also { println("AAA: restore state --> $it") }); 0 }
         ),
         init = { 0 }
     )
-
+    // create nav controller
     val navController = remember {
         val restoredNavController = navControllersStorage.consume()
+        println("AAA: create navC[$key] --> restoredNC = $restoredNavController")
         val isMatch = restoredNavController?.match(
             key = key,
             parent = parent,
@@ -122,20 +123,24 @@ fun <T> rememberNavController(
             startDestination = startDestination,
             destinations = destinations
         ) ?: false
-        if (isMatch) restoredNavController!!
-        else {
-            restoredNavController?.close()
-            NavController(
-                key = key,
-                parent = parent,
-                storageMode = finalStorageMode,
-                startDestination = startDestination,
-                destinations = destinations,
-                savedState = null
-            ).apply {
-                onCreated()
+        val finalNavController =
+            if (isMatch) restoredNavController!!
+            else {
+                println("AAA: create navC[$key] --> fail to restore instance")
+                restoredNavController?.close()
+                NavController(
+                    key = key,
+                    parent = parent,
+                    storageMode = finalStorageMode,
+                    startDestination = startDestination,
+                    destinations = destinations,
+                    savedState = navControllersStorage.consumeFromSavedState().also {
+                        println("AAA: create navC[$key] --> restoredSavedState = $it")
+                    }
+                )
             }
-        }
+        finalNavController.onCreated()
+        finalNavController
     }
     DisposableEffect(navController) {
         navControllersStorage.attachNavController(navController)
@@ -208,7 +213,7 @@ fun Navigation(
     // display current entry + animate enter/exit
     AnimatedContent(
         targetState = navController.currentNavEntry,
-        contentKey = { it },
+        contentKey = { it?.let { "${it.destination.name}:${it.navId}" } ?: "" },
         contentAlignment = Alignment.Center,
         modifier = modifier,
         transitionSpec = {
@@ -227,7 +232,11 @@ fun Navigation(
     ) {
         if (it != null) Box {
             // gen save state
-            val saveRegistry = remember(it) { SaveableStateRegistry(it.savedState) { true } }
+            val saveRegistry = remember(it) {
+                val registry = SaveableStateRegistry(it.savedState) { true }
+                it.savedStateRegistry = registry
+                registry
+            }
             // display content
             CompositionLocalProvider(
                 LocalSaveableStateRegistry provides saveRegistry,
@@ -241,6 +250,7 @@ fun Navigation(
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
                 onDispose {
+                    it.savedStateRegistry = null
                     // entry goes into backstack, store active subNavController
                     if (it in navController.getBackStack() || it == navController.currentNavEntry) {
                         it.saveState(saveRegistry.performSave())

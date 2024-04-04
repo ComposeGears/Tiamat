@@ -49,6 +49,8 @@ class NavController internal constructor(
     internal var contentTransition: ContentTransform? = null
         private set
 
+    private var nextEntryNavId = 0L
+
     init {
         // ensure there is not same-named destinations
         val namesSet = mutableSetOf<String>()
@@ -64,23 +66,37 @@ class NavController internal constructor(
         if (startDestination != null)
             requireKnownDestination(startDestination.destination)
         // load from saved state
-//        if (savedState != null) runCatching {
-//            val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
-//                ?.let { NavEntry.restore(it, destinations) }
-//            (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
-//                .mapTo(backStack) { NavEntry.restore(it, destinations) }
-//            setCurrentNavEntry(currentNavEntry, true)
-//        }
-        // todo log on failure + add platform log fun
+        if (savedState != null) runCatching {
+            val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
+                ?.let { NavEntry.restore(it, destinations) }
+            (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
+                .mapTo(backStack) { NavEntry.restore(it, destinations) }
+            setCurrentNavEntryInternal(currentNavEntry)
+        }
         // go to start destination if nothing restored
         if (currentNavEntry == null && backStack.isEmpty() && startDestination != null)
             setCurrentNavEntryInternal(NavEntry(startDestination))
     }
 
-//    internal fun save(): Map<String, Any?> = mapOf(
-//        KEY_CURRENT to currentNavEntry?.also { it.syncSaveStateRegistry() }?.save(),
-//        KEY_BACKSTACK to backStack.map { it.save() }
-//    )
+    internal fun match(
+        key: String?,
+        parent: NavController?,
+        storageMode: StorageMode,
+        startDestination: NavEntry<*>?,
+        destinations: Array<NavDestination<*>>,
+    ) = this.key == key
+        && this.parent == parent
+        && this.storageMode == storageMode
+        && this.startDestination?.destination == startDestination?.destination
+        && this.startDestination?.navArgs == startDestination?.navArgs
+        && this.startDestination?.freeArgs == startDestination?.freeArgs
+        && this.startDestination?.navResult == startDestination?.navResult
+        && this.destinations.contentEquals(destinations)
+
+    internal fun saveToSaveState(): Map<String, Any?> = mapOf(
+        KEY_CURRENT to currentNavEntry?.saveToSaveState(),
+        KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
+    )
 
     /**
      * @param key nav controller's key to search for
@@ -105,6 +121,7 @@ class NavController internal constructor(
     private fun setCurrentNavEntryInternal(
         navEntry: NavEntry<*>?,
     ) {
+        if (navEntry != null && navEntry.navId < 0) navEntry.navId = nextEntryNavId++
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null
@@ -232,21 +249,6 @@ class NavController internal constructor(
             parent?.back(result, to, transition) ?: false
         }
     }
-
-    internal fun match(
-        key: String?,
-        parent: NavController?,
-        storageMode: StorageMode,
-        startDestination: NavEntry<*>?,
-        destinations: Array<NavDestination<*>>,
-    )  = this.key == key
-        && this.parent == parent
-        && this.storageMode == storageMode
-        && this.startDestination?.destination == startDestination?.destination
-        && this.startDestination?.navArgs == startDestination?.navArgs
-        && this.startDestination?.freeArgs == startDestination?.freeArgs
-        && this.startDestination?.navResult == startDestination?.navResult
-        && this.destinations.contentEquals(destinations)
 
     internal fun close() {
         editBackStack { clear() }
