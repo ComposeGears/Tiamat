@@ -16,14 +16,14 @@ import androidx.lifecycle.ViewModel
  * Holds in-memory data storage
  */
 internal class RootStorageModel : ViewModel() {
-    val storage = DataStorage()
+    val storage : NavControllersStorage = NavControllersStorage()
 }
 
 /**
  * @return platform root data storage object
  */
 @Composable
-internal fun rememberRootDataStore(): DataStorage {
+internal fun rememberRootDataStore(): NavControllersStorage {
     val context = LocalContext.current
     val activity = remember(context) {
         var ctx = context

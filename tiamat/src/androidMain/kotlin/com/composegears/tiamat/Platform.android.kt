@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
  * @return platform root data storage object
  */
 @Composable
-internal actual fun rootDataStore(): DataStorage = rememberRootDataStore()
+internal actual fun rootNavControllersStore(): NavControllersStorage = rememberRootDataStore()
 
 /**
  * Wrap platform content and provides additional info/providable-s

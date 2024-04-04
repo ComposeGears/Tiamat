@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
-internal val LocalDataStore = staticCompositionLocalOf<DataStorage?> { null }
+internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
 sealed interface StorageMode {
     /**
@@ -25,26 +25,6 @@ sealed interface StorageMode {
      * In memory data storage, navController will reset on data loss
      */
     data object ResetOnDataLoss : StorageMode
-
-    /**
-     * In memory data storage, navController will reset on data loss
-     */
-    data object IgnoreDataLoss : StorageMode
-}
-
-@Suppress("DataClassContainsFunctions")
-internal data class DataStorage(val data: HashMap<String, Any?> = hashMapOf()) {
-    fun close() {
-        val closable = mutableListOf(this)
-        while (closable.isNotEmpty()) {
-            closable.removeAt(0).data.onEach { (_, value) ->
-                when (value) {
-                    is DataStorage -> closable.add(value)
-                    is TiamatViewModel -> value.close()
-                }
-            }
-        }
-    }
 }
 
 /**
@@ -66,7 +46,7 @@ fun rememberNavController(
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
-    startDestination = startDestination?.toEntry(),
+    startDestination = startDestination?.toNavEntry(),
     destinations = destinations,
     onCreated = onCreated
 )
@@ -94,7 +74,7 @@ fun <T> rememberNavController(
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
-    startDestination = startDestination?.toEntry(
+    startDestination = startDestination?.toNavEntry(
         navArgs = startDestinationNavArgs,
         freeArgs = startDestinationFreeArgs
     ),
@@ -115,35 +95,55 @@ fun <T> rememberNavController(
 fun <T> rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
-    startDestination: NavDestinationEntry<T>?,
+    startDestination: NavEntry<T>?,
     destinations: Array<NavDestination<*>>,
     onCreated: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
-    val parentDataStorage = LocalDataStore.current ?: rootDataStore()
-    fun createNavController(state: Map<String, Any?>?) =
-        NavController(
-            parent = parent,
-            key = key,
-            storageMode = storageMode ?: parent?.storageMode ?: StorageMode.ResetOnDataLoss,
-            startDestination = startDestination,
-            savedState = state,
-            destinations = destinations
-        ).apply {
-            restoreState(parentDataStorage)
-            onCreated()
-        }
+    val parentNavEntry = LocalNavEntry.current
+    val navControllersStorage = parentNavEntry?.navControllersStorage ?: rootNavControllersStore()
+    val finalStorageMode = storageMode ?: parent?.storageMode ?: StorageMode.ResetOnDataLoss
 
-    val navController = rememberSaveable(
+    // attach to system save logic and perform model save on it
+    if (parent == null) rememberSaveable(
         saver = Saver(
-            { navController -> navController.saveState() },
-            { savedState: Map<String, Any?> -> createNavController(savedState) }
+            save = { navControllersStorage.save(); it },
+            restore = { it }
         ),
-        init = { createNavController(null) }
+        init = { 0 }
     )
-    if (parent == null) DisposableEffect(navController) {
+
+    val navController = remember {
+        val restoredNavController = navControllersStorage.consume()
+        val isMatch = restoredNavController?.match(
+            key = key,
+            parent = parent,
+            storageMode = finalStorageMode,
+            startDestination = startDestination,
+            destinations = destinations
+        ) ?: false
+        if (isMatch) restoredNavController!!
+        else {
+            restoredNavController?.close()
+            NavController(
+                key = key,
+                parent = parent,
+                storageMode = finalStorageMode,
+                startDestination = startDestination,
+                destinations = destinations,
+                savedState = null
+            ).apply {
+                onCreated()
+            }
+        }
+    }
+    DisposableEffect(navController) {
+        navControllersStorage.attachNavController(navController)
         onDispose {
-            navController.close()
+            navControllersStorage.detachNavController(navController)
+            // we should close navController in case it is not `saved` to be restored later
+            if (!navControllersStorage.isSaved(navController))
+                navController.close()
         }
     }
     return navController
@@ -208,7 +208,7 @@ fun Navigation(
     // display current entry + animate enter/exit
     AnimatedContent(
         targetState = navController.currentNavEntry,
-        contentKey = { it?.let { "${it.destination.name}:${it.uuid}" } ?: "" },
+        contentKey = { it },
         contentAlignment = Alignment.Center,
         modifier = modifier,
         transitionSpec = {
@@ -227,21 +227,28 @@ fun Navigation(
     ) {
         if (it != null) Box {
             // gen save state
-            val saveRegistry = remember(it) {
-                val registry = SaveableStateRegistry(it.savedState) { true }
-                it.savedStateRegistry = registry
-                registry
-            }
+            val saveRegistry = remember(it) { SaveableStateRegistry(it.savedState) { true } }
             // display content
             CompositionLocalProvider(
                 LocalSaveableStateRegistry provides saveRegistry,
-                LocalDataStore provides it.entryStorage,
                 LocalNavController provides navController,
+                LocalNavEntry provides it,
             ) {
                 DestinationContent(it)
             }
             // prevent clicks during transition animation
             if (transition.isRunning) Overlay()
+            // save state when `this entry`/`parent entry` goes into backStack
+            DisposableEffect(it) {
+                onDispose {
+                    // entry goes into backstack, store active subNavController
+                    if (it in navController.getBackStack() || it == navController.currentNavEntry) {
+                        it.saveState(saveRegistry.performSave())
+                    } else {
+                        it.close()
+                    }
+                }
+            }
         }
     }
 }
@@ -340,5 +347,5 @@ fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     provider: () -> Model
 ): Model = remember {
     val storeKey = "Model#$key"
-    navEntry.entryStorage.data.getOrPut(storeKey, provider) as Model
+    navEntry.viewModels.getOrPut(storeKey, provider) as Model
 }

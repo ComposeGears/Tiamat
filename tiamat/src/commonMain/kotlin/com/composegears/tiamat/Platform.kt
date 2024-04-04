@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
  * @return platform root data storage object
  */
 @Composable
-internal expect fun rootDataStore(): DataStorage
+internal expect fun rootNavControllersStore(): NavControllersStorage
 
 /**
  * Wrap platform content and provides additional info/providable-s
