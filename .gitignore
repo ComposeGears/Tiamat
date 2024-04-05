@@ -10,3 +10,4 @@ captures
 .externalNativeBuild
 .cxx
 publish.bat
+kotlin-js-store/
