@@ -5,12 +5,16 @@
     <a target="_blank" href="https://github.com/ComposeGears/Tiamat/stargazers"><img src="https://img.shields.io/github/stars/ComposeGears/Tiamat.svg"></a>
     <a href="https://github.com/ComposeGears/Tiamat/network"><img alt="API" src="https://img.shields.io/github/forks/ComposeGears/Tiamat.svg"/></a>
     <a target="_blank" href="https://github.com/ComposeGears/Tiamat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ComposeGears/Tiamat.svg"></a>
-   <a target="_blank" href="https://central.sonatype.com/artifact/io.github.composegears/tiamat"><img src="https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square"></a>
 </p>
 
 ![](.readme/promo.jpeg)
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
+
+| Module      |                                                                                            Version                                                                                            |
+|-------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| tiamat      |      [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)      |
+| tiamat-koin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin) |
 
 #### Multiplatform
 ```kotlin
