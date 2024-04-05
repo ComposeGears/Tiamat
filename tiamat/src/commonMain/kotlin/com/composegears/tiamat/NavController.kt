@@ -84,14 +84,14 @@ class NavController internal constructor(
         storageMode: StorageMode,
         startDestination: NavEntry<*>?,
         destinations: Array<NavDestination<*>>,
-    ) = this.key == key
-        && this.parent == parent
-        && this.storageMode == storageMode
-        && this.startDestination?.destination == startDestination?.destination
-        && this.startDestination?.navArgs == startDestination?.navArgs
-        && this.startDestination?.freeArgs == startDestination?.freeArgs
-        && this.startDestination?.navResult == startDestination?.navResult
-        && this.destinations.contentEquals(destinations)
+    ) = this.key == key &&
+        this.parent == parent &&
+        this.storageMode == storageMode &&
+        this.startDestination?.destination == startDestination?.destination &&
+        this.startDestination?.navArgs == startDestination?.navArgs &&
+        this.startDestination?.freeArgs == startDestination?.freeArgs &&
+        this.startDestination?.navResult == startDestination?.navResult &&
+        this.destinations.contentEquals(destinations)
 
     internal fun saveToSaveState(): Map<String, Any?> = mapOf(
         KEY_CURRENT to currentNavEntry?.saveToSaveState(),

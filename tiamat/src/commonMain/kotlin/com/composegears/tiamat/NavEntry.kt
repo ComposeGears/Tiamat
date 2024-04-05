@@ -1,7 +1,6 @@
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.saveable.SaveableStateRegistry
 
 /**
  * Internal class
@@ -44,8 +43,8 @@ class NavEntry<Args> private constructor(
             navArgs = data[KEY_NAV_ARGS] as Args,
             freeArgs = data[KEY_FREE_ARGS],
             navResult = data[KEY_NAV_RESULT],
-            savedState = data[KEY_SAVED_STATE] as Map<String, List<Any?>>?,
-            savedNavControllers = data[KEY_SAVED_NAV_CONTROLLERS] as List<Map<String, Any?>>?
+            savedState = data[KEY_SAVED_STATE] as? Map<String, List<Any?>>?,
+            savedNavControllers = data[KEY_SAVED_NAV_CONTROLLERS] as? List<Map<String, Any?>>?
         ).also {
             it.navId = data[KEY_NAV_ID] as Long
         }
@@ -61,8 +60,8 @@ class NavEntry<Args> private constructor(
     internal var navId: Long = -1
     internal val viewModels = mutableMapOf<String, TiamatViewModel>()
     internal var savedState: Map<String, List<Any?>> = savedState ?: emptyMap()
-    internal var savedStateRegistry: SaveableStateRegistry? = null
-    internal val navControllersStorage = NavControllersStorage().also { it.restoreFromSavedState(savedNavControllers) }
+    internal var savedStateSaver: (() -> Map<String, List<Any?>>)? = null
+    internal val navControllersStorage = NavControllersStorage().apply { restoreFromSavedState(savedNavControllers) }
 
     constructor(
         destination: NavDestination<Args>,
@@ -93,7 +92,7 @@ class NavEntry<Args> private constructor(
     }
 
     internal fun saveToSaveState(): Map<String, Any?> {
-        savedStateRegistry?.performSave()?.let { savedState = it }
+        savedStateSaver?.invoke()?.let { savedState = it }
         return mapOf(
             KEY_NAME to destination.name,
             KEY_NAV_ID to navId,

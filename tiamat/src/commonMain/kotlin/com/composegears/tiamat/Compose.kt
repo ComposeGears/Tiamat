@@ -107,15 +107,17 @@ fun <T> rememberNavController(
     // attach to system save logic and perform model save on it
     if (parent == null) rememberSaveable(
         saver = Saver(
-            save = { navControllersStorage.saveToSaveState().also { println("AAA: save state --> $it") } },
-            restore = { navControllersStorage.restoreFromSavedState(it.also { println("AAA: restore state --> $it") }); 0 }
+            save = { navControllersStorage.saveToSaveState() },
+            restore = {
+                navControllersStorage.restoreFromSavedState(it)
+                0
+            }
         ),
         init = { 0 }
     )
     // create nav controller
     val navController = remember {
         val restoredNavController = navControllersStorage.consume()
-        println("AAA: create navC[$key] --> restoredNC = $restoredNavController")
         val isMatch = restoredNavController?.match(
             key = key,
             parent = parent,
@@ -126,7 +128,6 @@ fun <T> rememberNavController(
         val finalNavController =
             if (isMatch) restoredNavController!!
             else {
-                println("AAA: create navC[$key] --> fail to restore instance")
                 restoredNavController?.close()
                 NavController(
                     key = key,
@@ -134,9 +135,7 @@ fun <T> rememberNavController(
                     storageMode = finalStorageMode,
                     startDestination = startDestination,
                     destinations = destinations,
-                    savedState = navControllersStorage.consumeFromSavedState().also {
-                        println("AAA: create navC[$key] --> restoredSavedState = $it")
-                    }
+                    savedState = navControllersStorage.consumeFromSavedState()
                 )
             }
         finalNavController.onCreated()
@@ -202,6 +201,7 @@ private fun BoxScope.Overlay() {
  * @see [rememberViewModel]
  */
 @Composable
+@Suppress("CognitiveComplexMethod")
 @OptIn(ExperimentalAnimationApi::class)
 fun Navigation(
     navController: NavController,
@@ -234,7 +234,7 @@ fun Navigation(
             // gen save state
             val saveRegistry = remember(it) {
                 val registry = SaveableStateRegistry(it.savedState) { true }
-                it.savedStateRegistry = registry
+                it.savedStateSaver = registry::performSave
                 registry
             }
             // display content
@@ -250,7 +250,7 @@ fun Navigation(
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
                 onDispose {
-                    it.savedStateRegistry = null
+                    it.savedStateSaver = null
                     // entry goes into backstack, store active subNavController
                     if (it in navController.getBackStack() || it == navController.currentNavEntry) {
                         it.saveState(saveRegistry.performSave())

@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModel
  * Holds in-memory data storage
  */
 internal class RootStorageModel : ViewModel() {
-    val storage : NavControllersStorage = NavControllersStorage()
+    val storage: NavControllersStorage = NavControllersStorage()
 }
 
 /**
