@@ -34,6 +34,7 @@ enum class StorageMode {
  * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
+ * @param configuration an action to be called after [NavController] created/restored
  */
 @Composable
 @Suppress("ComposableParamOrder")
@@ -60,6 +61,7 @@ fun rememberNavController(
  * @param startDestinationNavArgs initial destination navArgs
  * @param startDestinationFreeArgs initial destination freeArgs
  * @param destinations array of allowed destinations for this controller
+ * @param configuration an action to be called after [NavController] created/restored
  */
 @Composable
 @Suppress("ComposableParamOrder")
@@ -89,6 +91,7 @@ fun <T> rememberNavController(
  * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
  * @param startDestination destination entry (destination + args) to be used as initial
  * @param destinations array of allowed destinations for this controller
+ * @param configuration an action to be called after [NavController] created/restored
  */
 @Composable
 @Suppress("ComposableParamOrder")

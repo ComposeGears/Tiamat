@@ -3,9 +3,7 @@ package com.composegears.tiamat
 import androidx.compose.runtime.Stable
 
 /**
- * Internal class
- *
- * Hold nav entry information and allow to save/restore state base on storage mode
+ * Hold nav entry information
  */
 @Stable
 class NavEntry<Args> private constructor(

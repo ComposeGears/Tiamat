@@ -1,5 +1,3 @@
-@file:Suppress("UNCHECKED_CAST")
-
 package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
@@ -83,7 +81,7 @@ class NavController internal constructor(
     private var nextEntryNavId = 0L
 
     init {
-        // ensure there is not same-named destinations
+        // ensure there is no same-named destinations
         val namesSet = mutableSetOf<String>()
         val duplicates = arrayListOf<String>()
         destinations.onEach {
@@ -98,8 +96,10 @@ class NavController internal constructor(
             requireKnownDestination(startDestination.destination)
         // load from saved state
         if (savedState != null) runCatching {
+            @Suppress("UNCHECKED_CAST")
             val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
                 ?.let { NavEntry.restore(it, destinations) }
+            @Suppress("UNCHECKED_CAST")
             (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
                 .mapTo(backStack) { NavEntry.restore(it, destinations) }
             setCurrentNavEntryInternal(currentNavEntry)

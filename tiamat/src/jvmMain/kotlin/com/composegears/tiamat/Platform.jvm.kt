@@ -11,6 +11,9 @@ val LocalNavBackHandler = staticCompositionLocalOf { NavBackHandler() }
  */
 private val globalDataStorage: NavControllersStorage = NavControllersStorage()
 
+/**
+ * @return platform root NavControllers storage object
+ */
 @Composable
 internal actual fun rootNavControllersStore(): NavControllersStorage = globalDataStorage
 

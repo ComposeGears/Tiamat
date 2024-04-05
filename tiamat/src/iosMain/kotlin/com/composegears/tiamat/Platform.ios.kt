@@ -7,7 +7,11 @@ import androidx.compose.runtime.Composable
  */
 private val globalDataStorage: NavControllersStorage = NavControllersStorage()
 
-// TODO check with iOs ppl
+// TODO check with iOS ppl
+
+/**
+ * @return platform root NavControllers storage object
+ */
 @Composable
 internal actual fun rootNavControllersStore(): NavControllersStorage = globalDataStorage
 
