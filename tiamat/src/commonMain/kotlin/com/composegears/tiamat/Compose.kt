@@ -15,16 +15,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
-sealed interface StorageMode {
+enum class StorageMode {
     /**
      * Savable storage, persist internal cleanups
      */
-    data object Savable : StorageMode
+    Savable,
 
     /**
      * In memory data storage, navController will reset on data loss
      */
-    data object ResetOnDataLoss : StorageMode
+    ResetOnDataLoss
 }
 
 /**
@@ -42,13 +42,13 @@ fun rememberNavController(
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>,
-    onCreated: NavController.() -> Unit = {}
+    configuration: NavController.() -> Unit = {}
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
     startDestination = startDestination?.toNavEntry(),
     destinations = destinations,
-    onCreated = onCreated
+    configuration = configuration
 )
 
 /**
@@ -70,7 +70,7 @@ fun <T> rememberNavController(
     startDestinationNavArgs: T? = null,
     startDestinationFreeArgs: Any? = null,
     destinations: Array<NavDestination<*>>,
-    onCreated: NavController.() -> Unit = {}
+    configuration: NavController.() -> Unit = {}
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
@@ -79,7 +79,7 @@ fun <T> rememberNavController(
         freeArgs = startDestinationFreeArgs
     ),
     destinations = destinations,
-    onCreated = onCreated
+    configuration = configuration
 )
 
 /**
@@ -97,7 +97,7 @@ fun <T> rememberNavController(
     storageMode: StorageMode? = null,
     startDestination: NavEntry<T>?,
     destinations: Array<NavDestination<*>>,
-    onCreated: NavController.() -> Unit = {}
+    configuration: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
     val parentNavEntry = LocalNavEntry.current
@@ -115,32 +115,17 @@ fun <T> rememberNavController(
         ),
         init = { 0 }
     )
-    // create nav controller
+    // create/restore nav controller from storage
     val navController = remember {
-        val restoredNavController = navControllersStorage.consume()
-        val isMatch = restoredNavController?.match(
+        navControllersStorage.restoreOrCreate(
             key = key,
             parent = parent,
             storageMode = finalStorageMode,
             startDestination = startDestination,
             destinations = destinations
-        ) ?: false
-        val finalNavController =
-            if (isMatch) restoredNavController!!
-            else {
-                restoredNavController?.close()
-                NavController(
-                    key = key,
-                    parent = parent,
-                    storageMode = finalStorageMode,
-                    startDestination = startDestination,
-                    destinations = destinations,
-                    savedState = navControllersStorage.consumeFromSavedState()
-                )
-            }
-        finalNavController.onCreated()
-        finalNavController
+        ).apply(configuration)
     }
+    // attach/detach to parent storage
     DisposableEffect(navController) {
         navControllersStorage.attachNavController(navController)
         onDispose {
@@ -223,7 +208,6 @@ fun Navigation(
                     initialContentExit = ExitTransition.None,
                     sizeTransform = null
                 )
-
                 navController.contentTransition != null -> navController.contentTransition!!
                 else -> contentTransformProvider(navController.isForwardTransition)
             }

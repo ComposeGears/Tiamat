@@ -21,8 +21,39 @@ class NavController internal constructor(
 ) {
 
     companion object {
+        const val KEY_KEY = "key"
+        const val KEY_STORAGE_MODE = "storageMode"
+        const val KEY_START_DESTINATION = "startDestination"
+        const val KEY_DESTINATIONS = "destinations"
         const val KEY_CURRENT = "current"
         const val KEY_BACKSTACK = "backStack"
+
+        const val DESTINATIONS_JOIN_SEPARATOR = ", "
+
+        internal fun isSame(
+            navController: NavController,
+            key: String?,
+            storageMode: StorageMode,
+            startDestination: NavEntry<*>?,
+            destinations: Array<NavDestination<*>>,
+        ) = navController.key == key &&
+            navController.storageMode == storageMode &&
+            navController.startDestination?.destination == startDestination?.destination &&
+            navController.destinations.contentEquals(destinations)
+
+        internal fun isSame(
+            savedState: Map<String, Any?>,
+            key: String?,
+            storageMode: StorageMode,
+            startDestination: NavEntry<*>?,
+            destinations: Array<NavDestination<*>>,
+        ) = savedState[KEY_KEY] == key &&
+            savedState[KEY_STORAGE_MODE] == storageMode.name &&
+            savedState[KEY_START_DESTINATION] == startDestination?.destination?.name &&
+            savedState[KEY_DESTINATIONS]
+                .let { it as String }
+                .split(DESTINATIONS_JOIN_SEPARATOR)
+                .allIndexed { index, destination -> destinations[index].name == destination }
     }
 
     /**
@@ -78,22 +109,11 @@ class NavController internal constructor(
             setCurrentNavEntryInternal(NavEntry(startDestination))
     }
 
-    internal fun match(
-        key: String?,
-        parent: NavController?,
-        storageMode: StorageMode,
-        startDestination: NavEntry<*>?,
-        destinations: Array<NavDestination<*>>,
-    ) = this.key == key &&
-        this.parent == parent &&
-        this.storageMode == storageMode &&
-        this.startDestination?.destination == startDestination?.destination &&
-        this.startDestination?.navArgs == startDestination?.navArgs &&
-        this.startDestination?.freeArgs == startDestination?.freeArgs &&
-        this.startDestination?.navResult == startDestination?.navResult &&
-        this.destinations.contentEquals(destinations)
-
-    internal fun saveToSaveState(): Map<String, Any?> = mapOf(
+    fun saveToSaveState(): Map<String, Any?> = mapOf(
+        KEY_KEY to key,
+        KEY_STORAGE_MODE to storageMode.name,
+        KEY_START_DESTINATION to startDestination?.destination?.name,
+        KEY_DESTINATIONS to destinations.joinToString(DESTINATIONS_JOIN_SEPARATOR) { it.name },
         KEY_CURRENT to currentNavEntry?.saveToSaveState(),
         KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
     )
