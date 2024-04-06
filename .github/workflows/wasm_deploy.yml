@@ -21,11 +21,8 @@ jobs:
         distribution: 'zulu'
         java-version: 17
 
-    - name: kotlinUpgradeYarnLock
-      run: ./gradlew kotlinUpgradeYarnLock
-
     - name: Build web app
-      run: ./gradlew :example:composeApp:assemble
+      run: ./gradlew :example:composeApp:wasmJsBrowserDistribution
    
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
