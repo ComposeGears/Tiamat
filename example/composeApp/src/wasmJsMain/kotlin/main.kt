@@ -14,7 +14,8 @@ import content.examples.koin.KoinLib
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     KoinLib.start()
-    CanvasBasedWindow(canvasElementId = "ComposeTarget") {
+    CanvasBasedWindow(canvasElementId = "TiamatTarget") {
+        PageLoadNotify()
         Box {
             App()
             Text(

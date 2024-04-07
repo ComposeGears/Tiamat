@@ -2,11 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Compose App</title>
-    <script type="application/javascript" src="skiko.js"></script>
-    <script type="application/javascript" src="composeApp.js"></script>
+    <title>Tiamat Wasm</title>
+    <link rel="stylesheet" type="text/css" href="spinner.css">
 </head>
 <body>
-<canvas id="ComposeTarget"></canvas>
+<div id="loading-indicator">
+    <div class="spinner"></div>
+</div>
+<canvas id="TiamatTarget"></canvas>
+<script type="application/javascript" src="app.js"></script>
+<script type="application/javascript" src="skiko.js"></script>
+<script type="application/javascript" src="composeApp.js"></script>
 </body>
 </html>
