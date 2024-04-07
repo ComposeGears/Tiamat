@@ -1114,6 +1114,8 @@ Compose:
     active: true
   ModifierComposable:
     active: true
+  ModifierComposed:
+    active: true
   ModifierMissing:
     #ignore
     active: false
