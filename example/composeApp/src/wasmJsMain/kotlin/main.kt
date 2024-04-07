@@ -21,9 +21,9 @@ fun main() {
             Text(
                 modifier = Modifier.align(Alignment.BottomEnd).padding(32.dp),
                 color = Color.White,
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                text = "Pre Alpha (WASM)",
+                text = "Pre Alpha (Wasm)",
             )
         }
     }
