@@ -6,7 +6,7 @@ import content.examples.common.SimpleScreen
 import content.examples.common.TextCaption
 
 actual val PlatformExample: NavDestination<Unit> by navDestination {
-    SimpleScreen("Platform WASM") {
+    SimpleScreen("Platform Wasm") {
         TextCaption("Nothing platform specific yet")
     }
 }

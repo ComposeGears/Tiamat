@@ -19,7 +19,7 @@ fun main() {
         Box {
             App()
             Text(
-                modifier = Modifier.align(Alignment.BottomEnd).padding(32.dp),
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
