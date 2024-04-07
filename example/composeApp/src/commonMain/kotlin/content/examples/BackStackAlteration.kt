@@ -99,7 +99,7 @@ val BackStackAlterationRoot by navDestination<Unit> {
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(nestedNavController.getBackStack()) {
-                        TextCaption(it.name)
+                        TextCaption(it.destination.name)
                     }
                     if (nestedNavController.getBackStack().isEmpty()) item {
                         TextCaption("Empty")

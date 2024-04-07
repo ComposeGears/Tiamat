@@ -5,10 +5,13 @@ import androidx.compose.runtime.Composable
 /**
  * Global in-memory data storage
  */
-private val globalDataStorage = DataStorage()
+private val globalDataStorage = NavControllersStorage()
 
+/**
+ * @return platform root NavControllers storage object
+ */
 @Composable
-internal actual fun rootDataStore(): DataStorage = globalDataStorage
+internal actual fun rootNavControllersStore(): NavControllersStorage = globalDataStorage
 
 /**
  * Wrap platform content and provides additional info/providable-s

@@ -151,7 +151,7 @@ fun rememberNavController(
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>,
-    onCreated: NavController.() -> Unit = {}
+    configuration: NavController.() -> Unit = {}
 )
 ```
 
@@ -183,7 +183,6 @@ NavController will keep the screens data, view models, and states during navigat
 >
 > eg: Android - Parcelable + any bundlable primitives
 - `StorageMode.ResetOnDataLoss` - store data in memory, allow to use any types of args & params (including lambdas). Reset nav controller upon data loss
-- `StorageMode.IgnoreDataLoss` - store data in memory, allow to use any types of args & params (including lambdas). Restore nav back stack, ignore data loss
 
 ### Known limitations
  
@@ -218,20 +217,9 @@ NavController will keep the screens data, view models, and states during navigat
 > ```
 
 > [!IMPORTANT]
-> No data exception
-> 
-> Using  `storageMode = StorageMode.IgnoreDataLoss` in the `rememberNavController`
-> 
-> Within screens `val navArgs = navArgs()` 
-> 
-> May cause error in case internal data storage where cleared (eg: Android may release memory of activity)
-> 
-> Solution: there is safe version `val navArgs = navArgsOrNull()` 
-
-> [!IMPORTANT]
 > Why is my system back button works wired with custom back handler?
 > 
-> Using custom back handler do not forget 2 rules
+> While using custom back handler do not forget 2 rules
 > 1) Always place `NavBackHandler` before `Navigation`
 > 2) use `Navigation(handleSystemBackEvent = false)` flag to disable extra back handler
 
