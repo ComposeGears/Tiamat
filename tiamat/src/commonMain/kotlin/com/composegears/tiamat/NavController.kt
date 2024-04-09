@@ -61,6 +61,12 @@ class NavController internal constructor(
         private set
 
     /**
+     * provides current active NavEntry as State object
+     */
+    var currentNavEntry by mutableStateOf<NavEntry<*>?>(null)
+        private set
+
+    /**
      * @return true if there is entities in back stack, false otherwise
      */
     var canGoBack by mutableStateOf(false)
@@ -69,8 +75,6 @@ class NavController internal constructor(
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     private var pendingBackTransition: ContentTransform? = null
 
-    internal var currentNavEntry by mutableStateOf<NavEntry<*>?>(null)
-        private set
     internal var isForwardTransition = true
         private set
     internal var isInitialTransition = true
@@ -109,7 +113,7 @@ class NavController internal constructor(
             setCurrentNavEntryInternal(NavEntry(startDestination))
     }
 
-    fun saveToSaveState(): Map<String, Any?> = mapOf(
+    internal fun saveToSaveState(): Map<String, Any?> = mapOf(
         KEY_KEY to key,
         KEY_STORAGE_MODE to storageMode.name,
         KEY_START_DESTINATION to startDestination?.destination?.name,

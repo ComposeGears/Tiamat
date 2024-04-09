@@ -13,6 +13,7 @@ private val color_bg1 = Color(0xff2b2d30)
 private val color_bg2 = Color(0xff43454a)
 private val color_onBg = Color(0xffdfe1e5)
 private val color_outline = Color(0xff393b40)
+private val color_outlineVariant = Color(0xff393b40)
 
 private val DarkColors = darkColorScheme(
     primary = color_active1,
@@ -23,7 +24,7 @@ private val DarkColors = darkColorScheme(
     onSurface = color_onBg,
     surfaceVariant = color_bg2,
     onSurfaceVariant = color_onBg,
-    outline = color_onBg,
+    outline = color_outline,
     primaryContainer = Color.Black,
     onPrimaryContainer = Color.Black,
     secondaryContainer = color_bg1,
@@ -42,7 +43,7 @@ private val DarkColors = darkColorScheme(
     inverseSurface = Color.Black,
     inversePrimary = Color.Black,
     surfaceTint = Color.Black,
-    outlineVariant = color_outline,
+    outlineVariant = color_outlineVariant,
     scrim = Color.Black,
 )
 
