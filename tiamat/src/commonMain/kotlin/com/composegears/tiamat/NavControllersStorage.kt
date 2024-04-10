@@ -75,7 +75,7 @@ internal class NavControllersStorage {
         activeChildNavControllers.add(navController)
     }
 
-    internal fun detachNavController(navController: NavController) {
+    fun detachNavController(navController: NavController) {
         activeChildNavControllers.remove(navController)
     }
 
