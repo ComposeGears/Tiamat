@@ -111,7 +111,7 @@ class NavController internal constructor(
     @Suppress("UNCHECKED_CAST")
     private fun restoreFromSavedState(savedState: Map<String, Any?>) {
         nextEntryNavId = savedState[KEY_NEXT_ENTRY_NAV_ID] as Long
-        val currentNavEntry = (savedState[KEY_CURRENT] as Map<String, Any?>?)
+        val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
             ?.let { NavEntry.restore(it, destinations) }
         (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
             .mapTo(backStack) { NavEntry.restore(it, destinations) }
