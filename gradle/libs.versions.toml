@@ -5,8 +5,8 @@ android-minSdk = "21"
 android-targetSdk = "34"
 
 detekt = "1.23.6"
-jetbrains-compose = "1.6.1"
-kotlin = "1.9.23"
+jetbrains-compose = "1.6.2"
+kotlin = "2.0.0-RC1"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
@@ -19,8 +19,8 @@ androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.3.13"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
-koin-compose = "io.insert-koin:koin-compose:3.6.0-wasm-alpha2"
-koin-core = "io.insert-koin:koin-core:3.6.0-wasm-alpha2"
+koin-compose = "io.insert-koin:koin-compose:1.2.0-Beta2"
+koin-core = "io.insert-koin:koin-core:3.6.0-Beta2"
 
 kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
