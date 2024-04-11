@@ -79,15 +79,16 @@ internal class NavControllersStorage {
         activeChildNavControllers.remove(navController)
     }
 
-    fun save() {
+    fun saveState() {
         savedState.clear()
         savedNavControllers.clear()
         savedNavControllers.addAll(activeChildNavControllers)
     }
 
     fun saveToSaveState(): List<Map<String, Any?>> {
-        save()
-        return activeChildNavControllers.map { it.saveToSaveState() }
+        return (activeChildNavControllers + savedNavControllers)
+            .toSet()
+            .map { it.saveToSaveState() } + savedState
     }
 
     fun restoreFromSavedState(savedState: List<Map<String, Any?>>?) {

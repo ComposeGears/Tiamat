@@ -86,7 +86,7 @@ class NavEntry<Args> private constructor(
 
     internal fun saveState(saveState: Map<String, List<Any?>>) {
         this.savedState = saveState
-        navControllersStorage.save()
+        navControllersStorage.saveState()
     }
 
     internal fun saveToSaveState(): Map<String, Any?> {
