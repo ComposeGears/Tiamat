@@ -16,7 +16,7 @@ androidx-camera-view = "androidx.camera:camera-view:1.3.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.1.0"
 androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.7.0"
 
-detekt-compose = "io.nlopez.compose.rules:detekt:0.3.12"
+detekt-compose = "io.nlopez.compose.rules:detekt:0.3.13"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 koin-compose = "io.insert-koin:koin-compose:1.1.3"
