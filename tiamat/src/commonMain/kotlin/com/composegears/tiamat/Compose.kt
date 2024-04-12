@@ -346,3 +346,22 @@ fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     val storeKey = "Model#$key"
     navEntry.viewModels.getOrPut(storeKey, provider) as Model
 }
+
+// TODO add doc
+@Composable
+inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
+    navController: NavController = navController(),
+    noinline provider: () -> Model
+): Model = rememberSharedViewModel(className<Model>(), navController, provider)
+
+// TODO add doc
+@Composable
+@Suppress("UNCHECKED_CAST")
+fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
+    key: String,
+    navController: NavController = navController(),
+    provider: () -> Model
+): Model = remember {
+    val storeKey = "Model#$key"
+    navController.sharedViewModels.getOrPut(storeKey, provider) as Model
+}

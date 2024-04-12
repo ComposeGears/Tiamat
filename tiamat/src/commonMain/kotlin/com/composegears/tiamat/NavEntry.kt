@@ -106,7 +106,7 @@ class NavEntry<Args> private constructor(
         // close navControllers
         navControllersStorage.close()
         // stop and clear viewModels
-        viewModels.map { it.value }.toList().onEach { it.close() }
+        viewModels.map { it.value }.onEach { it.close() }
         viewModels.clear()
     }
 }

@@ -74,6 +74,7 @@ class NavController internal constructor(
         private set
 
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
+    internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
 
     internal var isForwardTransition = true
@@ -283,6 +284,8 @@ class NavController internal constructor(
     internal fun close() {
         editBackStack { clear() }
         currentNavEntry?.close()
+        sharedViewModels.map { it.value }.onEach { it.close() }
+        sharedViewModels.clear()
         setCurrentNavEntryInternal(null)
     }
 
