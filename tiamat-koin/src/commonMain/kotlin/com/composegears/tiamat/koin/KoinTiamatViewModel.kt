@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.TiamatViewModel
 import com.composegears.tiamat.rememberViewModel
-import org.koin.compose.koinInject
+import org.koin.compose.currentKoinScope
 import org.koin.core.parameter.ParametersDefinition
+import org.koin.core.scope.Scope
 
 /**
  * Resolve TiamatViewModel from Koin
@@ -14,11 +15,9 @@ import org.koin.core.parameter.ParametersDefinition
  */
 @Composable
 inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
+    scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
-): Model {
-    val viewModel = koinInject<Model>(parameters = parameters)
-    return rememberViewModel { viewModel }
-}
+): Model = rememberViewModel { scope.get(parameters = parameters) }
 
 /**
  * Resolve TiamatViewModel from Koin
@@ -29,8 +28,6 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatVi
 @Composable
 inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
     key: String,
+    scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
-): Model {
-    val viewModel = koinInject<Model>(parameters = parameters)
-    return rememberViewModel(key = key) { viewModel }
-}
+): Model = rememberViewModel(key = key) { scope.get(parameters = parameters) }
