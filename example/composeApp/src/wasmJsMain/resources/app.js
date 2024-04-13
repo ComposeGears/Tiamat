@@ -3,5 +3,5 @@ function onLoadFinished() {
 }
 
 document.addEventListener("app-loaded", function() {
-     document.getElementById("loading-indicator").style.display = "none";
+    document.getElementById("spinner").style.display = "none";
 });
