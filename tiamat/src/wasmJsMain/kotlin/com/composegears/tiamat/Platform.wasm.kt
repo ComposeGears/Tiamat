@@ -1,6 +1,10 @@
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalNavBackHandler = staticCompositionLocalOf { NavBackHandler() }
 
 /**
  * Global in-memory data storage
@@ -24,10 +28,21 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
 }
 
 /**
- * No back button
+ * Platform provided system back handler
  */
 @Composable
-actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) = Unit
+actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
+    if (enabled) {
+        val backHandler = LocalNavBackHandler.current
+        DisposableEffect(Unit) {
+            val callback = { onBackEvent() }
+            backHandler.add(callback)
+            onDispose {
+                backHandler.remove(callback)
+            }
+        }
+    }
+}
 
 /**
  * We can not call T::class in @Composable functions,
