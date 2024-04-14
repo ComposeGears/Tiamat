@@ -34,7 +34,7 @@ val MainScreen by navDestination<Unit> {
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },
-            "Koin integration" to { navController.navigate(KoinIntegration) },
+            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegration) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }

@@ -3,30 +3,31 @@ package content.examples.koin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import com.composegears.tiamat.koin.koinSharedTiamatViewModel
 import com.composegears.tiamat.koin.koinTiamatViewModel
-import content.examples.common.BackButton
-import content.examples.common.NextButton
-import content.examples.common.SimpleScreen
-import content.examples.common.TextCaption
+import content.examples.common.*
 import content.examples.koin.KoinDetailViewModel.Companion.KoinDetailState.Loading
 import content.examples.koin.KoinDetailViewModel.Companion.KoinDetailState.Success
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
 
 val KoinIntegration by navDestination<Unit> {
     val navController = rememberNavController(
-        key = "KoinIntegrationNavController",
+        key = "KoinNavController",
         startDestination = KoinListScreen,
         destinations = arrayOf(KoinListScreen, KoinDetailScreen)
     )
@@ -38,8 +39,18 @@ val KoinIntegration by navDestination<Unit> {
 
 private val KoinListScreen by navDestination<Unit> {
     val navController = navController()
+    val sharedViewModel = koinSharedTiamatViewModel<KoinSharedViewModel>()
+    val launchCount by sharedViewModel.launchCount.collectAsState()
+
+    LaunchedEffect(Unit) {
+        sharedViewModel.increment()
+    }
 
     SimpleScreen("Koin integration") {
+        TextBody(
+            text = "Launch count: $launchCount",
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp)
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -63,9 +74,19 @@ private val KoinDetailScreen by navDestination<String> {
     val params = navArgs()
     val navController = navController()
     val viewModel = koinTiamatViewModel<KoinDetailViewModel> { parametersOf(params) }
+    val sharedViewModel = koinSharedTiamatViewModel<KoinSharedViewModel>()
+    val launchCount by sharedViewModel.launchCount.collectAsState()
     val state by viewModel.state.collectAsState()
 
+    LaunchedEffect(Unit) {
+        sharedViewModel.increment()
+    }
+
     SimpleScreen("KoinDetail Screen") {
+        TextBody(
+            text = "Launch count: $launchCount",
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 8.dp)
+        )
         when (val detailState = state) {
             is Loading -> CircularProgressIndicator()
             is Success -> {
@@ -96,10 +117,20 @@ internal class KoinDetailViewModel(private val params: String) : TiamatViewModel
 
     init {
         viewModelScope.launch {
-            delay(2000)
+            delay(1000)
 
             val result = "$params:${hashCode()}"
-            _state.value = Success(result)
+            _state.update { Success(result) }
         }
+    }
+}
+
+internal class KoinSharedViewModel : TiamatViewModel() {
+
+    private val _launchCount = MutableStateFlow(0)
+    val launchCount = _launchCount.asStateFlow()
+
+    fun increment() {
+        _launchCount.value++
     }
 }

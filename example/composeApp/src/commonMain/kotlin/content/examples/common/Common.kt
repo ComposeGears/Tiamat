@@ -153,8 +153,9 @@ fun TextCaption(text: String) {
 }
 
 @Composable
-fun TextBody(text: String) {
+fun TextBody(text: String, modifier: Modifier = Modifier) {
     Text(
+        modifier = modifier,
         text = text,
         style = MaterialTheme.typography.bodyMedium
     )

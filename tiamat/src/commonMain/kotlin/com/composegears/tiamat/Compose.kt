@@ -347,7 +347,7 @@ fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
 }
 
 /**
- * Provide sharedViewModel instance bound to [NavController]
+ * Provide sharedViewModel instance to provided [NavController] (default is current)
  *
  * @param navController current navController to which the ViewModel will be attached
  * @param provider default viewModel instance provider
@@ -359,7 +359,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberShar
 ): Model = rememberSharedViewModel(className<Model>(), navController, provider)
 
 /**
- * Provide sharedViewModel instance bound to [NavController]
+ * Provide sharedViewModel instance to provided [NavController] (default is current)
  *
  * @param key provides unique key part
  * @param navController current navController to which the ViewModel will be attached

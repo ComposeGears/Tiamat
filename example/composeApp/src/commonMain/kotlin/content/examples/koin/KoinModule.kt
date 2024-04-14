@@ -5,6 +5,7 @@ import org.koin.dsl.module
 
 val koinIntegrationModule = module {
     tiamatViewModelOf(::KoinDetailViewModel)
+    tiamatViewModelOf(::KoinSharedViewModel)
 
     /**
      * or with old Koin syntax
