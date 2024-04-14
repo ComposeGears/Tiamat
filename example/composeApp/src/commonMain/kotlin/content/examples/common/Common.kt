@@ -159,3 +159,11 @@ fun TextBody(text: String) {
         style = MaterialTheme.typography.bodyMedium
     )
 }
+
+@Composable
+fun TextBodyLarge(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge
+    )
+}
