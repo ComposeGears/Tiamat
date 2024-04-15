@@ -201,7 +201,7 @@ fun Navigation(
     // display current entry + animate enter/exit
     AnimatedContent(
         targetState = navController.currentNavEntry,
-        contentKey = { it?.let { "${it.destination.name}:${it.navId}" } ?: "" },
+        contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
         contentAlignment = Alignment.Center,
         modifier = modifier,
         transitionSpec = {

@@ -19,15 +19,15 @@ class NavController internal constructor(
 ) {
 
     companion object {
-        const val KEY_KEY = "key"
-        const val KEY_STORAGE_MODE = "storageMode"
-        const val KEY_NEXT_ENTRY_NAV_ID = "nextEntryNavId"
-        const val KEY_START_DESTINATION = "startDestination"
-        const val KEY_DESTINATIONS = "destinations"
-        const val KEY_CURRENT = "current"
-        const val KEY_BACKSTACK = "backStack"
+        private const val KEY_KEY = "key"
+        private const val KEY_STORAGE_MODE = "storageMode"
+        private const val KEY_NEXT_ENTRY_NAV_ID = "nextEntryNavId"
+        private const val KEY_START_DESTINATION = "startDestination"
+        private const val KEY_DESTINATIONS = "destinations"
+        private const val KEY_CURRENT = "current"
+        private const val KEY_BACKSTACK = "backStack"
 
-        const val DESTINATIONS_JOIN_SEPARATOR = ", "
+        private const val DESTINATIONS_JOIN_SEPARATOR = ", "
 
         internal fun isSame(
             navController: NavController,
@@ -181,7 +181,7 @@ class NavController internal constructor(
      *
      * @see [NavEntry]
      */
-    fun getBackStack() = backStack as List<NavEntry<*>>
+    fun getBackStack(): List<NavEntry<*>> = backStack
 
     /**
      * Edit current back stack
