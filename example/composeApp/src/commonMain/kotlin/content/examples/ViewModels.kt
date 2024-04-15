@@ -1,11 +1,8 @@
 package content.examples
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,25 +37,27 @@ val ViewModelsScreen1 by navDestination<Unit> {
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp), RoundedCornerShape(10.dp))
-                    .padding(horizontal = 32.dp, vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val timerValue by screenViewModel.timer.collectAsState()
-                TextBodyLarge("ScreenViewModel")
-                TextCaption("hashCode: ${screenViewModel.hashCode()}")
-                TextCaption("timer: $timerValue")
+            ViewModelInfoCard {
+                val timer by screenViewModel.timer.collectAsState()
+                ViewModelInfoBody(
+                    name = "ScreenViewModel",
+                    hashCode = screenViewModel.hashCode(),
+                    timer = timer
+                )
                 Spacer()
-
-                val sharedTimerValue by sharedViewModel.timer.collectAsState()
-                TextBody("SharedViewModel")
-                TextCaption("hashCode: ${sharedViewModel.hashCode()}")
-                TextCaption("timer: $sharedTimerValue")
+                val sharedTimer by sharedViewModel.timer.collectAsState()
+                ViewModelInfoBody(
+                    name = "SharedViewModel",
+                    hashCode = sharedViewModel.hashCode(),
+                    timer = sharedTimer
+                )
             }
             Spacer()
-
+            TextCaption(
+                "You can open another screen and go back to verify that there is same " +
+                    "instance of ScreenViewModel and SharedViewModel"
+            )
+            Spacer()
             val count by screenViewModel.counter.collectAsState()
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -71,10 +70,6 @@ val ViewModelsScreen1 by navDestination<Unit> {
 
             Spacer()
             NextButton(onClick = { navController.navigate(ViewModelsScreen2) })
-            TextCaption(
-                "You can open another screen and go back to verify that there is same " +
-                    "instance of ScreenViewModel and SharedViewModel"
-            )
         }
     }
 }
@@ -88,17 +83,8 @@ val ViewModelsScreen2 by navDestination<Unit> {
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp), RoundedCornerShape(10.dp))
-                    .padding(horizontal = 32.dp, vertical = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val sharedTimerValue by sharedViewModel.timer.collectAsState()
-                TextBodyLarge("SharedViewModel")
-                TextCaption("hashCode: ${sharedViewModel.hashCode()}")
-                TextCaption("timer: $sharedTimerValue")
-            }
+            val sharedTimerValue by sharedViewModel.timer.collectAsState()
+            ViewModelInfo(hashCode = sharedViewModel.hashCode(), timer = sharedTimerValue)
             Spacer()
             BackButton(onClick = navController::back)
         }
@@ -129,8 +115,8 @@ private class ScreenViewModel : TiamatViewModel() {
     }
 }
 
-// Will be attached to ViewModelsRoot navController
-private class SharedViewModel : TiamatViewModel() {
+// Will be attached to NavController
+internal class SharedViewModel : TiamatViewModel() {
     private val _timer = MutableStateFlow(0)
     val timer = _timer.asStateFlow()
 
