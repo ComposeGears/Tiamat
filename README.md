@@ -140,6 +140,7 @@ The scope provides a number of composable functions:
 - `clearFreeArgs` - clear free type arguments (eg: clear handled deeplink info)
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
+- `rememberSharedViewModel` - create or provide view model scoped(linked) to current/provided `NavController`
 
 ### NavController
 
