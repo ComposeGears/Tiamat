@@ -1,11 +1,6 @@
-@file:Suppress("MatchingDeclarationName")
-
 package content.examples
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
@@ -13,10 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.TiamatViewModel
-import com.composegears.tiamat.navController
-import com.composegears.tiamat.navDestination
-import com.composegears.tiamat.rememberViewModel
+import com.composegears.tiamat.*
 import content.examples.common.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +17,81 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class ViewModelsRootViewModel : TiamatViewModel() {
+val ViewModelsRoot by navDestination<Unit> {
+    val viewModelsNavController = rememberNavController(
+        destinations = arrayOf(ViewModelsScreen1, ViewModelsScreen2),
+        startDestination = ViewModelsScreen1
+    )
+    Navigation(
+        navController = viewModelsNavController,
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+val ViewModelsScreen1 by navDestination<Unit> {
+    val navController = navController()
+    val screenViewModel = rememberViewModel { ScreenViewModel() }
+    val sharedViewModel = rememberSharedViewModel { SharedViewModel() }
+    SimpleScreen("ViewModel's - Screen 1") {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ViewModelInfoCard {
+                val timer by screenViewModel.timer.collectAsState()
+                ViewModelInfoBody(
+                    name = "ScreenViewModel",
+                    hashCode = screenViewModel.hashCode(),
+                    timer = timer
+                )
+                Spacer()
+                val sharedTimer by sharedViewModel.timer.collectAsState()
+                ViewModelInfoBody(
+                    name = "SharedViewModel",
+                    hashCode = sharedViewModel.hashCode(),
+                    timer = sharedTimer
+                )
+            }
+            Spacer()
+            TextCaption(
+                "You can open another screen and go back to verify that there is same " +
+                    "instance of ScreenViewModel and SharedViewModel"
+            )
+            Spacer()
+            val count by screenViewModel.counter.collectAsState()
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                CircleButton(text = "-", onClick = screenViewModel::dec)
+                Text(text = "Value: $count", style = MaterialTheme.typography.bodyMedium)
+                CircleButton(text = "+", onClick = screenViewModel::inc)
+            }
+
+            Spacer()
+            NextButton(onClick = { navController.navigate(ViewModelsScreen2) })
+        }
+    }
+}
+
+val ViewModelsScreen2 by navDestination<Unit> {
+    val navController = navController()
+    val sharedViewModel = rememberSharedViewModel { SharedViewModel() }
+
+    SimpleScreen("ViewModel's - Screen 2") {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val sharedTimerValue by sharedViewModel.timer.collectAsState()
+            ViewModelInfo(hashCode = sharedViewModel.hashCode(), timer = sharedTimerValue)
+            Spacer()
+            BackButton(onClick = navController::back)
+        }
+    }
+}
+
+private class ScreenViewModel : TiamatViewModel() {
     private val _timer = MutableStateFlow(0)
     private val _counter = MutableStateFlow(1)
     val counter = _counter.asStateFlow()
@@ -49,40 +115,17 @@ class ViewModelsRootViewModel : TiamatViewModel() {
     }
 }
 
-val ViewModelsRoot by navDestination<Unit> {
-    val navController = navController()
-    val viewModel = rememberViewModel { ViewModelsRootViewModel() }
-    SimpleScreen("View Model's") {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val timerValue by viewModel.timer.collectAsState()
-            TextBody("ViewModel address:\n$viewModel")
-            TextBody("Timer Value:$timerValue")
-            Spacer()
+// Will be attached to NavController
+internal class SharedViewModel : TiamatViewModel() {
+    private val _timer = MutableStateFlow(0)
+    val timer = _timer.asStateFlow()
 
-            val count by viewModel.counter.collectAsState()
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                CircleButton("-") { viewModel.dec() }
-                Text(text = "Value: $count", style = MaterialTheme.typography.bodyMedium)
-                CircleButton("+") { viewModel.inc() }
+    init {
+        viewModelScope.launch {
+            while (isActive) {
+                _timer.value++
+                delay(1000)
             }
-
-            Spacer()
-            NextButton(onClick = { navController.navigate(ViewModelsScreen) })
-            TextCaption("You can open another screen and go back to verify")
-            TextCaption("that there is same instance of ViewModel")
         }
-    }
-}
-
-val ViewModelsScreen by navDestination<Unit> {
-    val navController = navController()
-    SimpleScreen("View Model's - Screen") {
-        BackButton(onClick = navController::back)
     }
 }
