@@ -3,10 +3,10 @@ package com.composegears.tiamat
 import androidx.compose.runtime.Composable
 
 /**
- * @return platform root data storage object
+ * @return platform root NavControllers storage object
  */
 @Composable
-internal expect fun rootDataStore(): DataStorage
+internal expect fun rootNavControllersStore(): NavControllersStorage
 
 /**
  * Wrap platform content and provides additional info/providable-s
@@ -21,3 +21,10 @@ internal expect fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
  */
 @Composable
 expect fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit)
+
+/**
+ * We can not call T::class in @Composable functions,
+ *
+ * workaround is to call it outside of @Composable via regular inline fun
+ */
+expect inline fun <reified T : Any> className(): String

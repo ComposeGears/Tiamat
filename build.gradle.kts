@@ -44,15 +44,15 @@ allprojects {
 subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         val outPath = layout.buildDirectory.dir("compose_compiler").get().asFile.absoluteFile
-        kotlinOptions {
+        compilerOptions {
             if (project.findProperty("composeCompilerReports") == "true") {
-                freeCompilerArgs += listOf(
+                freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$outPath"
                 )
             }
             if (project.findProperty("composeCompilerMetrics") == "true") {
-                freeCompilerArgs += listOf(
+                freeCompilerArgs.addAll(
                     "-P",
                     "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$outPath"
                 )

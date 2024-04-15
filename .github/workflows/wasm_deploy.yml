@@ -1,4 +1,4 @@
-name: WASM Deploy
+name: Wasm Deploy
 
 on: 
    workflow_dispatch:

@@ -64,7 +64,7 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
 }
 
 @Composable
-fun NavDestinationScope<*>.rememberDestinationLifecycleOwner(): LifecycleOwner {
+internal fun NavDestinationScope<*>.rememberDestinationLifecycleOwner(): LifecycleOwner {
     val lifecycleModel = rememberViewModel { LifecycleModel() }
     val parentLifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleModel) {

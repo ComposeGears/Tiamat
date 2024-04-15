@@ -1,11 +1,11 @@
 plugins {
+    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.4"
+version = "1.1.0-rc01"
 
 kotlin {
     jvm()
@@ -25,7 +25,6 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.ui)
         }
         androidMain.dependencies {

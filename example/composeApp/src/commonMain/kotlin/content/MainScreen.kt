@@ -29,12 +29,12 @@ val MainScreen by navDestination<Unit> {
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
-            "ViewModel" to { navController.navigate(ViewModelsRoot) },
+            "ViewModel/SharedViewModel" to { navController.navigate(ViewModelsRoot) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },
-            "Koin integration" to { navController.navigate(KoinIntegration) },
+            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegration) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }

@@ -6,10 +6,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalLifecycleOwner
 
 /**
- * @return platform root data storage object
+ * @return platform root NavControllers storage object
  */
 @Composable
-internal actual fun rootDataStore(): DataStorage = rememberRootDataStore()
+internal actual fun rootNavControllersStore(): NavControllersStorage = rememberRootDataStore()
 
 /**
  * Wrap platform content and provides additional info/providable-s
@@ -33,3 +33,10 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
 actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     BackHandler(enabled, onBackEvent)
 }
+
+/**
+ * We can not call T::class in @Composable functions,
+ *
+ * workaround is to call it outside of @Composable via regular inline fun
+ */
+actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!
