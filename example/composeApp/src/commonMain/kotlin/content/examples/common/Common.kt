@@ -121,7 +121,7 @@ fun ExitButton(text: String, onClick: () -> Unit) {
 fun TextButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(text)
     }
