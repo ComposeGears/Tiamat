@@ -19,14 +19,15 @@ class NavController internal constructor(
 ) {
 
     companion object {
-        const val KEY_KEY = "key"
-        const val KEY_STORAGE_MODE = "storageMode"
-        const val KEY_START_DESTINATION = "startDestination"
-        const val KEY_DESTINATIONS = "destinations"
-        const val KEY_CURRENT = "current"
-        const val KEY_BACKSTACK = "backStack"
+        private const val KEY_KEY = "key"
+        private const val KEY_STORAGE_MODE = "storageMode"
+        private const val KEY_NEXT_ENTRY_NAV_ID = "nextEntryNavId"
+        private const val KEY_START_DESTINATION = "startDestination"
+        private const val KEY_DESTINATIONS = "destinations"
+        private const val KEY_CURRENT = "current"
+        private const val KEY_BACKSTACK = "backStack"
 
-        const val DESTINATIONS_JOIN_SEPARATOR = ", "
+        private const val DESTINATIONS_JOIN_SEPARATOR = ", "
 
         internal fun isSame(
             navController: NavController,
@@ -73,6 +74,7 @@ class NavController internal constructor(
         private set
 
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
+    internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
 
     internal var isForwardTransition = true
@@ -100,22 +102,27 @@ class NavController internal constructor(
             requireKnownDestination(startDestination.destination)
         // load from saved state
         if (savedState != null) runCatching {
-            @Suppress("UNCHECKED_CAST")
-            val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
-                ?.let { NavEntry.restore(it, destinations) }
-            @Suppress("UNCHECKED_CAST")
-            (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
-                .mapTo(backStack) { NavEntry.restore(it, destinations) }
-            setCurrentNavEntryInternal(currentNavEntry)
+            restoreFromSavedState(savedState)
         }
         // go to start destination if nothing restored
         if (currentNavEntry == null && backStack.isEmpty() && startDestination != null)
             setCurrentNavEntryInternal(NavEntry(startDestination))
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun restoreFromSavedState(savedState: Map<String, Any?>) {
+        nextEntryNavId = savedState[KEY_NEXT_ENTRY_NAV_ID] as Long
+        val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
+            ?.let { NavEntry.restore(it, destinations) }
+        (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
+            .mapTo(backStack) { NavEntry.restore(it, destinations) }
+        setCurrentNavEntryInternal(currentNavEntry)
+    }
+
     internal fun saveToSaveState(): Map<String, Any?> = mapOf(
         KEY_KEY to key,
         KEY_STORAGE_MODE to storageMode.name,
+        KEY_NEXT_ENTRY_NAV_ID to nextEntryNavId,
         KEY_START_DESTINATION to startDestination?.destination?.name,
         KEY_DESTINATIONS to destinations.joinToString(DESTINATIONS_JOIN_SEPARATOR) { it.name },
         KEY_CURRENT to currentNavEntry?.saveToSaveState(),
@@ -174,7 +181,7 @@ class NavController internal constructor(
      *
      * @see [NavEntry]
      */
-    fun getBackStack() = backStack as List<NavEntry<*>>
+    fun getBackStack(): List<NavEntry<*>> = backStack
 
     /**
      * Edit current back stack
@@ -277,6 +284,8 @@ class NavController internal constructor(
     internal fun close() {
         editBackStack { clear() }
         currentNavEntry?.close()
+        sharedViewModels.map { it.value }.onEach { it.close() }
+        sharedViewModels.clear()
         setCurrentNavEntryInternal(null)
     }
 

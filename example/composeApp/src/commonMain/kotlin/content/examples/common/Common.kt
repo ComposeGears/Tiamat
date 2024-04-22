@@ -1,6 +1,8 @@
 package content.examples.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.NavigateBefore
@@ -47,6 +49,35 @@ fun NavDestinationScope<*>.SimpleScreen(
                 body()
             }
         }
+    }
+}
+
+@Composable
+fun ViewModelInfoCard(content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(10.dp), RoundedCornerShape(10.dp))
+            .padding(horizontal = 32.dp, vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        content = content
+    )
+}
+
+@Composable
+fun ColumnScope.ViewModelInfoBody(name: String, hashCode: Int, timer: Int) {
+    TextBodyLarge(name)
+    TextCaption("hashCode: $hashCode")
+    TextCaption("timer: $timer")
+}
+
+@Composable
+fun ViewModelInfo(hashCode: Int, timer: Int) {
+    ViewModelInfoCard {
+        ViewModelInfoBody(
+            name = "SharedViewModel",
+            hashCode = hashCode,
+            timer = timer
+        )
     }
 }
 
@@ -121,7 +152,7 @@ fun ExitButton(text: String, onClick: () -> Unit) {
 fun TextButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(text)
     }
@@ -153,9 +184,18 @@ fun TextCaption(text: String) {
 }
 
 @Composable
-fun TextBody(text: String) {
+fun TextBody(text: String, modifier: Modifier = Modifier) {
     Text(
+        modifier = modifier,
         text = text,
         style = MaterialTheme.typography.bodyMedium
+    )
+}
+
+@Composable
+fun TextBodyLarge(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge
     )
 }

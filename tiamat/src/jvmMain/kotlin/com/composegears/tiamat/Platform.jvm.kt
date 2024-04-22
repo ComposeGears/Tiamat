@@ -34,11 +34,10 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
 actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     if (enabled) {
         val backHandler = LocalNavBackHandler.current
-        DisposableEffect(Unit) {
-            val callback = { onBackEvent() }
-            backHandler.add(callback)
+        DisposableEffect(onBackEvent) {
+            backHandler.add(onBackEvent)
             onDispose {
-                backHandler.remove(callback)
+                backHandler.remove(onBackEvent)
             }
         }
     }

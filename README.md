@@ -140,6 +140,7 @@ The scope provides a number of composable functions:
 - `clearFreeArgs` - clear free type arguments (eg: clear handled deeplink info)
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
+- `rememberSharedViewModel` - create or provide view model scoped(linked) to current/provided `NavController`
 
 ### NavController
 
@@ -270,7 +271,7 @@ Hint
 I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame of animation
 ```kotlin
     // LaunchEffect & DisposableEffect are executed on `next` frame, so you may see 1 frame of animation
-    // to avoid this effect use `onCreated` lambda within `rememberNavController` fun
+    // to avoid this effect use `configuration` lambda within `rememberNavController` fun
     // see DeeplinkScreen.kt
 
     val deeplinkNavController = rememberNavController(

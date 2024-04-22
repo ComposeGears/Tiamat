@@ -41,7 +41,6 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     DataPassingResultRoot,
                     DataPassingResultScreen,
                     ViewModelsRoot,
-                    ViewModelsScreen,
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,

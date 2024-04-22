@@ -86,7 +86,7 @@ class NavEntry<Args> private constructor(
 
     internal fun saveState(saveState: Map<String, List<Any?>>) {
         this.savedState = saveState
-        navControllersStorage.save()
+        navControllersStorage.saveState()
     }
 
     internal fun saveToSaveState(): Map<String, Any?> {
@@ -106,7 +106,7 @@ class NavEntry<Args> private constructor(
         // close navControllers
         navControllersStorage.close()
         // stop and clear viewModels
-        viewModels.map { it.value }.toList().onEach { it.close() }
+        viewModels.map { it.value }.onEach { it.close() }
         viewModels.clear()
     }
 }
