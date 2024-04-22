@@ -1,8 +1,13 @@
+#TiamatTarget {
+    width: 100vw;
+    height: 100vh;
+}
+
 body {
     background-color: #2b2d30;
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     display: flex;
     justify-content: center;
