@@ -43,7 +43,7 @@ val MainScreen by navDestination<Unit> {
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 8.dp),
+            contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(content) { (name, action) ->
