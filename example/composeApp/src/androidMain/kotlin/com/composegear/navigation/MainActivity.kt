@@ -47,6 +47,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent.let(deepLinkController::onIntent)
+        deepLinkController.onIntent(intent)
     }
 }

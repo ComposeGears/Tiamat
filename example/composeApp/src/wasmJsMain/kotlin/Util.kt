@@ -1,3 +1,5 @@
+@file:Suppress("MissingPackageDeclaration")
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 

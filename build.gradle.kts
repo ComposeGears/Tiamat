@@ -30,8 +30,10 @@ allprojects {
             files(
                 "src/commonMain/kotlin",
                 "src/jvmMain/kotlin",
+                "src/desktopMain/kotlin",
                 "src/androidMain/kotlin",
                 "src/iosMain/kotlin",
+                "src/wasmJsMain/kotlin",
             )
         )
     }
