@@ -258,18 +258,27 @@ class NavController internal constructor(
      *
      * @param result data to be provided to opened entity
      * @param to destination to be searched in backstack or null
+     * @param inclusive indicate if target screen should be popped out
      * @param transition transition animation
+     *
+     * @return true if navigation successful, otherwise false
      */
     fun back(
         result: Any? = null,
         to: NavDestination<*>? = null,
+        inclusive: Boolean = false,
         transition: ContentTransform? = pendingBackTransition
     ): Boolean {
         isForwardTransition = false
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
-        if (to != null) while (backStack.isNotEmpty() && backStack.last().destination != to) {
-            backStack.removeLast().close()
+        if (to != null) {
+            while (backStack.isNotEmpty() && backStack.last().destination != to) {
+                backStack.removeLast().close()
+            }
+            if (inclusive && backStack.isNotEmpty()) {
+                backStack.removeLast().close()
+            }
         }
         return if (backStack.isNotEmpty()) {
             val target = backStack.removeLast()
@@ -277,7 +286,7 @@ class NavController internal constructor(
             setCurrentNavEntryInternal(target)
             true
         } else {
-            parent?.back(result, to, transition) ?: false
+            parent?.back(result, to, inclusive, transition) ?: false
         }
     }
 
