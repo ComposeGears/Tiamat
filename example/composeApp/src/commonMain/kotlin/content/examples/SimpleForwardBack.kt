@@ -30,6 +30,19 @@ private fun NavDestinationScope<*>.Screen(
             }
             BackButton(text = "Previous", onClick = navController::back)
             TextCaption(text = "Click button or press system `back` button to go back (ESC for desktop)")
+            if (nextScreen == null) {
+                Spacer()
+                BackButton(
+                    text = "To Screen1 inclusive",
+                    onClick = {
+                        navController.back(
+                            to = SimpleForwardBackRootScreen1,
+                            inclusive = true
+                        )
+                    }
+                )
+                TextCaption(text = "Navigate back to Screen1's parent")
+            }
             Spacer()
             ExitButton(text = "Exit", onClick = { navController.back(to = MainScreen) })
             TextCaption(text = "Exit back to Main screen")
