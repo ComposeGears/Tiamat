@@ -19,7 +19,7 @@ androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.0"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.1"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
-koin-compose = "io.insert-koin:koin-compose:1.2.0-Beta2"
+koin-compose = "io.insert-koin:koin-compose:1.2.0-Beta4"
 koin-core = "io.insert-koin:koin-core:3.6.0-Beta4"
 
 kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0"
