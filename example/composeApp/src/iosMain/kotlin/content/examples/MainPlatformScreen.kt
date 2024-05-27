@@ -1,4 +1,4 @@
-package content.examples.platform
+package content.examples
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,22 +19,14 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.common.SimpleScreen
 import content.examples.koin.KoinIntegration
-import content.examples.platform.examples.AndroidViewLifecycleScreen
-import content.examples.platform.examples.DeeplinkScreen
-import content.examples.platform.examples.SavedStateScreen
 
 val MainPlatformScreen by navDestination<Unit> {
     val navController = navController()
 
     val content = remember {
-        listOf(
-            "Android SavedState" to { navController.navigate(SavedStateScreen) },
-            "AndroidView + Lifecycle handle" to { navController.navigate(AndroidViewLifecycleScreen) },
-            "Deeplink" to { navController.navigate(DeeplinkScreen) },
-            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegration) }
-        )
+        listOf("Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegration) })
     }
-    SimpleScreen("Platform samples") {
+    SimpleScreen("iOS samples") {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)

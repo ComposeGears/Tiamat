@@ -11,7 +11,6 @@ import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import content.MainScreen
 import content.examples.*
-import content.examples.koin.KoinIntegration
 import content.examples.multimodule.MultiModuleRoot
 
 @Composable
@@ -47,7 +46,6 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     MultiModuleRoot,
                     BackStackAlterationRoot,
                     TwoPaneResizableRoot,
-                    KoinIntegration,
                     PlatformExample
                 )
             )

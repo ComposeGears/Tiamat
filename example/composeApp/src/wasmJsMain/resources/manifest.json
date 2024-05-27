@@ -1,0 +1,13 @@
+{
+    "name": "Tiamat Wasm",
+    "icons": [
+        {
+            "src": "images/tiamat.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/Tiamat",
+    "display": "standalone",
+    "background_color": "white"
+}

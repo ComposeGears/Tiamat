@@ -1,3 +1,5 @@
+@file:Suppress("Filename", "MissingPackageDeclaration")
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,6 +37,6 @@ fun main() {
 
 @Preview
 @Composable
-fun AppDesktopPreview() {
+private fun AppDesktopPreview() {
     App()
 }

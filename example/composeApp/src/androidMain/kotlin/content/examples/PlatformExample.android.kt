@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.composegear.navigation.DeeplinkData
 import com.composegears.tiamat.*
+import content.examples.koin.KoinIntegration
 import content.examples.platform.MainPlatformScreen
 import content.examples.platform.examples.AndroidViewLifecycleScreen
 import content.examples.platform.examples.DeeplinkScreen
@@ -19,7 +20,8 @@ actual val PlatformExample: NavDestination<Unit> by navDestination {
             MainPlatformScreen,
             SavedStateScreen,
             AndroidViewLifecycleScreen,
-            DeeplinkScreen
+            DeeplinkScreen,
+            KoinIntegration
         )
     ) {
         if (deeplink != null) {

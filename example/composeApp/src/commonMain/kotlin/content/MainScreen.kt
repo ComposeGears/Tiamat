@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import content.examples.*
-import content.examples.koin.KoinIntegration
 import content.examples.multimodule.MultiModuleRoot
 
 val MainScreen by navDestination<Unit> {
@@ -34,7 +33,6 @@ val MainScreen by navDestination<Unit> {
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },
-            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegration) },
             "Platform specific" to { navController.navigate(PlatformExample) }
         )
     }
@@ -43,7 +41,7 @@ val MainScreen by navDestination<Unit> {
         contentAlignment = Alignment.Center
     ) {
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 8.dp),
+            contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(content) { (name, action) ->
