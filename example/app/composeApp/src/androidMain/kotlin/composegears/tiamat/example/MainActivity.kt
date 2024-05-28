@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.DisposableEffect
 import com.composegears.tiamat.navigationFadeInOut
-import composegears.tiamat.example.common.PlatformExampleScreen
+import composegears.tiamat.example.platform.DeeplinkScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         deepLinkController.onIntent(intent)
         setContent {
-            App { rootNavController ->
+            App { rootNavController, content ->
                 // pass deeplink deeper and handle inside screen
                 val deeplink = deepLinkController.deeplink
                 // using disposable effect as it runs faster then LaunchedEffect
@@ -27,9 +27,10 @@ class MainActivity : ComponentActivity() {
                         rootNavController.editBackStack {
                             clear()
                             add(MainScreen)
+                            add(PlatformExamplesScreen)
                         }
                         rootNavController.replace(
-                            dest = PlatformExampleScreen,
+                            dest = DeeplinkScreen,
                             freeArgs = deeplink,
                             // we only animate root content switch
                             // all nested items should use navigationNone() transition to prevent `blink`
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
                     }
                     onDispose { }
                 }
+                content()
             }
         }
     }

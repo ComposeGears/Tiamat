@@ -9,12 +9,19 @@ import com.composegears.tiamat.NavController
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
-import composegears.tiamat.example.common.PlatformExampleScreen
 import composegears.tiamat.example.multimodule.MultiModuleRoot
 import composegears.tiamat.example.ui.core.AppTheme
 
 @Composable
-fun App(configure: @Composable (NavController) -> Unit = {}) {
+@Suppress("SpreadOperator")
+fun App(
+    configure: @Composable (
+        NavController,
+        @Composable () -> Unit
+    ) -> Unit = { _, content ->
+        content()
+    }
+) {
     AppTheme {
         Surface {
             val rootNavController = rememberNavController(
@@ -46,14 +53,16 @@ fun App(configure: @Composable (NavController) -> Unit = {}) {
                     MultiModuleRoot,
                     BackStackAlterationRoot,
                     TwoPaneResizableRoot,
-                    PlatformExampleScreen
+                    PlatformExamplesScreen,
+                    *platformExamplesConfig.destinations()
                 )
             )
-            configure(rootNavController)
-            Navigation(
-                navController = rootNavController,
-                modifier = Modifier.fillMaxSize().systemBarsPadding()
-            )
+            configure(rootNavController) {
+                Navigation(
+                    navController = rootNavController,
+                    modifier = Modifier.fillMaxSize().systemBarsPadding()
+                )
+            }
         }
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import composegears.tiamat.example.common.PlatformExampleScreen
 import composegears.tiamat.example.multimodule.MultiModuleRoot
 
 val MainScreen by navDestination<Unit> {
@@ -33,7 +32,7 @@ val MainScreen by navDestination<Unit> {
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },
-            "Platform specific" to { navController.navigate(PlatformExampleScreen) }
+            "Platform specific" to { navController.navigate(PlatformExamplesScreen) }
         )
     }
     Box(

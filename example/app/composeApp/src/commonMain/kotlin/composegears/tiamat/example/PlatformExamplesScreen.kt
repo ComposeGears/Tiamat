@@ -1,4 +1,4 @@
-package composegears.tiamat.example.common
+package composegears.tiamat.example
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,16 +18,19 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.TextCaption
 
-val PlatformScreen by navDestination<Unit> {
+val PlatformExamplesScreen by navDestination<Unit> {
     val navController = navController()
 
-    SimpleScreen("Platform ${platformConfig.platformName}") {
-        LazyColumn(
+    SimpleScreen("Platform ${platformExamplesConfig.platformName}") {
+        if (platformExamplesConfig.availableScreens.isEmpty()) {
+            TextCaption("Nothing platform specific yet")
+        } else LazyColumn(
             contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(platformConfig.availableScreens) { (name, screen) ->
+            items(platformExamplesConfig.availableScreens) { (name, screen) ->
                 Button(
                     modifier = Modifier.widthIn(max = 450.dp),
                     onClick = {
@@ -45,8 +48,7 @@ val PlatformScreen by navDestination<Unit> {
     }
 }
 
-expect val PlatformExampleScreen: NavDestination<Unit>
-expect val platformConfig: PlatformConfig
+expect val platformExamplesConfig: PlatformConfig
 
 class PlatformConfig(
     val platformName: String,
