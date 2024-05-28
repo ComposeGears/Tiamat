@@ -1133,6 +1133,8 @@ Compose:
         active: true
     MutableParams:
         active: true
+    ParameterNaming:
+        active: true
     MutableStateAutoboxing:
         active: true
     MutableStateParam:
