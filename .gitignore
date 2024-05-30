@@ -9,5 +9,18 @@ local.properties
 captures
 .externalNativeBuild
 .cxx
+.kotlin
 publish.bat
 kotlin-js-store/
+
+# Xcode
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.xccheckout
+*.xcsmblueprint
+xcuserdata/
+xcshareddata/
+contents.xcworkspacedata

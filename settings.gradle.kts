@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 include(":tiamat")
 include(":tiamat-koin")
 
-include(":example:composeApp")
+include(":example:app:composeApp")
+include(":example:ui-core")
+include(":example:sample-koin")
