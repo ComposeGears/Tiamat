@@ -22,7 +22,7 @@ jobs:
         java-version: 17
 
     - name: Build web app
-      run: ./gradlew :example:composeApp:wasmJsBrowserDistribution
+      run: ./gradlew :example:app:composeApp:wasmJsBrowserDistribution
    
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
