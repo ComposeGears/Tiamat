@@ -27,7 +27,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-         path: 'example/composeApp/build/dist/wasmJs/productionExecutable'
+         path: 'example/app/composeApp/build/dist/wasmJs/productionExecutable'
     
     - name: Deploy to GitHub Pages
       id: deployment
