@@ -216,15 +216,16 @@ class NavController internal constructor(
      * otherwise it will be created and opened
      *
      * @param dest entry to open
-     * @param navArgs args to be provided to destination
-     * @param freeArgs free args to be provided to destination
      * @param transition transition animation
+     * @param orElse an action to be taken if destination not found in backstack,
+     *               default is to navigate to destination
      */
     fun <Args> popToTop(
         dest: NavDestination<Args>,
-        navArgs: Args? = null,
-        freeArgs: Any? = null,
-        transition: ContentTransform? = null
+        transition: ContentTransform? = null,
+        orElse: NavController.() -> Unit = {
+            navigate(dest, null, null, transition)
+        }
     ) {
         if (currentNavEntry?.destination?.name == dest.name) return
         val entry = backStack.find { it.destination.name == dest.name }
@@ -232,7 +233,7 @@ class NavController internal constructor(
             currentNavEntry?.let { backStack.add(it) }
             backStack.remove(entry)
             replaceInternal(entry, transition)
-        } else navigate(dest, navArgs, freeArgs, transition)
+        } else orElse()
     }
 
     /**
@@ -256,16 +257,37 @@ class NavController internal constructor(
      * Close current destination. Navigate to previous destination from backstack.
      * If there is no entities in backstack, action will be redirected to parent navController
      *
-     * @param result data to be provided to opened entity
-     * @param to destination to be searched in backstack or null
-     * @param inclusive indicate if target screen should be popped out
+     * @param result data to be provided as result
      * @param transition transition animation
      *
      * @return true if navigation successful, otherwise false
      */
     fun back(
         result: Any? = null,
+        transition: ContentTransform? = pendingBackTransition
+    ): Boolean = backInternal(null, result, false, transition)
+
+    /**
+     * Close current destination. Navigate to previous destination from backstack.
+     * If there is no entities in backstack, action will be redirected to parent navController
+     *
+     * @param to destination to back to
+     * @param result data to be provided as result
+     * @param inclusive indicate if target screen should be popped out
+     * @param transition transition animation
+     *
+     * @return true if navigation successful, otherwise false
+     */
+    fun back(
+        to: NavDestination<*>,
+        result: Any? = null,
+        inclusive: Boolean = false,
+        transition: ContentTransform? = pendingBackTransition
+    ): Boolean = backInternal(to, result, inclusive, transition)
+
+    private fun backInternal(
         to: NavDestination<*>? = null,
+        result: Any? = null,
         inclusive: Boolean = false,
         transition: ContentTransform? = pendingBackTransition
     ): Boolean {
@@ -273,7 +295,7 @@ class NavController internal constructor(
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
         if (to != null) {
-            while (backStack.isNotEmpty() && backStack.last().destination != to) {
+            while (backStack.isNotEmpty() && backStack.last().destination.name != to.name) {
                 backStack.removeLast().close()
             }
             if (inclusive && backStack.isNotEmpty()) {
@@ -286,7 +308,7 @@ class NavController internal constructor(
             setCurrentNavEntryInternal(target)
             true
         } else {
-            parent?.back(result, to, inclusive, transition) ?: false
+            parent?.backInternal(to, result, inclusive, transition) ?: false
         }
     }
 
@@ -339,6 +361,44 @@ class NavController internal constructor(
          */
         fun removeAt(index: Int) {
             backStack.removeAt(index).close()
+        }
+
+        /**
+         * Remove latest/most recent item within same destination
+         *
+         * @param dest dest to be removed
+         * @return true if entry where removed, false otherwise
+         */
+        fun removeRecent(dest: NavDestination<*>): Boolean {
+            val ind = backStack.indexOfLast { it.destination.name == dest.name }
+            if (ind >= 0) backStack.removeAt(ind).close()
+            return ind >= 0
+        }
+
+        /**
+         * Remove latest/most recent item matching predicate
+         *
+         * @param predicate matcher
+         * @return true if entry where removed, false otherwise
+         */
+        fun removeRecent(predicate: (NavEntry<*>) -> Boolean): Boolean {
+            val ind = backStack.indexOfLast(predicate)
+            if (ind >= 0) backStack.removeAt(ind).close()
+            return ind >= 0
+        }
+
+        /**
+         * Remove all items matching predicate
+         *
+         * @param predicate matcher
+         */
+        fun removeAll(predicate: (NavEntry<*>) -> Boolean) {
+            var i = 0
+            while (i < backStack.size) {
+                if (predicate(backStack[i])) {
+                    backStack.removeAt(i).close()
+                } else i++
+            }
         }
 
         /**
