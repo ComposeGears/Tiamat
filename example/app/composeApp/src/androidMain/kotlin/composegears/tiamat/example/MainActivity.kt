@@ -4,17 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.composegears.tiamat.navigationFadeInOut
 import composegears.tiamat.example.platform.DeeplinkScreen
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("-") }
 
 class MainActivity : ComponentActivity() {
 
     private val deepLinkController = DeepLinkController()
 
+    @OptIn(ExperimentalSharedTransitionApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         deepLinkController.onIntent(intent)
         setContent {
@@ -40,7 +47,13 @@ class MainActivity : ComponentActivity() {
                     }
                     onDispose { }
                 }
-                content()
+                SharedTransitionLayout {
+                    CompositionLocalProvider(
+                        LocalSharedTransitionScope provides this
+                    ) {
+                        content()
+                    }
+                }
             }
         }
     }

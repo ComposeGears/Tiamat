@@ -1,6 +1,7 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.*
@@ -11,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.launch
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
@@ -190,7 +192,7 @@ private fun BoxScope.Overlay() {
  */
 @Composable
 @Suppress("CognitiveComplexMethod")
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalTransitionApi::class)
 fun Navigation(
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -199,9 +201,30 @@ fun Navigation(
 ) {
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
-    AnimatedContent(
-        targetState = navController.currentNavEntry,
-        contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
+
+    var lastTarget by remember { mutableStateOf<NavEntry<*>?>(null) }
+    val scope = rememberCoroutineScope()
+    val seekableTransitionState by remember(navController.currentNavEntry) {
+        val controller = navController.contentTransitionController
+        val state = mutableStateOf(
+            if (controller != null) SeekableTransitionState<NavEntry<*>?>(lastTarget, navController.currentNavEntry)
+            else null
+        )
+        val transitionState = state.value
+        if (transitionState != null && controller != null) scope.launch {
+            controller.invoke(transitionState)
+            state.value = null
+        }
+        lastTarget = navController.currentNavEntry
+        state
+    }
+    val transition: Transition<NavEntry<*>?> = seekableTransitionState
+        ?.let { rememberTransition(it) }
+        ?: run { updateTransition(navController.currentNavEntry) }
+
+    // draw animated content
+    transition.AnimatedContent(
+        //contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
         contentAlignment = Alignment.Center,
         modifier = modifier,
         transitionSpec = {
@@ -215,7 +238,6 @@ fun Navigation(
                 else -> contentTransformProvider(navController.isForwardTransition)
             }
         },
-        label = "nav_controller_${navController.key ?: "no_key"}",
     ) {
         if (it != null) Box {
             // gen save state
@@ -233,7 +255,7 @@ fun Navigation(
                 DestinationContent(it)
             }
             // prevent clicks during transition animation
-            if (transition.isRunning) Overlay()
+            if (transition.isRunning || seekableTransitionState != null) Overlay()
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
                 onDispose {

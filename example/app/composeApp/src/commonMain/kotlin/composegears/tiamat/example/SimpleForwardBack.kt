@@ -11,6 +11,7 @@ import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.*
+import composegears.tiamat.utils.PredictiveBackWrapper
 
 @Composable
 private fun NavDestinationScope<*>.Screen(
@@ -50,17 +51,25 @@ private fun NavDestinationScope<*>.Screen(
 }
 
 val SimpleForwardBackRoot by navDestination<Unit> {
-    Screen("Simple navigation: forward/back", SimpleForwardBackRootScreen1)
+    PredictiveBackWrapper(navController()) {
+        Screen("Simple navigation: forward/back", SimpleForwardBackRootScreen1)
+    }
 }
 
 val SimpleForwardBackRootScreen1 by navDestination<Unit> {
-    Screen("Simple navigation: forward/back (screen 1)", SimpleForwardBackRootScreen2)
+    PredictiveBackWrapper(navController()) {
+        Screen("Simple navigation: forward/back (screen 1)", SimpleForwardBackRootScreen2)
+    }
 }
 
 val SimpleForwardBackRootScreen2 by navDestination<Unit> {
-    Screen("Simple navigation: forward/back (screen 2)", SimpleForwardBackRootScreen3)
+    PredictiveBackWrapper(navController()) {
+        Screen("Simple navigation: forward/back (screen 2)", SimpleForwardBackRootScreen3)
+    }
 }
 
 val SimpleForwardBackRootScreen3 by navDestination<Unit> {
-    Screen("Simple navigation: forward/back (screen 3)", null)
+    PredictiveBackWrapper(navController()) {
+        Screen("Simple navigation: forward/back (screen 3)", null)
+    }
 }

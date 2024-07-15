@@ -1,6 +1,8 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.ExperimentalTransitionApi
+import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.runtime.*
 
 /**
@@ -9,6 +11,7 @@ import androidx.compose.runtime.*
  * Provides navigation action
  */
 @Stable
+@OptIn(ExperimentalTransitionApi::class)
 class NavController internal constructor(
     val key: String?,
     val parent: NavController?,
@@ -76,12 +79,15 @@ class NavController internal constructor(
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
+    private var pendingTransitionController: (suspend SeekableTransitionState<NavEntry<*>?>.() -> Unit)? = null
 
     internal var isForwardTransition = true
         private set
     internal var isInitialTransition = true
         private set
     internal var contentTransition: ContentTransform? = null
+        private set
+    internal var contentTransitionController: (suspend SeekableTransitionState<NavEntry<*>?>.() -> Unit)? = null
         private set
 
     private var nextEntryNavId = 0L
@@ -156,6 +162,7 @@ class NavController internal constructor(
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null
+        pendingTransitionController = null
         canGoBack = backStack.isNotEmpty()
     }
 
@@ -166,6 +173,7 @@ class NavController internal constructor(
         isForwardTransition = true
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
+        contentTransitionController = pendingTransitionController
         setCurrentNavEntryInternal(entry)
     }
 
@@ -174,6 +182,10 @@ class NavController internal constructor(
      */
     fun setPendingBackTransition(transition: ContentTransform? = null) {
         this.pendingBackTransition = transition
+    }
+
+    fun setPendingTransitionController(pendingTransitionController: (suspend SeekableTransitionState<NavEntry<*>?>.() -> Unit)?) {
+        this.pendingTransitionController = pendingTransitionController
     }
 
     /**
@@ -204,10 +216,21 @@ class NavController internal constructor(
         navArgs: Args? = null,
         freeArgs: Any? = null,
         transition: ContentTransform? = null
+    ) = navigate(NavEntry(dest, navArgs, freeArgs), transition)
+
+    /**
+     * Place current destination in back stack and open new one
+     *
+     * @param entry entry to open
+     * @param transition transition animation
+     */
+    fun navigate(
+        entry: NavEntry<*>,
+        transition: ContentTransform? = null
     ) {
-        requireKnownDestination(dest)
+        requireKnownDestination(entry.destination)
         currentNavEntry?.let { backStack.add(it) }
-        replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
+        replaceInternal(entry, transition)
     }
 
     /**
@@ -294,6 +317,7 @@ class NavController internal constructor(
         isForwardTransition = false
         isInitialTransition = currentNavEntry == null
         contentTransition = transition
+        contentTransitionController = pendingTransitionController
         if (to != null) {
             while (backStack.isNotEmpty() && backStack.last().destination.name != to.name) {
                 backStack.removeLast().close()
