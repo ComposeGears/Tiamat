@@ -11,6 +11,7 @@ import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.multimodule.MultiModuleRoot
 import composegears.tiamat.example.ui.core.AppTheme
+import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
 @Composable
 @Suppress("SpreadOperator")
@@ -54,6 +55,7 @@ fun App(
                     BackStackAlterationRoot,
                     TwoPaneResizableRoot,
                     PlatformExamplesScreen,
+                    KoinIntegrationScreen,
                     *platformExamplesConfig.destinations()
                 )
             )

@@ -4,7 +4,6 @@ import composegears.tiamat.example.PlatformConfig.PlatformDestination
 import composegears.tiamat.example.platform.AndroidViewLifecycleScreen
 import composegears.tiamat.example.platform.DeeplinkScreen
 import composegears.tiamat.example.platform.SavedStateScreen
-import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
 actual val platformExamplesConfig = PlatformConfig(
     platformName = "Android",
@@ -21,9 +20,5 @@ actual val platformExamplesConfig = PlatformConfig(
             name = "Deeplink",
             destination = DeeplinkScreen
         ),
-        PlatformDestination(
-            name = "Koin (ViewModel/SharedViewModel)",
-            destination = KoinIntegrationScreen
-        )
     )
 )
