@@ -142,8 +142,8 @@ fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> DestinationContent(entry: NavEntry<Args>) {
-    val scope = remember(entry) { NavDestinationScopeImpl(entry) }
+private fun <Args> AnimatedVisibilityScope.DestinationContent(entry: NavEntry<Args>) {
+    val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
     with(entry.destination) {
         scope.PlatformContentWrapper {
             Content()

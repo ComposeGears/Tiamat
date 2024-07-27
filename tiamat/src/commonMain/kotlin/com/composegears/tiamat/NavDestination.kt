@@ -1,5 +1,6 @@
 package com.composegears.tiamat
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import kotlin.properties.ReadOnlyProperty
@@ -9,7 +10,7 @@ import kotlin.reflect.KProperty
  * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity
  */
 @Stable
-abstract class NavDestinationScope<Args> internal constructor() {
+abstract class NavDestinationScope<Args> internal constructor() : AnimatedVisibilityScope {
     internal abstract val navEntry: NavEntry<Args>
 }
 
@@ -18,7 +19,9 @@ abstract class NavDestinationScope<Args> internal constructor() {
  */
 internal open class NavDestinationScopeImpl<Args>(
     override val navEntry: NavEntry<Args>,
-) : NavDestinationScope<Args>()
+    private val animatedVisibilityScope: AnimatedVisibilityScope
+) : NavDestinationScope<Args>(),
+    AnimatedVisibilityScope by animatedVisibilityScope
 
 /**
  * Destination base interface

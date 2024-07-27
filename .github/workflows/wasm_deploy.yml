@@ -22,12 +22,12 @@ jobs:
         java-version: 17
 
     - name: Build web app
-      run: ./gradlew :example:composeApp:wasmJsBrowserDistribution
+      run: ./gradlew :example:app:composeApp:wasmJsBrowserDistribution
    
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-         path: 'example/composeApp/build/dist/wasmJs/productionExecutable'
+         path: 'example/app/composeApp/build/dist/wasmJs/productionExecutable'
     
     - name: Deploy to GitHub Pages
       id: deployment

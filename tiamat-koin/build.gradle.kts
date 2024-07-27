@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.1.0-rc01"
+version = "1.1.0-rc02"
 
 kotlin {
     jvm()
@@ -35,9 +35,9 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.tiamat)
 
-            implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
+            implementation(compose.foundation)
             implementation(compose.runtime)
         }
     }

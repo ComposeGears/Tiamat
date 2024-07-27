@@ -102,7 +102,7 @@ Setup
     }
    ```
 
-see example: [App.kt](example/composeApp/src/commonMain/kotlin/App.kt#L16)
+see example: [App.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/App.kt#L27)
 
 Overview
 --------
@@ -249,19 +249,19 @@ Custom transition:
 
 ### Examples code
 
-- [SimpleForwardBack.kt](example/composeApp/src/commonMain/kotlin/content/examples/SimpleForwardBack.kt) - Simple back and forward navigation
-- [SimpleReplace.kt](example/composeApp/src/commonMain/kotlin/content/examples/SimpleReplace.kt) - Example of `replace` navigation
-- [Tabs.kt](example/composeApp/src/commonMain/kotlin/content/examples/Tabs.kt) - Bottom navigation example
-- [NestedNavigation.kt](example/composeApp/src/commonMain/kotlin/content/examples/NestedNavigation.kt) - Nested nav controller interaction
-- [DataPassingParams.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingParams.kt) - How to pass data to next screen
-- [DataPassingFreeArgs.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingFreeArgs.kt) - How to pass addition type-free data to next screen (useful to metadata/deeplink)
-- [DataPassingResult.kt](example/composeApp/src/commonMain/kotlin/content/examples/DataPassingResult.kt) - How to provide result
-- [ViewModels.kt](example/composeApp/src/commonMain/kotlin/content/examples/ViewModels.kt) - ViewModels usage
-- [CustomTransition.kt](example/composeApp/src/commonMain/kotlin/content/examples/CustomTransition.kt) - Custom animations/transition
-- [Root.kt](example/composeApp/src/commonMain/kotlin/content/examples/multimodule/Root.kt) - Multi-module communication example (using Signals/Broadcast-api) 
-- [BackStackAlteration.kt](example/composeApp/src/commonMain/kotlin/content/examples/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
-- [TwoPaneResizableExample.kt](example/composeApp/src/commonMain/kotlin/content/examples/TwoPaneResizableExample.kt) - 2 pane example (list+details, dynamic switch between 1-pane or 2-pane layout)
-- [KoinIntegration.kt](example/composeApp/src/commonMain/kotlin/content/examples/koin/KoinIntegration.kt) - Koin integration
+- [SimpleForwardBack.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/SimpleForwardBack.kt) - Simple back and forward navigation
+- [SimpleReplace.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/SimpleReplace.kt) - Example of `replace` navigation
+- [Tabs.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/Tabs.kt) - Bottom navigation example
+- [NestedNavigation.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/NestedNavigation.kt) - Nested nav controller interaction
+- [DataPassingParams.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingParams.kt) - How to pass data to next screen
+- [DataPassingFreeArgs.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingFreeArgs.kt) - How to pass addition type-free data to next screen (useful to metadata/deeplink)
+- [DataPassingResult.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingResult.kt) - How to provide result
+- [ViewModels.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/ViewModels.kt) - ViewModels usage
+- [CustomTransition.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/CustomTransition.kt) - Custom animations/transition
+- [Root.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/multimodule/Root.kt) - Multi-module communication example (using Signals/Broadcast-api) 
+- [BackStackAlteration.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
+- [TwoPaneResizableExample.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/TwoPaneResizableExample.kt) - 2 pane example (list+details, dynamic switch between 1-pane or 2-pane layout)
+- [KoinIntegrationScreen.kt](example/sample-koin/src/commonMain/kotlin/composegears/tiamat/sample/koin/KoinIntegrationScreen.kt) - Koin integration
 
 Hint
 ----
@@ -322,7 +322,7 @@ fun main() = application {
 ### Android
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleExample.kt](example/composeApp/src/androidMain/kotlin/content/examples/platform/examples/AndroidViewLifecycleScreen.kt)
+See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/app/composeApp/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
 
 ### iOS
 
@@ -330,11 +330,11 @@ Nothing specific (yet)
 
 ### Run/Build sample
 
-Android: `./gradlew example:composeApp:assembleDebug`
+Android: `./gradlew example:app:composeApp:assembleDebug`
 
-Desktop: `./gradlew example:composeApp:run`
+Desktop: `./gradlew example:app:composeApp:run`
 
-Web: `./gradlew example:composeApp:wasmJsBrowserRun`
+Web: `./gradlew example:app:composeApp:wasmJsBrowserRun`
 
 iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
 
