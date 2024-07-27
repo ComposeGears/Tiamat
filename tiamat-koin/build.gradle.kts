@@ -29,7 +29,6 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.tiamat)
 
-            implementation(libs.koin.core)
             implementation(libs.koin.compose)
 
             implementation(compose.foundation)
