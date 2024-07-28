@@ -192,7 +192,7 @@ private fun BoxScope.Overlay() {
  */
 @Composable
 @Suppress("CognitiveComplexMethod")
-@OptIn(ExperimentalTransitionApi::class)
+@OptIn(ExperimentalTransitionApi::class, ExperimentalAnimationApi::class)
 fun Navigation(
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -202,25 +202,31 @@ fun Navigation(
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
 
-    var lastTarget by remember { mutableStateOf<NavEntry<*>?>(null) }
-    val scope = rememberCoroutineScope()
-    val seekableTransitionState by remember(navController.currentNavEntry) {
-        val controller = navController.contentTransitionController
-        val state = mutableStateOf(
-            if (controller != null) SeekableTransitionState<NavEntry<*>?>(lastTarget, navController.currentNavEntry)
-            else null
-        )
-        val transitionState = state.value
-        if (transitionState != null && controller != null) scope.launch {
-            controller.invoke(transitionState)
-            state.value = null
-        }
-        lastTarget = navController.currentNavEntry
-        state
+    var seekableTransitionState by remember {
+        mutableStateOf(SeekableTransitionState<NavEntry<*>?>(null, null))
     }
-    val transition: Transition<NavEntry<*>?> = seekableTransitionState
-        ?.let { rememberTransition(it) }
-        ?: run { updateTransition(navController.currentNavEntry) }
+    var isIntTransition by remember { mutableStateOf(false) }
+    LaunchedEffect(navController.currentNavEntry) {
+        val currentEntry = navController.currentNavEntry
+        val controller = navController.contentTransitionController
+        val initialState = seekableTransitionState.targetState ?: seekableTransitionState.currentState
+        if (initialState != null) {
+            isIntTransition = true
+            seekableTransitionState = SeekableTransitionState(initialState, currentEntry)
+            if (controller != null) controller.invoke(seekableTransitionState)
+            else animate(0f, 1f, animationSpec = tween(350, easing = LinearEasing)) { v, _ ->
+                launch {
+                    seekableTransitionState.snapToFraction(v)
+                }
+            }
+            isIntTransition = false
+        }
+        seekableTransitionState = SeekableTransitionState(currentEntry, null)
+    }
+
+    val transition: Transition<NavEntry<*>?> = rememberTransition(seekableTransitionState)
+
+    //------------------
 
     // draw animated content
     transition.AnimatedContent(
@@ -229,6 +235,8 @@ fun Navigation(
         modifier = modifier,
         transitionSpec = {
             when {
+                seekableTransitionState.targetState == null ||
+                seekableTransitionState.currentState == null ||
                 navController.isInitialTransition -> ContentTransform(
                     targetContentEnter = EnterTransition.None,
                     initialContentExit = ExitTransition.None,
@@ -255,7 +263,7 @@ fun Navigation(
                 DestinationContent(it)
             }
             // prevent clicks during transition animation
-            if (transition.isRunning || seekableTransitionState != null) Overlay()
+            if (isIntTransition) Overlay()
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
                 onDispose {

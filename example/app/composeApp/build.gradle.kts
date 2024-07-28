@@ -67,7 +67,7 @@ kotlin {
             implementation(libs.androidx.concurrent.futures)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose)
-            implementation("androidx.compose.animation:animation:1.7.0-beta03")
+            implementation("androidx.compose.animation:animation:1.7.0-beta05")
         }
         iosMain.dependencies {
             implementation(projects.tiamatKoin)
