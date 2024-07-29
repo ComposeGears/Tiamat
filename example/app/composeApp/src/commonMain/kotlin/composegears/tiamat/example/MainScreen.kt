@@ -31,6 +31,7 @@ val MainScreen by navDestination<Unit> {
             "ViewModel/SharedViewModel" to { navController.navigate(ViewModelsRoot) },
             "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
+            "Custom state saver" to { navController.navigate(CustomStateSaverRoot) },
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
             "2 Pane (list + detail, resizable)" to { navController.navigate(TwoPaneResizableRoot) },

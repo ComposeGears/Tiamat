@@ -42,6 +42,7 @@ Why Tiamat?
 - Easy to use
 - Allow to pass ANY types as data, even lambdas (!under small condition)
 - Customizable transitions
+- Customizable save-state logic
 
 Setup
 -----
@@ -139,6 +140,7 @@ The scope provides a number of composable functions:
 - `freeArgs` - free type arguments, useful to store metadata or pass deeplink info
 - `clearFreeArgs` - clear free type arguments (eg: clear handled deeplink info)
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
+- `clearNavResult` - clear passed nav result (eg: you want to show notification base on result and clear it not to re-show)
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
 - `rememberSharedViewModel` - create or provide view model scoped(linked) to current/provided `NavController`
 
@@ -177,13 +179,13 @@ NavController will keep the screens data, view models, and states during navigat
 
 ### Storage mode
 
-- `null` - will take parent NavController mode or `ResetOnDataLoss` for root controller
-- `StorageMode.Savable` - will store data in `savable` storage (eg: Android -> Bundle) 
+- `null` - will take parent NavController mode or `Memory` for root controller
+- `StorageMode.SavedState` - will store data in `savable` storage (eg: Android -> Bundle) 
 > [!IMPORTANT]
 > Only 'Savable' types of params & args will be available to use
 >
 > eg: Android - Parcelable + any bundlable primitives
-- `StorageMode.ResetOnDataLoss` - store data in memory, allow to use any types of args & params (including lambdas). Reset nav controller upon data loss
+- `StorageMode.Memory` - store data in memory, allow to use any types of args & params (including lambdas). Reset nav controller upon data loss
 
 ### Known limitations
  
@@ -258,6 +260,7 @@ Custom transition:
 - [DataPassingResult.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingResult.kt) - How to provide result
 - [ViewModels.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/ViewModels.kt) - ViewModels usage
 - [CustomTransition.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/CustomTransition.kt) - Custom animations/transition
+- [CustomStateSaver.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/CustomStateSaver.kt) - Custom save/restore state
 - [Root.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/multimodule/Root.kt) - Multi-module communication example (using Signals/Broadcast-api) 
 - [BackStackAlteration.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
 - [TwoPaneResizableExample.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/TwoPaneResizableExample.kt) - 2 pane example (list+details, dynamic switch between 1-pane or 2-pane layout)
@@ -337,6 +340,14 @@ Desktop: `./gradlew example:app:composeApp:run`
 Web: `./gradlew example:app:composeApp:wasmJsBrowserRun`
 
 iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
+
+## Contributors
+
+Thank you for your help! ❤️
+
+<a href="https://github.com/ComposeGears/Tiamat/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ComposeGears/Tiamat" />
+</a>
 
 
 # License
