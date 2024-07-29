@@ -1,4 +1,3 @@
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.gitlab.arturbosch.detekt.DetektPlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -6,7 +5,6 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.gradle.dependency.check)
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -19,12 +17,6 @@ detekt {
     buildUponDefaultConfig = true
     parallel = true
 }
-
-tasks.withType<DependencyUpdatesTask> {
-    rejectVersionIf { !isStable(candidate.version) }
-}
-
-fun isStable(version: String) = "^[0-9,.v-]+(-r)?$".toRegex().matches(version)
 
 allprojects {
     group = "io.github.composegears"
