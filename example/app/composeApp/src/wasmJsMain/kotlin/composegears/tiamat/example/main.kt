@@ -2,6 +2,7 @@
 
 package composegears.tiamat.example
 
+import PageLoadNotify
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -22,9 +23,7 @@ external fun onLoadFinished()
 fun main() {
     KoinLib.start()
     CanvasBasedWindow(canvasElementId = "TiamatTarget") {
-        LaunchedEffect(Unit) {
-            onLoadFinished()
-        }
+        PageLoadNotify()
         Box {
             App()
             Text(
