@@ -26,6 +26,12 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        binaries.executable()
+        nodejs()
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(projects.tiamat)

@@ -14,11 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.CanvasBasedWindow
+import composegears.tiamat.sample.koin.KoinLib
 
 external fun onLoadFinished()
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    KoinLib.start()
     CanvasBasedWindow(canvasElementId = "TiamatTarget") {
         LaunchedEffect(Unit) {
             onLoadFinished()

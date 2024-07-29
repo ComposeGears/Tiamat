@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.multimodule.MultiModuleRoot
+import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
 val MainScreen by navDestination<Unit> {
     val navController = navController()
@@ -28,6 +29,7 @@ val MainScreen by navDestination<Unit> {
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
             "ViewModel/SharedViewModel" to { navController.navigate(ViewModelsRoot) },
+            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
             "Back stack alteration" to { navController.navigate(BackStackAlterationRoot) },
