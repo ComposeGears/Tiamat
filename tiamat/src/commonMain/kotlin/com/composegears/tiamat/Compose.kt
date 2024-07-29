@@ -319,6 +319,13 @@ fun <Result> NavDestinationScope<*>.navResult(): Result? = remember {
 }
 
 /**
+ * Clear provided nav result
+ */
+fun NavDestinationScope<*>.clearNavResult() {
+    navEntry.navResult = null
+}
+
+/**
  * Provide (create or restore) viewModel instance bound to navigation entry
  *
  * @param provider default viewModel instance provider
