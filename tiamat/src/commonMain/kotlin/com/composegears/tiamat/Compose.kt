@@ -19,19 +19,19 @@ enum class StorageMode {
     /**
      * Savable storage, persist internal cleanups
      */
-    Savable,
+    SavedState,
 
     /**
      * In memory data storage, navController will reset on data loss
      */
-    ResetOnDataLoss
+    Memory
 }
 
 /**
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
+ * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
  * @param startDestination destination to be used as initial
  * @param destinations array of allowed destinations for this controller
  * @param configuration an action to be called after [NavController] created/restored
@@ -56,7 +56,7 @@ fun rememberNavController(
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
+ * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
  * @param startDestination destination to be used as initial
  * @param startDestinationNavArgs initial destination navArgs
  * @param startDestinationFreeArgs initial destination freeArgs
@@ -68,7 +68,7 @@ fun rememberNavController(
 fun <T> rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
-    startDestination: NavDestination<T>?,
+    startDestination: NavDestination<T>,
     startDestinationNavArgs: T? = null,
     startDestinationFreeArgs: Any? = null,
     destinations: Array<NavDestination<*>>,
@@ -76,7 +76,7 @@ fun <T> rememberNavController(
 ) = rememberNavController(
     key = key,
     storageMode = storageMode,
-    startDestination = startDestination?.toNavEntry(
+    startDestination = startDestination.toNavEntry(
         navArgs = startDestinationNavArgs,
         freeArgs = startDestinationFreeArgs
     ),
@@ -88,7 +88,7 @@ fun <T> rememberNavController(
  * Create and provide [NavController] instance to be used in [Navigation]
  *
  * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode.ResetOnDataLoss]
+ * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
  * @param startDestination destination entry (destination + args) to be used as initial
  * @param destinations array of allowed destinations for this controller
  * @param configuration an action to be called after [NavController] created/restored
@@ -105,7 +105,7 @@ fun <T> rememberNavController(
     val parent = LocalNavController.current
     val parentNavEntry = LocalNavEntry.current
     val navControllersStorage = parentNavEntry?.navControllersStorage ?: rootNavControllersStore()
-    val finalStorageMode = storageMode ?: parent?.storageMode ?: StorageMode.ResetOnDataLoss
+    val finalStorageMode = storageMode ?: parent?.storageMode ?: StorageMode.Memory
 
     // attach to system save logic and perform model save on it
     if (parent == null) rememberSaveable(

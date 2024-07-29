@@ -21,7 +21,7 @@ class NavController internal constructor(
     companion object {
         private const val KEY_KEY = "key"
         private const val KEY_STORAGE_MODE = "storageMode"
-        private const val KEY_NEXT_ENTRY_NAV_ID = "nextEntryNavId"
+        private const val KEY_PENDING_ENTRY_NAV_ID = "pendingEntryNavId"
         private const val KEY_START_DESTINATION = "startDestination"
         private const val KEY_DESTINATIONS = "destinations"
         private const val KEY_CURRENT = "current"
@@ -84,7 +84,7 @@ class NavController internal constructor(
     internal var contentTransition: ContentTransform? = null
         private set
 
-    private var nextEntryNavId = 0L
+    private var pendingEntryNavId = 0L
 
     init {
         // ensure there is no same-named destinations
@@ -101,7 +101,7 @@ class NavController internal constructor(
         if (startDestination != null)
             requireKnownDestination(startDestination.destination)
         // load from saved state
-        if (savedState != null) runCatching {
+        if (!savedState.isNullOrEmpty()) runCatching {
             restoreFromSavedState(savedState)
         }
         // go to start destination if nothing restored
@@ -111,7 +111,7 @@ class NavController internal constructor(
 
     @Suppress("UNCHECKED_CAST")
     private fun restoreFromSavedState(savedState: Map<String, Any?>) {
-        nextEntryNavId = savedState[KEY_NEXT_ENTRY_NAV_ID] as Long
+        pendingEntryNavId = savedState[KEY_PENDING_ENTRY_NAV_ID] as Long
         val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
             ?.let { NavEntry.restore(it, destinations) }
         (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
@@ -119,15 +119,48 @@ class NavController internal constructor(
         setCurrentNavEntryInternal(currentNavEntry)
     }
 
-    internal fun saveToSaveState(): Map<String, Any?> = mapOf(
+    private fun getMinimalVerificationSavedState() = mapOf(
         KEY_KEY to key,
         KEY_STORAGE_MODE to storageMode.name,
-        KEY_NEXT_ENTRY_NAV_ID to nextEntryNavId,
         KEY_START_DESTINATION to startDestination?.destination?.name,
         KEY_DESTINATIONS to destinations.joinToString(DESTINATIONS_JOIN_SEPARATOR) { it.name },
+    )
+
+    private fun getFullSavedState() = getMinimalVerificationSavedState() + mapOf(
+        KEY_PENDING_ENTRY_NAV_ID to pendingEntryNavId,
         KEY_CURRENT to currentNavEntry?.saveToSaveState(),
         KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
     )
+
+    internal fun saveToSaveState(): Map<String, Any?> = when (storageMode) {
+        StorageMode.SavedState -> getFullSavedState()
+        StorageMode.Memory -> getMinimalVerificationSavedState()
+    }
+
+    /**
+     * Save current navController state(full, regardless of `storageMode`)
+     * and it's children states(depend on theirs `storageMode`)
+     *
+     * @return saved state
+     */
+    fun getSavedState(): Map<String, Any?> = getFullSavedState()
+
+    /**
+     * Load navController (and it's children) state from saved state
+     *
+     * Use with caution, calling this method will reset backstack and current entry
+     *
+     * @param savedState saved state
+     */
+    fun loadFromSavedState(savedState: Map<String, Any?>) {
+        // clear current state
+        close()
+        // load from saved state
+        restoreFromSavedState(savedState)
+        // navigate to start destination if nothing restored
+        if (currentNavEntry == null && backStack.isEmpty() && startDestination != null)
+            setCurrentNavEntryInternal(NavEntry(startDestination))
+    }
 
     /**
      * @param key nav controller's key to search for
@@ -152,7 +185,7 @@ class NavController internal constructor(
     private fun setCurrentNavEntryInternal(
         navEntry: NavEntry<*>?,
     ) {
-        if (navEntry != null && navEntry.navId < 0) navEntry.navId = nextEntryNavId++
+        if (navEntry != null && navEntry.navId < 0) navEntry.navId = pendingEntryNavId++
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null

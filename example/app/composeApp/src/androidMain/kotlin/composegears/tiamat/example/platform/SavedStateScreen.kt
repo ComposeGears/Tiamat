@@ -30,7 +30,7 @@ val SavedStateScreen by navDestination<Unit> {
             Column {
                 TextCaption("In order to test this behaviour (IMPORTANT):")
                 TextCaption("• go ./example/composeApp/src/commonMain/kotlin/App.kt")
-                TextCaption("• change storageMode to StorageMode.Savable")
+                TextCaption("• change storageMode to StorageMode.SavedState")
                 TextCaption("• !!WARNING!! other screens may not work due to this changes!!")
                 TextCaption("• compile android app")
                 TextCaption("• go to developer settings of your device")
@@ -44,7 +44,7 @@ val SavedStateScreen by navDestination<Unit> {
             TextCaption("eg: primitives, parcelable (see: SaveableStateRegistry.canBeSaved)")
             val savableNavController = rememberNavController(
                 key = "savableNavController",
-                storageMode = StorageMode.Savable,
+                storageMode = StorageMode.SavedState,
                 startDestination = SavableDataExampleScreenRoot,
                 destinations = arrayOf(
                     SavableDataExampleScreenRoot,

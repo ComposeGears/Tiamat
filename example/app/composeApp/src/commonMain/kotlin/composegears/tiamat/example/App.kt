@@ -27,7 +27,7 @@ fun App(
         Surface {
             val rootNavController = rememberNavController(
                 key = "rootNavController",
-                storageMode = StorageMode.ResetOnDataLoss,
+                storageMode = StorageMode.Memory,
                 startDestination = MainScreen,
                 destinations = arrayOf(
                     MainScreen,
@@ -51,6 +51,7 @@ fun App(
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
                     CustomTransitionScreen2,
+                    CustomStateSaverRoot,
                     MultiModuleRoot,
                     BackStackAlterationRoot,
                     TwoPaneResizableRoot,
