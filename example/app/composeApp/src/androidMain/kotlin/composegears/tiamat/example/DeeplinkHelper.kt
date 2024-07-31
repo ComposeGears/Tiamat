@@ -1,15 +1,18 @@
 package composegears.tiamat.example
 
 import android.content.Intent
+import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class DeeplinkData(
     val categoryId: String,
     val productId: String,
     val productName: String
-)
+) : Parcelable
 
 class DeepLinkController {
     var deeplink by mutableStateOf<DeeplinkData?>(null)

@@ -294,12 +294,8 @@ fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
  *
  * @return free nav arguments provided to [NavController.navigate] function or null
  */
-@Composable
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
-fun <T> NavDestinationScope<*>.freeArgs(): T? = remember {
-    navEntry.freeArgs as T?
-}
-
+fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
 /**
  * Clear provided free args
  */
@@ -312,11 +308,8 @@ fun NavDestinationScope<*>.clearFreeArgs() {
  *
  * @see [NavController.back]
  */
-@Composable
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
-fun <Result> NavDestinationScope<*>.navResult(): Result? = remember {
-    navEntry.navResult as Result?
-}
+fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
 
 /**
  * Clear provided nav result
