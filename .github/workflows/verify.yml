@@ -24,6 +24,9 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v3
 
+    - name: Check public API changes
+      run: ./gradlew apiCheck
+
     - name: Execute Gradle build
       run: ./gradlew detekt
 
