@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.clearNavResult
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.navResult
@@ -27,13 +25,22 @@ val DataPassingResultRoot by navDestination<Unit> {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            val result =
-                navResult<NavResult>() // use <Any?> + when(result)... if there multiple results types
-            Text(text = "Last result: $result", style = MaterialTheme.typography.bodyMedium)
+            // use <Any?> + when(result)... if there multiple results types
+            val result = navResult<NavResult>()
 
+            Text(
+                text = "Last result: $result",
+                style = MaterialTheme.typography.bodyMedium
+            )
             NextButton(
                 text = "Open for result",
                 onClick = { navController.navigate(DataPassingResultScreen) }
+            )
+            TextButton(
+                text = "Clear result",
+                onClick = {
+                    clearNavResult()
+                }
             )
         }
     }

@@ -1,6 +1,9 @@
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 /**
  * Hold nav entry information
@@ -50,9 +53,9 @@ class NavEntry<Args> private constructor(
 
     var navArgs: Args? = navArgs
         internal set
-    var freeArgs: Any? = freeArgs
+    var freeArgs: Any? by mutableStateOf(freeArgs)
         internal set
-    var navResult: Any? = navResult
+    var navResult: Any? by mutableStateOf(navResult)
         internal set
 
     internal var navId: Long = -1
