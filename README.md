@@ -341,6 +341,12 @@ Web: `./gradlew example:app:composeApp:wasmJsBrowserRun`
 
 iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
 
+other commands:
+
+- dumps public API: `./gradlew apiDump`
+
+- check API changes: `./gradlew apiCheck`
+
 ## Contributors
 
 Thank you for your help! ❤️
