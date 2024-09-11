@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
  * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity
  */
 @Stable
-abstract class NavDestinationScope<Args> internal constructor() : AnimatedVisibilityScope {
+public abstract class NavDestinationScope<Args> internal constructor() : AnimatedVisibilityScope {
     internal abstract val navEntry: NavEntry<Args>
 }
 
@@ -54,11 +54,11 @@ internal open class NavDestinationScopeImpl<Args>(
  *
  * ```
  */
-interface NavDestination<Args> {
-    val name: String
+public interface NavDestination<Args> {
+    public val name: String
 
     @Composable
-    fun NavDestinationScope<Args>.Content()
+    public fun NavDestinationScope<Args>.Content()
 }
 
 /**
@@ -78,7 +78,7 @@ internal open class NavDestinationImpl<Args>(
 /**
  * Nav destination delegate impl
  */
-class NavDestinationInstanceDelegate<Args>(
+public class NavDestinationInstanceDelegate<Args>(
     private val content: @Composable NavDestinationScope<Args>.() -> Unit
 ) : ReadOnlyProperty<Nothing?, NavDestination<Args>> {
     private var destination: NavDestination<Args>? = null
@@ -94,17 +94,16 @@ class NavDestinationInstanceDelegate<Args>(
  *
  * @see [NavDestination]
  */
-fun <Args> NavDestination(
+public fun <Args> NavDestination(
     name: String,
     content: @Composable NavDestinationScope<Args>.() -> Unit
-): NavDestination<Args> =
-    NavDestinationImpl(name, content)
+): NavDestination<Args> = NavDestinationImpl(name, content)
 
 /**
  * Nav destination delegate, destination name will be same as property name
  *
  * @param content content builder lambda
  */
-fun <Args> navDestination(
+public fun <Args> navDestination(
     content: @Composable NavDestinationScope<Args>.() -> Unit
-) = NavDestinationInstanceDelegate(content)
+): NavDestinationInstanceDelegate<Args> = NavDestinationInstanceDelegate(content)

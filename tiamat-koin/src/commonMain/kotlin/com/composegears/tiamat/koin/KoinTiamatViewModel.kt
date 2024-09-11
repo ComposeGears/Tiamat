@@ -13,7 +13,7 @@ import org.koin.core.scope.Scope
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
 ): Model = rememberViewModel { scope.get(parameters = parameters) }
@@ -26,7 +26,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatVi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
     key: String,
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
@@ -40,7 +40,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatVi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
     navController: NavController = navController(),
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
@@ -55,7 +55,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
     key: String,
     navController: NavController = navController(),
     scope: Scope = currentKoinScope(),

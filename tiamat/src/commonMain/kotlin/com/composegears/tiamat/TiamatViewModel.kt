@@ -9,18 +9,19 @@ import kotlin.coroutines.CoroutineContext
 /**
  * ViewModels base class
  */
-abstract class TiamatViewModel {
+public abstract class TiamatViewModel {
 
-    protected val viewModelScope = ComposeModelCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val _viewModelScope = ComposeModelCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    protected val viewModelScope: CoroutineScope = _viewModelScope
 
-    open fun onClosed() = Unit
+    public open fun onClosed(): Unit = Unit
 
     internal fun close() {
-        viewModelScope.close()
+        _viewModelScope.close()
         onClosed()
     }
 
-    protected class ComposeModelCoroutineScope(context: CoroutineContext) : CoroutineScope {
+    internal class ComposeModelCoroutineScope(context: CoroutineContext) : CoroutineScope {
         override val coroutineContext: CoroutineContext = context
 
         fun close() {

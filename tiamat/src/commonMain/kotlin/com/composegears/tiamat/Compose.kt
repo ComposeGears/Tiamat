@@ -15,7 +15,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
-enum class StorageMode {
+public enum class StorageMode {
     /**
      * Savable storage, persist internal cleanups
      */
@@ -38,13 +38,13 @@ enum class StorageMode {
  */
 @Composable
 @Suppress("ComposableParamOrder")
-fun rememberNavController(
+public fun rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<*>? = null,
     destinations: Array<NavDestination<*>>,
     configuration: NavController.() -> Unit = {}
-) = rememberNavController(
+): NavController = rememberNavController(
     key = key,
     storageMode = storageMode,
     startDestination = startDestination?.toNavEntry(),
@@ -65,7 +65,7 @@ fun rememberNavController(
  */
 @Composable
 @Suppress("ComposableParamOrder")
-fun <T> rememberNavController(
+public fun <T> rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavDestination<T>,
@@ -73,7 +73,7 @@ fun <T> rememberNavController(
     startDestinationFreeArgs: Any? = null,
     destinations: Array<NavDestination<*>>,
     configuration: NavController.() -> Unit = {}
-) = rememberNavController(
+): NavController = rememberNavController(
     key = key,
     storageMode = storageMode,
     startDestination = startDestination.toNavEntry(
@@ -95,7 +95,7 @@ fun <T> rememberNavController(
  */
 @Composable
 @Suppress("ComposableParamOrder")
-fun <T> rememberNavController(
+public fun <T> rememberNavController(
     key: String? = null,
     storageMode: StorageMode? = null,
     startDestination: NavEntry<T>?,
@@ -191,7 +191,7 @@ private fun BoxScope.Overlay() {
 @Composable
 @Suppress("CognitiveComplexMethod")
 @OptIn(ExperimentalAnimationApi::class)
-fun Navigation(
+public fun Navigation(
     navController: NavController,
     modifier: Modifier = Modifier,
     handleSystemBackEvent: Boolean = true,
@@ -255,7 +255,7 @@ fun Navigation(
  */
 @Composable
 @Suppress("UnusedReceiverParameter")
-fun NavDestinationScope<*>.navController(): NavController =
+public fun NavDestinationScope<*>.navController(): NavController =
     LocalNavController.current ?: error("not attached to navController")
 
 /**
@@ -268,7 +268,7 @@ fun NavDestinationScope<*>.navController(): NavController =
  */
 @Composable
 @Suppress("CastToNullableType")
-fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
+public fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
     navEntry.navArgs ?: error("args not provided or null, consider use navArgsOrNull()")
 }
 
@@ -282,7 +282,7 @@ fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
  */
 @Composable
 @Suppress("CastToNullableType")
-fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
+public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
     navEntry.navArgs
 }
 
@@ -295,11 +295,12 @@ fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
  * @return free nav arguments provided to [NavController.navigate] function or null
  */
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
-fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
+public fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
+
 /**
  * Clear provided free args
  */
-fun NavDestinationScope<*>.clearFreeArgs() {
+public fun NavDestinationScope<*>.clearFreeArgs() {
     navEntry.freeArgs = null
 }
 
@@ -309,12 +310,12 @@ fun NavDestinationScope<*>.clearFreeArgs() {
  * @see [NavController.back]
  */
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
-fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
+public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
 
 /**
  * Clear provided nav result
  */
-fun NavDestinationScope<*>.clearNavResult() {
+public fun NavDestinationScope<*>.clearNavResult() {
     navEntry.navResult = null
 }
 
@@ -324,7 +325,7 @@ fun NavDestinationScope<*>.clearNavResult() {
  * @param provider default viewModel instance provider
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     noinline provider: () -> Model
 ): Model = rememberViewModel(className<Model>(), provider)
 
@@ -338,7 +339,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberView
  */
 @Composable
 @Suppress("UNCHECKED_CAST")
-fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
+public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String,
     provider: () -> Model
 ): Model = remember {
@@ -353,7 +354,7 @@ fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
  * @param provider default viewModel instance provider
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
     navController: NavController = navController(),
     noinline provider: () -> Model
 ): Model = rememberSharedViewModel(className<Model>(), navController, provider)
@@ -367,7 +368,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberShar
  */
 @Composable
 @Suppress("UNCHECKED_CAST")
-fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
+public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
     key: String,
     navController: NavController = navController(),
     provider: () -> Model

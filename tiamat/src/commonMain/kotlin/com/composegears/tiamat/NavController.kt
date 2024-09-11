@@ -9,16 +9,16 @@ import androidx.compose.runtime.*
  * Provides navigation action
  */
 @Stable
-class NavController internal constructor(
-    val key: String?,
-    val parent: NavController?,
+public class NavController internal constructor(
+    public val key: String?,
+    public val parent: NavController?,
     internal val storageMode: StorageMode,
     internal val startDestination: NavEntry<*>?,
     private val destinations: Array<NavDestination<*>>,
     savedState: Map<String, Any?>?
 ) {
 
-    companion object {
+    public companion object {
         private const val KEY_KEY = "key"
         private const val KEY_STORAGE_MODE = "storageMode"
         private const val KEY_PENDING_ENTRY_NAV_ID = "pendingEntryNavId"
@@ -58,19 +58,19 @@ class NavController internal constructor(
     /**
      * provides current active NavDestination as State object
      */
-    var current by mutableStateOf<NavDestination<*>?>(null, neverEqualPolicy())
+    public var current: NavDestination<*>? by mutableStateOf(null, neverEqualPolicy())
         private set
 
     /**
      * provides current active NavEntry as State object
      */
-    var currentNavEntry by mutableStateOf<NavEntry<*>?>(null)
+    public var currentNavEntry: NavEntry<*>? by mutableStateOf(null)
         private set
 
     /**
      * @return true if there is entities in back stack, false otherwise
      */
-    var canGoBack by mutableStateOf(false)
+    public var canGoBack: Boolean by mutableStateOf(false)
         private set
 
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
@@ -143,7 +143,7 @@ class NavController internal constructor(
      *
      * @return saved state
      */
-    fun getSavedState(): Map<String, Any?> = getFullSavedState()
+    public fun getSavedState(): Map<String, Any?> = getFullSavedState()
 
     /**
      * Load navController (and it's children) state from saved state
@@ -152,7 +152,7 @@ class NavController internal constructor(
      *
      * @param savedState saved state
      */
-    fun loadFromSavedState(savedState: Map<String, Any?>) {
+    public fun loadFromSavedState(savedState: Map<String, Any?>) {
         // clear current state
         close()
         // load from saved state
@@ -167,7 +167,7 @@ class NavController internal constructor(
      *
      * @return NavController instance with same key (current or one of parents), null if no one match
      */
-    fun findNavController(key: String): NavController? {
+    public fun findNavController(key: String): NavController? {
         var nc: NavController? = this
         while (nc != null) {
             if (nc.key == key) return nc
@@ -205,7 +205,7 @@ class NavController internal constructor(
     /**
      * Set default value for next [back] nav transition
      */
-    fun setPendingBackTransition(transition: ContentTransform? = null) {
+    public fun setPendingBackTransition(transition: ContentTransform? = null) {
         this.pendingBackTransition = transition
     }
 
@@ -214,12 +214,12 @@ class NavController internal constructor(
      *
      * @see [NavEntry]
      */
-    fun getBackStack(): List<NavEntry<*>> = backStack
+    public fun getBackStack(): List<NavEntry<*>> = backStack
 
     /**
      * Edit current back stack
      */
-    fun editBackStack(actions: BackStackEditScope.() -> Unit) {
+    public fun editBackStack(actions: BackStackEditScope.() -> Unit) {
         BackStackEditScope().actions()
         canGoBack = backStack.isNotEmpty()
     }
@@ -232,7 +232,7 @@ class NavController internal constructor(
      * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
-    fun <Args> navigate(
+    public fun <Args> navigate(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
         freeArgs: Any? = null,
@@ -253,7 +253,7 @@ class NavController internal constructor(
      * @param orElse an action to be taken if destination not found in backstack,
      *               default is to navigate to destination
      */
-    fun <Args> popToTop(
+    public fun <Args> popToTop(
         dest: NavDestination<Args>,
         transition: ContentTransform? = null,
         orElse: NavController.() -> Unit = {
@@ -277,7 +277,7 @@ class NavController internal constructor(
      * @param freeArgs free args to be provided to destination
      * @param transition transition animation
      */
-    fun <Args> replace(
+    public fun <Args> replace(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
         freeArgs: Any? = null,
@@ -295,7 +295,7 @@ class NavController internal constructor(
      *
      * @return true if navigation successful, otherwise false
      */
-    fun back(
+    public fun back(
         result: Any? = null,
         transition: ContentTransform? = pendingBackTransition
     ): Boolean = backInternal(null, result, false, transition)
@@ -311,7 +311,7 @@ class NavController internal constructor(
      *
      * @return true if navigation successful, otherwise false
      */
-    fun back(
+    public fun back(
         to: NavDestination<*>,
         result: Any? = null,
         inclusive: Boolean = false,
@@ -353,7 +353,7 @@ class NavController internal constructor(
         setCurrentNavEntryInternal(null)
     }
 
-    inner class BackStackEditScope internal constructor() {
+    public inner class BackStackEditScope internal constructor() {
 
         /**
          * Add destination into backstack
@@ -362,7 +362,7 @@ class NavController internal constructor(
          * @param navArgs args to be provided to destination
          * @param freeArgs free args to be provided to destination
          */
-        fun <Args> add(
+        public fun <Args> add(
             dest: NavDestination<Args>,
             navArgs: Args? = null,
             freeArgs: Any? = null,
@@ -378,7 +378,7 @@ class NavController internal constructor(
          * @param navArgs args to be provided to destination
          * @param freeArgs free args to be provided to destination
          */
-        fun <Args> add(
+        public fun <Args> add(
             index: Int,
             dest: NavDestination<Args>,
             navArgs: Args? = null,
@@ -392,7 +392,7 @@ class NavController internal constructor(
          *
          * @param index position
          */
-        fun removeAt(index: Int) {
+        public fun removeAt(index: Int) {
             backStack.removeAt(index).close()
         }
 
@@ -402,7 +402,7 @@ class NavController internal constructor(
          * @param dest dest to be removed
          * @return true if entry where removed, false otherwise
          */
-        fun removeRecent(dest: NavDestination<*>): Boolean {
+        public fun removeRecent(dest: NavDestination<*>): Boolean {
             val ind = backStack.indexOfLast { it.destination.name == dest.name }
             if (ind >= 0) backStack.removeAt(ind).close()
             return ind >= 0
@@ -414,7 +414,7 @@ class NavController internal constructor(
          * @param predicate matcher
          * @return true if entry where removed, false otherwise
          */
-        fun removeRecent(predicate: (NavEntry<*>) -> Boolean): Boolean {
+        public fun removeRecent(predicate: (NavEntry<*>) -> Boolean): Boolean {
             val ind = backStack.indexOfLast(predicate)
             if (ind >= 0) backStack.removeAt(ind).close()
             return ind >= 0
@@ -425,7 +425,7 @@ class NavController internal constructor(
          *
          * @param predicate matcher
          */
-        fun removeAll(predicate: (NavEntry<*>) -> Boolean) {
+        public fun removeAll(predicate: (NavEntry<*>) -> Boolean) {
             var i = 0
             while (i < backStack.size) {
                 if (predicate(backStack[i])) {
@@ -437,7 +437,7 @@ class NavController internal constructor(
         /**
          * Clear backstack
          */
-        fun clear() {
+        public fun clear() {
             while (backStack.isNotEmpty()) {
                 backStack.removeLast().close()
             }

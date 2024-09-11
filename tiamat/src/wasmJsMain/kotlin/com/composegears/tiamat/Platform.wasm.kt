@@ -27,11 +27,11 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
  * No back button
  */
 @Composable
-actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) = Unit
+public actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit): Unit = Unit
 
 /**
  * We can not call T::class in @Composable functions,
  *
  * workaround is to call it outside of @Composable via regular inline fun
  */
-actual inline fun <reified T : Any> className(): String = T::class.simpleName!!
+public actual inline fun <reified T : Any> className(): String = T::class.simpleName!!

@@ -9,8 +9,8 @@ import androidx.compose.runtime.setValue
  * Hold nav entry information
  */
 @Stable
-class NavEntry<Args> private constructor(
-    val destination: NavDestination<Args>,
+public class NavEntry<Args> private constructor(
+    public val destination: NavDestination<Args>,
     navArgs: Args? = null,
     freeArgs: Any? = null,
     navResult: Any? = null,
@@ -18,7 +18,7 @@ class NavEntry<Args> private constructor(
     savedNavControllers: List<Map<String, Any?>>? = null,
 ) {
 
-    companion object {
+    public companion object {
         private const val KEY_NAME = "name"
         private const val KEY_NAV_ID = "id"
         private const val KEY_NAV_ARGS = "navArgs"
@@ -51,11 +51,11 @@ class NavEntry<Args> private constructor(
         }
     }
 
-    var navArgs: Args? = navArgs
+    public var navArgs: Args? = navArgs
         internal set
-    var freeArgs: Any? by mutableStateOf(freeArgs)
+    public var freeArgs: Any? by mutableStateOf(freeArgs)
         internal set
-    var navResult: Any? by mutableStateOf(navResult)
+    public var navResult: Any? by mutableStateOf(navResult)
         internal set
 
     internal var navId: Long = -1
@@ -64,7 +64,7 @@ class NavEntry<Args> private constructor(
     internal var savedStateSaver: (() -> Map<String, List<Any?>>)? = null
     internal val navControllersStorage = NavControllersStorage().apply { restoreFromSavedState(savedNavControllers) }
 
-    constructor(
+    public constructor(
         destination: NavDestination<Args>,
         navArgs: Args? = null,
         freeArgs: Any? = null,
@@ -121,11 +121,11 @@ class NavEntry<Args> private constructor(
  * @param freeArgs entry freeArgs
  * @param navResult entry navResult
  */
-fun <Args> NavDestination<Args>.toNavEntry(
+public fun <Args> NavDestination<Args>.toNavEntry(
     navArgs: Args? = null,
     freeArgs: Any? = null,
     navResult: Any? = null
-) = NavEntry(
+): NavEntry<Args> = NavEntry(
     destination = this,
     navArgs = navArgs,
     freeArgs = freeArgs,
