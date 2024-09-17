@@ -111,12 +111,9 @@ public fun <T> rememberNavController(
     if (parent == null) rememberSaveable(
         saver = Saver(
             save = { navControllersStorage.saveToSaveState() },
-            restore = {
-                navControllersStorage.restoreFromSavedState(it)
-                0
-            }
+            restore = { navControllersStorage.restoreFromSavedState(it) }
         ),
-        init = { 0 }
+        init = { }
     )
     // create/restore nav controller from storage
     val navController = remember {
@@ -338,14 +335,47 @@ public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.remem
  * @param provider default viewModel instance provider
  */
 @Composable
-@Suppress("UNCHECKED_CAST")
 public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String,
     provider: () -> Model
 ): Model = remember {
-    val storeKey = "Model#$key"
-    navEntry.viewModels.getOrPut(storeKey, provider) as Model
+    navEntry.viewModels.getModel(key, provider)
 }
+
+/**
+ * Provide (create or restore) viewModel instance bound to navigation entry
+ *
+ * The model will use savedState to save/restore its state
+ *
+ * @param provider default viewModel instance provider
+ */
+@Composable
+public inline fun <reified Model> NavDestinationScope<*>.rememberSaveableViewModel(
+    noinline provider: (SavedState?) -> Model
+): Model where Model : TiamatViewModel, Model : Saveable =
+    rememberSaveableViewModel(className<Model>(), provider)
+
+/**
+ * Recommended to use `rememberViewModel(key, provider)` instead
+ *
+ * Provide (create or restore) viewModel instance bound to navigation entry
+ *
+ * The model will use savedState to save/restore its state
+ *
+ * @param key provides unique key part
+ * @param provider default viewModel instance provider
+ */
+@Composable
+public fun <Model> NavDestinationScope<*>.rememberSaveableViewModel(
+    key: String,
+    provider: (SavedState?) -> Model
+): Model where Model : TiamatViewModel, Model : Saveable = rememberSaveable(
+    saver = Saver(
+        save = { it.saveToSaveState() },
+        restore = { navEntry.viewModels.getModel(key) { provider(it) } }
+    ),
+    init = { navEntry.viewModels.getModel(key) { provider(null) } }
+)
 
 /**
  * Provide sharedViewModel instance to provided [NavController] (default is current)
@@ -367,12 +397,21 @@ public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.remem
  * @param provider default viewModel instance provider
  */
 @Composable
-@Suppress("UNCHECKED_CAST")
 public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
     key: String,
     navController: NavController = navController(),
     provider: () -> Model
 ): Model = remember {
+    navController.sharedViewModels.getModel(key, provider)
+}
+
+// ------------------ internal utils -------------------------
+
+@Suppress("UNCHECKED_CAST")
+internal fun <Model : TiamatViewModel> MutableMap<String, TiamatViewModel>.getModel(
+    key: String,
+    provider: () -> Model
+): Model {
     val storeKey = "Model#$key"
-    navController.sharedViewModels.getOrPut(storeKey, provider) as Model
+    return getOrPut(storeKey, provider) as Model
 }

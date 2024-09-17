@@ -31,6 +31,7 @@ val ViewModelsRoot by navDestination<Unit> {
 val ViewModelsScreen1 by navDestination<Unit> {
     val navController = navController()
     val screenViewModel = rememberViewModel { ScreenViewModel() }
+    val saveableViewModel = rememberSaveableViewModel { SaveableViewModel(it) }
     val sharedViewModel = rememberSharedViewModel { SharedViewModel() }
     SimpleScreen("ViewModel's - Screen 1") {
         Column(
@@ -43,6 +44,13 @@ val ViewModelsScreen1 by navDestination<Unit> {
                     name = "ScreenViewModel",
                     hashCode = screenViewModel.hashCode(),
                     timer = timer
+                )
+                Spacer()
+                val saveableTimer by saveableViewModel.timer.collectAsState()
+                ViewModelInfoBody(
+                    name = "SaveableViewModel",
+                    hashCode = saveableViewModel.hashCode(),
+                    timer = saveableTimer
                 )
                 Spacer()
                 val sharedTimer by sharedViewModel.timer.collectAsState()
@@ -76,7 +84,7 @@ val ViewModelsScreen1 by navDestination<Unit> {
 
 val ViewModelsScreen2 by navDestination<Unit> {
     val navController = navController()
-    val sharedViewModel = rememberSharedViewModel { SharedViewModel() }
+    val sharedViewModel = rememberSharedViewModel(provider = ::SharedViewModel)
 
     SimpleScreen("ViewModel's - Screen 2") {
         Column(
@@ -91,6 +99,39 @@ val ViewModelsScreen2 by navDestination<Unit> {
     }
 }
 
+internal class SharedViewModel : TiamatViewModel() {
+    private val _timer = MutableStateFlow(0)
+    val timer = _timer.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            while (isActive) {
+                _timer.value++
+                delay(1000)
+            }
+        }
+    }
+}
+
+internal class SaveableViewModel(savedState: SavedState?) : TiamatViewModel(), Saveable {
+
+    private val _timer = MutableStateFlow(0)
+    val timer = _timer.asStateFlow()
+
+    init {
+        _timer.value = savedState?.get("count") as? Int? ?: 0
+        viewModelScope.launch {
+            while (isActive) {
+                _timer.value++
+                delay(1000)
+            }
+        }
+    }
+
+    override fun saveToSaveState() = mapOf("count" to timer.value)
+}
+
+// Will be attached to NavController
 private class ScreenViewModel : TiamatViewModel() {
     private val _timer = MutableStateFlow(0)
     private val _counter = MutableStateFlow(1)
@@ -112,20 +153,5 @@ private class ScreenViewModel : TiamatViewModel() {
 
     fun dec() {
         _counter.update { _counter.value - 1 }
-    }
-}
-
-// Will be attached to NavController
-internal class SharedViewModel : TiamatViewModel() {
-    private val _timer = MutableStateFlow(0)
-    val timer = _timer.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            while (isActive) {
-                _timer.value++
-                delay(1000)
-            }
-        }
     }
 }

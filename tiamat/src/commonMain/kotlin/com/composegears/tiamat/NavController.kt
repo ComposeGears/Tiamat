@@ -15,7 +15,7 @@ public class NavController internal constructor(
     internal val storageMode: StorageMode,
     internal val startDestination: NavEntry<*>?,
     private val destinations: Array<NavDestination<*>>,
-    savedState: Map<String, Any?>?
+    savedState: SavedState?
 ) {
 
     public companion object {
@@ -41,7 +41,7 @@ public class NavController internal constructor(
             navController.destinations.contentEquals(destinations)
 
         internal fun isSame(
-            savedState: Map<String, Any?>,
+            savedState: SavedState,
             key: String?,
             storageMode: StorageMode,
             startDestination: NavEntry<*>?,
@@ -110,11 +110,11 @@ public class NavController internal constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun restoreFromSavedState(savedState: Map<String, Any?>) {
+    private fun restoreFromSavedState(savedState: SavedState) {
         pendingEntryNavId = savedState[KEY_PENDING_ENTRY_NAV_ID] as Long
-        val currentNavEntry = (savedState[KEY_CURRENT] as? Map<String, Any?>?)
+        val currentNavEntry = (savedState[KEY_CURRENT] as? SavedState?)
             ?.let { NavEntry.restore(it, destinations) }
-        (savedState[KEY_BACKSTACK] as List<Map<String, Any?>>)
+        (savedState[KEY_BACKSTACK] as List<SavedState>)
             .mapTo(backStack) { NavEntry.restore(it, destinations) }
         setCurrentNavEntryInternal(currentNavEntry)
     }
@@ -132,7 +132,7 @@ public class NavController internal constructor(
         KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
     )
 
-    internal fun saveToSaveState(): Map<String, Any?> = when (storageMode) {
+    internal fun saveToSaveState(): SavedState = when (storageMode) {
         StorageMode.SavedState -> getFullSavedState()
         StorageMode.Memory -> getMinimalVerificationSavedState()
     }
@@ -143,7 +143,7 @@ public class NavController internal constructor(
      *
      * @return saved state
      */
-    public fun getSavedState(): Map<String, Any?> = getFullSavedState()
+    public fun getSavedState(): SavedState = getFullSavedState()
 
     /**
      * Load navController (and it's children) state from saved state
@@ -152,7 +152,7 @@ public class NavController internal constructor(
      *
      * @param savedState saved state
      */
-    public fun loadFromSavedState(savedState: Map<String, Any?>) {
+    public fun loadFromSavedState(savedState: SavedState) {
         // clear current state
         close()
         // load from saved state

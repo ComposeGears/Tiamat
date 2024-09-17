@@ -694,7 +694,7 @@ style:
     RedundantHigherOrderMapUsage:
         active: true
     RedundantVisibilityModifierRule:
-        active: true
+        active: false
     ReturnCount:
         active: true
         max: 4

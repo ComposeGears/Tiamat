@@ -29,3 +29,10 @@ public abstract class TiamatViewModel {
         }
     }
 }
+
+/**
+ * Interface for ViewModels that can be saved to a [SavedState]
+ */
+public interface Saveable {
+    public fun saveToSaveState(): SavedState
+}

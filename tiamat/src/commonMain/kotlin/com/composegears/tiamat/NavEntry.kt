@@ -15,7 +15,7 @@ public class NavEntry<Args> private constructor(
     freeArgs: Any? = null,
     navResult: Any? = null,
     savedState: Map<String, List<Any?>>? = null,
-    savedNavControllers: List<Map<String, Any?>>? = null,
+    savedNavControllers: List<SavedState>? = null,
 ) {
 
     public companion object {
@@ -28,26 +28,26 @@ public class NavEntry<Args> private constructor(
         private const val KEY_SAVED_NAV_CONTROLLERS = "savedNavControllers"
 
         internal fun restore(
-            data: Map<String, Any?>,
+            savedState: SavedState,
             destinations: Array<NavDestination<*>>,
         ): NavEntry<*> {
-            val destination = (data[KEY_NAME] as String).let { name -> destinations.first { it.name == name } }
-            return restore(data, destination)
+            val destination = (savedState[KEY_NAME] as String).let { name -> destinations.first { it.name == name } }
+            return restore(savedState, destination)
         }
 
         @Suppress("UNCHECKED_CAST")
         private fun <Args> restore(
-            data: Map<String, Any?>,
+            savedState: SavedState,
             destination: NavDestination<Args>,
         ) = NavEntry(
             destination = destination,
-            navArgs = data[KEY_NAV_ARGS] as Args,
-            freeArgs = data[KEY_FREE_ARGS],
-            navResult = data[KEY_NAV_RESULT],
-            savedState = data[KEY_SAVED_STATE] as? Map<String, List<Any?>>?,
-            savedNavControllers = data[KEY_SAVED_NAV_CONTROLLERS] as? List<Map<String, Any?>>?
+            navArgs = savedState[KEY_NAV_ARGS] as Args,
+            freeArgs = savedState[KEY_FREE_ARGS],
+            navResult = savedState[KEY_NAV_RESULT],
+            savedState = savedState[KEY_SAVED_STATE] as? Map<String, List<Any?>>?,
+            savedNavControllers = savedState[KEY_SAVED_NAV_CONTROLLERS] as? List<SavedState>?
         ).also {
-            it.navId = data[KEY_NAV_ID] as Long
+            it.navId = savedState[KEY_NAV_ID] as Long
         }
     }
 
@@ -92,7 +92,7 @@ public class NavEntry<Args> private constructor(
         navControllersStorage.saveState()
     }
 
-    internal fun saveToSaveState(): Map<String, Any?> {
+    internal fun saveToSaveState(): SavedState {
         savedStateSaver?.invoke()?.let { savedState = it }
         return mapOf(
             KEY_NAME to destination.name,

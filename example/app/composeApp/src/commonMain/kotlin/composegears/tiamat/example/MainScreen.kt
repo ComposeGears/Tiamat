@@ -28,7 +28,7 @@ val MainScreen by navDestination<Unit> {
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
-            "ViewModel/SharedViewModel" to { navController.navigate(ViewModelsRoot) },
+            "ViewModels" to { navController.navigate(ViewModelsRoot) },
             "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Custom state saver" to { navController.navigate(CustomStateSaverRoot) },
