@@ -10,12 +10,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import com.composegears.tiamat.koin.koinSaveableTiamatViewModel
 import com.composegears.tiamat.koin.koinSharedTiamatViewModel
 import com.composegears.tiamat.koin.koinTiamatViewModel
 import composegears.tiamat.example.ui.core.*
 import composegears.tiamat.sample.koin.viewmodel.KoinDetailViewModel
 import composegears.tiamat.sample.koin.viewmodel.KoinDetailViewModel.Companion.KoinDetailState.Loading
 import composegears.tiamat.sample.koin.viewmodel.KoinDetailViewModel.Companion.KoinDetailState.Success
+import composegears.tiamat.sample.koin.viewmodel.SaveableViewModel
 import composegears.tiamat.sample.koin.viewmodel.SharedViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -33,6 +35,7 @@ val KoinIntegrationScreen by navDestination<Unit> {
 
 private val KoinListScreen by navDestination<Unit> {
     val navController = navController()
+    val saveableViewModel = koinSaveableTiamatViewModel<SaveableViewModel>()
     val sharedViewModel = koinSharedTiamatViewModel<SharedViewModel>()
 
     SimpleScreen("Koin integration") {
@@ -40,8 +43,11 @@ private val KoinListScreen by navDestination<Unit> {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val timer by sharedViewModel.timer.collectAsState()
-            ViewModelInfo(hashCode = sharedViewModel.hashCode(), timer = timer)
+            val timer1 by sharedViewModel.timer.collectAsState()
+            val timer2 by saveableViewModel.timer.collectAsState()
+            ViewModelInfo("SharedViewModel", hashCode = sharedViewModel.hashCode(), timer = timer1)
+            Spacer(8.dp)
+            ViewModelInfo("SaveableViewModel", hashCode = saveableViewModel.hashCode(), timer = timer2)
             Spacer(8.dp)
             TextCaption("Pass value to detail screen")
             NextButton(
@@ -75,7 +81,7 @@ private val KoinDetailScreen by navDestination<String> {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     val timer by sharedViewModel.timer.collectAsState()
-                    ViewModelInfo(hashCode = sharedViewModel.hashCode(), timer = timer)
+                    ViewModelInfo("SharedViewModel", hashCode = sharedViewModel.hashCode(), timer = timer)
                     TextBody(text = detailState.result)
                     BackButton(onClick = navController::back)
                 }

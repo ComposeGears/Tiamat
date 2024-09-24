@@ -92,7 +92,7 @@ val ViewModelsScreen2 by navDestination<Unit> {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val sharedTimerValue by sharedViewModel.timer.collectAsState()
-            ViewModelInfo(hashCode = sharedViewModel.hashCode(), timer = sharedTimerValue)
+            ViewModelInfo("SharedViewModel", hashCode = sharedViewModel.hashCode(), timer = sharedTimerValue)
             Spacer()
             BackButton(onClick = navController::back)
         }

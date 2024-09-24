@@ -29,7 +29,7 @@ val MainScreen by navDestination<Unit> {
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
             "ViewModels" to { navController.navigate(ViewModelsRoot) },
-            "Koin (ViewModel/SharedViewModel)" to { navController.navigate(KoinIntegrationScreen) },
+            "Koin (ViewModels)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },
             "Custom state saver" to { navController.navigate(CustomStateSaverRoot) },
             "Multi-module" to { navController.navigate(MultiModuleRoot) },
