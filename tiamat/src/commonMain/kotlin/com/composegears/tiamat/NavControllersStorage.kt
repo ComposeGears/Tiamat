@@ -9,7 +9,7 @@ internal class NavControllersStorage {
 
     private val activeChildNavControllers = ArrayList<NavController>()
     private val savedNavControllers = ArrayList<NavController>()
-    private var savedState = mutableListOf<Map<String, Any?>>()
+    private var savedState = mutableListOf<SavedState>()
 
     fun restoreOrCreate(
         key: String?,
@@ -85,13 +85,13 @@ internal class NavControllersStorage {
         savedNavControllers.addAll(activeChildNavControllers)
     }
 
-    fun saveToSaveState(): List<Map<String, Any?>> {
+    fun saveToSaveState(): List<SavedState> {
         return (activeChildNavControllers + savedNavControllers)
             .toSet()
             .map { it.saveToSaveState() } + savedState
     }
 
-    fun restoreFromSavedState(savedState: List<Map<String, Any?>>?) {
+    fun restoreFromSavedState(savedState: List<SavedState>?) {
         this.savedState = savedState?.toMutableList() ?: mutableListOf()
     }
 

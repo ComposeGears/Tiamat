@@ -20,11 +20,11 @@ internal expect fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
  * Platform provided system back handler
  */
 @Composable
-expect fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit)
+public expect fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit)
 
 /**
  * We can not call T::class in @Composable functions,
  *
  * workaround is to call it outside of @Composable via regular inline fun
  */
-expect inline fun <reified T : Any> className(): String
+public expect inline fun <reified T : Any> className(): String

@@ -34,10 +34,10 @@ fun ColumnScope.ViewModelInfoBody(name: String, hashCode: Int, timer: Int) {
 }
 
 @Composable
-fun ViewModelInfo(hashCode: Int, timer: Int) {
+fun ViewModelInfo(name: String, hashCode: Int, timer: Int) {
     ViewModelInfoCard {
         ViewModelInfoBody(
-            name = "SharedViewModel",
+            name = name,
             hashCode = hashCode,
             timer = timer
         )

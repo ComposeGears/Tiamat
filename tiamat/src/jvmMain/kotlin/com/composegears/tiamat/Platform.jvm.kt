@@ -2,9 +2,11 @@ package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalNavBackHandler = staticCompositionLocalOf { NavBackHandler() }
+public val LocalNavBackHandler: ProvidableCompositionLocal<NavBackHandler> =
+    staticCompositionLocalOf { NavBackHandler() }
 
 /**
  * Global in-memory data storage
@@ -31,7 +33,7 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
  * Platform provided system back handler
  */
 @Composable
-actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
+public actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     if (enabled) {
         val backHandler = LocalNavBackHandler.current
         DisposableEffect(onBackEvent) {
@@ -48,4 +50,4 @@ actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
  *
  * workaround is to call it outside of @Composable via regular inline fun
  */
-actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!
+public actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!

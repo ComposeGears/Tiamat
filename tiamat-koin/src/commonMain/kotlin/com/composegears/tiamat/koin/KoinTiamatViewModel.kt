@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.composegears.tiamat.*
 import org.koin.compose.currentKoinScope
 import org.koin.core.parameter.ParametersDefinition
+import org.koin.core.parameter.parametersOf
 import org.koin.core.scope.Scope
 
 /**
@@ -13,7 +14,7 @@ import org.koin.core.scope.Scope
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
 ): Model = rememberViewModel { scope.get(parameters = parameters) }
@@ -26,11 +27,53 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatVi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatViewModel(
     key: String,
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
 ): Model = rememberViewModel(key = key) { scope.get(parameters = parameters) }
+
+/**
+ * Resolve saveable TiamatViewModel from Koin
+ *
+ * @param scope current Koin scope
+ * @param parameters injected parameters into ViewModel
+ */
+@Composable
+@Suppress("SpreadOperator")
+public inline fun <reified Model> NavDestinationScope<*>.koinSaveableTiamatViewModel(
+    scope: Scope = currentKoinScope(),
+    noinline parameters: ParametersDefinition? = null,
+): Model where Model : TiamatViewModel, Model : Saveable =
+    rememberSaveableViewModel { savedState ->
+        val params = buildList {
+            add(savedState ?: emptyMap<String, Any?>())
+            parameters?.invoke()?.values?.let(::addAll)
+        }.toTypedArray()
+        scope.get(parameters = { parametersOf(*params) })
+    }
+
+/**
+ * Resolve saveable TiamatViewModel from Koin
+ *
+ * @param key provides unique key to create ViewModel
+ * @param scope current Koin scope
+ * @param parameters injected parameters into ViewModel
+ */
+@Composable
+@Suppress("SpreadOperator")
+public inline fun <reified Model> NavDestinationScope<*>.koinSaveableTiamatViewModel(
+    key: String,
+    scope: Scope = currentKoinScope(),
+    noinline parameters: ParametersDefinition? = null,
+): Model where Model : TiamatViewModel, Model : Saveable =
+    rememberSaveableViewModel(key = key) { savedState ->
+        val params = buildList {
+            add(savedState ?: emptyMap<String, Any?>())
+            parameters?.invoke()?.values?.let(::addAll)
+        }.toTypedArray()
+        scope.get(parameters = { parametersOf(*params) })
+    }
 
 /**
  * Resolve shared instance of TiamatViewModel from Koin to provided [NavController] (default is current)
@@ -40,7 +83,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinTiamatVi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
     navController: NavController = navController(),
     scope: Scope = currentKoinScope(),
     noinline parameters: ParametersDefinition? = null,
@@ -55,7 +98,7 @@ inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTi
  * @param parameters injected parameters into ViewModel
  */
 @Composable
-inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
+public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.koinSharedTiamatViewModel(
     key: String,
     navController: NavController = navController(),
     scope: Scope = currentKoinScope(),

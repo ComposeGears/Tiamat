@@ -30,7 +30,7 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
  * Platform provided system back handler
  */
 @Composable
-actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
+public actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
     BackHandler(enabled, onBackEvent)
 }
 
@@ -39,4 +39,4 @@ actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
  *
  * workaround is to call it outside of @Composable via regular inline fun
  */
-actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!
+public actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!
