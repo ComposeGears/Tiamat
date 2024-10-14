@@ -139,11 +139,14 @@ public fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> AnimatedVisibilityScope.DestinationContent(entry: NavEntry<Args>) {
+private fun <Args> AnimatedVisibilityScope.DestinationContent(
+    entry: NavEntry<Args>
+) {
     val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
     with(entry.destination) {
         scope.PlatformContentWrapper {
             Content()
+            extensions.onEach { ext -> ext.extensionContent(scope) }
         }
     }
 }
@@ -254,6 +257,12 @@ public fun Navigation(
 @Suppress("UnusedReceiverParameter")
 public fun NavDestinationScope<*>.navController(): NavController =
     LocalNavController.current ?: error("not attached to navController")
+
+/**
+ * Provides current [NavEntry] instance
+ */
+@Composable
+public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
 
 /**
  * Provides nav arguments passed into navigate forward function for current destination
