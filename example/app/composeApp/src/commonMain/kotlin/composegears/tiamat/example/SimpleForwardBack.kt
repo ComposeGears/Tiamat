@@ -10,6 +10,7 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import composegears.tiamat.example.extensions.PathExtension
 import composegears.tiamat.example.ui.core.*
 
 @Composable
@@ -49,18 +50,18 @@ private fun NavDestinationScope<*>.Screen(
     }
 }
 
-val SimpleForwardBackRoot by navDestination<Unit> {
+val SimpleForwardBackRoot by navDestination<Unit>(PathExtension()) {
     Screen("Simple navigation: forward/back", SimpleForwardBackRootScreen1)
 }
 
-val SimpleForwardBackRootScreen1 by navDestination<Unit> {
+val SimpleForwardBackRootScreen1 by navDestination<Unit>(PathExtension()) {
     Screen("Simple navigation: forward/back (screen 1)", SimpleForwardBackRootScreen2)
 }
 
-val SimpleForwardBackRootScreen2 by navDestination<Unit> {
+val SimpleForwardBackRootScreen2 by navDestination<Unit>(PathExtension()) {
     Screen("Simple navigation: forward/back (screen 2)", SimpleForwardBackRootScreen3)
 }
 
-val SimpleForwardBackRootScreen3 by navDestination<Unit> {
+val SimpleForwardBackRootScreen3 by navDestination<Unit>(PathExtension()) {
     Screen("Simple navigation: forward/back (screen 3)", null)
 }

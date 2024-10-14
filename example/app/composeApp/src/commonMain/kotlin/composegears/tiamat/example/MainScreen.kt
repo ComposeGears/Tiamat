@@ -14,10 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import composegears.tiamat.example.extensions.PathExtension
 import composegears.tiamat.example.multimodule.MultiModuleRoot
 import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
-val MainScreen by navDestination<Unit> {
+val MainScreen by navDestination<Unit>(PathExtension("./")) {
     val navController = navController()
     val content = remember {
         listOf(

@@ -56,6 +56,7 @@ internal open class NavDestinationScopeImpl<Args>(
  */
 public interface NavDestination<Args> {
     public val name: String
+    public val extensions: Array<out Extension<Args>>
 
     @Composable
     public fun NavDestinationScope<Args>.Content()
@@ -66,6 +67,7 @@ public interface NavDestination<Args> {
  */
 internal open class NavDestinationImpl<Args>(
     override val name: String,
+    override val extensions: Array<out Extension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit
 ) : NavDestination<Args> {
 
@@ -79,12 +81,13 @@ internal open class NavDestinationImpl<Args>(
  * Nav destination delegate impl
  */
 public class NavDestinationInstanceDelegate<Args>(
-    private val content: @Composable NavDestinationScope<Args>.() -> Unit
+    private val extensions: Array<out Extension<Args>>,
+    private val content: @Composable NavDestinationScope<Args>.() -> Unit,
 ) : ReadOnlyProperty<Nothing?, NavDestination<Args>> {
     private var destination: NavDestination<Args>? = null
 
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): NavDestination<Args> {
-        if (destination == null) destination = NavDestination(property.name, content)
+        if (destination == null) destination = NavDestination(property.name, extensions, content)
         return destination!!
     }
 }
@@ -96,8 +99,9 @@ public class NavDestinationInstanceDelegate<Args>(
  */
 public fun <Args> NavDestination(
     name: String,
+    extensions: Array<out Extension<Args>> = emptyArray(),
     content: @Composable NavDestinationScope<Args>.() -> Unit
-): NavDestination<Args> = NavDestinationImpl(name, content)
+): NavDestination<Args> = NavDestinationImpl(name, extensions, content)
 
 /**
  * Nav destination delegate, destination name will be same as property name
@@ -105,5 +109,6 @@ public fun <Args> NavDestination(
  * @param content content builder lambda
  */
 public fun <Args> navDestination(
+    vararg extensions: Extension<Args> = emptyArray(),
     content: @Composable NavDestinationScope<Args>.() -> Unit
-): NavDestinationInstanceDelegate<Args> = NavDestinationInstanceDelegate(content)
+): NavDestinationInstanceDelegate<Args> = NavDestinationInstanceDelegate(extensions, content)
