@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.CanvasBasedWindow
+import androidx.compose.ui.window.ComposeViewport
 import composegears.tiamat.sample.koin.KoinLib
 
 external fun onLoadFinished()
@@ -21,7 +21,7 @@ external fun onLoadFinished()
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     KoinLib.start()
-    CanvasBasedWindow(canvasElementId = "TiamatTarget") {
+    ComposeViewport(viewportContainerId = "TiamatTarget") {
         LaunchedEffect(Unit) {
             onLoadFinished()
         }
@@ -32,7 +32,7 @@ fun main() {
                 color = Color.White,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                text = "Pre Alpha (Wasm)",
+                text = "Wasm Alpha",
             )
         }
     }
