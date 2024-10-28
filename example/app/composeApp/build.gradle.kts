@@ -38,12 +38,14 @@ kotlin {
     wasmJs {
         moduleName = "tiamatApp"
         browser {
+            //todo add historyFallbackApi: true
             commonWebpackConfig {
                 outputFileName = "tiamatApp.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
                     static = (static ?: mutableListOf()).apply {
                         // Serve sources to debug inside browser
                         add(project.projectDir.path)
+
                     }
                 }
             }

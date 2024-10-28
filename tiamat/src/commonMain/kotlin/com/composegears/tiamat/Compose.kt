@@ -117,13 +117,16 @@ public fun <T> rememberNavController(
     )
     // create/restore nav controller from storage
     val navController = remember {
-        navControllersStorage.restoreOrCreate(
-            key = key,
-            parent = parent,
-            storageMode = finalStorageMode,
-            startDestination = startDestination,
-            destinations = destinations
-        ).apply(configuration)
+        navControllersStorage
+            .restoreOrCreate(
+                key = key,
+                parent = parent,
+                storageMode = finalStorageMode,
+                startDestination = startDestination,
+                destinations = destinations
+            )
+            .apply(configuration)
+            .also { it.followRoute() }
     }
     // attach/detach to parent storage
     DisposableEffect(navController) {
@@ -236,9 +239,12 @@ public fun Navigation(
             if (transition.isRunning) Overlay()
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
+                // invalidate navController routing state
+                navController.invalidateRoute()
+                // save state handle
                 onDispose {
                     it.savedStateSaver = null
-                    // entry goes into backstack, store active subNavController
+                    // entry goes into backstack, save active subNavController
                     if (it in navController.getBackStack() || it == navController.currentNavEntry) {
                         it.saveState(saveRegistry.performSave())
                     } else {

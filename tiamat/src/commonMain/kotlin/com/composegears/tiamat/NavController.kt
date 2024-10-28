@@ -76,6 +76,7 @@ public class NavController internal constructor(
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
+    private var pendingRoute: Route? = null
 
     internal var isForwardTransition = true
         private set
@@ -178,7 +179,7 @@ public class NavController internal constructor(
 
     private fun requireKnownDestination(dest: NavDestination<*>) {
         require(destinations.any { it.name == dest.name }) {
-            "${dest.name} is not declared in this nav controller"
+            "${dest.name} is not declared in the current (key = $key) nav controller"
         }
     }
 
@@ -311,6 +312,67 @@ public class NavController internal constructor(
     ) {
         replaceInternal(entry, transition)
     }
+
+    /**
+     * Navigate through provided rout
+     *
+     * @param route route to navigate by
+     */
+    @TiamatExperimentalApi
+    public fun route(route: Route) {
+        pendingRoute = route.clone()
+        followRoute()
+    }
+
+    /**
+     * Follow active/parents route or pass it to next NavController
+     */
+    internal fun followRoute() {
+        // read rote from parent if present
+        val parentRoute = parent?.pendingRoute
+        if (parentRoute?.actions?.first()?.selector?.invoke(this) == true) {
+            parent?.pendingRoute = null
+            pendingRoute = parentRoute
+        }
+        // no route -> no actions
+        pendingRoute ?: return
+        // execute action on the current nav controller
+        val currentEntry = currentNavEntry
+        pendingRoute?.actions?.removeFirstOrNull()?.action?.invoke(this)
+        if (pendingRoute?.actions?.isEmpty() == true) pendingRoute = null
+        // if the destination changed or finished -> let compose do work
+        if (pendingRoute == null || currentNavEntry !== currentEntry) return
+        // no navigation happen -> search for active navController to route
+        currentNavEntry
+            ?.navControllersStorage
+            ?.getActiveNavControllers()
+            ?.firstOrNull { pendingRoute?.actions?.first()?.selector?.invoke(this) == true }
+            ?.let {
+                it.pendingRoute = pendingRoute
+                pendingRoute = null
+                it.followRoute()
+            }
+            ?: invalidateRoute() // if no one can handle route -> invalidate
+    }
+
+    /**
+     * We need ether close unfinished rout or else indicate path error
+     *
+     * Should be called after child destination being instantiated
+     */
+    internal fun invalidateRoute() {
+        if (pendingRoute?.failStrategy == Route.FailStrategy.Throw)
+            error(
+                listOfNotNull(
+                    "Route not finished, failed to find next controller to execute:",
+                    key?.let { "\tNavController: $it" },
+                    current?.name?.let { "In the destination: $it" },
+                    pendingRoute?.actions?.firstOrNull()?.description?.let { "\tUnable to: $it" }
+                ).joinToString("\n")
+            )
+        pendingRoute = null
+    }
+
 
     /**
      * Close current destination. Navigate to previous destination from backstack.

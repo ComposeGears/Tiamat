@@ -79,6 +79,8 @@ internal class NavControllersStorage {
         activeChildNavControllers.remove(navController)
     }
 
+    fun getActiveNavControllers(): List<NavController> = activeChildNavControllers
+
     fun saveState() {
         savedState.clear()
         savedNavControllers.clear()

@@ -1,5 +1,10 @@
 package com.composegears.tiamat
 
+
+@Retention(AnnotationRetention.BINARY)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING, message = "Under development feature")
+public annotation class TiamatExperimentalApi
+
 /**
  * SaveState declaration alias
  */
