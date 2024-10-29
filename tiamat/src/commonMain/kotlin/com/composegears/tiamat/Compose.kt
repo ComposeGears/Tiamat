@@ -126,7 +126,7 @@ public fun <T> rememberNavController(
                 destinations = destinations
             )
             .apply(configuration)
-            .also { it.followRoute() }
+            .apply { followRoute() }
     }
     // attach/detach to parent storage
     DisposableEffect(navController) {
@@ -149,7 +149,7 @@ private fun <Args> AnimatedVisibilityScope.DestinationContent(
     with(entry.destination) {
         scope.PlatformContentWrapper {
             Content()
-            extensions.onEach { ext -> ext.extensionContent(scope) }
+            extensions.onEach { ext -> ext.ExtensionContent(scope) }
         }
     }
 }

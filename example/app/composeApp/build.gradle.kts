@@ -38,7 +38,6 @@ kotlin {
     wasmJs {
         moduleName = "tiamatApp"
         browser {
-            //todo add historyFallbackApi: true
             commonWebpackConfig {
                 outputFileName = "tiamatApp.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {

@@ -7,7 +7,7 @@ public class Route private constructor(
     internal val actions = ArrayList(actions)
 
     public companion object {
-        //todo add doc
+        // todo add doc
         public fun start(
             failStrategy: FailStrategy = FailStrategy.Ignore,
             description: String? = null,
@@ -15,7 +15,7 @@ public class Route private constructor(
         ): Route = Route(failStrategy).next(description, { true }, actions)
     }
 
-    //todo add doc
+    // todo add doc
     public fun next(
         description: String? = null,
         selector: NavController.() -> Boolean = { true },

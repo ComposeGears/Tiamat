@@ -11,10 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
-import composegears.tiamat.example.ui.core.BackButton
-import composegears.tiamat.example.ui.core.NextButton
-import composegears.tiamat.example.ui.core.SimpleScreen
-import composegears.tiamat.example.ui.core.TextButton
+import composegears.tiamat.example.ui.core.*
 
 data class MasterItem(
     val name: String
@@ -35,7 +32,7 @@ class Model : TiamatViewModel() {
     )
 }
 
-val TwoPaneResizableRoot by navDestination<Unit> {
+val TwoPaneResizableRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("2 Pane") {
         BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val model = rememberViewModel { Model() }

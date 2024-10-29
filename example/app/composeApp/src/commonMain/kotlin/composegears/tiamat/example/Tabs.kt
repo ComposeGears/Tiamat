@@ -18,6 +18,7 @@ import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.BackButton
 import composegears.tiamat.example.ui.core.NextButton
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 @Composable
 private fun Screen(
@@ -70,7 +71,7 @@ private fun NavDestinationScope<*>.TabScreen(
     }
 }
 
-val SimpleTabsRoot by navDestination<Unit> {
+val SimpleTabsRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("BottomBar Tabs + custom back") {
         val tabNavController = rememberNavController(
             key = "tabs",

@@ -19,8 +19,9 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.SimpleScreen
 import composegears.tiamat.example.ui.core.TextCaption
+import composegears.tiamat.example.ui.core.webPathExtension
 
-val PlatformExamplesScreen by navDestination<Unit> {
+val PlatformExamplesScreen by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
 
     SimpleScreen("Platform ${platformExamplesConfig.platformName}") {

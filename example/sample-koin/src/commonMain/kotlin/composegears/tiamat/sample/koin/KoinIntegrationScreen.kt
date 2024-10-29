@@ -21,7 +21,7 @@ import composegears.tiamat.sample.koin.viewmodel.SaveableViewModel
 import composegears.tiamat.sample.koin.viewmodel.SharedViewModel
 import org.koin.core.parameter.parametersOf
 
-val KoinIntegrationScreen by navDestination<Unit> {
+val KoinIntegrationScreen by navDestination<Unit>(webPathExtension()) {
     val navController = rememberNavController(
         key = "KoinNavController",
         startDestination = KoinListScreen,

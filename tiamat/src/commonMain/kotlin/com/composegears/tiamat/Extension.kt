@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 public abstract class Extension<Args> {
 
     @Composable
-    internal fun extensionContent(scope: NavDestinationScope<Args>) {
+    internal fun ExtensionContent(scope: NavDestinationScope<Args>) {
         scope.content()
     }
 
@@ -14,4 +14,4 @@ public abstract class Extension<Args> {
 }
 
 public inline fun <reified P : Extension<*>> NavDestination<*>.ext(): P? =
-    extensions.firstOrNull { it is P } as P?
+    extensions.firstOrNull { it is P } as? P?

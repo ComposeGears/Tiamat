@@ -1,8 +1,8 @@
-package composegears.tiamat.example.extensions
+package composegears.tiamat.example.ui.core
 
 import com.composegears.tiamat.Extension
 
-expect class PathExtension<T>(
+expect fun <T> webPathExtension(
     path: String? = null,
     argsToPathTransform: (T) -> String? = { null }
-) : Extension<T>
+): Extension<T>?

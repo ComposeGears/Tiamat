@@ -1,11 +1,16 @@
-package composegears.tiamat.example.extensions
+package composegears.tiamat.example.ui.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.composegears.tiamat.*
 import kotlinx.browser.window
 
-actual class PathExtension<T> actual constructor(
+actual fun <T> webPathExtension(
+    path: String?,
+    argsToPathTransform: (T) -> String?
+): Extension<T>? = PathExtension(path, argsToPathTransform)
+
+class PathExtension<T>(
     private val path: String?,
     private val argsToPathTransform: (T) -> String?
 ) : Extension<T>() {

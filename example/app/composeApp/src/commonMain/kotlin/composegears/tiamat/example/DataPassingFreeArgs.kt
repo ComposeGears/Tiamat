@@ -16,10 +16,11 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.BackButton
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 class FreeArgsData
 
-val DataPassingFreeArgsRoot by navDestination<Unit> {
+val DataPassingFreeArgsRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Data passing: free args") {
         Column(

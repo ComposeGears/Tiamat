@@ -19,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navArgsOrNull
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import composegears.tiamat.example.extensions.PathExtension
 import composegears.tiamat.example.ui.core.BackButton
 import composegears.tiamat.example.ui.core.CircleButton
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 data class NavArgsData(val counter: Int)
 
-val DataPassingParamsRoot by navDestination<Unit>(PathExtension()) {
+val DataPassingParamsRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Data passing: Params") {
         var counter by rememberSaveable { mutableIntStateOf(0) }
@@ -50,7 +50,7 @@ val DataPassingParamsRoot by navDestination<Unit>(PathExtension()) {
 }
 
 val DataPassingParamsScreen by navDestination<NavArgsData>(
-    PathExtension(argsToPathTransform = { "counter=${it.counter}" })
+    webPathExtension(argsToPathTransform = { "counter=${it.counter}" })
 ) {
     val navController = navController()
     val args = navArgsOrNull()

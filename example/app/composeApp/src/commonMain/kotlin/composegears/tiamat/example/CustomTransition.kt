@@ -16,7 +16,7 @@ import com.composegears.tiamat.navigationSlideInOut
 import com.composegears.tiamat.navigationSlideOutToBottom
 import composegears.tiamat.example.ui.core.*
 
-val CustomTransitionRoot by navDestination<Unit> {
+val CustomTransitionRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Custom transition") {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

@@ -226,6 +226,19 @@ public class NavController internal constructor(
     }
 
     /**
+     * Place current destination in back stack and open copy of entry
+     *
+     * @param entry entry to open
+     * @param transition transition animation
+     */
+    public fun <Args> navigate(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null
+    ) {
+        navigate(entry.destination, entry.navArgs, entry.freeArgs, transition)
+    }
+
+    /**
      * Place current destination in back stack and open new one
      *
      * @param dest destination to open
@@ -239,22 +252,9 @@ public class NavController internal constructor(
         freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
-        navigate(NavEntry(dest, navArgs, freeArgs), transition)
-    }
-
-    /**
-     * Place current destination in back stack and open new one
-     *
-     * @param entry entry to open
-     * @param transition transition animation
-     */
-    public fun <Args> navigate(
-        entry: NavEntry<Args>,
-        transition: ContentTransform? = null
-    ) {
-        requireKnownDestination(entry.destination)
+        requireKnownDestination(dest)
         currentNavEntry?.let { backStack.add(it) }
-        replaceInternal(entry, transition)
+        replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
     }
 
     /**
@@ -284,6 +284,19 @@ public class NavController internal constructor(
     }
 
     /**
+     * Close & remove current destination and open copy of entry
+     *
+     * @param entry entry to open
+     * @param transition transition animation
+     */
+    public fun <Args> replace(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null
+    ) {
+        replace(entry.destination, entry.navArgs, entry.freeArgs, transition)
+    }
+
+    /**
      * Close & remove current destination and open new one
      *
      * @param dest destination to open
@@ -297,20 +310,7 @@ public class NavController internal constructor(
         freeArgs: Any? = null,
         transition: ContentTransform? = null
     ) {
-        replace(NavEntry(dest, navArgs, freeArgs), transition)
-    }
-
-    /**
-     * Close & remove current destination and open new one
-     *
-     * @param entry entry to open
-     * @param transition transition animation
-     */
-    public fun <Args> replace(
-        entry: NavEntry<Args>,
-        transition: ContentTransform? = null
-    ) {
-        replaceInternal(entry, transition)
+        replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
     }
 
     /**
@@ -372,7 +372,6 @@ public class NavController internal constructor(
             )
         pendingRoute = null
     }
-
 
     /**
      * Close current destination. Navigate to previous destination from backstack.
@@ -442,6 +441,16 @@ public class NavController internal constructor(
     }
 
     public inner class BackStackEditScope internal constructor() {
+        /**
+         * Add a copy of entry into backstack
+         *
+         * @param entry backstack entry
+         */
+        public fun <Args> add(
+            entry: NavEntry<Args>,
+        ) {
+            add(entry.destination, entry.navArgs, entry.freeArgs)
+        }
 
         /**
          * Add destination into backstack
@@ -455,18 +464,20 @@ public class NavController internal constructor(
             navArgs: Args? = null,
             freeArgs: Any? = null,
         ) {
-            add(NavEntry(dest, navArgs, freeArgs))
+            backStack.add(NavEntry(dest, navArgs, freeArgs))
         }
 
         /**
-         * Add destination into backstack
+         * Add a copy of entry into backstack at specific position
          *
+         * @param index position
          * @param entry backstack entry
          */
         public fun <Args> add(
+            index: Int,
             entry: NavEntry<Args>,
         ) {
-            backStack.add(entry)
+            add(index, entry.destination, entry.navArgs, entry.freeArgs)
         }
 
         /**
@@ -483,20 +494,7 @@ public class NavController internal constructor(
             navArgs: Args? = null,
             freeArgs: Any? = null,
         ) {
-            add(index, NavEntry(dest, navArgs, freeArgs))
-        }
-
-        /**
-         * Add destination into backstack at specific position
-         *
-         * @param index position
-         * @param entry backstack entry
-         */
-        public fun <Args> add(
-            index: Int,
-            entry: NavEntry<Args>,
-        ) {
-            backStack.add(index, entry)
+            backStack.add(index, NavEntry(dest, navArgs, freeArgs))
         }
 
         /**
