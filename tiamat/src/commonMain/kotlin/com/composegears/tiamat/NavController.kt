@@ -164,6 +164,16 @@ public class NavController internal constructor(
     }
 
     /**
+     * Search for specific destination from list of known destinations
+     *
+     * @param predicate the predicate to match a destinations
+     *
+     * @return the first destination matching [predicate] or null
+     */
+    public fun findDestination(predicate: (NavDestination<*>) -> Boolean): NavDestination<*>? =
+        destinations.find(predicate)
+
+    /**
      * @param key nav controller's key to search for
      *
      * @return NavController instance with same key (current or one of parents), null if no one match

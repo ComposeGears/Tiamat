@@ -18,7 +18,7 @@ import composegears.tiamat.example.multimodule.MultiModuleRoot
 import composegears.tiamat.example.ui.core.webPathExtension
 import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
-val MainScreen by navDestination<Unit>(webPathExtension("./")) {
+val MainScreen by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     val content = remember {
         listOf(

@@ -50,7 +50,10 @@ val DataPassingParamsRoot by navDestination<Unit>(webPathExtension()) {
 }
 
 val DataPassingParamsScreen by navDestination<NavArgsData>(
-    webPathExtension(argsToPathTransform = { "counter=${it.counter}" })
+    webPathExtension(
+        argsToPathTransform = { "counter=${it.counter}" },
+        pathToArgsTransform = { NavArgsData(it.substringAfter("counter=").toInt()) }
+    )
 ) {
     val navController = navController()
     val args = navArgsOrNull()

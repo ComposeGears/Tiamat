@@ -17,8 +17,8 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
-import composegears.tiamat.example.extensions.webPathExtension
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 // Root - knows about Feature1 and Feature2
 // Feature1 - knows about Feature2.
