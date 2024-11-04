@@ -6,6 +6,7 @@ public final class com/composegears/tiamat/ComposeKt {
 	public static final fun navArgs (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
 	public static final fun navArgsOrNull (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
 	public static final fun navController (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/NavController;
+	public static final fun navEntry (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/NavEntry;
 	public static final fun navResult (Lcom/composegears/tiamat/NavDestinationScope;)Ljava/lang/Object;
 	public static final fun rememberNavController (Ljava/lang/String;Lcom/composegears/tiamat/StorageMode;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;[Lcom/composegears/tiamat/NavDestination;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/NavController;
 	public static final fun rememberNavController (Ljava/lang/String;Lcom/composegears/tiamat/StorageMode;Lcom/composegears/tiamat/NavDestination;[Lcom/composegears/tiamat/NavDestination;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/NavController;
@@ -13,6 +14,12 @@ public final class com/composegears/tiamat/ComposeKt {
 	public static final fun rememberSaveableViewModel (Lcom/composegears/tiamat/NavDestinationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/TiamatViewModel;
 	public static final fun rememberSharedViewModel (Lcom/composegears/tiamat/NavDestinationScope;Ljava/lang/String;Lcom/composegears/tiamat/NavController;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/TiamatViewModel;
 	public static final fun rememberViewModel (Lcom/composegears/tiamat/NavDestinationScope;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/TiamatViewModel;
+}
+
+public abstract class com/composegears/tiamat/Extension {
+	public static final field $stable I
+	public fun <init> ()V
+	public abstract fun content (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class com/composegears/tiamat/NavContentTransformKt {
@@ -31,6 +38,7 @@ public final class com/composegears/tiamat/NavController {
 	public static synthetic fun back$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;ZLandroidx/compose/animation/ContentTransform;ILjava/lang/Object;)Z
 	public static synthetic fun back$default (Lcom/composegears/tiamat/NavController;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)Z
 	public final fun editBackStack (Lkotlin/jvm/functions/Function1;)V
+	public final fun findDestination (Lkotlin/jvm/functions/Function1;)Lcom/composegears/tiamat/NavDestination;
 	public final fun findNavController (Ljava/lang/String;)Lcom/composegears/tiamat/NavController;
 	public final fun getBackStack ()Ljava/util/List;
 	public final fun getCanGoBack ()Z
@@ -41,18 +49,25 @@ public final class com/composegears/tiamat/NavController {
 	public final fun getSavedState ()Ljava/util/Map;
 	public final fun loadFromSavedState (Ljava/util/Map;)V
 	public final fun navigate (Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;)V
+	public final fun navigate (Lcom/composegears/tiamat/NavEntry;Landroidx/compose/animation/ContentTransform;)V
 	public static synthetic fun navigate$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
+	public static synthetic fun navigate$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavEntry;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
 	public final fun popToTop (Lcom/composegears/tiamat/NavDestination;Landroidx/compose/animation/ContentTransform;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun popToTop$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavDestination;Landroidx/compose/animation/ContentTransform;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun replace (Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;)V
+	public final fun replace (Lcom/composegears/tiamat/NavEntry;Landroidx/compose/animation/ContentTransform;)V
 	public static synthetic fun replace$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
+	public static synthetic fun replace$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavEntry;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
+	public final fun route (Lcom/composegears/tiamat/Route;)V
 	public final fun setPendingBackTransition (Landroidx/compose/animation/ContentTransform;)V
 	public static synthetic fun setPendingBackTransition$default (Lcom/composegears/tiamat/NavController;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
 }
 
 public final class com/composegears/tiamat/NavController$BackStackEditScope {
 	public final fun add (ILcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;)V
+	public final fun add (ILcom/composegears/tiamat/NavEntry;)V
 	public final fun add (Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;)V
+	public final fun add (Lcom/composegears/tiamat/NavEntry;)V
 	public static synthetic fun add$default (Lcom/composegears/tiamat/NavController$BackStackEditScope;ILcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)V
 	public static synthetic fun add$default (Lcom/composegears/tiamat/NavController$BackStackEditScope;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)V
 	public final fun clear ()V
@@ -67,19 +82,22 @@ public final class com/composegears/tiamat/NavController$Companion {
 
 public abstract interface class com/composegears/tiamat/NavDestination {
 	public abstract fun Content (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun getExtensions ()Ljava/util/List;
 	public abstract fun getName ()Ljava/lang/String;
 }
 
 public final class com/composegears/tiamat/NavDestinationInstanceDelegate : kotlin/properties/ReadOnlyProperty {
 	public static final field $stable I
-	public fun <init> (Lkotlin/jvm/functions/Function3;)V
+	public fun <init> (Ljava/util/List;Lkotlin/jvm/functions/Function3;)V
 	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public fun getValue (Ljava/lang/Void;Lkotlin/reflect/KProperty;)Lcom/composegears/tiamat/NavDestination;
 }
 
 public final class com/composegears/tiamat/NavDestinationKt {
-	public static final fun NavDestination (Ljava/lang/String;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/NavDestination;
-	public static final fun navDestination (Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/NavDestinationInstanceDelegate;
+	public static final fun NavDestination (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/NavDestination;
+	public static synthetic fun NavDestination$default (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lcom/composegears/tiamat/NavDestination;
+	public static final fun navDestination ([Lcom/composegears/tiamat/Extension;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/NavDestinationInstanceDelegate;
+	public static synthetic fun navDestination$default ([Lcom/composegears/tiamat/Extension;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lcom/composegears/tiamat/NavDestinationInstanceDelegate;
 }
 
 public abstract class com/composegears/tiamat/NavDestinationScope : androidx/compose/animation/AnimatedVisibilityScope {
@@ -110,6 +128,26 @@ public final class com/composegears/tiamat/Platform_androidKt {
 	public static final fun NavBackHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
+public final class com/composegears/tiamat/Route {
+	public static final field $stable I
+	public static final field Companion Lcom/composegears/tiamat/Route$Companion;
+	public final fun next (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lcom/composegears/tiamat/Route;
+	public static synthetic fun next$default (Lcom/composegears/tiamat/Route;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/composegears/tiamat/Route;
+}
+
+public final class com/composegears/tiamat/Route$Companion {
+	public final fun start (Lcom/composegears/tiamat/Route$FailStrategy;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lcom/composegears/tiamat/Route;
+	public static synthetic fun start$default (Lcom/composegears/tiamat/Route$Companion;Lcom/composegears/tiamat/Route$FailStrategy;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lcom/composegears/tiamat/Route;
+}
+
+public final class com/composegears/tiamat/Route$FailStrategy : java/lang/Enum {
+	public static final field Ignore Lcom/composegears/tiamat/Route$FailStrategy;
+	public static final field Throw Lcom/composegears/tiamat/Route$FailStrategy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/composegears/tiamat/Route$FailStrategy;
+	public static fun values ()[Lcom/composegears/tiamat/Route$FailStrategy;
+}
+
 public abstract interface class com/composegears/tiamat/Saveable {
 	public abstract fun saveToSaveState ()Ljava/util/Map;
 }
@@ -120,6 +158,9 @@ public final class com/composegears/tiamat/StorageMode : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lcom/composegears/tiamat/StorageMode;
 	public static fun values ()[Lcom/composegears/tiamat/StorageMode;
+}
+
+public abstract interface annotation class com/composegears/tiamat/TiamatExperimentalApi : java/lang/annotation/Annotation {
 }
 
 public abstract class com/composegears/tiamat/TiamatViewModel {
