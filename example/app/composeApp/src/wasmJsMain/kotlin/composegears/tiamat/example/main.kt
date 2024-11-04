@@ -34,7 +34,7 @@ fun main() {
         Box {
             App(
                 controllerConfig = { nc ->
-                    //this is !!!VERY!!! simple & primitive way to handle web-navigation
+                    // this is !!!VERY!!! simple & primitive way to handle web-navigation
                     // let main screen's ext to navigate if needed
                     nc.current?.ext<WebPathExtension<*>>()?.navigate(nc, path)
                 },

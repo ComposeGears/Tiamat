@@ -10,7 +10,7 @@ actual fun <T> webPathExtension(
     pathToArgsTransform: (String) -> T?
 ): Extension<T>? = WebPathExtension(argsToPathTransform, pathToArgsTransform)
 
-//this is !!!VERY!!! simple & primitive way to handle web-navigation
+// this is !!!VERY!!! simple & primitive way to handle web-navigation
 class WebPathExtension<T>(
     private val argsToPathTransform: (T) -> String?,
     private val pathToArgsTransform: (String) -> T?
@@ -30,7 +30,6 @@ class WebPathExtension<T>(
         val args = parts.getOrNull(1)
         val dest = navController.findDestination { it.name == name } ?: return
         paresArgsAndNavigate(navController, dest, args)
-
     }
 
     private fun <T> paresArgsAndNavigate(
@@ -38,10 +37,8 @@ class WebPathExtension<T>(
         destination: NavDestination<T>,
         argsStr: String?
     ) {
-        print("paresArgsAndNavigate: $argsStr")
-        val argsValue =
-            if (argsStr == null) null
-            else destination.ext<WebPathExtension<T>>()?.pathToArgsTransform?.invoke(argsStr)
+        argsStr ?: return
+        val argsValue = destination.ext<WebPathExtension<T>>()?.pathToArgsTransform?.invoke(argsStr)
         if (navController.current != destination) navController.navigate(destination, argsValue)
     }
 
