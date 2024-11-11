@@ -43,6 +43,7 @@ fun App(
                     DataPassingFreeArgsScreen,
                     DataPassingResultRoot,
                     DataPassingResultScreen,
+                    RouteAndDeepLinks,
                     ViewModelsRoot,
                     CustomTransitionRoot,
                     CustomTransitionScreen1,

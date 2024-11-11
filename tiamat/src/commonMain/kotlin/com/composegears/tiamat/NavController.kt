@@ -13,6 +13,7 @@ public class NavController internal constructor(
     public val key: String?,
     public val parent: NavController?,
     internal val storageMode: StorageMode,
+    internal val canBeSaved: (Any) -> Boolean,
     internal val startDestination: NavEntry<*>?,
     private val destinations: Array<NavDestination<*>>,
     savedState: SavedState?
@@ -127,10 +128,22 @@ public class NavController internal constructor(
         KEY_DESTINATIONS to destinations.joinToString(DESTINATIONS_JOIN_SEPARATOR) { it.name },
     )
 
+    private fun <T> NavEntry<T>.checkIfSaveable() = apply {
+        fun test(data: Any, kind: String) {
+            if (!canBeSaved(data)) error(
+                "Unable to save ${destination.name}\n" +
+                    "$kind of type ${data::class.simpleName} is not saveable for current (key=$key) NavController"
+            )
+        }
+        navArgs?.let { test(it, "navArgs") }
+        freeArgs?.let { test(it, "freeArgs") }
+        navResult?.let { test(it, "navResult") }
+    }
+
     private fun getFullSavedState() = getMinimalVerificationSavedState() + mapOf(
         KEY_PENDING_ENTRY_NAV_ID to pendingEntryNavId,
-        KEY_CURRENT to currentNavEntry?.saveToSaveState(),
-        KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
+        KEY_CURRENT to currentNavEntry?.checkIfSaveable()?.saveToSaveState(),
+        KEY_BACKSTACK to backStack.map { it.checkIfSaveable().saveToSaveState() }
     )
 
     internal fun saveToSaveState(): SavedState = when (storageMode) {
@@ -330,39 +343,39 @@ public class NavController internal constructor(
      */
     @TiamatExperimentalApi
     public fun route(route: Route) {
-        pendingRoute = route.clone()
-        followRoute()
+//        pendingRoute = route.clone()
+//        followRoute()
     }
 
     /**
      * Follow active/parents route or pass it to next NavController
      */
     internal fun followRoute() {
-        // read rote from parent if present
-        val parentRoute = parent?.pendingRoute
-        if (parentRoute?.actions?.first()?.selector?.invoke(this) == true) {
-            parent?.pendingRoute = null
-            pendingRoute = parentRoute
-        }
-        // no route -> no actions
-        pendingRoute ?: return
-        // execute action on the current nav controller
-        val currentEntry = currentNavEntry
-        pendingRoute?.actions?.removeFirstOrNull()?.action?.invoke(this)
-        if (pendingRoute?.actions?.isEmpty() == true) pendingRoute = null
-        // if the destination changed or finished -> let compose do work
-        if (pendingRoute == null || currentNavEntry !== currentEntry) return
-        // no navigation happen -> search for active navController to route
-        currentNavEntry
-            ?.navControllersStorage
-            ?.getActiveNavControllers()
-            ?.firstOrNull { pendingRoute?.actions?.first()?.selector?.invoke(this) == true }
-            ?.let {
-                it.pendingRoute = pendingRoute
-                pendingRoute = null
-                it.followRoute()
+        /*    // read rote from parent if present
+            val parentRoute = parent?.pendingRoute
+            if (parentRoute?.actions?.first()?.selector?.invoke(this) == true) {
+                parent?.pendingRoute = null
+                pendingRoute = parentRoute
             }
-            ?: invalidateRoute() // if no one can handle route -> invalidate
+            // no route -> no actions
+            pendingRoute ?: return
+            // execute action on the current nav controller
+            val currentEntry = currentNavEntry
+            pendingRoute?.actions?.removeFirstOrNull()?.action?.invoke(this)
+            if (pendingRoute?.actions?.isEmpty() == true) pendingRoute = null
+            // if the destination changed or finished -> let compose do work
+            if (pendingRoute == null || currentNavEntry !== currentEntry) return
+            // no navigation happen -> search for active navController to route
+            currentNavEntry
+                ?.navControllersStorage
+                ?.getActiveNavControllers()
+                ?.firstOrNull { pendingRoute?.actions?.first()?.selector?.invoke(this) == true }
+                ?.let {
+                    it.pendingRoute = pendingRoute
+                    pendingRoute = null
+                    it.followRoute()
+                }
+                ?: invalidateRoute() // if no one can handle route -> invalidate*/
     }
 
     /**
@@ -371,15 +384,22 @@ public class NavController internal constructor(
      * Should be called after child destination being instantiated
      */
     internal fun invalidateRoute() {
-        if (pendingRoute?.failStrategy == Route.FailStrategy.Throw)
-            error(
-                listOfNotNull(
-                    "Route not finished, failed to find next controller to execute:",
-                    key?.let { "\tNavController: $it" },
-                    current?.name?.let { "In the destination: $it" },
-                    pendingRoute?.actions?.firstOrNull()?.description?.let { "\tUnable to: $it" }
-                ).joinToString("\n")
-            )
+        if (pendingRoute?.throwOnFail == true) error(
+            listOfNotNull(
+                "Route not finished:",
+                key?.let { "\tNavController: $it" },
+                current?.name?.let { "Destination: $it" },
+
+                pendingRoute?.actions?.firstOrNull()?.let {
+                    when (it) {
+                        is NavDestination<*> -> "Unable to open destination: ${it.name}"
+                        is NavEntry<*> -> "Unable to open entry: ${it.destination.name}"
+                        is Route.RouteDestination<*> -> "Unable to find route destination"
+                        is Route.RouteNavController -> "Unable to find nav controller"
+                    }
+                }
+            ).joinToString("\n")
+        )
         pendingRoute = null
     }
 

@@ -116,12 +116,17 @@ public fun <T> rememberNavController(
         init = { }
     )
     // create/restore nav controller from storage
+    val parentRegistry = LocalSaveableStateRegistry.current
     val navController = remember {
         navControllersStorage
             .restoreOrCreate(
                 key = key,
                 parent = parent,
                 storageMode = finalStorageMode,
+                canBeSaved = parentRegistry
+                    ?.takeIf { storageMode == StorageMode.SavedState }
+                    ?.let { it::canBeSaved }
+                    ?: { true },
                 startDestination = startDestination,
                 destinations = destinations
             )
@@ -223,7 +228,7 @@ public fun Navigation(
         if (it != null) Box {
             // gen save state
             val saveRegistry = remember(it) {
-                val registry = SaveableStateRegistry(it.savedState) { true }
+                val registry = SaveableStateRegistry(it.savedState, navController.canBeSaved)
                 it.savedStateSaver = registry::performSave
                 registry
             }

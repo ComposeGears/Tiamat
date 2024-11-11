@@ -15,6 +15,7 @@ internal class NavControllersStorage {
         key: String?,
         parent: NavController?,
         storageMode: StorageMode,
+        canBeSaved: (Any) -> Boolean,
         startDestination: NavEntry<*>?,
         destinations: Array<NavDestination<*>>,
     ): NavController {
@@ -47,6 +48,7 @@ internal class NavControllersStorage {
                 key = key,
                 parent = parent,
                 storageMode = storageMode,
+                canBeSaved = canBeSaved,
                 startDestination = startDestination,
                 destinations = destinations,
                 savedState = restoredSavedState
@@ -65,6 +67,7 @@ internal class NavControllersStorage {
             key = key,
             parent = parent,
             storageMode = storageMode,
+            canBeSaved = canBeSaved,
             startDestination = startDestination,
             destinations = destinations,
             savedState = null

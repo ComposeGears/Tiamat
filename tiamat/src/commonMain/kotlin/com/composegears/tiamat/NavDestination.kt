@@ -54,7 +54,7 @@ internal open class NavDestinationScopeImpl<Args>(
  *
  * ```
  */
-public interface NavDestination<Args> {
+public interface NavDestination<Args> : Route.Element {
     public val name: String
     public val extensions: List<Extension<Args>>
 

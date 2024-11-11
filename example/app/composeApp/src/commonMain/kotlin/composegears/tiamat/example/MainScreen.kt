@@ -29,6 +29,7 @@ val MainScreen by navDestination<Unit>(webPathExtension()) {
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
+            "Route navigation / deep-links" to { navController.navigate(RouteAndDeepLinks) },
             "ViewModels" to { navController.navigate(ViewModelsRoot) },
             "Koin (ViewModels)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },

@@ -303,6 +303,7 @@ I want to navigate true multiple nav steps in 1 call (e.g handle deeplink)
 
 ```kotlin
 // there is 2 common ideas behind handle complex navigation
+
 //---- idea 1 -----
 // create some data/param that will be passed via free args 
 // each screen handle this arg and opens `next` screen
@@ -336,7 +337,7 @@ val DeeplinkScreen by navDestination<Unit> {
 }
 
 //---- idea 2 -----
-// use rout-api
+// use route-api
 
 if (deeplink != null) {
     @OptIn(TiamatExperimentalApi::class)
