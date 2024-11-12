@@ -5,7 +5,7 @@ android-minSdk = "21"
 android-targetSdk = "34"
 
 detekt = "1.23.7"
-jetbrains-compose = "1.7.0"
+jetbrains-compose = "1.7.1"
 kotlin = "2.0.21"
 
 [libraries]
