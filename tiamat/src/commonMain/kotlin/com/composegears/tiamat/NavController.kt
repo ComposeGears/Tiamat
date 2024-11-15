@@ -2,6 +2,8 @@ package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.*
+import com.composegears.tiamat.Route.Companion.isMatchCurrentNavController
+import com.composegears.tiamat.Route.Companion.resolveNavEntry
 
 /**
  * Navigation controller class
@@ -343,39 +345,109 @@ public class NavController internal constructor(
      */
     @TiamatExperimentalApi
     public fun route(route: Route) {
-//        pendingRoute = route.clone()
-//        followRoute()
+        pendingRoute = route.clone()
+        followRoute()
     }
 
     /**
      * Follow active/parents route or pass it to next NavController
      */
+    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
     internal fun followRoute() {
-        /*    // read rote from parent if present
-            val parentRoute = parent?.pendingRoute
-            if (parentRoute?.actions?.first()?.selector?.invoke(this) == true) {
-                parent?.pendingRoute = null
-                pendingRoute = parentRoute
+        // prebuild stack
+        val pendingStack = ArrayList<NavEntry<*>>()
+
+        // read rote from parent if present & allowed
+        if (pendingRoute == null) run {
+            val parentRoute = parent?.pendingRoute ?: return@run
+            val parentElement = parentRoute.elements.firstOrNull()
+            val pendingNavEntry: NavEntry<*>? = parentElement
+                ?.takeIf { parentRoute.autoPath }
+                ?.resolveNavEntry(this)
+            val isMatchCurrentNavController = parentElement?.isMatchCurrentNavController(this) ?: false
+            if (pendingNavEntry != null || isMatchCurrentNavController) {
+                parent.pendingRoute = null
+                pendingRoute = parentRoute.clone(drop = if (isMatchCurrentNavController) 1 else 0)
             }
-            // no route -> no actions
-            pendingRoute ?: return
-            // execute action on the current nav controller
-            val currentEntry = currentNavEntry
-            pendingRoute?.actions?.removeFirstOrNull()?.action?.invoke(this)
-            if (pendingRoute?.actions?.isEmpty() == true) pendingRoute = null
-            // if the destination changed or finished -> let compose do work
-            if (pendingRoute == null || currentNavEntry !== currentEntry) return
-            // no navigation happen -> search for active navController to route
+            if (pendingNavEntry != null) pendingStack.add(pendingNavEntry)
+        }
+
+        // no route -> no actions
+        val pendingRoute = pendingRoute ?: return
+
+        // build pending stack
+        while (pendingRoute.elements.size > pendingStack.size) {
+            val nextNavEntry = pendingRoute.elements[pendingStack.size].resolveNavEntry(this)
+            if (nextNavEntry != null) pendingStack.add(nextNavEntry)
+            else break
+        }
+
+        // apply pending stack
+        var isDestinationChanged = false
+        val pendingStackSize = pendingStack.size
+        if (pendingStack.isNotEmpty()) {
+            // skip helper
+            fun canSkip(old: NavEntry<*>?, new: NavEntry<*>) =
+                old != null &&
+                    pendingRoute.autoSkip &&
+                    old.destination == new.destination &&
+                    old.navArgs == new.navArgs &&
+                    old.freeArgs == new.freeArgs &&
+                    old.navResult == new.navResult
+
+            val target = pendingStack.removeLast()
+            // apply backstack
+            var skipCount = 0
+            for (i in 0..pendingStack.lastIndex) {
+                if (canSkip(backStack.getOrNull(i), pendingStack[i])) {
+                    skipCount++
+                } else break
+            }
+            repeat(skipCount) {
+                pendingStack.removeFirst()
+            }
+            editBackStack {
+                while (backStack.size != skipCount) {
+                    removeAt(skipCount)
+                }
+                pendingStack.onEach {
+                    add(it)
+                }
+            }
+            // replace current
+            if (!canSkip(currentNavEntry, target)) {
+                replace(target)
+                isDestinationChanged = true
+            }
+        }
+
+        // remove processed items
+        val unfinishedRoute = pendingRoute.clone(drop = pendingStackSize)
+        if (unfinishedRoute.elements.size == 0) {
+            this.pendingRoute = null
+            return
+        } else this.pendingRoute = unfinishedRoute
+
+        // on no changes happened (all changes are skipped, or we need to step in to the child nav controller)
+        // try to find next nav controller to finish route in the current active nav entry
+        if (!isDestinationChanged) {
+            val nextElement = unfinishedRoute.elements.first()
             currentNavEntry
                 ?.navControllersStorage
                 ?.getActiveNavControllers()
-                ?.firstOrNull { pendingRoute?.actions?.first()?.selector?.invoke(this) == true }
-                ?.let {
-                    it.pendingRoute = pendingRoute
-                    pendingRoute = null
-                    it.followRoute()
+                ?.find { nc ->
+                    val isNcMatching = nextElement.isMatchCurrentNavController(nc)
+                    val isEntryMatching = unfinishedRoute.autoPath && nextElement.resolveNavEntry(nc) != null
+                    if (isNcMatching || isEntryMatching) {
+                        // remove matcher if it was nc-validation
+                        nc.pendingRoute = unfinishedRoute.clone(if (isNcMatching) 1 else 0)
+                        this.pendingRoute = null
+                        nc.followRoute()
+                        true
+                    } else false
                 }
-                ?: invalidateRoute() // if no one can handle route -> invalidate*/
+                ?: invalidateRoute()
+        }
     }
 
     /**
@@ -389,13 +461,12 @@ public class NavController internal constructor(
                 "Route not finished:",
                 key?.let { "\tNavController: $it" },
                 current?.name?.let { "Destination: $it" },
-
-                pendingRoute?.actions?.firstOrNull()?.let {
+                pendingRoute?.elements?.firstOrNull()?.let {
                     when (it) {
-                        is NavDestination<*> -> "Unable to open destination: ${it.name}"
+                        is NavDestination<*> -> "Unable to find destination: ${it.name}"
                         is NavEntry<*> -> "Unable to open entry: ${it.destination.name}"
-                        is Route.RouteDestination<*> -> "Unable to find route destination"
-                        is Route.RouteNavController -> "Unable to find nav controller"
+                        is Route.RouteDestination<*> -> "Unable to find route destination (${it.description})"
+                        is Route.RouteNavController -> "Unable to find nav controller (${it.description})"
                     }
                 }
             ).joinToString("\n")

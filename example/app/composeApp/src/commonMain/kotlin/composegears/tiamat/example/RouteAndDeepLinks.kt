@@ -53,30 +53,57 @@ val RouteAndDeepLinks by navDestination<Unit>(webPathExtension()) {
                 TextButton(
                     text = "NonAuto Route: open tabs -> tab3 -> tab1 -> tab2 -> tab3",
                     onClick = {
-                        routeNC.route(Route.build(autoPath = false, throwOnFail = true) {
-                            route(SimpleTabsRoot)
-                            selectNavController()
-                            route(Tab3)
-                            selectNavController()
-                            route(TabScreen1)
-                            route(TabScreen2)
-                            route(TabScreen3)
-                        })
+                        routeNC.route(
+                            Route.build(
+                                autoPath = false,
+                                autoSkip = true,
+                                throwOnFail = true
+                            ) {
+                                route(SimpleTabsRoot)
+                                selectNavController()
+                                route(Tab3)
+                                selectNavController()
+                                route(TabScreen1)
+                                route(TabScreen2)
+                                route(TabScreen3)
+                            }
+                        )
                     }
                 )
                 Spacer()
                 TextButton(
                     text = "NonAuto Key-based Route: open tabs -> tab3 -> tab1 -> tab2 -> tab3",
                     onClick = {
-                        routeNC.route(Route.build(autoPath = false, throwOnFail = true) {
-                            route("SimpleTabsRoot")
-                            selectNavController("tabs")
-                            route("Tab3")
-                            selectNavController("Tab3NavController")
-                            route("TabScreen1")
-                            route("TabScreen2")
-                            route("TabScreen3")
-                        })
+                        routeNC.route(
+                            Route.build(
+                                autoPath = false,
+                                autoSkip = true,
+                                throwOnFail = true
+                            ) {
+                                route("SimpleTabsRoot")
+                                selectNavController("tabs")
+                                route("Tab3")
+                                selectNavController("Tab3NavController")
+                                route("TabScreen1")
+                                route("TabScreen2")
+                                route("TabScreen3")
+                            }
+                        )
+                    }
+                )
+                Spacer()
+                TextButton(
+                    text = "Auto Key-based Route: open tabs -> tab3 -> tab1 -> tab2 -> tab3",
+                    onClick = {
+                        routeNC.route(
+                            Route.build {
+                                route("SimpleTabsRoot")
+                                route("Tab3")
+                                route("TabScreen1")
+                                route("TabScreen2")
+                                route("TabScreen3")
+                            }
+                        )
                     }
                 )
             }
