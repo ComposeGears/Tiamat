@@ -1,0 +1,1 @@
+This module contains core example application

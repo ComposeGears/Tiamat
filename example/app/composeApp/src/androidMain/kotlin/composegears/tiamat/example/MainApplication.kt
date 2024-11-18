@@ -1,12 +1,12 @@
 package composegears.tiamat.example
 
 import android.app.Application
-import composegears.tiamat.sample.koin.KoinLib
+import composegears.tiamat.example.platform.Platform
 
 class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KoinLib.start()
+        Platform.start()
     }
 }

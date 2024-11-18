@@ -13,10 +13,11 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.composegears.tiamat.LocalNavBackHandler
-import composegears.tiamat.sample.koin.KoinLib
+import composegears.tiamat.example.content.App
+import composegears.tiamat.example.platform.Platform
 
 fun main() {
-    KoinLib.start()
+    Platform.start()
     application {
         val backHandler = LocalNavBackHandler.current
 

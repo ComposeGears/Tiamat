@@ -22,5 +22,12 @@ include(":tiamat")
 include(":tiamat-koin")
 
 include(":example:app:composeApp")
+include(":example:content")
+include(":example:platform")
 include(":example:ui-core")
-include(":example:sample-koin")
+
+
+project(":example:app:composeApp").name = "composeApp"
+project(":example:content").name = "content"
+project(":example:platform").name = "platform"
+project(":example:ui-core").name = "ui-core"

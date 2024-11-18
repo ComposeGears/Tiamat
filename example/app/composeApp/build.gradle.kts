@@ -30,7 +30,7 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
 
-            export(projects.example.sampleKoin)
+            export(projects.example.platform)
         }
     }
 
@@ -53,28 +53,17 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.tiamat)
-            implementation(projects.tiamatKoin)
-            implementation(projects.example.sampleKoin)
-            implementation(projects.example.uiCore)
+            implementation(projects.example.content)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.camera.camera2)
-            implementation(libs.androidx.camera.lifecycle)
-            implementation(libs.androidx.camera.view)
-            implementation(libs.androidx.concurrent.futures)
-            implementation(libs.koin.compose)
         }
         iosMain.dependencies {
-            api(projects.example.sampleKoin)
 
-            implementation(libs.koin.compose)
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(libs.koin.compose)
                 implementation(libs.kotlin.coroutines.swing)
             }
         }
