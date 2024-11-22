@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.Screen
 
-val AdwTwoPaneNav by navDestination<Unit> {
-    Screen("Two Pane navigation") {
+val AdvExtensions by navDestination<Unit> {
+    Screen("Extensions") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("TODO")
         }
