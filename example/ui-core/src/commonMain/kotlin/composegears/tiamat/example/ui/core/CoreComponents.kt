@@ -1,10 +1,16 @@
 package composegears.tiamat.example.ui.core
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.NavDestinationScope
+import com.composegears.tiamat.navController
 
 @Composable
 fun VSpacer(height: Dp = 16.dp) {
@@ -24,4 +30,36 @@ fun RowScope.FillSpace(weight: Float = 1f) {
 @Composable
 fun ColumnScope.FillSpace(weight: Float = 1f) {
     Spacer(modifier = Modifier.weight(weight))
+}
+
+@Composable
+fun <T> NavDestinationScope<T>.Screen(
+    title: String,
+    backButton: Boolean = true,
+    body: @Composable NavDestinationScope<T>.() -> Unit
+) {
+    val nc = navController()
+    Column(Modifier.fillMaxSize()) {
+        Surface(
+            modifier = Modifier.heightIn(min = 48.dp).fillMaxWidth(),
+            tonalElevation = 4.dp
+        ) {
+            Row(
+                modifier = Modifier.heightIn(min = 48.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (backButton) IconButton(
+                    onClick = { nc.back() }
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                }
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+        HorizontalDivider()
+        body()
+    }
 }

@@ -8,7 +8,14 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.content.content.HomeScreen
-import composegears.tiamat.example.content.content.StubScreen
+import composegears.tiamat.example.content.content.advanced.AdwTwoPaneNav
+import composegears.tiamat.example.content.content.apr.APRFreeArgs
+import composegears.tiamat.example.content.content.apr.APRNavArgs
+import composegears.tiamat.example.content.content.apr.APRNavResult
+import composegears.tiamat.example.content.content.architecture.ArchBackStackAlteration
+import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
+import composegears.tiamat.example.content.content.architecture.ArchViewModel
+import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.ui.core.AppTheme
 
 @Composable
@@ -22,7 +29,19 @@ fun App() {
                 startDestination = HomeScreen,
                 destinations = arrayOf(
                     HomeScreen,
-                    StubScreen
+                    NavForwardAndBack,
+                    NavReplace,
+                    NavNested,
+                    NavCustomAnimation,
+                    NavTabs,
+                    NavRoute,
+                    APRNavArgs,
+                    APRFreeArgs,
+                    APRNavResult,
+                    ArchViewModel,
+                    ArchCustomSaveState,
+                    ArchBackStackAlteration,
+                    AdwTwoPaneNav,
                 )
             )
             Navigation(rootNavController, Modifier.fillMaxSize())

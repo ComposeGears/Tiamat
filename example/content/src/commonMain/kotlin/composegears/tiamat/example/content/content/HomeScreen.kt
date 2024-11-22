@@ -22,12 +22,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import composegears.tiamat.example.content.content.advanced.AdwTwoPaneNav
+import composegears.tiamat.example.content.content.apr.APRFreeArgs
+import composegears.tiamat.example.content.content.apr.APRNavArgs
+import composegears.tiamat.example.content.content.apr.APRNavResult
+import composegears.tiamat.example.content.content.architecture.ArchBackStackAlteration
+import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
+import composegears.tiamat.example.content.content.architecture.ArchViewModel
+import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.ui.core.FillSpace
 import composegears.tiamat.example.ui.core.LocalThemeConfig
 import composegears.tiamat.example.ui.core.VSpacer
@@ -39,32 +48,32 @@ private val HomeItems = listOf(
             HomeItemDestination(
                 name = "Forward & back",
                 description = "Simple navigation back & forward case",
-                destination = ::StubScreen
+                destination = ::NavForwardAndBack
             ),
             HomeItemDestination(
                 name = "Replace",
                 description = "Replace (navigate without adding current destination to back stack) case",
-                destination = ::StubScreen
+                destination = ::NavReplace
             ),
             HomeItemDestination(
                 name = "Nested navigation",
                 description = "Multiple nested nav controllers case",
-                destination = ::StubScreen
+                destination = ::NavNested
             ),
             HomeItemDestination(
                 name = "Custom animation",
                 description = "On fly customizable navigation animation",
-                destination = ::StubScreen
+                destination = ::NavCustomAnimation
             ),
             HomeItemDestination(
                 name = "Tabs navigation",
                 description = "Simple tab's navigation with a separate nav controllers for each tab",
-                destination = ::StubScreen
+                destination = ::NavTabs
             ),
             HomeItemDestination(
                 name = "Routing",
                 description = "Advanced Route-Api demo (building nav-path)",
-                destination = ::StubScreen
+                destination = ::NavRoute
             ),
         ),
     ),
@@ -74,17 +83,17 @@ private val HomeItems = listOf(
             HomeItemDestination(
                 name = "NavArgs",
                 description = "Passing navigation-arguments to next screen example",
-                destination = ::StubScreen
+                destination = ::APRNavArgs
             ),
             HomeItemDestination(
                 name = "FreeArgs",
                 description = "Passing free-type-arguments to next screen example",
-                destination = ::StubScreen
+                destination = ::APRFreeArgs
             ),
             HomeItemDestination(
                 name = "NavResult",
                 description = "Returning result tp previous screen",
-                destination = ::StubScreen
+                destination = ::APRNavResult
             ),
         ),
     ),
@@ -94,17 +103,17 @@ private val HomeItems = listOf(
             HomeItemDestination(
                 name = "ViewModel",
                 description = "ViewModel usage demo",
-                destination = ::StubScreen
+                destination = ::ArchViewModel
             ),
             HomeItemDestination(
                 name = "Custom SaveState",
                 description = "Custom save and restore state logic case",
-                destination = ::StubScreen
+                destination = ::ArchCustomSaveState
             ),
             HomeItemDestination(
                 name = "Back stack alteration",
                 description = "Editing back stack on the fly example",
-                destination = ::StubScreen
+                destination = ::ArchBackStackAlteration
             ),
         ),
     ),
@@ -114,15 +123,11 @@ private val HomeItems = listOf(
             HomeItemDestination(
                 name = "Two Pane navigation",
                 description = "Resizable mobile/desktop example of 2-pane navigation",
-                destination = ::StubScreen
+                destination = ::AdwTwoPaneNav
             ),
         ),
     ),
 )
-
-val StubScreen by navDestination<Unit> {
-    Text("Stub")
-}
 
 val HomeScreen by navDestination<Unit> {
     val navController = navController()
@@ -199,10 +204,14 @@ private fun HomeGroupItem(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(Modifier.padding(16.dp).weight(1f)) {
-                        Text(it.name, style = MaterialTheme.typography.titleSmall)
+                        Text(text = it.name, style = MaterialTheme.typography.titleSmall)
                         if (it.description.isNotBlank()) {
                             VSpacer(4.dp)
-                            Text(it.description, style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = it.description,
+                                modifier = Modifier.alpha(0.75f),
+                                style = MaterialTheme.typography.bodySmall,
+                            )
                         }
                     }
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
