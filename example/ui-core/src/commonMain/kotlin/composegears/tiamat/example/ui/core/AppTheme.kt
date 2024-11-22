@@ -2,55 +2,104 @@ package composegears.tiamat.example.ui.core
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
-private val color_active1 = Color(0xff375fad)
-private val color_active2 = Color(0xff549159)
-private val color_active3 = Color(0xff8e5f34)
-private val color_onActive = Color(0xffdfe1e5)
-private val color_bg1 = Color(0xff2b2d30)
-private val color_bg2 = Color(0xff43454a)
-private val color_onBg = Color(0xffdfe1e5)
-private val color_outline = Color(0xff393b40)
-private val color_outlineVariant = Color(0xff393b40)
+class LocalThemConfig {
+    var isDarkMode by mutableStateOf(true)
+}
+
+val LocalThemeConfig = staticCompositionLocalOf { LocalThemConfig() }
+
+private val color_killMyEyesPlease = Color(0xffbd17b5)
+private val color_primary = Color(0xff1e66d6)
 
 private val DarkColors = darkColorScheme(
-    primary = color_active1,
-    onPrimary = color_onActive,
-    secondary = color_active2,
-    onSecondary = color_onActive,
-    surface = color_bg1,
-    onSurface = color_onBg,
-    surfaceVariant = color_bg2,
-    onSurfaceVariant = color_onBg,
-    outline = color_outline,
-    primaryContainer = Color.Black,
-    onPrimaryContainer = Color.Black,
-    secondaryContainer = color_bg1,
-    onSecondaryContainer = color_onBg,
-    tertiary = color_active3,
-    onTertiary = color_onBg,
-    tertiaryContainer = Color.Blue,
-    onTertiaryContainer = Color.Black,
-    error = Color.Black,
-    errorContainer = Color.Black,
-    onError = Color.Black,
-    onErrorContainer = Color.Black,
-    background = Color.Black,
-    onBackground = Color.Black,
-    inverseOnSurface = Color.Black,
-    inverseSurface = Color.Black,
-    inversePrimary = Color.Black,
-    surfaceTint = Color.Black,
-    outlineVariant = color_outlineVariant,
-    scrim = Color.Black,
+    primary = color_primary,
+//    onPrimary = color_killMyEyesPlease,
+//    primaryContainer = color_killMyEyesPlease,
+//    onPrimaryContainer = color_killMyEyesPlease,
+//    inversePrimary = color_killMyEyesPlease,
+//    secondary = color_killMyEyesPlease,
+//    onSecondary = color_killMyEyesPlease,
+//    secondaryContainer = color_killMyEyesPlease,
+//    onSecondaryContainer = color_killMyEyesPlease,
+//    tertiary = color_killMyEyesPlease,
+//    onTertiary = color_killMyEyesPlease,
+//    tertiaryContainer = color_killMyEyesPlease,
+//    onTertiaryContainer = color_killMyEyesPlease,
+//    background = color_killMyEyesPlease,
+//    onBackground = color_killMyEyesPlease,
+    surface = Color(0xff1e1f22),
+//    onSurface = color_killMyEyesPlease,
+//    surfaceVariant = color_killMyEyesPlease,
+//    onSurfaceVariant = color_killMyEyesPlease,
+//    surfaceTint = color_killMyEyesPlease,
+//    inverseSurface = color_killMyEyesPlease,
+//    inverseOnSurface = color_killMyEyesPlease,
+//    error = color_killMyEyesPlease,
+//    onError = color_killMyEyesPlease,
+//    errorContainer = color_killMyEyesPlease,
+//    onErrorContainer = color_killMyEyesPlease,
+//    outline = color_killMyEyesPlease,
+    outlineVariant = Color(0xff393b40),
+//    scrim = color_killMyEyesPlease,
+//    surfaceBright = color_killMyEyesPlease,
+//    surfaceContainer = color_killMyEyesPlease,
+//    surfaceContainerHigh = color_killMyEyesPlease,
+//    surfaceContainerHighest = color_killMyEyesPlease,
+//    surfaceContainerLow = color_killMyEyesPlease,
+//    surfaceContainerLowest = color_killMyEyesPlease,
+//    surfaceDim = color_killMyEyesPlease,
+)
+
+private val LightColors = lightColorScheme(
+    primary = color_primary,
+//    onPrimary = color_killMyEyesPlease,
+//    primaryContainer = color_killMyEyesPlease,
+//    onPrimaryContainer = color_killMyEyesPlease,
+//    inversePrimary = color_killMyEyesPlease,
+//    secondary = color_killMyEyesPlease,
+//    onSecondary = color_killMyEyesPlease,
+//    secondaryContainer = color_killMyEyesPlease,
+//    onSecondaryContainer = color_killMyEyesPlease,
+//    tertiary = color_killMyEyesPlease,
+//    onTertiary = color_killMyEyesPlease,
+//    tertiaryContainer = color_killMyEyesPlease,
+//    onTertiaryContainer = color_killMyEyesPlease,
+//    background = color_killMyEyesPlease,
+//    onBackground = color_killMyEyesPlease,
+    surface = Color.White,
+//    onSurface = color_killMyEyesPlease,
+//    surfaceVariant = color_killMyEyesPlease,
+//    onSurfaceVariant = color_killMyEyesPlease,
+//    surfaceTint = color_killMyEyesPlease,
+//    inverseSurface = color_killMyEyesPlease,
+//    inverseOnSurface = color_killMyEyesPlease,
+//    error = color_killMyEyesPlease,
+//    onError = color_killMyEyesPlease,
+//    errorContainer = color_killMyEyesPlease,
+//    onErrorContainer = color_killMyEyesPlease,
+//    outline = color_killMyEyesPlease,
+//    outlineVariant = color_killMyEyesPlease,
+//    scrim = color_killMyEyesPlease,
+//    surfaceBright = color_killMyEyesPlease,
+//    surfaceContainer = color_killMyEyesPlease,
+//    surfaceContainerHigh = color_killMyEyesPlease,
+//    surfaceContainerHighest = color_killMyEyesPlease,
+//    surfaceContainerLow = color_killMyEyesPlease,
+//    surfaceContainerLowest = color_killMyEyesPlease,
+//    surfaceDim = color_killMyEyesPlease,
 )
 
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
+fun AppTheme(
+    content: @Composable () -> Unit
+) {
+    val themeConfig = LocalThemeConfig.current
     MaterialTheme(
-        colorScheme = DarkColors,
+        colorScheme = if (themeConfig.isDarkMode) DarkColors else LightColors,
         content = content
     )
 }

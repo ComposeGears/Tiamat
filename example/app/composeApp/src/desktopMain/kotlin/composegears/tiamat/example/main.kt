@@ -3,12 +3,19 @@
 package composegears.tiamat.example
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.PointerMatcher
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.onClick
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -16,11 +23,11 @@ import com.composegears.tiamat.LocalNavBackHandler
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.platform.Platform
 
+@OptIn(ExperimentalFoundationApi::class)
 fun main() {
     Platform.start()
     application {
         val backHandler = LocalNavBackHandler.current
-
         Window(
             onCloseRequest = ::exitApplication,
             state = rememberWindowState(
@@ -33,7 +40,16 @@ fun main() {
             },
             title = "Tiamat Nav-Example"
         ) {
-            App()
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .onClick(
+                        enabled = true,
+                        matcher = PointerMatcher.mouse(PointerButton.Back),
+                        onClick = { backHandler.back() })
+            ) {
+                App()
+            }
         }
     }
 }
