@@ -17,8 +17,9 @@ import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.ui.core.SimpleScreen
 import composegears.tiamat.example.ui.core.TextBody
 import composegears.tiamat.example.ui.core.TextButton
+import composegears.tiamat.example.ui.core.webPathExtension
 
-val CustomStateSaverRoot by navDestination<Unit> {
+val CustomStateSaverRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("Custom state saver") {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             var savedState by remember { mutableStateOf<Map<String, Any?>>(emptyMap()) }

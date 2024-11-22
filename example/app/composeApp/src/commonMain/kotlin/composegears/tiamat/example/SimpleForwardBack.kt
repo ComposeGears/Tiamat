@@ -49,7 +49,7 @@ private fun NavDestinationScope<*>.Screen(
     }
 }
 
-val SimpleForwardBackRoot by navDestination<Unit> {
+val SimpleForwardBackRoot by navDestination<Unit>(webPathExtension()) {
     Screen("Simple navigation: forward/back", SimpleForwardBackRootScreen1)
 }
 

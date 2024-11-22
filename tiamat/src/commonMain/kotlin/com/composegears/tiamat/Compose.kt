@@ -116,14 +116,22 @@ public fun <T> rememberNavController(
         init = { }
     )
     // create/restore nav controller from storage
+    val parentRegistry = LocalSaveableStateRegistry.current
     val navController = remember {
-        navControllersStorage.restoreOrCreate(
-            key = key,
-            parent = parent,
-            storageMode = finalStorageMode,
-            startDestination = startDestination,
-            destinations = destinations
-        ).apply(configuration)
+        navControllersStorage
+            .restoreOrCreate(
+                key = key,
+                parent = parent,
+                storageMode = finalStorageMode,
+                canBeSaved = parentRegistry
+                    ?.takeIf { storageMode == StorageMode.SavedState }
+                    ?.let { it::canBeSaved }
+                    ?: { true },
+                startDestination = startDestination,
+                destinations = destinations
+            )
+            .apply(configuration)
+            .apply { followRoute() }
     }
     // attach/detach to parent storage
     DisposableEffect(navController) {
@@ -139,11 +147,14 @@ public fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> AnimatedVisibilityScope.DestinationContent(entry: NavEntry<Args>) {
+private fun <Args> AnimatedVisibilityScope.DestinationContent(
+    entry: NavEntry<Args>
+) {
     val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
     with(entry.destination) {
         scope.PlatformContentWrapper {
             Content()
+            extensions.onEach { ext -> ext.ExtensionContent(scope) }
         }
     }
 }
@@ -217,7 +228,7 @@ public fun Navigation(
         if (it != null) Box {
             // gen save state
             val saveRegistry = remember(it) {
-                val registry = SaveableStateRegistry(it.savedState) { true }
+                val registry = SaveableStateRegistry(it.savedState, navController.canBeSaved)
                 it.savedStateSaver = registry::performSave
                 registry
             }
@@ -233,9 +244,12 @@ public fun Navigation(
             if (transition.isRunning) Overlay()
             // save state when `this entry`/`parent entry` goes into backStack
             DisposableEffect(it) {
+                // invalidate navController routing state
+                navController.invalidateRoute()
+                // save state handle
                 onDispose {
                     it.savedStateSaver = null
-                    // entry goes into backstack, store active subNavController
+                    // entry goes into backstack, save active subNavController
                     if (it in navController.getBackStack() || it == navController.currentNavEntry) {
                         it.saveState(saveRegistry.performSave())
                     } else {
@@ -254,6 +268,12 @@ public fun Navigation(
 @Suppress("UnusedReceiverParameter")
 public fun NavDestinationScope<*>.navController(): NavController =
     LocalNavController.current ?: error("not attached to navController")
+
+/**
+ * Provides current [NavEntry] instance
+ */
+@Composable
+public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
 
 /**
  * Provides nav arguments passed into navigate forward function for current destination

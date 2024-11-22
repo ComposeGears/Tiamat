@@ -2,6 +2,8 @@ package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.*
+import com.composegears.tiamat.Route.Companion.isMatchCurrentNavController
+import com.composegears.tiamat.Route.Companion.resolveNavEntry
 
 /**
  * Navigation controller class
@@ -13,6 +15,7 @@ public class NavController internal constructor(
     public val key: String?,
     public val parent: NavController?,
     internal val storageMode: StorageMode,
+    internal val canBeSaved: (Any) -> Boolean,
     internal val startDestination: NavEntry<*>?,
     private val destinations: Array<NavDestination<*>>,
     savedState: SavedState?
@@ -76,6 +79,7 @@ public class NavController internal constructor(
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
+    private var pendingRoute: Route? = null
 
     internal var isForwardTransition = true
         private set
@@ -126,10 +130,22 @@ public class NavController internal constructor(
         KEY_DESTINATIONS to destinations.joinToString(DESTINATIONS_JOIN_SEPARATOR) { it.name },
     )
 
+    private fun <T> NavEntry<T>.checkIfSaveable() = apply {
+        fun test(data: Any, kind: String) {
+            if (!canBeSaved(data)) error(
+                "Unable to save ${destination.name}\n" +
+                    "$kind of type ${data::class.simpleName} is not saveable for current (key=$key) NavController"
+            )
+        }
+        navArgs?.let { test(it, "navArgs") }
+        freeArgs?.let { test(it, "freeArgs") }
+        navResult?.let { test(it, "navResult") }
+    }
+
     private fun getFullSavedState() = getMinimalVerificationSavedState() + mapOf(
         KEY_PENDING_ENTRY_NAV_ID to pendingEntryNavId,
-        KEY_CURRENT to currentNavEntry?.saveToSaveState(),
-        KEY_BACKSTACK to backStack.map { it.saveToSaveState() }
+        KEY_CURRENT to currentNavEntry?.checkIfSaveable()?.saveToSaveState(),
+        KEY_BACKSTACK to backStack.map { it.checkIfSaveable().saveToSaveState() }
     )
 
     internal fun saveToSaveState(): SavedState = when (storageMode) {
@@ -163,6 +179,16 @@ public class NavController internal constructor(
     }
 
     /**
+     * Search for specific destination from list of known destinations
+     *
+     * @param predicate the predicate to match a destinations
+     *
+     * @return the first destination matching [predicate] or null
+     */
+    public fun findDestination(predicate: (NavDestination<*>) -> Boolean): NavDestination<*>? =
+        destinations.find(predicate)
+
+    /**
      * @param key nav controller's key to search for
      *
      * @return NavController instance with same key (current or one of parents), null if no one match
@@ -178,7 +204,7 @@ public class NavController internal constructor(
 
     private fun requireKnownDestination(dest: NavDestination<*>) {
         require(destinations.any { it.name == dest.name }) {
-            "${dest.name} is not declared in this nav controller"
+            "${dest.name} is not declared in the current (key = $key) nav controller"
         }
     }
 
@@ -225,9 +251,22 @@ public class NavController internal constructor(
     }
 
     /**
+     * Place current destination in back stack and open copy of entry
+     *
+     * @param entry entry to open
+     * @param transition transition animation
+     */
+    public fun <Args> navigate(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null
+    ) {
+        navigate(entry.destination, entry.navArgs, entry.freeArgs, transition)
+    }
+
+    /**
      * Place current destination in back stack and open new one
      *
-     * @param dest entry to open
+     * @param dest destination to open
      * @param navArgs args to be provided to destination
      * @param freeArgs free args to be provided to destination
      * @param transition transition animation
@@ -248,7 +287,7 @@ public class NavController internal constructor(
      * If [dest] found in back stack it will be removed from it and opened
      * otherwise it will be created and opened
      *
-     * @param dest entry to open
+     * @param dest destination to open
      * @param transition transition animation
      * @param orElse an action to be taken if destination not found in backstack,
      *               default is to navigate to destination
@@ -270,9 +309,22 @@ public class NavController internal constructor(
     }
 
     /**
+     * Close & remove current destination and open copy of entry
+     *
+     * @param entry entry to open
+     * @param transition transition animation
+     */
+    public fun <Args> replace(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null
+    ) {
+        replace(entry.destination, entry.navArgs, entry.freeArgs, transition)
+    }
+
+    /**
      * Close & remove current destination and open new one
      *
-     * @param dest entry to open
+     * @param dest destination to open
      * @param navArgs args to be provided to destination
      * @param freeArgs free args to be provided to destination
      * @param transition transition animation
@@ -284,6 +336,142 @@ public class NavController internal constructor(
         transition: ContentTransform? = null
     ) {
         replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
+    }
+
+    /**
+     * Navigate through provided rout
+     *
+     * @param route route to navigate by
+     */
+    @TiamatExperimentalApi
+    public fun route(route: Route) {
+        pendingRoute = route.clone()
+        followRoute()
+    }
+
+    /**
+     * Follow active/parents route or pass it to next NavController
+     */
+    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
+    internal fun followRoute() {
+        // prebuild stack
+        val pendingStack = ArrayList<NavEntry<*>>()
+
+        // read rote from parent if present & allowed
+        if (pendingRoute == null) run {
+            val parentRoute = parent?.pendingRoute ?: return@run
+            val parentElement = parentRoute.elements.firstOrNull()
+            val pendingNavEntry: NavEntry<*>? = parentElement
+                ?.takeIf { parentRoute.autoPath }
+                ?.resolveNavEntry(this)
+            val isMatchCurrentNavController = parentElement?.isMatchCurrentNavController(this) ?: false
+            if (pendingNavEntry != null || isMatchCurrentNavController) {
+                parent.pendingRoute = null
+                pendingRoute = parentRoute.clone(drop = if (isMatchCurrentNavController) 1 else 0)
+            }
+            if (pendingNavEntry != null) pendingStack.add(pendingNavEntry)
+        }
+
+        // no route -> no actions
+        val pendingRoute = pendingRoute ?: return
+
+        // build pending stack
+        while (pendingRoute.elements.size > pendingStack.size) {
+            val nextNavEntry = pendingRoute.elements[pendingStack.size].resolveNavEntry(this)
+            if (nextNavEntry != null) pendingStack.add(nextNavEntry)
+            else break
+        }
+
+        // apply pending stack
+        var isDestinationChanged = false
+        val pendingStackSize = pendingStack.size
+        if (pendingStack.isNotEmpty()) {
+            // skip helper
+            fun canSkip(old: NavEntry<*>?, new: NavEntry<*>) =
+                old != null &&
+                    pendingRoute.autoSkip &&
+                    old.destination == new.destination &&
+                    old.navArgs == new.navArgs &&
+                    old.freeArgs == new.freeArgs &&
+                    old.navResult == new.navResult
+
+            val target = pendingStack.removeLast()
+            // apply backstack
+            var skipCount = 0
+            for (i in 0..pendingStack.lastIndex) {
+                if (canSkip(backStack.getOrNull(i), pendingStack[i])) {
+                    skipCount++
+                } else break
+            }
+            repeat(skipCount) {
+                pendingStack.removeFirst()
+            }
+            editBackStack {
+                while (backStack.size != skipCount) {
+                    removeAt(skipCount)
+                }
+                pendingStack.onEach {
+                    add(it)
+                }
+            }
+            // replace current
+            if (!canSkip(currentNavEntry, target)) {
+                replace(target)
+                isDestinationChanged = true
+            }
+        }
+
+        // remove processed items
+        val unfinishedRoute = pendingRoute.clone(drop = pendingStackSize)
+        if (unfinishedRoute.elements.size == 0) {
+            this.pendingRoute = null
+            return
+        } else this.pendingRoute = unfinishedRoute
+
+        // on no changes happened (all changes are skipped, or we need to step in to the child nav controller)
+        // try to find next nav controller to finish route in the current active nav entry
+        if (!isDestinationChanged) {
+            val nextElement = unfinishedRoute.elements.first()
+            currentNavEntry
+                ?.navControllersStorage
+                ?.getActiveNavControllers()
+                ?.find { nc ->
+                    val isNcMatching = nextElement.isMatchCurrentNavController(nc)
+                    val isEntryMatching = unfinishedRoute.autoPath && nextElement.resolveNavEntry(nc) != null
+                    if (isNcMatching || isEntryMatching) {
+                        // remove matcher if it was nc-validation
+                        nc.pendingRoute = unfinishedRoute.clone(if (isNcMatching) 1 else 0)
+                        this.pendingRoute = null
+                        nc.followRoute()
+                        true
+                    } else false
+                }
+                ?: invalidateRoute()
+        }
+    }
+
+    /**
+     * We need ether close unfinished rout or else indicate path error
+     *
+     * Should be called after child destination being instantiated
+     */
+    internal fun invalidateRoute() {
+        if (pendingRoute?.throwOnFail == true) error(
+            listOfNotNull(
+                "Route not finished:",
+                key?.let { "\tNavController: $it" },
+                current?.name?.let { "Destination: $it" },
+                pendingRoute?.elements?.firstOrNull()?.let {
+                    when (it) {
+                        is NavDestination<*> -> "Unable to find destination: ${it.name}"
+                        is NavEntry<*> -> "Unable to open entry: ${it.destination.name}"
+                        is Route.RouteDestination<*> -> "Unable to find route destination (${it.description})"
+                        is Route.RouteNavController -> "Unable to find nav controller (${it.description})"
+                    }
+                }
+            ).joinToString("\n")
+        )
+        pendingRoute = null
     }
 
     /**
@@ -354,11 +542,21 @@ public class NavController internal constructor(
     }
 
     public inner class BackStackEditScope internal constructor() {
+        /**
+         * Add a copy of entry into backstack
+         *
+         * @param entry backstack entry
+         */
+        public fun <Args> add(
+            entry: NavEntry<Args>,
+        ) {
+            add(entry.destination, entry.navArgs, entry.freeArgs)
+        }
 
         /**
          * Add destination into backstack
          *
-         * @param dest entry to open
+         * @param dest backstack destination
          * @param navArgs args to be provided to destination
          * @param freeArgs free args to be provided to destination
          */
@@ -371,10 +569,23 @@ public class NavController internal constructor(
         }
 
         /**
+         * Add a copy of entry into backstack at specific position
+         *
+         * @param index position
+         * @param entry backstack entry
+         */
+        public fun <Args> add(
+            index: Int,
+            entry: NavEntry<Args>,
+        ) {
+            add(index, entry.destination, entry.navArgs, entry.freeArgs)
+        }
+
+        /**
          * Add destination into backstack at specific position
          *
          * @param index position
-         * @param dest entry to open
+         * @param dest backstack destination
          * @param navArgs args to be provided to destination
          * @param freeArgs free args to be provided to destination
          */
@@ -399,7 +610,7 @@ public class NavController internal constructor(
         /**
          * Remove latest/most recent item within same destination
          *
-         * @param dest dest to be removed
+         * @param dest destination to be removed
          * @return true if entry where removed, false otherwise
          */
         public fun removeRecent(dest: NavDestination<*>): Boolean {

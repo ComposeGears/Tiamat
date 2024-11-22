@@ -14,10 +14,7 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.NavDestinationScope
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
-import composegears.tiamat.example.ui.core.BackButton
-import composegears.tiamat.example.ui.core.NextButton
-import composegears.tiamat.example.ui.core.SimpleScreen
-import composegears.tiamat.example.ui.core.TextCaption
+import composegears.tiamat.example.ui.core.*
 
 @Composable
 private fun NavDestinationScope<*>.Screen(
@@ -40,7 +37,7 @@ private fun NavDestinationScope<*>.Screen(
     }
 }
 
-val SimpleReplaceRoot by navDestination<Unit> {
+val SimpleReplaceRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Simple navigation: Replace") {
         Column(

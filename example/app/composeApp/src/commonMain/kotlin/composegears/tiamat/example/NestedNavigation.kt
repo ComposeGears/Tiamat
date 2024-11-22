@@ -11,8 +11,9 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
-val NestedNavigationRoot by navDestination<Unit> {
+val NestedNavigationRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("Nested navigation") {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

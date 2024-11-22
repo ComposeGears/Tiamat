@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.clearNavResult
@@ -18,7 +21,7 @@ import composegears.tiamat.example.ui.core.*
 
 data class NavResult(val counter: Int)
 
-val DataPassingResultRoot by navDestination<Unit> {
+val DataPassingResultRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Data passing: Result") {
         Column(

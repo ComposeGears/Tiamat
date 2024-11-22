@@ -37,7 +37,7 @@ private fun NavDestinationScope<*>.Screen(
     }
 }
 
-val BackStackAlterationRoot by navDestination<Unit> {
+val BackStackAlterationRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("Back stack alteration") {
         Column(Modifier.padding(16.dp)) {
             val nestedNavController = rememberNavController(

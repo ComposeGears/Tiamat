@@ -43,6 +43,7 @@ Why Tiamat?
 - Allow to pass ANY types as data, even lambdas (!under small condition)
 - Customizable transitions
 - Customizable save-state logic
+- Support of Extensions
 
 Setup
 -----
@@ -171,6 +172,32 @@ fun Content() {
 }
 ```
 
+### Extensions
+
+You can attach an extension to any destination, common case is to track screens
+
+```kotlin
+
+// define extension
+class AnalyticsExt<T>(private val name: String) : Extension<T>() {
+    @Composable
+    override fun NavDestinationScope<T>.content() {
+        LaunchedEffect(Unit) {
+            val service = ... // receive tracker
+            service.trackScreen(name)
+        }
+    }
+}
+
+// apply ext to screen
+val SomeScreen by navDestination<Unit>(
+    AnalyticsExt("SomeScreen")
+) {
+    // screen content
+}
+
+```
+
 NavController will keep the screens data, view models, and states during navigation
 
 > [!IMPORTANT]
@@ -272,7 +299,88 @@ Hint
 
 ### Multiplatform
 
-I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame of animation
+I want to navigate true multiple nav steps in 1 call (e.g handle deeplink)
+
+```kotlin
+// there is 2 common ideas behind handle complex navigation
+
+//---- idea 1 -----
+// create some data/param that will be passed via free args 
+// each screen handle this arg and opens `next` screen
+
+val DeeplinkScreen by navDestination<Unit> {
+    val deeplink = freeArgs<DeeplinkData>() // take free args 
+
+    val deeplinkNavController = rememberNavController(
+        key = "deeplinkNavController",
+        startDestination = ShopScreen,
+        destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
+    ) {
+        // handle deeplink and open next screen
+        // passing eitthe same data or appropriate parts of it
+        if (deeplink != null) {  
+            editBackStack {
+                clear()
+                add(ShopScreen)
+                add(CategoryScreen, deeplink.categoryId)
+            }
+            replace(
+                dest = DetailScreen,
+                navArgs = DetailParams(deeplink.productName, deeplink.productId),
+                transition = navigationNone()
+            )
+            clearFreeArgs()
+        }
+    }
+
+    Navigation(modifier = Modifier.fillMaxSize(), navController = deeplinkNavController)
+}
+
+//---- idea 2 -----
+// use route-api
+
+if (deeplink != null) {
+    @OptIn(TiamatExperimentalApi::class)
+    navController?.route(Route
+        .start {
+            // we are in the root nav controller
+            // in case we are not at DeeplinkScreen
+            // clear history and open it
+            // else do nothing, route will be continued in the DeeplinkScreen screen
+            if (current != DeeplinkScreen) {
+                editBackStack {
+                    clear()
+                    add(MainScreen)
+                    add(PlatformExamplesScreen)
+                }
+                replace(DeeplinkScreen)
+            }
+        }
+        .next {
+            // we are in the DeeplinkScreen`s nested nav controller
+            // if there is multiple nested controlled - use `next(selector=...)
+            // we can check a backstack or just open full flow for deeplink
+            editBackStack {
+                clear()
+                add(ShopScreen)
+                add(CategoryScreen, deeplink.categoryId)
+            }
+            replace(
+                dest = DetailScreen,
+                navArgs = DetailParams(deeplink.productName, deeplink.productId),
+                transition = navigationNone()
+            )
+        }
+    )
+    deepLinkController.clearDeepLink()
+}
+```
+
+---
+
+I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame
+of animation
+
 ```kotlin
     // LaunchEffect & DisposableEffect are executed on `next` frame, so you may see 1 frame of animation
     // to avoid this effect use `configuration` lambda within `rememberNavController` fun
@@ -301,7 +409,6 @@ I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make st
 
 ``` 
 
-
 ### Desktop
 
 There is no default 'back' action on desktop
@@ -314,7 +421,7 @@ fun main() = application {
     Window(
         // ...
         onKeyEvent = { // < add global key event handler
-           it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
+            it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
         },
         // ...
     ) {
@@ -324,6 +431,7 @@ fun main() = application {
 ```
 
 ### Android
+
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
 See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/app/composeApp/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
@@ -355,7 +463,6 @@ Thank you for your help! ❤️
 <a href="https://github.com/ComposeGears/Tiamat/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=ComposeGears/Tiamat" />
 </a>
-
 
 # License
 ```

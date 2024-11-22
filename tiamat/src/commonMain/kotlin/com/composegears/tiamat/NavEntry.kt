@@ -16,7 +16,7 @@ public class NavEntry<Args> private constructor(
     navResult: Any? = null,
     savedState: Map<String, List<Any?>>? = null,
     savedNavControllers: List<SavedState>? = null,
-) {
+) : Route.Element {
 
     public companion object {
         private const val KEY_NAME = "name"
@@ -62,6 +62,7 @@ public class NavEntry<Args> private constructor(
     internal val viewModels = mutableMapOf<String, TiamatViewModel>()
     internal var savedState: Map<String, List<Any?>> = savedState ?: emptyMap()
     internal var savedStateSaver: (() -> Map<String, List<Any?>>)? = null
+    internal var canBeSaved: ((Any) -> Boolean)? = null
     internal val navControllersStorage = NavControllersStorage().apply { restoreFromSavedState(savedNavControllers) }
 
     public constructor(
@@ -92,7 +93,15 @@ public class NavEntry<Args> private constructor(
         navControllersStorage.saveState()
     }
 
+    private fun validateSaveable(data: Any?, type: String) {
+        val canSave = data?.let { canBeSaved?.invoke(it) }
+        if (canSave == false) error("The $type of ${destination.name} can't be saved")
+    }
+
     internal fun saveToSaveState(): SavedState {
+        validateSaveable(navArgs, "navArgs")
+        validateSaveable(freeArgs, "freeArgs")
+        validateSaveable(navResult, "navResult")
         savedStateSaver?.invoke()?.let { savedState = it }
         return mapOf(
             KEY_NAME to destination.name,

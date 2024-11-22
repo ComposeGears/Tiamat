@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-val ViewModelsRoot by navDestination<Unit> {
+val ViewModelsRoot by navDestination<Unit>(webPathExtension()) {
     val viewModelsNavController = rememberNavController(
         destinations = arrayOf(ViewModelsScreen1, ViewModelsScreen2),
         startDestination = ViewModelsScreen1

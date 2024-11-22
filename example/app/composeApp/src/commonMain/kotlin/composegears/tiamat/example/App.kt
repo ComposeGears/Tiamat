@@ -16,12 +16,8 @@ import composegears.tiamat.sample.koin.KoinIntegrationScreen
 @Composable
 @Suppress("SpreadOperator")
 fun App(
-    configure: @Composable (
-        NavController,
-        @Composable () -> Unit
-    ) -> Unit = { _, content ->
-        content()
-    }
+    controllerConfig: (NavController) -> Unit = {},
+    content: @Composable (@Composable () -> Unit) -> Unit = { it() }
 ) {
     AppTheme {
         Surface {
@@ -47,6 +43,7 @@ fun App(
                     DataPassingFreeArgsScreen,
                     DataPassingResultRoot,
                     DataPassingResultScreen,
+                    RouteAndDeepLinks,
                     ViewModelsRoot,
                     CustomTransitionRoot,
                     CustomTransitionScreen1,
@@ -58,9 +55,10 @@ fun App(
                     PlatformExamplesScreen,
                     KoinIntegrationScreen,
                     *platformExamplesConfig.destinations()
-                )
+                ),
+                configuration = controllerConfig
             )
-            configure(rootNavController) {
+            content {
                 Navigation(
                     navController = rootNavController,
                     modifier = Modifier.fillMaxSize().systemBarsPadding()

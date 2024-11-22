@@ -15,9 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.multimodule.MultiModuleRoot
+import composegears.tiamat.example.ui.core.webPathExtension
 import composegears.tiamat.sample.koin.KoinIntegrationScreen
 
-val MainScreen by navDestination<Unit> {
+val MainScreen by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     val content = remember {
         listOf(
@@ -28,6 +29,7 @@ val MainScreen by navDestination<Unit> {
             "Data passing: params" to { navController.navigate(DataPassingParamsRoot) },
             "Data passing: free args" to { navController.navigate(DataPassingFreeArgsRoot) },
             "Data passing: result" to { navController.navigate(DataPassingResultRoot) },
+            "Route navigation / deep-links" to { navController.navigate(RouteAndDeepLinks) },
             "ViewModels" to { navController.navigate(ViewModelsRoot) },
             "Koin (ViewModels)" to { navController.navigate(KoinIntegrationScreen) },
             "Custom transition" to { navController.navigate(CustomTransitionRoot) },

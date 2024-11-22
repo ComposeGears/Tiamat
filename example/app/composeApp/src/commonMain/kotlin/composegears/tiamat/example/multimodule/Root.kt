@@ -18,13 +18,14 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 // Root - knows about Feature1 and Feature2
 // Feature1 - knows about Feature2.
 // Feature2 - may ask Root to do smth. !!!(do not know about Root, neither Feature1)
 // All modules - knows about BaseModule.
 
-val MultiModuleRoot by navDestination<Unit> {
+val MultiModuleRoot by navDestination<Unit>(webPathExtension()) {
     SimpleScreen("Multi-module root") {
         val nc = navController()
         val multiModuleNavController = rememberNavController(

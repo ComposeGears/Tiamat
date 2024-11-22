@@ -22,10 +22,11 @@ import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.ui.core.BackButton
 import composegears.tiamat.example.ui.core.CircleButton
 import composegears.tiamat.example.ui.core.SimpleScreen
+import composegears.tiamat.example.ui.core.webPathExtension
 
 data class NavArgsData(val counter: Int)
 
-val DataPassingParamsRoot by navDestination<Unit> {
+val DataPassingParamsRoot by navDestination<Unit>(webPathExtension()) {
     val navController = navController()
     SimpleScreen("Data passing: Params") {
         var counter by rememberSaveable { mutableIntStateOf(0) }
@@ -48,7 +49,12 @@ val DataPassingParamsRoot by navDestination<Unit> {
     }
 }
 
-val DataPassingParamsScreen by navDestination<NavArgsData> {
+val DataPassingParamsScreen by navDestination<NavArgsData>(
+    webPathExtension(
+        argsToPathTransform = { "counter=${it.counter}" },
+        pathToArgsTransform = { NavArgsData(it.substringAfter("counter=").toInt()) }
+    )
+) {
     val navController = navController()
     val args = navArgsOrNull()
     SimpleScreen("Data passing: Params - Data") {
