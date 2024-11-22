@@ -149,7 +149,7 @@ private val HomeItems = listOf(
 val HomeScreen by navDestination<Unit> {
     val navController = navController()
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         var selectedItem by rememberSaveable { mutableStateOf<String?>(null) }
@@ -163,7 +163,7 @@ val HomeScreen by navDestination<Unit> {
                 HomeGroupItem(
                     item = it,
                     isExpanded = selectedItem == it.title,
-                    onItemClick = { item -> selectedItem = item.title },
+                    onItemClick = { item -> selectedItem = if (selectedItem == item.title) null else item.title },
                     onDestinationSelect = { dest -> navController.navigate(dest) },
                 )
             }
@@ -202,7 +202,7 @@ private fun HomeGroupItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = !isExpanded) { onItemClick(item) }
+                    .clickable { onItemClick(item) }
                     .padding(end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

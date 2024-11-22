@@ -17,7 +17,7 @@ private val color_primary = Color(0xff1e66d6)
 
 private val LightColors = lightColorScheme(
     primary = color_primary,
-//    onPrimary = color_killMyEyesPlease,
+    onPrimary = Color.White,
 //    primaryContainer = color_killMyEyesPlease,
 //    onPrimaryContainer = color_killMyEyesPlease,
 //    inversePrimary = color_killMyEyesPlease,
@@ -56,7 +56,7 @@ private val LightColors = lightColorScheme(
 
 private val DarkColors = darkColorScheme(
     primary = color_primary,
-//    onPrimary = color_killMyEyesPlease,
+    onPrimary = Color.White,
 //    primaryContainer = color_killMyEyesPlease,
 //    onPrimaryContainer = color_killMyEyesPlease,
 //    inversePrimary = color_killMyEyesPlease,
