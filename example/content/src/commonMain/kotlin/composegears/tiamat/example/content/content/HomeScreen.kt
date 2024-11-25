@@ -69,11 +69,12 @@ private val HomeItems = listOf(
             ),
             HomeItemDestination(
                 name = "Tabs navigation",
-                description = "Simple tab's navigation with a separate nav controllers for each tab",
+                description = "Simple tab's navigation with a separate nav controllers for each tab." +
+                    "Sample use `popToTop` nav action to bring to from previously opened screen",
                 destination = NavTabs
             ),
             HomeItemDestination(
-                name = "Routing",
+                name = "Routing (experimental)",
                 description = "Advanced Route-Api demo (building nav-path)",
                 destination = NavRoute
             ),

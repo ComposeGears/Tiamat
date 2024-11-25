@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ fun AppButton(
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(8.dp),
     onClick: () -> Unit,
 ) {
     Button(
@@ -49,7 +51,7 @@ fun AppButton(
         enabled = enabled,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = shape
     ) {
         AppButtonContent(text, startIcon, endIcon)
     }
@@ -62,6 +64,7 @@ fun AppOutlinedButton(
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(8.dp),
     onClick: () -> Unit,
 ) {
     OutlinedButton(
@@ -69,7 +72,7 @@ fun AppOutlinedButton(
         enabled = enabled,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = shape
     ) {
         AppButtonContent(text, startIcon, endIcon)
     }
@@ -82,6 +85,7 @@ fun AppTextButton(
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(8.dp),
     onClick: () -> Unit,
 ) {
     TextButton(
@@ -89,7 +93,7 @@ fun AppTextButton(
         enabled = enabled,
         modifier = modifier,
         contentPadding = PaddingValues(horizontal = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+        shape = shape
     ) {
         AppButtonContent(text, startIcon, endIcon)
     }
