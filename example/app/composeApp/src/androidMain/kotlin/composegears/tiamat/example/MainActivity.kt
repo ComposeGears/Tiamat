@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
             val view = LocalView.current
             val themeConfig = LocalThemeConfig.current
             LaunchedEffect(themeConfig.isDarkMode) {
+                // todo call enableEdgeToEdge instead
                 WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !themeConfig.isDarkMode
             }
         }

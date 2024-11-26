@@ -5,6 +5,48 @@ package com.composegears.tiamat
  */
 public typealias SavedState = Map<String, Any?>
 
+// TODO add doc
+public fun SavedState.toHumanReadableString(
+    tabChar: String = "    ",
+    initialTabSize: Int = 0,
+): String = StringBuilder()
+    .apply { appendBeautifulString(tabChar, "Data", this@toHumanReadableString, initialTabSize) }
+    .toString()
+
+private fun StringBuilder.appendBeautifulString(tabChar: String, key: String, data: Any?, tab: Int) {
+    val prefix = tabChar.repeat(tab)
+    when (data) {
+        is Map<*, *> -> {
+            append(prefix).append(key)
+            if (data.isNotEmpty()) {
+                append(" = {\n")
+                data.onEach {
+                    appendBeautifulString(tabChar, it.key.toString(), it.value, tab + 1)
+                }
+                append(prefix).append("}\n")
+            } else {
+                append(" = {}\n")
+            }
+
+        }
+        is Iterable<*> -> {
+            append(prefix).append(key)
+            if (data.iterator().hasNext()) {
+                append(" = [\n")
+                data.onEachIndexed { index, item ->
+                    appendBeautifulString(tabChar, "#$index", item, tab + 1)
+                }
+                append(prefix).append("]\n")
+            } else {
+                append(" = []\n")
+            }
+        }
+        else -> {
+            append(prefix).append(key).append(" = ").append(data).append("\n")
+        }
+    }
+}
+
 /**
  * @return true if all elements match the given predicate or collection is empty
  */

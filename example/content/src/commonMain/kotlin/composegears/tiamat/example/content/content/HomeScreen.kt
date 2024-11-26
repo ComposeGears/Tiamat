@@ -39,6 +39,7 @@ import composegears.tiamat.example.content.content.architecture.ArchCustomSaveSt
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.platform.Platform
+import composegears.tiamat.example.ui.core.AppFeature
 import composegears.tiamat.example.ui.core.FillSpace
 import composegears.tiamat.example.ui.core.LocalThemeConfig
 import composegears.tiamat.example.ui.core.VSpacer
@@ -47,33 +48,33 @@ private val HomeItems = listOf(
     HomeItem(
         "Navigation",
         listOf(
-            HomeItemDestination(
+            AppFeature(
                 name = "Forward & back",
                 description = "Simple navigation back & forward case",
                 destination = NavForwardAndBack
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Replace",
                 description = "Replace (navigate without adding current destination to back stack) case",
                 destination = NavReplace
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Nested navigation",
                 description = "Multiple nested nav controllers case",
                 destination = NavNested
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Custom animation",
                 description = "On fly customizable navigation animation",
                 destination = NavCustomAnimation
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Tabs navigation",
                 description = "Simple tab's navigation with a separate nav controllers for each tab." +
                     "Sample use `popToTop` nav action to bring to from previously opened screen",
                 destination = NavTabs
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Routing (experimental)",
                 description = "Advanced Route-Api demo (building nav-path)",
                 destination = NavRoute
@@ -83,17 +84,17 @@ private val HomeItems = listOf(
     HomeItem(
         "Args / Params / Result",
         listOf(
-            HomeItemDestination(
+            AppFeature(
                 name = "NavArgs",
                 description = "Passing navigation-arguments to next screen example",
                 destination = APRNavArgs
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "FreeArgs",
                 description = "Passing free-type-arguments to next screen example",
                 destination = APRFreeArgs
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "NavResult",
                 description = "Returning result tp previous screen",
                 destination = APRNavResult
@@ -103,17 +104,17 @@ private val HomeItems = listOf(
     HomeItem(
         "Architecture",
         listOf(
-            HomeItemDestination(
+            AppFeature(
                 name = "ViewModel",
                 description = "ViewModel usage demo",
                 destination = ArchViewModel
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Custom SaveState",
                 description = "Custom save and restore state logic case",
                 destination = ArchCustomSaveState
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Back stack alteration",
                 description = "Editing back stack on the fly example",
                 destination = ArchBackStackAlteration
@@ -123,12 +124,12 @@ private val HomeItems = listOf(
     HomeItem(
         "Advanced examples",
         listOf(
-            HomeItemDestination(
+            AppFeature(
                 name = "Two Pane navigation",
                 description = "Resizable mobile/desktop example of 2-pane navigation",
                 destination = AdvTwoPaneNav
             ),
-            HomeItemDestination(
+            AppFeature(
                 name = "Extensions",
                 description = "Example shows how to use nav-destination extensions (eg: Analytics tracking)",
                 destination = AdvExtensions
@@ -137,14 +138,9 @@ private val HomeItems = listOf(
     ),
     HomeItem(
         "Platform ${Platform.name()}",
-        Platform.features().map { pi ->
-            HomeItemDestination(
-                name = pi.name,
-                description = pi.description,
-                destination = pi.destination
-            )
-        }
-    )
+        Platform.features()
+    ),
+    // todo add 3rd party (eg: koin)
 ).filter { it.items.isNotEmpty() }
 
 val HomeScreen by navDestination<Unit> {
@@ -232,7 +228,11 @@ private fun HomeGroupItem(
                             )
                         }
                     }
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "",
+                        modifier = Modifier.alpha(0.5f)
+                    )
                 }
             }
         }
@@ -243,11 +243,5 @@ private fun HomeGroupItem(
 
 private data class HomeItem(
     val title: String,
-    val items: List<HomeItemDestination>
-)
-
-private data class HomeItemDestination(
-    val name: String,
-    val description: String,
-    val destination: NavDestination<*>
+    val items: List<AppFeature>
 )
