@@ -55,7 +55,7 @@ val NavNested by navDestination<Unit> {
 @Composable
 private fun ItemContent(
     group: String,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -65,18 +65,16 @@ private fun ItemContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(group, style = MaterialTheme.typography.headlineMedium)
-        Navigation(
-            rememberNavController(
-                key = group,
-                startDestination = NavNestedScreen1,
-                destinations = arrayOf(
-                    NavNestedScreen1,
-                    NavNestedScreen2,
-                    NavNestedScreen3
-                )
-            ),
-            modifier = modifier.fillMaxSize()
+        val nc = rememberNavController(
+            key = group,
+            startDestination = NavNestedScreen1,
+            destinations = arrayOf(
+                NavNestedScreen1,
+                NavNestedScreen2,
+                NavNestedScreen3
+            )
         )
+        Navigation(nc)
     }
 }
 

@@ -5,19 +5,31 @@ import androidx.compose.runtime.Composable
 /**
  * Extension base class
  */
-public abstract class Extension<Args> {
-
+public interface Extension<in Args> {
     @Composable
-    internal fun ExtensionContent(scope: NavDestinationScope<Args>) {
-        scope.content()
-    }
-
-    /**
-     * The content of extension
-     */
-    @Composable
-    public abstract fun NavDestinationScope<Args>.content()
+    public fun NavDestinationScope<out Args>.Content()
 }
+
+/**
+ * internal simple Extension impl
+ */
+internal open class ExtensionImpl<in Args>(
+    private val content: @Composable NavDestinationScope<out Args>.() -> Unit
+) : Extension<Args> {
+    @Composable
+    override fun NavDestinationScope<out Args>.Content() {
+        content()
+    }
+}
+
+/**
+ * Simple extension builder
+ *
+ * @param content extension content builder lambda
+ */
+public fun <Args> extension(
+    content: @Composable NavDestinationScope<out Args>.() -> Unit
+): Extension<Args> = ExtensionImpl(content)
 
 /**
  * Provides an attached extension of defined type

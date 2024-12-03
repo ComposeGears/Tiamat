@@ -46,7 +46,8 @@ fun main() {
                     .onClick(
                         enabled = true,
                         matcher = PointerMatcher.mouse(PointerButton.Back),
-                        onClick = { backHandler.back() })
+                        onClick = { backHandler.back() }
+                    )
             ) {
                 App()
             }

@@ -38,3 +38,33 @@ fun main() {
         }
     }
 }
+
+/*
+@OptIn(ExperimentalComposeUiApi::class)
+fun main() {
+    KoinLib.start()
+    val path = window.location.href
+        .replace(window.location.origin, "")
+        .replace("/#", "")
+    ComposeViewport(viewportContainerId = "TiamatTarget") {
+        LaunchedEffect(Unit) {
+            onLoadFinished()
+        }
+        Box {
+            App(
+                controllerConfig = { nc ->
+                    // this is !!!VERY!!! simple & primitive way to handle web-navigation
+                    // let main screen's ext to navigate if needed
+                    nc.current?.ext<WebPathExtension<*>>()?.navigate(nc, path)
+                },
+            )
+            Text(
+                modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                text = "Wasm Alpha",
+            )
+        }
+    }
+}*/

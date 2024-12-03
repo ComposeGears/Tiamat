@@ -24,7 +24,7 @@ val NavReplace by navDestination<Unit> {
     Screen("Replace") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
-                key = "Replace",
+                key = "Replace nav controller",
                 startDestination = NavReplaceScreen1,
                 destinations = arrayOf(
                     NavReplaceScreen1,
@@ -88,7 +88,7 @@ private val NavReplaceScreen3 by navDestination<Unit> {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
-            Text("Click \"Back\" to see \"Screen 1\"")
+            Text("""Click "Back" to see "Screen 1"""")
             VSpacer()
             AppButton(
                 "Back",

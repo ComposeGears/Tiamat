@@ -151,10 +151,14 @@ private fun <Args> AnimatedVisibilityScope.DestinationContent(
     entry: NavEntry<Args>
 ) {
     val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
-    with(entry.destination) {
-        scope.PlatformContentWrapper {
+    scope.PlatformContentWrapper {
+        with(entry.destination) {
             Content()
-            extensions.onEach { ext -> ext.ExtensionContent(scope) }
+        }
+        entry.destination.extensions.onEach {
+            with(it) {
+                Content()
+            }
         }
     }
 }
@@ -198,7 +202,6 @@ private fun BoxScope.Overlay() {
  */
 @Composable
 @Suppress("CognitiveComplexMethod")
-@OptIn(ExperimentalAnimationApi::class)
 public fun Navigation(
     navController: NavController,
     modifier: Modifier = Modifier,

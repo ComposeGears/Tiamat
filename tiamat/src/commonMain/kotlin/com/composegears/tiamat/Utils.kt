@@ -27,7 +27,6 @@ private fun StringBuilder.appendBeautifulString(tabChar: String, key: String, da
             } else {
                 append(" = {}\n")
             }
-
         }
         is Iterable<*> -> {
             append(prefix).append(key)

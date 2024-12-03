@@ -6,13 +6,13 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
+val LocalThemeConfig = staticCompositionLocalOf { LocalThemConfig() }
+
 class LocalThemConfig {
     var isDarkMode by mutableStateOf(false)
 }
-
-val LocalThemeConfig = staticCompositionLocalOf { LocalThemConfig() }
-
-private val color_killMyEyesPlease = Color(0xffbd17b5)
+// TODO clean
+// private val color_killMyEyesPlease = Color(0xffbd17b5)
 private val color_primary = Color(0xff1e66d6)
 
 private val LightColors = lightColorScheme(

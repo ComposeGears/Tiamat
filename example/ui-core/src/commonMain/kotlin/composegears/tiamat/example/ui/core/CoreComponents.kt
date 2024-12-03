@@ -35,16 +35,15 @@ fun ColumnScope.FillSpace(weight: Float = 1f) {
     Spacer(modifier = Modifier.weight(weight))
 }
 
-
 @Composable
 fun AppButton(
     text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
-    modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -60,12 +59,12 @@ fun AppButton(
 @Composable
 fun AppOutlinedButton(
     text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
-    modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -81,12 +80,12 @@ fun AppOutlinedButton(
 @Composable
 fun AppTextButton(
     text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
-    modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit,
 ) {
     TextButton(
         onClick = onClick,
@@ -108,7 +107,8 @@ internal fun AppButtonContent(
     Row {
         if (startIcon != null) Icon(startIcon, "", Modifier.size(24.dp))
         Text(
-            text, Modifier.padding(
+            text,
+            Modifier.padding(
                 start = if (startIcon == null) 12.dp else 0.dp,
                 end = if (endIcon == null) 12.dp else 0.dp,
             )

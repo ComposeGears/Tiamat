@@ -604,7 +604,8 @@ public class NavController internal constructor(
          * @param index position
          */
         public fun removeAt(index: Int) {
-            backStack.removeAt(index).close()
+            if (index in backStack.indices)
+                backStack.removeAt(index).close()
         }
 
         /**
@@ -620,12 +621,12 @@ public class NavController internal constructor(
         }
 
         /**
-         * Remove latest/most recent item matching predicate
+         * Remove one latest/most recent item matching predicate
          *
-         * @param predicate matcher
+         * @param predicate matcher, default `{true}`
          * @return true if entry where removed, false otherwise
          */
-        public fun removeRecent(predicate: (NavEntry<*>) -> Boolean): Boolean {
+        public fun removeRecent(predicate: (NavEntry<*>) -> Boolean = { true }): Boolean {
             val ind = backStack.indexOfLast(predicate)
             if (ind >= 0) backStack.removeAt(ind).close()
             return ind >= 0

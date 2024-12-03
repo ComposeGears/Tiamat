@@ -31,7 +31,6 @@ val NavRoute by navDestination<Unit> {
                     NavRouteScreen3,
                 )
             )
-            Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text("Here some simple examples of Route-api")
             Text("There is more complex option available")
@@ -90,13 +89,8 @@ val NavRoute by navDestination<Unit> {
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
         }
-
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("it will not be placed at back stack")
-        }
     }
 }
-
 
 private val NavRouteStub by navDestination<Unit> {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

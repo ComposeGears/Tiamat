@@ -114,16 +114,16 @@ private val HomeItems = listOf(
                 description = "Custom save and restore state logic case",
                 destination = ArchCustomSaveState
             ),
-            AppFeature(
-                name = "Back stack alteration",
-                description = "Editing back stack on the fly example",
-                destination = ArchBackStackAlteration
-            ),
         ),
     ),
     HomeItem(
         "Advanced examples",
         listOf(
+            AppFeature(
+                name = "Back stack alteration",
+                description = "Editing back stack on the fly example",
+                destination = ArchBackStackAlteration
+            ),
             AppFeature(
                 name = "Two Pane navigation",
                 description = "Resizable mobile/desktop example of 2-pane navigation",
@@ -168,7 +168,8 @@ val HomeScreen by navDestination<Unit> {
         val themeConfig = LocalThemeConfig.current
         IconButton(
             modifier = Modifier.align(Alignment.TopEnd),
-            onClick = { themeConfig.isDarkMode = !themeConfig.isDarkMode }) {
+            onClick = { themeConfig.isDarkMode = !themeConfig.isDarkMode }
+        ) {
             Icon(Icons.Default.DarkMode, "")
         }
     }
