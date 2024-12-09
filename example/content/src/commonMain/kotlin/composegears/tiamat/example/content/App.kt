@@ -8,15 +8,15 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.StorageMode
 import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.content.content.HomeScreen
+import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
-import composegears.tiamat.example.content.content.advanced.AdvTwoPaneNav
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
-import composegears.tiamat.example.content.content.architecture.ArchBackStackAlteration
 import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
+import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.ui.core.AppTheme
 
@@ -42,10 +42,11 @@ fun App() {
                     APRNavResult,
                     ArchViewModel,
                     ArchCustomSaveState,
-                    ArchBackStackAlteration,
-                    AdvTwoPaneNav,
                     AdvExtensions,
-                    *Platform.features().map { it.destination }.toTypedArray()
+                    AdvBackStackAlteration,
+                    *(Platform.features() + A3rdParty.features())
+                        .map { it.destination }
+                        .toTypedArray()
                 )
             )
             Navigation(rootNavController, Modifier.fillMaxSize())

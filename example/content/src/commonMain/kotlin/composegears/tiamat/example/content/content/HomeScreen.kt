@@ -37,6 +37,7 @@ import composegears.tiamat.example.content.content.apr.APRNavResult
 import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
+import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.ui.core.AppFeature
 import composegears.tiamat.example.ui.core.FillSpace
@@ -134,7 +135,11 @@ private val HomeItems = listOf(
         "Platform ${Platform.name()}",
         Platform.features()
     ),
-    // todo add 3rd party (eg: koin)
+    HomeItem(
+        "3rd party",
+        A3rdParty.features()
+    ),
+
 ).filter { it.items.isNotEmpty() }
 
 val HomeScreen by navDestination<Unit> {

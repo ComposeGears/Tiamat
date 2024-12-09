@@ -5,6 +5,7 @@ import ComposeApp
 struct iOSApp: App {
     init() {
         Platform.shared.start()
+        A3rdParty.shared.start()
     }
 
 	var body: some Scene {

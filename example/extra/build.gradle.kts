@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "composegears.tiamat.example.content"
+    namespace = "composegears.tiamat.example.extra"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 }
 
@@ -34,12 +34,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.tiamat)
-            api(projects.example.platform)
-            api(projects.example.extra)
-            api(projects.example.uiCore)
+            implementation(projects.tiamat)
+            implementation(projects.tiamatKoin)
+            implementation(projects.example.uiCore)
 
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.koin.compose)
         }
     }
 }

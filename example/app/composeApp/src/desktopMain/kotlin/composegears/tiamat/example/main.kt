@@ -21,11 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.composegears.tiamat.LocalNavBackHandler
 import composegears.tiamat.example.content.App
+import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 
 @OptIn(ExperimentalFoundationApi::class)
 fun main() {
     Platform.start()
+    A3rdParty.start()
     application {
         val backHandler = LocalNavBackHandler.current
         Window(
