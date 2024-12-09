@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.lifecycle.ViewModel
 
 /**
@@ -24,14 +25,19 @@ internal class RootStorageModel : ViewModel() {
  */
 @Composable
 internal fun rememberRootDataStore(): NavControllersStorage {
-    val context = LocalContext.current
-    val activity = remember(context) {
-        var ctx = context
-        while (ctx !is ComponentActivity) {
-            ctx = (ctx as ContextWrapper).baseContext
+    if (LocalInspectionMode.current) {
+        // as for android preview we use in memory storage
+        return remember { NavControllersStorage() }
+    } else {
+        val context = LocalContext.current
+        val activity = remember(context) {
+            var ctx = context
+            while (ctx !is ComponentActivity) {
+                ctx = (ctx as ContextWrapper).baseContext
+            }
+            ctx
         }
-        ctx
+        val storageModel by activity.viewModels<RootStorageModel>()
+        return storageModel.storage
     }
-    val storageModel by activity.viewModels<RootStorageModel>()
-    return storageModel.storage
 }

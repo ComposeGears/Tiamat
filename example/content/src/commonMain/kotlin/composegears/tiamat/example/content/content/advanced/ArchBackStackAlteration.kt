@@ -1,4 +1,4 @@
-package composegears.tiamat.example.content.content.architecture
+package composegears.tiamat.example.content.content.advanced
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -7,7 +7,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,17 +23,16 @@ import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.VSpacer
 
-// TODO
-val ArchBackStackAlteration by navDestination<Unit> {
+val AdvBackStackAlteration by navDestination<Unit> {
     Screen("Back stack alteration") {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             val nc = rememberNavController(
-                key = "Rpute nav controller",
-                startDestination = ArchBackStackAlterationScreenA,
+                key = "BS alteration nav controller",
+                startDestination = AdvBackStackAlterationScreenA,
                 destinations = arrayOf(
-                    ArchBackStackAlterationScreenA,
-                    ArchBackStackAlterationScreenB,
-                    ArchBackStackAlterationScreenC,
+                    AdvBackStackAlterationScreenA,
+                    AdvBackStackAlterationScreenB,
+                    AdvBackStackAlterationScreenC,
                 )
             )
             var editsCount by remember { mutableIntStateOf(0) }
@@ -53,7 +55,7 @@ val ArchBackStackAlteration by navDestination<Unit> {
                         "Append ScreenA",
                         modifier = Modifier.widthIn(min = 200.dp),
                         onClick = {
-                            nc.editBackStack { add(ArchBackStackAlterationScreenA) }
+                            nc.editBackStack { add(AdvBackStackAlterationScreenA) }
                             editsCount++
                         }
                     )
@@ -61,7 +63,7 @@ val ArchBackStackAlteration by navDestination<Unit> {
                         "Append ScreenB",
                         modifier = Modifier.widthIn(min = 200.dp),
                         onClick = {
-                            nc.editBackStack { add(ArchBackStackAlterationScreenB) }
+                            nc.editBackStack { add(AdvBackStackAlterationScreenB) }
                             editsCount++
                         }
                     )
@@ -69,7 +71,7 @@ val ArchBackStackAlteration by navDestination<Unit> {
                         "Append ScreenC",
                         modifier = Modifier.widthIn(min = 200.dp),
                         onClick = {
-                            nc.editBackStack { add(ArchBackStackAlterationScreenC) }
+                            nc.editBackStack { add(AdvBackStackAlterationScreenC) }
                             editsCount++
                         }
                     )
@@ -114,7 +116,7 @@ val ArchBackStackAlteration by navDestination<Unit> {
     }
 }
 
-private val ArchBackStackAlterationScreenA by navDestination<Unit> {
+private val AdvBackStackAlterationScreenA by navDestination<Unit> {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -130,7 +132,7 @@ private val ArchBackStackAlterationScreenA by navDestination<Unit> {
     }
 }
 
-private val ArchBackStackAlterationScreenB by navDestination<Unit> {
+private val AdvBackStackAlterationScreenB by navDestination<Unit> {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -146,7 +148,7 @@ private val ArchBackStackAlterationScreenB by navDestination<Unit> {
     }
 }
 
-private val ArchBackStackAlterationScreenC by navDestination<Unit> {
+private val AdvBackStackAlterationScreenC by navDestination<Unit> {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

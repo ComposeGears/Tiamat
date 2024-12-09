@@ -57,6 +57,8 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.ui.tooling)
+            implementation(libs.androidx.ui.tooling.preview.android)
         }
         iosMain.dependencies {
 

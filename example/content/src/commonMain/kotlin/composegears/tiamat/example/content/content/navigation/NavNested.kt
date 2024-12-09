@@ -31,12 +31,12 @@ val NavNested by navDestination<Unit> {
         ) {
             val content1 = remember {
                 movableContentOf { modifier: Modifier ->
-                    ItemContent("Group 1", modifier)
+                    ItemContent("Group 1 nav controller", modifier)
                 }
             }
             val content2 = remember {
                 movableContentOf { modifier: Modifier ->
-                    ItemContent("Group 2", modifier)
+                    ItemContent("Group 2 nav controller", modifier)
                 }
             }
             if (maxWidth > maxHeight) Row {

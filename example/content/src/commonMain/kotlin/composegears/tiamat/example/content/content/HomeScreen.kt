@@ -29,12 +29,11 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
+import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
-import composegears.tiamat.example.content.content.advanced.AdvTwoPaneNav
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
-import composegears.tiamat.example.content.content.architecture.ArchBackStackAlteration
 import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
@@ -122,12 +121,7 @@ private val HomeItems = listOf(
             AppFeature(
                 name = "Back stack alteration",
                 description = "Editing back stack on the fly example",
-                destination = ArchBackStackAlteration
-            ),
-            AppFeature(
-                name = "Two Pane navigation",
-                description = "Resizable mobile/desktop example of 2-pane navigation",
-                destination = AdvTwoPaneNav
+                destination = AdvBackStackAlteration
             ),
             AppFeature(
                 name = "Extensions",

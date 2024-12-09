@@ -2,7 +2,6 @@ package com.composegears.tiamat
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
@@ -147,38 +146,68 @@ public fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> AnimatedVisibilityScope.DestinationContent(
+private fun <Args> AnimatedVisibilityScope.EntryContent(
     entry: NavEntry<Args>
 ) {
-    val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
-    scope.PlatformContentWrapper {
-        with(entry.destination) {
-            Content()
+    Box {
+        val navController = LocalNavController.current ?: error("NavController is not attached")
+        // gen save state
+        val saveRegistry = remember(entry) {
+            val registry = SaveableStateRegistry(entry.savedState, navController.canBeSaved)
+            entry.savedStateSaver = registry::performSave
+            registry
         }
-        entry.destination.extensions.onEach {
-            with(it) {
-                Content()
-            }
-        }
-    }
-}
-
-@Composable
-private fun BoxScope.Overlay() {
-    Box(
-        modifier = Modifier
-            .matchParentSize()
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach {
-                            it.consume()
-                        }
+        // display content
+        CompositionLocalProvider(
+            LocalSaveableStateRegistry provides saveRegistry,
+            LocalNavEntry provides entry,
+        ) {
+            val scope = remember(entry) { NavDestinationScopeImpl(entry, this@EntryContent) }
+            // entry content
+            scope.PlatformContentWrapper {
+                // destination content
+                with(entry.destination) {
+                    Content()
+                }
+                // extensions content
+                entry.destination.extensions.onEach {
+                    with(it) {
+                        Content()
                     }
                 }
             }
-    )
+        }
+        // prevent clicks during transition animation
+        if (transition.isRunning) Box(
+            modifier = Modifier
+                .matchParentSize()
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach {
+                                it.consume()
+                            }
+                        }
+                    }
+                }
+        )
+        // save state when `this entry`/`parent entry` goes into backStack
+        DisposableEffect(entry) {
+            // invalidate navController routing state
+            navController.invalidateRoute()
+            // save state handle
+            onDispose {
+                entry.savedStateSaver = null
+                // entry goes into backstack, save active subNavController
+                if (entry in navController.getBackStack() || entry == navController.currentNavEntry) {
+                    entry.saveState(saveRegistry.performSave())
+                } else {
+                    entry.close()
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -210,56 +239,26 @@ public fun Navigation(
 ) {
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
-    AnimatedContent(
-        targetState = navController.currentNavEntry,
-        contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
-        contentAlignment = Alignment.Center,
-        modifier = modifier,
-        transitionSpec = {
-            when {
-                navController.isInitialTransition -> ContentTransform(
-                    targetContentEnter = EnterTransition.None,
-                    initialContentExit = ExitTransition.None,
-                    sizeTransform = null
-                )
-                navController.contentTransition != null -> navController.contentTransition!!
-                else -> contentTransformProvider(navController.isForwardTransition)
-            }
-        },
-        label = "nav_controller_${navController.key ?: "no_key"}",
-    ) {
-        if (it != null) Box {
-            // gen save state
-            val saveRegistry = remember(it) {
-                val registry = SaveableStateRegistry(it.savedState, navController.canBeSaved)
-                it.savedStateSaver = registry::performSave
-                registry
-            }
-            // display content
-            CompositionLocalProvider(
-                LocalSaveableStateRegistry provides saveRegistry,
-                LocalNavController provides navController,
-                LocalNavEntry provides it,
-            ) {
-                DestinationContent(it)
-            }
-            // prevent clicks during transition animation
-            if (transition.isRunning) Overlay()
-            // save state when `this entry`/`parent entry` goes into backStack
-            DisposableEffect(it) {
-                // invalidate navController routing state
-                navController.invalidateRoute()
-                // save state handle
-                onDispose {
-                    it.savedStateSaver = null
-                    // entry goes into backstack, save active subNavController
-                    if (it in navController.getBackStack() || it == navController.currentNavEntry) {
-                        it.saveState(saveRegistry.performSave())
-                    } else {
-                        it.close()
-                    }
+    CompositionLocalProvider(LocalNavController provides navController) {
+        AnimatedContent(
+            targetState = navController.currentNavEntry,
+            contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
+            contentAlignment = Alignment.Center,
+            modifier = modifier,
+            transitionSpec = {
+                when {
+                    navController.isInitialTransition -> ContentTransform(
+                        targetContentEnter = EnterTransition.None,
+                        initialContentExit = ExitTransition.None,
+                        sizeTransform = null
+                    )
+                    navController.contentTransition != null -> navController.contentTransition!!
+                    else -> contentTransformProvider(navController.isForwardTransition)
                 }
-            }
+            },
+            label = "nav_controller_${navController.key ?: "no_key"}",
+        ) {
+            if (it != null) EntryContent(it)
         }
     }
 }

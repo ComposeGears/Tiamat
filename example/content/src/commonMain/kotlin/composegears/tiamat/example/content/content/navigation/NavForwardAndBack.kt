@@ -21,7 +21,7 @@ val NavForwardAndBack by navDestination<Unit> {
     Screen("Forward & back") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
-                key = "F&B",
+                key = "F&B nav controller",
                 startDestination = NavForwardAndBackScreen1,
                 destinations = arrayOf(
                     NavForwardAndBackScreen1,

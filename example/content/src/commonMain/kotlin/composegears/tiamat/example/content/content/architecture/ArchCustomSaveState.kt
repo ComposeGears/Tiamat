@@ -33,7 +33,7 @@ val ArchCustomSaveState by navDestination<Unit> {
             }
             if (showNavigation) {
                 val nc = rememberNavController(
-                    key = "Arch custom save state",
+                    key = "Arch custom save state nav controller",
                     startDestination = ArchCustomSaveStateScreen1,
                     destinations = arrayOf(
                         ArchCustomSaveStateScreen1,

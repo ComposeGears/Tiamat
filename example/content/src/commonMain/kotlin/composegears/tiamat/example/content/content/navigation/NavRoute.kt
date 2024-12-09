@@ -22,7 +22,7 @@ val NavRoute by navDestination<Unit> {
     Screen("Routing") {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             val nc = rememberNavController(
-                key = "Rpute nav controller",
+                key = "Route nav controller",
                 startDestination = null,
                 destinations = arrayOf(
                     NavRouteStub,

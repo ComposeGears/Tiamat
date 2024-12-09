@@ -24,7 +24,7 @@ val NavCustomAnimation by navDestination<Unit> {
     Screen("Custom animation") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
-                key = "Custom Animation",
+                key = "Custom Animation nav controller",
                 startDestination = NavCustomAnimationScreen1,
                 destinations = arrayOf(
                     NavCustomAnimationScreen1,

@@ -28,7 +28,7 @@ val AdvExtensions by navDestination<Unit> {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val nc = rememberNavController(
-                key = "F&B",
+                key = "Extensions nav controller",
                 startDestination = AdvExtensionsScreen1,
                 destinations = arrayOf(
                     AdvExtensionsScreen1,
