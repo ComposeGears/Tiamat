@@ -10,7 +10,7 @@ kotlin = "2.0.21"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.9.3"
-androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.0"
+androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.1"
 androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.0"
 androidx-camera-view = "androidx.camera:camera-view:1.4.1"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.2.0"
