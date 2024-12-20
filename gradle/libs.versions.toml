@@ -21,7 +21,7 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 
 koin-compose = "io.insert-koin:koin-compose:4.0.0"
 
-kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.9.0"
+kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1"
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 
 [plugins]
