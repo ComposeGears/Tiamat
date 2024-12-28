@@ -20,11 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.VSpacer
 
-val APRNavArgs by navDestination<Unit> {
+val APRNavArgs by navDestination<Unit>(DestinationPathExt) {
     Screen("NavArgs") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -46,7 +47,8 @@ val APRNavArgs by navDestination<Unit> {
     }
 }
 
-private val APRNavArgsScreen1 by navDestination<Unit> {
+// type is specified to bypass `Type checking has run into a recursive problem` error (see readme.md)
+private val APRNavArgsScreen1: NavDestination<Unit> by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -83,7 +85,15 @@ private val APRNavArgsScreen1 by navDestination<Unit> {
     }
 }
 
-private val APRNavArgsScreen2 by navDestination<Int> {
+// we can remove `<Int>` but it's here to show the type
+@Suppress("RemoveExplicitTypeArguments")
+private val APRNavArgsScreen2 by navDestination<Int>(
+    DestinationPathExt(
+        argsToString = { "value=$it" },
+        stringToArgs = { it.substringAfter("value=").toInt() },
+        backStackDestination = { listOf(APRNavArgsScreen1) },
+    )
+) {
     val nc = navController()
     val args = navArgsOrNull() // you can use `navArgs()` as unsafe option
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

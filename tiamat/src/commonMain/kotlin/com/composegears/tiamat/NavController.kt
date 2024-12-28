@@ -2,8 +2,7 @@ package com.composegears.tiamat
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.*
-import com.composegears.tiamat.Route.Companion.isMatchCurrentNavController
-import com.composegears.tiamat.Route.Companion.resolveNavEntry
+import com.composegears.tiamat.Route.Companion.resolve
 
 /**
  * Navigation controller class
@@ -75,6 +74,8 @@ public class NavController internal constructor(
      */
     public var canGoBack: Boolean by mutableStateOf(false)
         private set
+
+    private val onDestinationChangedListeners = mutableSetOf<(NavController, NavDestination<*>) -> Unit>()
 
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
@@ -189,6 +190,14 @@ public class NavController internal constructor(
         destinations.find(predicate)
 
     /**
+     * Checks if the given destination is known to the current NavController
+     *
+     * @param dest The destination to check.
+     * @return true if the destination is known, false otherwise
+     */
+    public fun isKnownDestination(dest: NavDestination<*>): Boolean = destinations.any { it.name == dest.name }
+
+    /**
      * @param key nav controller's key to search for
      *
      * @return NavController instance with same key (current or one of parents), null if no one match
@@ -202,8 +211,35 @@ public class NavController internal constructor(
         return null
     }
 
+    private fun notifyDestinationChanged(navController: NavController, destination: NavDestination<*>) {
+        onDestinationChangedListeners.forEach { it(navController, destination) }
+        parent?.notifyDestinationChanged(navController, destination)
+    }
+
+    /**
+     * Adds a listener that will be notified when the destination changes (including child nav controllers changes)
+     *
+     * @param listener The listener that will be called when the destination changes
+     * @return The listener that was added
+     */
+    public fun addOnDestinationChangedListener(
+        listener: (NavController, NavDestination<*>?) -> Unit
+    ): (NavController, NavDestination<*>?) -> Unit {
+        onDestinationChangedListeners.add(listener)
+        return listener
+    }
+
+    /**
+     * Removes a previously added destination change listener
+     *
+     * @param listener The listener to be removed
+     */
+    public fun removeOnDestinationChangedListener(listener: (NavController, NavDestination<*>?) -> Unit) {
+        onDestinationChangedListeners.remove(listener)
+    }
+
     private fun requireKnownDestination(dest: NavDestination<*>) {
-        require(destinations.any { it.name == dest.name }) {
+        require(isKnownDestination(dest)) {
             "${dest.name} is not declared in the current (key = $key) nav controller"
         }
     }
@@ -216,6 +252,7 @@ public class NavController internal constructor(
         current = navEntry?.destination
         pendingBackTransition = null
         canGoBack = backStack.isNotEmpty()
+        current?.let { notifyDestinationChanged(this, it) }
     }
 
     private fun replaceInternal(
@@ -350,99 +387,107 @@ public class NavController internal constructor(
     }
 
     /**
+     * Navigate through parent's rout
+     */
+    internal fun followParentsRoute() {
+        val parentRoute = parent?.pendingRoute ?: return
+        val parentElement = parentRoute.elements.firstOrNull()
+        val entries = parentElement?.resolve(this)
+        if (entries != null) {
+            parent.pendingRoute = null
+            if (pendingRoute != null) {
+                // nc already had to follow some route, but parent wants to follow another
+                // skip parent's route and cancel it
+                return
+            }
+            // follow parent's route
+            pendingRoute = parentRoute.clone(drop = 1)
+            followRoute(entries)
+        }
+    }
+
+    /**
      * Follow active/parents route or pass it to next NavController
      */
-    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
-    internal fun followRoute() {
-        // prebuild stack
-        val pendingStack = ArrayList<NavEntry<*>>()
+    @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod", "NestedBlockDepth")
+    private fun followRoute(initialEntries: List<NavEntry<*>> = emptyList()) {
+        // no route to go -> no actions -> exit
+        var pendingRoute = pendingRoute ?: return
 
-        // read rote from parent if present & allowed
-        if (pendingRoute == null) run {
-            val parentRoute = parent?.pendingRoute ?: return@run
-            val parentElement = parentRoute.elements.firstOrNull()
-            val pendingNavEntry: NavEntry<*>? = parentElement
-                ?.takeIf { parentRoute.autoPath }
-                ?.resolveNavEntry(this)
-            val isMatchCurrentNavController = parentElement?.isMatchCurrentNavController(this) ?: false
-            if (pendingNavEntry != null || isMatchCurrentNavController) {
-                parent.pendingRoute = null
-                pendingRoute = parentRoute.clone(drop = if (isMatchCurrentNavController) 1 else 0)
-            }
-            if (pendingNavEntry != null) pendingStack.add(pendingNavEntry)
+        // entries to open
+        val pendingEntries = ArrayList(initialEntries)
+
+        // resolve entries from pending route
+        var resolvedCount = 0
+        while (resolvedCount <= pendingRoute.elements.lastIndex) {
+            val entries = pendingRoute.elements[resolvedCount].resolve(this)
+            if (entries != null) {
+                resolvedCount++
+                pendingEntries.addAll(entries)
+            } else break
+        }
+        if (resolvedCount != 0) {
+            pendingRoute = pendingRoute.clone(drop = resolvedCount)
+            this.pendingRoute = pendingRoute
         }
 
-        // no route -> no actions
-        val pendingRoute = pendingRoute ?: return
+        // route helper
+        fun isSameEntry(old: NavEntry<*>?, new: NavEntry<*>) =
+            old != null &&
+                old.destination == new.destination &&
+                old.navArgs == new.navArgs &&
+                old.freeArgs == new.freeArgs &&
+                old.navResult == new.navResult
 
-        // build pending stack
-        while (pendingRoute.elements.size > pendingStack.size) {
-            val nextNavEntry = pendingRoute.elements[pendingStack.size].resolveNavEntry(this)
-            if (nextNavEntry != null) pendingStack.add(nextNavEntry)
-            else break
-        }
-
-        // apply pending stack
-        var isDestinationChanged = false
-        val pendingStackSize = pendingStack.size
-        if (pendingStack.isNotEmpty()) {
-            // skip helper
-            fun canSkip(old: NavEntry<*>?, new: NavEntry<*>) =
-                old != null &&
-                    pendingRoute.autoSkip &&
-                    old.destination == new.destination &&
-                    old.navArgs == new.navArgs &&
-                    old.freeArgs == new.freeArgs &&
-                    old.navResult == new.navResult
-
-            val target = pendingStack.removeLast()
-            // apply backstack
+        // apply entries
+        var isCurrentDestinationChanged = false
+        if (pendingEntries.isNotEmpty()) {
+            // last entry should be shown as `new` current
+            val upcomingCurrent = pendingEntries.removeLast()
+            // calculate how many entries we can skip
             var skipCount = 0
-            for (i in 0..pendingStack.lastIndex) {
-                if (canSkip(backStack.getOrNull(i), pendingStack[i])) {
-                    skipCount++
-                } else break
-            }
-            repeat(skipCount) {
-                pendingStack.removeFirst()
-            }
-            editBackStack {
-                while (backStack.size != skipCount) {
-                    removeAt(skipCount)
+            if (!pendingRoute.forceReplace) {
+                for (i in 0..pendingEntries.lastIndex) {
+                    if (isSameEntry(backStack.getOrNull(i), pendingEntries[i])) {
+                        skipCount++
+                    } else break
                 }
-                pendingStack.onEach {
+            }
+            // apply backstack changes
+            editBackStack {
+                if (skipCount == 0) clear()
+                else while (size() > skipCount) {
+                    removeLast()
+                }
+                pendingEntries.drop(skipCount).onEach {
                     add(it)
                 }
             }
-            // replace current
-            if (!canSkip(currentNavEntry, target)) {
-                replace(target)
-                isDestinationChanged = true
+            // apply current destination
+            if (pendingRoute.forceReplace || !isSameEntry(currentNavEntry, upcomingCurrent)) {
+                replace(upcomingCurrent)
+                isCurrentDestinationChanged = true
             }
         }
 
-        // remove processed items
-        val unfinishedRoute = pendingRoute.clone(drop = pendingStackSize)
-        if (unfinishedRoute.elements.size == 0) {
+        // invalidate route if there is no more elements
+        if (pendingRoute.elements.isEmpty()) {
             this.pendingRoute = null
             return
-        } else this.pendingRoute = unfinishedRoute
+        }
 
-        // on no changes happened (all changes are skipped, or we need to step in to the child nav controller)
-        // try to find next nav controller to finish route in the current active nav entry
-        if (!isDestinationChanged) {
-            val nextElement = unfinishedRoute.elements.first()
+        // in case current destination was not changed, we need to find a child to follow rute
+        if (!isCurrentDestinationChanged) {
+            val nextElement = pendingRoute.elements.first()
             currentNavEntry
                 ?.navControllersStorage
                 ?.getActiveNavControllers()
                 ?.find { nc ->
-                    val isNcMatching = nextElement.isMatchCurrentNavController(nc)
-                    val isEntryMatching = unfinishedRoute.autoPath && nextElement.resolveNavEntry(nc) != null
-                    if (isNcMatching || isEntryMatching) {
-                        // remove matcher if it was nc-validation
-                        nc.pendingRoute = unfinishedRoute.clone(if (isNcMatching) 1 else 0)
+                    val entries = nextElement.resolve(nc)
+                    if (entries != null) {
+                        nc.pendingRoute = pendingRoute.clone(drop = 1)
                         this.pendingRoute = null
-                        nc.followRoute()
+                        nc.followRoute(entries)
                         true
                     } else false
                 }
@@ -465,7 +510,7 @@ public class NavController internal constructor(
                     when (it) {
                         is NavDestination<*> -> "Unable to find destination: ${it.name}"
                         is NavEntry<*> -> "Unable to open entry: ${it.destination.name}"
-                        is Route.RouteDestination<*> -> "Unable to find route destination (${it.description})"
+                        is Route.RouteEntries -> "Unable to find route destination (${it.description})"
                         is Route.RouteNavController -> "Unable to find nav controller (${it.description})"
                     }
                 }
@@ -609,12 +654,24 @@ public class NavController internal constructor(
         }
 
         /**
+         * Remove latest/most recent item
+         *
+         * @return true if entry where removed, false otherwise
+         */
+        public fun removeLast(): Boolean {
+            return if (backStack.isNotEmpty()) {
+                backStack.removeLast().close()
+                true
+            } else false
+        }
+
+        /**
          * Remove latest/most recent item within same destination
          *
          * @param dest destination to be removed
          * @return true if entry where removed, false otherwise
          */
-        public fun removeRecent(dest: NavDestination<*>): Boolean {
+        public fun removeLast(dest: NavDestination<*>): Boolean {
             val ind = backStack.indexOfLast { it.destination.name == dest.name }
             if (ind >= 0) backStack.removeAt(ind).close()
             return ind >= 0
@@ -626,7 +683,7 @@ public class NavController internal constructor(
          * @param predicate matcher, default `{true}`
          * @return true if entry where removed, false otherwise
          */
-        public fun removeRecent(predicate: (NavEntry<*>) -> Boolean = { true }): Boolean {
+        public fun removeLast(predicate: (NavEntry<*>) -> Boolean): Boolean {
             val ind = backStack.indexOfLast(predicate)
             if (ind >= 0) backStack.removeAt(ind).close()
             return ind >= 0
@@ -647,6 +704,26 @@ public class NavController internal constructor(
         }
 
         /**
+         * Replace the current backstack with the provided destinations
+         *
+         * @param destinations the destinations to replace the current backstack with
+         */
+        public fun set(vararg destinations: NavDestination<*>) {
+            clear()
+            destinations.onEach { add(it) }
+        }
+
+        /**
+         * Replace the current backstack with the provided entries
+         *
+         * @param entries the entries to replace the current backstack with
+         */
+        public fun set(vararg entries: NavEntry<*>) {
+            clear()
+            entries.onEach { add(it) }
+        }
+
+        /**
          * Clear backstack
          */
         public fun clear() {
@@ -654,5 +731,10 @@ public class NavController internal constructor(
                 backStack.removeLast().close()
             }
         }
+
+        /**
+         * @return current backstack items count
+         */
+        public fun size(): Int = backStack.size
     }
 }

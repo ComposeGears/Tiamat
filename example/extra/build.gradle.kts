@@ -34,6 +34,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.example.platform)
+
             implementation(projects.tiamat)
             implementation(projects.tiamatKoin)
             implementation(projects.example.uiCore)

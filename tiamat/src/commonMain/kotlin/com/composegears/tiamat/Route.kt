@@ -1,11 +1,12 @@
 package com.composegears.tiamat
 
+// TODO add doc
+
 /**
  * Navigation route
  */
 public class Route private constructor(
-    internal val autoPath: Boolean,
-    internal val autoSkip: Boolean,
+    internal val forceReplace: Boolean,
     internal val throwOnFail: Boolean,
     elements: List<Element> = emptyList()
 ) {
@@ -18,20 +19,17 @@ public class Route private constructor(
         public fun build(
             vararg elements: Element
         ): Route = build(
-            autoPath = true,
-            autoSkip = true,
+            forceReplace = false,
             throwOnFail = false,
             elements = elements
         )
 
         public fun build(
-            autoPath: Boolean = true,
-            autoSkip: Boolean = true,
+            forceReplace: Boolean = true,
             throwOnFail: Boolean = false,
             vararg elements: Element
         ): Route = Route(
-            autoPath = autoPath,
-            autoSkip = autoSkip,
+            forceReplace = forceReplace,
             throwOnFail = throwOnFail,
             elements = elements.toList()
         )
@@ -39,36 +37,37 @@ public class Route private constructor(
         public fun build(
             builder: RouteBuilderScope.() -> Unit
         ): Route = build(
-            autoPath = true,
-            autoSkip = true,
+            forceReplace = false,
             throwOnFail = false,
             builder = builder
         )
 
         public fun build(
-            autoPath: Boolean = true,
-            autoSkip: Boolean = true,
+            forceReplace: Boolean = true,
             throwOnFail: Boolean = false,
             builder: RouteBuilderScope.() -> Unit
         ): Route = Route(
-            autoPath = autoPath,
-            autoSkip = autoSkip,
+            forceReplace = forceReplace,
             throwOnFail = throwOnFail,
         ).also { RouteBuilderScope(it).builder() }
 
         // ------------- resolvers -------------
 
-        internal fun Element.isMatchCurrentNavController(nc: NavController) =
-            (this as? RouteNavController)
-                ?.selector
-                ?.invoke(nc)
-                ?: false
-
-        internal fun Element.resolveNavEntry(nc: NavController) = when (this) {
-            is NavDestination<*> -> takeIf { nc.findDestination { it == this } != null }?.toNavEntry()
-            is NavEntry<*> -> takeIf { nc.findDestination { it == this.destination } != null }
-            is RouteDestination<*> -> entryProvider(nc)
-                ?.takeIf { ne -> nc.findDestination { it == ne.destination } != null }
+        /**
+         * Resolve route element to list of navigation entries
+         *
+         * May return empty list in case we only need to select nav controller
+         *
+         * @return list of navigation entries or null if route element is not resolved
+         */
+        internal fun Element.resolve(nc: NavController): List<NavEntry<*>>? = when (this) {
+            is RouteNavController -> if (this.selector(nc)) emptyList() else null
+            is NavDestination<*> -> if (nc.isKnownDestination(this)) listOf(this.toNavEntry()) else null
+            is NavEntry<*> -> if (nc.isKnownDestination(this.destination)) listOf(this) else null
+            is RouteEntries -> {
+                val entries = this.entriesProvider(nc)
+                if (entries != null && entries.all { nc.isKnownDestination(it.destination) }) entries else null
+            }
             else -> null
         }
     }
@@ -76,8 +75,7 @@ public class Route private constructor(
     public fun clone(): Route = clone(0)
 
     internal fun clone(drop: Int): Route = Route(
-        autoPath = autoPath,
-        autoSkip = autoSkip,
+        forceReplace = forceReplace,
         throwOnFail = throwOnFail,
         elements = ArrayList(elements.drop(drop))
     )
@@ -86,9 +84,9 @@ public class Route private constructor(
 
     public sealed interface Element
 
-    internal class RouteDestination<Args>(
+    internal class RouteEntries(
         val description: String,
-        val entryProvider: (navController: NavController) -> NavEntry<Args>?,
+        val entriesProvider: (navController: NavController) -> List<NavEntry<*>>?,
     ) : Element
 
     internal class RouteNavController(
@@ -105,37 +103,50 @@ public class Route private constructor(
         public fun route(
             name: String,
             description: String = "name = $name",
-            entryBuilder: (NavDestination<*>) -> NavEntry<*>? = { it.toNavEntry() },
-        ) {
-            route(
-                description = description,
-                entryProvider = { nc -> nc.findDestination { it.name == name }?.let(entryBuilder) },
-            )
-        }
+        ): Unit = route(
+            description = description,
+            entryProvider = { nc -> nc.findDestination { it.name == name }?.toNavEntry() },
+        )
 
         @Suppress("UNCHECKED_CAST")
         public fun <Args> route(
             destination: NavDestination<Args>,
             navArgs: Args? = null,
             freeArgs: Any? = null,
+        ): Unit = route(
+            description = "name = ${destination.name}",
+            entryProvider = { nc ->
+                nc.findDestination { it === destination }
+                    ?.let { it as NavDestination<Args> }
+                    ?.toNavEntry(navArgs, freeArgs)
+            },
+        )
+
+        public fun route(
+            navEntry: NavEntry<*>,
+            description: String = "name = ${navEntry.destination.name}",
+        ): Unit = route(
+            description = description,
+            entryProvider = { nc -> nc.findDestination { it === navEntry.destination }?.let { navEntry } },
+        )
+
+        public fun route(
+            description: String = "",
+            entryProvider: (navController: NavController) -> NavEntry<*>?,
         ) {
-            route(
-                description = "name = ${destination.name}",
-                entryProvider = { nc ->
-                    nc.findDestination { it === destination }
-                        ?.let { it as NavDestination<Args> }
-                        ?.toNavEntry(navArgs, freeArgs)
-                },
+            route.elements += RouteEntries(
+                description = description,
+                entriesProvider = { nc -> entryProvider(nc)?.let { listOf(it) } }
             )
         }
 
-        public fun <Args> route(
+        public fun routeList(
             description: String = "",
-            entryProvider: (navController: NavController) -> NavEntry<Args>?,
+            entriesProvider: (navController: NavController) -> List<NavEntry<*>>?,
         ) {
-            route.elements += RouteDestination(
+            route.elements += RouteEntries(
                 description = description,
-                entryProvider = entryProvider,
+                entriesProvider = entriesProvider
             )
         }
 

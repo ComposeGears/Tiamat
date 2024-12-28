@@ -5,15 +5,23 @@ package com.composegears.tiamat
  */
 public typealias SavedState = Map<String, Any?>
 
-// TODO add doc
+/**
+ * Converts the `SavedState` to a human-readable string representation
+ *
+ * This function formats the `SavedState` map into a string representation that is easier to read
+ *
+ * @param tabChar The character(s) used for indentation. Defaults to four spaces
+ * @param initialTabSize The initial size of the indentation. Defaults to 0
+ * @return A human-readable string representation of the `SavedState`
+ */
 public fun SavedState.toHumanReadableString(
     tabChar: String = "    ",
     initialTabSize: Int = 0,
 ): String = StringBuilder()
-    .apply { appendBeautifulString(tabChar, "Data", this@toHumanReadableString, initialTabSize) }
+    .apply { appendSavedStateDataString(tabChar, "Data", this@toHumanReadableString, initialTabSize) }
     .toString()
 
-private fun StringBuilder.appendBeautifulString(tabChar: String, key: String, data: Any?, tab: Int) {
+private fun StringBuilder.appendSavedStateDataString(tabChar: String, key: String, data: Any?, tab: Int) {
     val prefix = tabChar.repeat(tab)
     when (data) {
         is Map<*, *> -> {
@@ -21,7 +29,7 @@ private fun StringBuilder.appendBeautifulString(tabChar: String, key: String, da
             if (data.isNotEmpty()) {
                 append(" = {\n")
                 data.onEach {
-                    appendBeautifulString(tabChar, it.key.toString(), it.value, tab + 1)
+                    appendSavedStateDataString(tabChar, it.key.toString(), it.value, tab + 1)
                 }
                 append(prefix).append("}\n")
             } else {
@@ -33,7 +41,7 @@ private fun StringBuilder.appendBeautifulString(tabChar: String, key: String, da
             if (data.iterator().hasNext()) {
                 append(" = [\n")
                 data.onEachIndexed { index, item ->
-                    appendBeautifulString(tabChar, "#$index", item, tab + 1)
+                    appendSavedStateDataString(tabChar, "#$index", item, tab + 1)
                 }
                 append(prefix).append("]\n")
             } else {

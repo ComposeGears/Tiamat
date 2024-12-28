@@ -130,7 +130,7 @@ public fun <T> rememberNavController(
                 destinations = destinations
             )
             .apply(configuration)
-            .apply { followRoute() }
+            .apply { followParentsRoute() }
     }
     // attach/detach to parent storage
     DisposableEffect(navController) {

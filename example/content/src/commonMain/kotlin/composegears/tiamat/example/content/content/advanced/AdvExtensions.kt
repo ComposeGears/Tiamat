@@ -16,12 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.VSpacer
 
-val AdvExtensions by navDestination<Unit> {
+val AdvExtensions by navDestination<Unit>(DestinationPathExt) {
     Screen("Extensions") {
         Column(
             Modifier.fillMaxSize(),

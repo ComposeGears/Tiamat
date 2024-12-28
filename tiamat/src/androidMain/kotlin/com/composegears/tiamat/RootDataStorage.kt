@@ -2,12 +2,11 @@
 
 package com.composegears.tiamat
 
-import android.content.ContextWrapper
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.lifecycle.ViewModel
 
@@ -29,14 +28,7 @@ internal fun rememberRootDataStore(): NavControllersStorage {
         // as for android preview we use in memory storage
         return remember { NavControllersStorage() }
     } else {
-        val context = LocalContext.current
-        val activity = remember(context) {
-            var ctx = context
-            while (ctx !is ComponentActivity) {
-                ctx = (ctx as ContextWrapper).baseContext
-            }
-            ctx
-        }
+        val activity = LocalActivity.current as? ComponentActivity ?: error("Activity not found")
         val storageModel by activity.viewModels<RootStorageModel>()
         return storageModel.storage
     }

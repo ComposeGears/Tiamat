@@ -38,111 +38,114 @@ import composegears.tiamat.example.content.content.architecture.ArchCustomSaveSt
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.extra.A3rdParty
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.ui.core.AppFeature
 import composegears.tiamat.example.ui.core.FillSpace
 import composegears.tiamat.example.ui.core.LocalThemeConfig
 import composegears.tiamat.example.ui.core.VSpacer
 
-private val HomeItems = listOf(
-    HomeItem(
-        "Navigation",
-        listOf(
-            AppFeature(
-                name = "Forward & back",
-                description = "Simple navigation back & forward case",
-                destination = NavForwardAndBack
-            ),
-            AppFeature(
-                name = "Replace",
-                description = "Replace (navigate without adding current destination to back stack) case",
-                destination = NavReplace
-            ),
-            AppFeature(
-                name = "Nested navigation",
-                description = "Multiple nested nav controllers case",
-                destination = NavNested
-            ),
-            AppFeature(
-                name = "Custom animation",
-                description = "On fly customizable navigation animation",
-                destination = NavCustomAnimation
-            ),
-            AppFeature(
-                name = "Tabs navigation",
-                description = "Simple tab's navigation with a separate nav controllers for each tab." +
-                    "Sample use `popToTop` nav action to bring to from previously opened screen",
-                destination = NavTabs
-            ),
-            AppFeature(
-                name = "Routing (experimental)",
-                description = "Advanced Route-Api demo (building nav-path)",
-                destination = NavRoute
-            ),
-        ),
-    ),
-    HomeItem(
-        "Args / Params / Result",
-        listOf(
-            AppFeature(
-                name = "NavArgs",
-                description = "Passing navigation-arguments to next screen example",
-                destination = APRNavArgs
-            ),
-            AppFeature(
-                name = "FreeArgs",
-                description = "Passing free-type-arguments to next screen example",
-                destination = APRFreeArgs
-            ),
-            AppFeature(
-                name = "NavResult",
-                description = "Returning result tp previous screen",
-                destination = APRNavResult
+private val HomeItems =
+    listOf(
+        HomeItem(
+            "Navigation",
+            listOf(
+                AppFeature(
+                    name = "Forward & back",
+                    description = "Simple navigation back & forward case",
+                    destination = NavForwardAndBack
+                ),
+                AppFeature(
+                    name = "Replace",
+                    description = "Replace (navigate without adding current destination to back stack) case",
+                    destination = NavReplace
+                ),
+                AppFeature(
+                    name = "Nested navigation",
+                    description = "Multiple nested nav controllers case",
+                    destination = NavNested
+                ),
+                AppFeature(
+                    name = "Custom animation",
+                    description = "On fly customizable navigation animation",
+                    destination = NavCustomAnimation
+                ),
+                AppFeature(
+                    name = "Tabs navigation",
+                    description = "Simple tab's navigation with a separate nav controllers for each tab." +
+                        "Sample use `popToTop` nav action to bring to from previously opened screen",
+                    destination = NavTabs
+                ),
+                AppFeature(
+                    name = "Routing (experimental)",
+                    description = "Advanced Route-Api demo (building nav-path)",
+                    destination = NavRoute
+                ),
             ),
         ),
-    ),
-    HomeItem(
-        "Architecture",
-        listOf(
-            AppFeature(
-                name = "ViewModel",
-                description = "ViewModel usage demo",
-                destination = ArchViewModel
-            ),
-            AppFeature(
-                name = "Custom SaveState",
-                description = "Custom save and restore state logic case",
-                destination = ArchCustomSaveState
-            ),
-        ),
-    ),
-    HomeItem(
-        "Advanced examples",
-        listOf(
-            AppFeature(
-                name = "Back stack alteration",
-                description = "Editing back stack on the fly example",
-                destination = AdvBackStackAlteration
-            ),
-            AppFeature(
-                name = "Extensions",
-                description = "Example shows how to use nav-destination extensions (eg: Analytics tracking)",
-                destination = AdvExtensions
+        HomeItem(
+            "Args / Params / Result",
+            listOf(
+                AppFeature(
+                    name = "NavArgs",
+                    description = "Passing navigation-arguments to next screen example",
+                    destination = APRNavArgs
+                ),
+                AppFeature(
+                    name = "FreeArgs",
+                    description = "Passing free-type-arguments to next screen example",
+                    destination = APRFreeArgs
+                ),
+                AppFeature(
+                    name = "NavResult",
+                    description = "Returning result tp previous screen",
+                    destination = APRNavResult
+                ),
             ),
         ),
-    ),
-    HomeItem(
-        "Platform ${Platform.name()}",
-        Platform.features()
-    ),
-    HomeItem(
-        "3rd party",
-        A3rdParty.features()
-    ),
+        HomeItem(
+            "Architecture",
+            listOf(
+                AppFeature(
+                    name = "ViewModel",
+                    description = "ViewModel usage demo",
+                    destination = ArchViewModel
+                ),
+                AppFeature(
+                    name = "Custom SaveState",
+                    description = "Custom save and restore state logic case",
+                    destination = ArchCustomSaveState
+                ),
+            ),
+        ),
+        HomeItem(
+            "Advanced examples",
+            listOf(
+                AppFeature(
+                    name = "Back stack alteration",
+                    description = "Editing back stack on the fly example",
+                    destination = AdvBackStackAlteration
+                ),
+                AppFeature(
+                    name = "Extensions",
+                    description = "Example shows how to use nav-destination extensions (eg: Analytics tracking)",
+                    destination = AdvExtensions
+                ),
+            ),
+        ),
+        HomeItem(
+            "Platform ${Platform.name()}",
+            Platform.features()
+        ),
+        HomeItem(
+            "3rd party",
+            A3rdParty.features()
+        ),
+    ).filter {
+        it.items.isNotEmpty()
+    }
 
-).filter { it.items.isNotEmpty() }
-
-val HomeScreen by navDestination<Unit> {
+val HomeScreen: NavDestination<Unit> by navDestination(DestinationPathExt) {
     val navController = navController()
     Box(
         modifier = Modifier.fillMaxSize().systemBarsPadding(),

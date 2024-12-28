@@ -15,12 +15,13 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.VSpacer
 
-val NavReplace by navDestination<Unit> {
+val NavReplace by navDestination<Unit>(DestinationPathExt) {
     Screen("Replace") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(

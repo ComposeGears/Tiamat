@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-val ArchViewModel by navDestination<Unit> {
+val ArchViewModel by navDestination<Unit>(DestinationPathExt) {
     Screen("ViewModel") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(

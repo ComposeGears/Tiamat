@@ -18,12 +18,13 @@ import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import com.composegears.tiamat.rememberNavController
+import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.VSpacer
 
-val NavNested by navDestination<Unit> {
+val NavNested by navDestination<Unit>(DestinationPathExt) {
     Screen("Nested navigation") {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize().padding(16.dp),
