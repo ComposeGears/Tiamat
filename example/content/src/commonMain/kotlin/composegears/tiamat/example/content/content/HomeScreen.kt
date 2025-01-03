@@ -38,12 +38,8 @@ import composegears.tiamat.example.content.content.architecture.ArchCustomSaveSt
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.extra.A3rdParty
-import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.platform.Platform
-import composegears.tiamat.example.ui.core.AppFeature
-import composegears.tiamat.example.ui.core.FillSpace
-import composegears.tiamat.example.ui.core.LocalThemeConfig
-import composegears.tiamat.example.ui.core.VSpacer
+import composegears.tiamat.example.ui.core.*
 
 private val HomeItems =
     listOf(
@@ -145,7 +141,7 @@ private val HomeItems =
         it.items.isNotEmpty()
     }
 
-val HomeScreen: NavDestination<Unit> by navDestination(DestinationPathExt) {
+val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
     val navController = navController()
     Box(
         modifier = Modifier.fillMaxSize().systemBarsPadding(),

@@ -23,7 +23,10 @@ import composegears.tiamat.example.ui.core.AppTheme
 
 @Composable
 @Suppress("SpreadOperator")
-fun App(navControllerConfig: NavController.() -> Unit = {}) {
+fun App(
+    navControllerConfig: NavController.() -> Unit = {},
+    overlay: @Composable (navController: NavController) -> Unit = {},
+) {
     AppTheme {
         Surface(Modifier.fillMaxSize()) {
             val rootNavController = rememberNavController(
@@ -52,6 +55,7 @@ fun App(navControllerConfig: NavController.() -> Unit = {}) {
                 configuration = navControllerConfig
             )
             Navigation(rootNavController, Modifier.fillMaxSize())
+            overlay(rootNavController)
         }
     }
 }

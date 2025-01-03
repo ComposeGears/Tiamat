@@ -14,8 +14,8 @@ import com.composegears.tiamat.koin.koinSharedTiamatViewModel
 import com.composegears.tiamat.koin.koinTiamatViewModel
 import com.composegears.tiamat.koin.tiamatViewModelOf
 import com.composegears.tiamat.navDestination
-import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.Screen
+import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
@@ -35,7 +35,7 @@ val a3rdPKoinModule = module {
      */
 }
 
-val A3rdPKoin by navDestination<Unit>(DestinationPathExt) {
+val A3rdPKoin by navDestination<Unit>(ScreenInfo()) {
     val simpleViewModel = koinTiamatViewModel<A3rdPKoinSimpleViewModel>()
     val paramViewModel = koinTiamatViewModel<A3rdPKoinParamViewModel> { parametersOf("params") }
     val saveableViewModel = koinSaveableTiamatViewModel<A3rdPKoinSaveableViewModel>()

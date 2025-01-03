@@ -124,6 +124,7 @@ fun <T> NavDestinationScope<T>.Screen(
     body: @Composable NavDestinationScope<T>.() -> Unit
 ) {
     val nc = navController()
+    // val si = ext<ScreenInfo<*>>() // todo add code reference to UI
     Column(Modifier.fillMaxSize().navigationBarsPadding()) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
@@ -133,15 +134,21 @@ fun <T> NavDestinationScope<T>.Screen(
                 modifier = Modifier.heightIn(min = 48.dp).statusBarsPadding(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (backButton) IconButton(
-                    onClick = { nc.back() }
-                ) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
-                }
+                if (backButton)
+                    IconButton(
+                        enabled = nc.canGoBack,
+                        onClick = { nc.back() }
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                    }
+                else
+                    HSpacer(16.dp)
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
                 )
+                HSpacer(16.dp)
             }
         }
         HorizontalDivider()

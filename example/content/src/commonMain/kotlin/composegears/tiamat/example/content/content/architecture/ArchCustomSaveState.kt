@@ -16,13 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
-import composegears.tiamat.example.platform.DestinationPathExt
-import composegears.tiamat.example.ui.core.AppButton
-import composegears.tiamat.example.ui.core.HSpacer
-import composegears.tiamat.example.ui.core.Screen
-import composegears.tiamat.example.ui.core.VSpacer
+import composegears.tiamat.example.ui.core.*
 
-val ArchCustomSaveState by navDestination<Unit>(DestinationPathExt) {
+val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
     Screen("Custom SaveState") {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             var ncSavedState by remember { mutableStateOf<SavedState?>(null) }

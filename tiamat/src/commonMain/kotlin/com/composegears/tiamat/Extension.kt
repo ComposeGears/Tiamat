@@ -3,19 +3,32 @@ package com.composegears.tiamat
 import androidx.compose.runtime.Composable
 
 /**
- * Extension base class
+ * Extension base interface
  */
-public interface Extension<in Args> {
+public interface Extension<in Args>
+
+/**
+ * Extension with a content base interface
+ *
+ * Default type is [ContentExtension.Type.Overlay]
+ */
+public interface ContentExtension<in Args> : Extension<Args> {
+
     @Composable
     public fun NavDestinationScope<out Args>.Content()
+
+    public fun getType(): Type = Type.Overlay
+
+    public enum class Type { Overlay, Underlay }
 }
 
 /**
- * internal simple Extension impl
+ * internal simple ContentExtension impl, type = Overlay
  */
-internal open class ExtensionImpl<in Args>(
+internal open class ContentExtensionImpl<in Args>(
     private val content: @Composable NavDestinationScope<out Args>.() -> Unit
-) : Extension<Args> {
+) : ContentExtension<Args> {
+
     @Composable
     override fun NavDestinationScope<out Args>.Content() {
         content()
@@ -23,13 +36,13 @@ internal open class ExtensionImpl<in Args>(
 }
 
 /**
- * Simple extension builder
+ * Simple [ContentExtension.Type.Overlay] content-extension builder
  *
  * @param content extension content builder lambda
  */
 public fun <Args> extension(
     content: @Composable NavDestinationScope<out Args>.() -> Unit
-): Extension<Args> = ExtensionImpl(content)
+): Extension<Args> = ContentExtensionImpl(content)
 
 /**
  * Provides an attached extension of defined type

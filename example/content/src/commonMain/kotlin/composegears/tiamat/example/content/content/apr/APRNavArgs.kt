@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,12 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
-import composegears.tiamat.example.platform.DestinationPathExt
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
+import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
 
-val APRNavArgs by navDestination<Unit>(DestinationPathExt) {
+// the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
+val APRNavArgs by navDestination<Unit>(ScreenInfo("NavArgs")) {
     Screen("NavArgs") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -48,7 +50,7 @@ val APRNavArgs by navDestination<Unit>(DestinationPathExt) {
 }
 
 // type is specified to bypass `Type checking has run into a recursive problem` error (see readme.md)
-private val APRNavArgsScreen1: NavDestination<Unit> by navDestination {
+private val APRNavArgsScreen1: NavDestination<Unit> by navDestination(ScreenInfo("ArgsInput")) {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -88,14 +90,20 @@ private val APRNavArgsScreen1: NavDestination<Unit> by navDestination {
 // we can remove `<Int>` but it's here to show the type
 @Suppress("RemoveExplicitTypeArguments")
 private val APRNavArgsScreen2 by navDestination<Int>(
-    DestinationPathExt(
+    ScreenInfo(
+        name = "ArgsValue",
         argsToString = { "value=$it" },
-        stringToArgs = { it.substringAfter("value=").toInt() },
-        backStackDestination = { listOf(APRNavArgsScreen1) },
+        stringToArgs = { it?.substringAfter("value=")?.toInt() },
     )
 ) {
     val nc = navController()
     val args = navArgsOrNull() // you can use `navArgs()` as unsafe option
+    LaunchedEffect(Unit) {
+        // in case we are open this screen from deeplink/url - ensure we have previous screen in backstack
+        if (nc.getBackStack().find { it.destination == APRNavArgsScreen1 } == null) nc.editBackStack {
+            add(APRNavArgsScreen1)
+        }
+    }
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)

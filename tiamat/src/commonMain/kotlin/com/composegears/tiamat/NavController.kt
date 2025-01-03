@@ -75,8 +75,6 @@ public class NavController internal constructor(
     public var canGoBack: Boolean by mutableStateOf(false)
         private set
 
-    private val onDestinationChangedListeners = mutableSetOf<(NavController, NavDestination<*>) -> Unit>()
-
     private val backStack: ArrayList<NavEntry<*>> = ArrayList()
     internal val sharedViewModels = mutableMapOf<String, TiamatViewModel>()
     private var pendingBackTransition: ContentTransform? = null
@@ -211,33 +209,6 @@ public class NavController internal constructor(
         return null
     }
 
-    private fun notifyDestinationChanged(navController: NavController, destination: NavDestination<*>) {
-        onDestinationChangedListeners.forEach { it(navController, destination) }
-        parent?.notifyDestinationChanged(navController, destination)
-    }
-
-    /**
-     * Adds a listener that will be notified when the destination changes (including child nav controllers changes)
-     *
-     * @param listener The listener that will be called when the destination changes
-     * @return The listener that was added
-     */
-    public fun addOnDestinationChangedListener(
-        listener: (NavController, NavDestination<*>?) -> Unit
-    ): (NavController, NavDestination<*>?) -> Unit {
-        onDestinationChangedListeners.add(listener)
-        return listener
-    }
-
-    /**
-     * Removes a previously added destination change listener
-     *
-     * @param listener The listener to be removed
-     */
-    public fun removeOnDestinationChangedListener(listener: (NavController, NavDestination<*>?) -> Unit) {
-        onDestinationChangedListeners.remove(listener)
-    }
-
     private fun requireKnownDestination(dest: NavDestination<*>) {
         require(isKnownDestination(dest)) {
             "${dest.name} is not declared in the current (key = $key) nav controller"
@@ -252,7 +223,6 @@ public class NavController internal constructor(
         current = navEntry?.destination
         pendingBackTransition = null
         canGoBack = backStack.isNotEmpty()
-        current?.let { notifyDestinationChanged(this, it) }
     }
 
     private fun replaceInternal(

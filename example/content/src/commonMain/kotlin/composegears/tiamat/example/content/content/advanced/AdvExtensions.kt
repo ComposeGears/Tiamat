@@ -16,13 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
-import composegears.tiamat.example.platform.DestinationPathExt
-import composegears.tiamat.example.ui.core.AppButton
-import composegears.tiamat.example.ui.core.HSpacer
-import composegears.tiamat.example.ui.core.Screen
-import composegears.tiamat.example.ui.core.VSpacer
+import composegears.tiamat.example.ui.core.*
 
-val AdvExtensions by navDestination<Unit>(DestinationPathExt) {
+val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
     Screen("Extensions") {
         Column(
             Modifier.fillMaxSize(),
@@ -68,9 +64,13 @@ val AdvExtensions by navDestination<Unit>(DestinationPathExt) {
 
 // ------------ extensions -------------------
 
+// Marker/Simple ext have no content and may be a marker/data handler to be used
+// in tandem with other extensions
+class MarkerExtension(val data: String) : Extension<Any?>
+
 // having a dedicated object or class allows you cal ext fun to get extension ref
 // eg: nc.current.ext<GlobalExtension>() -> return GlobalExtension or null if not attached
-object GlobalExtension : Extension<Any?> {
+object GlobalExtension : ContentExtension<Any?> {
     var activeDestination by mutableStateOf("")
 
     @Composable
@@ -82,7 +82,7 @@ object GlobalExtension : Extension<Any?> {
     }
 }
 
-class LocalExtension(val logMessage: String) : Extension<Any?> {
+class LocalExtension(val logMessage: String) : ContentExtension<Any?> {
     @Composable
     override fun NavDestinationScope<out Any?>.Content() {
         LaunchedEffect(Unit) {
@@ -93,7 +93,7 @@ class LocalExtension(val logMessage: String) : Extension<Any?> {
 
 // simple extensions, you can use them
 // you will not be able to identify from the list of nav extensions
-// type of ext will always be ExtensionImpl
+// type of ext will always be ContentExtensionImpl
 val SimpleGlobalExtension = extension<Any> {}
 
 // extension can also have its own UI placed over screen content
@@ -159,7 +159,7 @@ private val AdvExtensionsScreen2 by navDestination<Unit>(
 private val AdvExtensionsScreen3 by navDestination<Unit>(
     GlobalExtension,
     LocalExtension("Screen3"),
-    extension { /* at place extension */ }
+    MarkerExtension("Some data")
 ) {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

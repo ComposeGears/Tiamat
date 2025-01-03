@@ -146,6 +146,7 @@ public fun <T> rememberNavController(
 }
 
 @Composable
+@Suppress("CognitiveComplexMethod")
 private fun <Args> AnimatedVisibilityScope.EntryContent(
     entry: NavEntry<Args>
 ) {
@@ -165,13 +166,19 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
             val scope = remember(entry) { NavDestinationScopeImpl(entry, this@EntryContent) }
             // entry content
             scope.PlatformContentWrapper {
+                // extensions before-content
+                entry.destination.extensions.onEach {
+                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
+                        Content()
+                    }
+                }
                 // destination content
                 with(entry.destination) {
                     Content()
                 }
-                // extensions content
+                // extensions after-content
                 entry.destination.extensions.onEach {
-                    with(it) {
+                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
                         Content()
                     }
                 }
@@ -276,6 +283,15 @@ public fun NavDestinationScope<*>.navController(): NavController =
  */
 @Composable
 public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
+
+/**
+ * Provides an attached extension of defined type
+ *
+ * @return extension or null if the ext of this type is not attached
+ */
+@Composable
+public inline fun <reified P : Extension<*>> NavDestinationScope<*>.ext(): P? =
+    navEntry().destination.ext<P>()
 
 /**
  * Provides nav arguments passed into navigate forward function for current destination
