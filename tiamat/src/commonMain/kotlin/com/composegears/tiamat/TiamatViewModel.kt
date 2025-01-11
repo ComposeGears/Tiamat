@@ -7,7 +7,7 @@ import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
 /**
- * ViewModels base class
+ * ViewModels base class.
  */
 public abstract class TiamatViewModel {
 
@@ -31,7 +31,7 @@ public abstract class TiamatViewModel {
 }
 
 /**
- * Interface for ViewModels that can be saved to a [SavedState]
+ * Interface for ViewModels that can be saved to a [SavedState].
  */
 public interface Saveable {
     public fun saveToSaveState(): SavedState

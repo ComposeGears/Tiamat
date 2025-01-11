@@ -26,11 +26,12 @@ class ScreenHandler internal constructor() {
 }
 
 /**
- * Various screen info
+ * Screen information extension.
  *
- * @param srcReference ref to github sources
- * @param argsToString args serializer
- * @param stringToArgs args deserializer
+ * @property name The name of the screen.
+ * @property srcReference The source reference of the screen.
+ * @property argsToString An arguments serializer.
+ * @property stringToArgs An arguments deserializer.
  */
 class ScreenInfo<T>(
     val name: String? = null,

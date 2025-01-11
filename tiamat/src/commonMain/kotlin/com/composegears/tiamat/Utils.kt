@@ -1,18 +1,18 @@
 package com.composegears.tiamat
 
 /**
- * SaveState declaration alias
+ * SaveState declaration alias.
  */
 public typealias SavedState = Map<String, Any?>
 
 /**
- * Converts the `SavedState` to a human-readable string representation
+ * Converts the `SavedState` to a human-readable string representation.
  *
- * This function formats the `SavedState` map into a string representation that is easier to read
+ * This function formats the `SavedState` map into a string representation that is easier to read.
  *
- * @param tabChar The character(s) used for indentation. Defaults to four spaces
- * @param initialTabSize The initial size of the indentation. Defaults to 0
- * @return A human-readable string representation of the `SavedState`
+ * @param tabChar The character(s) used for indentation. Defaults to four spaces.
+ * @param initialTabSize The initial size of the indentation. Defaults to 0.
+ * @return A human-readable string representation of the `SavedState`.
  */
 public fun SavedState.toHumanReadableString(
     tabChar: String = "    ",
@@ -55,7 +55,11 @@ private fun StringBuilder.appendSavedStateDataString(tabChar: String, key: Strin
 }
 
 /**
- * @return true if all elements match the given predicate or collection is empty
+ * Checks if all elements in the iterable satisfy the given predicate with their index.
+ *
+ * @param predicate A function that takes an index and an element,
+ * and returns `true` if the element satisfies the condition, `false` otherwise.
+ * @return `true` if all elements satisfy the predicate, `false` if any element does not.
  */
 internal fun <T> Iterable<T>.allIndexed(predicate: (Int, T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true

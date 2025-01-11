@@ -3,12 +3,12 @@ package com.composegears.tiamat
 import androidx.compose.runtime.Composable
 
 /**
- * Extension base interface
+ * Extension base interface.
  */
 public interface Extension<in Args>
 
 /**
- * Extension with a content base interface
+ * Content extension base interface.
  *
  * Default type is [ContentExtension.Type.Overlay]
  */
@@ -23,7 +23,7 @@ public interface ContentExtension<in Args> : Extension<Args> {
 }
 
 /**
- * internal simple ContentExtension impl, type = Overlay
+ * Internal simple ContentExtension impl, type = Overlay
  */
 internal open class ContentExtensionImpl<in Args>(
     private val content: @Composable NavDestinationScope<out Args>.() -> Unit
@@ -36,7 +36,7 @@ internal open class ContentExtensionImpl<in Args>(
 }
 
 /**
- * Simple [ContentExtension.Type.Overlay] content-extension builder
+ * Create [ContentExtension.Type.Overlay] content-extension.
  *
  * @param content extension content builder lambda
  */
@@ -45,9 +45,9 @@ public fun <Args> extension(
 ): Extension<Args> = ContentExtensionImpl(content)
 
 /**
- * Provides an attached extension of defined type
+ * Retrieves the first extension of the specified type from the list of extensions.
  *
- * @return extension or null if the ext of this type is not attached
+ * @return The first extension of type [P] if found, or `null` otherwise.
  */
 public inline fun <reified P : Extension<*>> NavDestination<*>.ext(): P? =
     extensions.firstOrNull { it is P } as? P?

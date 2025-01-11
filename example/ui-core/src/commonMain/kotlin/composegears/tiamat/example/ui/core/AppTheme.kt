@@ -11,7 +11,7 @@ val LocalThemeConfig = staticCompositionLocalOf { LocalThemConfig() }
 class LocalThemConfig {
     var isDarkMode by mutableStateOf(false)
 }
-// TODO clean
+
 // private val color_killMyEyesPlease = Color(0xffbd17b5)
 private val color_primary = Color(0xff1e66d6)
 

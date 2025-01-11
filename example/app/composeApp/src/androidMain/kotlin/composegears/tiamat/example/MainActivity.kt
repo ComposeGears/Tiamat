@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
             // theme config handler
             val themeConfig = LocalThemeConfig.current
             LaunchedEffect(themeConfig.isDarkMode) {
-                // todo check colors
                 if (themeConfig.isDarkMode) enableEdgeToEdge(
                     statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
                     navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
