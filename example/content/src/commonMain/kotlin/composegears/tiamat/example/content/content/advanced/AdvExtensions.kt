@@ -21,7 +21,7 @@ import composegears.tiamat.example.ui.core.*
 val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
     Screen("Extensions") {
         Column(
-            Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val nc = rememberNavController(
@@ -35,10 +35,13 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             )
             VSpacer()
             Text(
-                buildString {
+                text = buildString {
                     append("This is extensions sample.\n")
+                    append("—————\n")
                     append("Last active screen reported by global extension: ${GlobalExtension.activeDestination}\n")
+                    append("—————\n")
                     append("Current screen log message: ${nc.current?.ext<LocalExtension>()?.logMessage}\n")
+                    append("—————\n")
                     append(
                         "Current screen extensions: ${
                             nc.current?.extensions?.joinToString(
@@ -55,7 +58,6 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                 nc,
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
         }
@@ -116,7 +118,7 @@ private val AdvExtensionsScreen1 by navDestination<Unit>(
     SimpleGlobalExtension
 ) {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -135,7 +137,7 @@ private val AdvExtensionsScreen2 by navDestination<Unit>(
     mySimpleExtensionBuilder(showOverlay = true),
 ) {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -162,7 +164,7 @@ private val AdvExtensionsScreen3 by navDestination<Unit>(
     MarkerExtension("Some data")
 ) {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

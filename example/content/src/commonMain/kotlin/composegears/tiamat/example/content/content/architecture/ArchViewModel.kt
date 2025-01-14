@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.*
@@ -48,11 +49,14 @@ private val ArchViewModelScreen1 by navDestination<Unit> {
     val sharedViewModel = rememberSharedViewModel { ArchViewModelSimpleViewModel() }
 
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
-            Text("sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}")
+            Text(
+                text = "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             AppButton(
                 "Next",
@@ -72,17 +76,27 @@ private val ArchViewModelScreen2 by navDestination<Unit> {
     val saveableViewModel = rememberSaveableViewModel { savedState -> ArchViewModelSaveableViewModel(savedState) }
 
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
-            Text("viewModel \$counter = ${viewModel.counter.collectAsState().value}")
-            Text("sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}")
-            Text("saveableViewModel \$counter = ${saveableViewModel.counter.collectAsState().value}")
+            Text(
+                text = "viewModel \$counter = ${viewModel.counter.collectAsState().value}\n" +
+                    "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}\n" +
+                    "saveableViewModel \$counter = ${saveableViewModel.counter.collectAsState().value}",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
-            Text("Go next screen, then go back -> you will see that view models are restored")
-            Text("Go back and reopen this screen -> view models will be recreated (except shared)")
-            Text("Android: hide & re-open app -> saveableViewModel will restore it's saved state")
+            Text(
+                text = """
+                    Go next screen, then go back -> you will see that view models are restored
+                    —————
+                    Go back and reopen this screen -> view models will be recreated (except shared)
+                    —————
+                    Android: hide & re-open app -> saveableViewModel will restore it's saved state
+                """.trimIndent(),
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             Row {
                 AppButton(
@@ -110,7 +124,10 @@ private val ArchViewModelScreen3 by navDestination<Unit> {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
-            Text("sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}")
+            Text(
+                text = "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             AppButton(
                 "Back",

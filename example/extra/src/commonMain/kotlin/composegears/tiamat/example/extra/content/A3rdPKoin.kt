@@ -3,9 +3,12 @@ package composegears.tiamat.example.extra.content
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.Saveable
 import com.composegears.tiamat.SavedState
 import com.composegears.tiamat.TiamatViewModel
@@ -42,14 +45,25 @@ val A3rdPKoin by navDestination<Unit>(ScreenInfo()) {
     val sharedViewModel = koinSharedTiamatViewModel<A3rdPKoinSharedViewModel>()
     fun <T : Any> T.modelInfo() = this::class.simpleName + "@" + this.hashCode()
     Screen("Koin ViewModel") {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("This is koin view-models example, see code for more details")
+                Text(
+                    text = "This is koin view-models example, see code for more details",
+                    textAlign = TextAlign.Center
+                )
                 VSpacer()
-                Text("simpleViewModel -> ${simpleViewModel.modelInfo()} ")
-                Text("paramViewModel -> ${paramViewModel.modelInfo()} ")
-                Text("saveableViewModel -> ${saveableViewModel.modelInfo()} ")
-                Text("sharedViewModel -> ${sharedViewModel.modelInfo()} ")
+                Text(
+                    text = """
+                        simpleViewModel -> ${simpleViewModel.modelInfo()}
+                        —————
+                        paramViewModel -> ${paramViewModel.modelInfo()}
+                        —————
+                        saveableViewModel -> ${saveableViewModel.modelInfo()}
+                        —————
+                        sharedViewModel -> ${sharedViewModel.modelInfo()}
+                    """.trimIndent(),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

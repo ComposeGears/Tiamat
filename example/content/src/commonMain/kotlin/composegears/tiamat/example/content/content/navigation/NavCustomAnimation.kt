@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.AppButton
@@ -38,6 +39,7 @@ val NavCustomAnimation by navDestination<Unit>(ScreenInfo()) {
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(8.dp)) // prevent render out of bounds during slide animation
             )
         }
     }
@@ -47,7 +49,7 @@ val NavCustomAnimation by navDestination<Unit>(ScreenInfo()) {
 private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
     val nc = navController()
     Surface {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
                 VSpacer()
@@ -103,7 +105,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
 private val NavCustomAnimationScreen2 by navDestination<Unit> {
     val nc = navController()
     Surface {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
                 VSpacer()

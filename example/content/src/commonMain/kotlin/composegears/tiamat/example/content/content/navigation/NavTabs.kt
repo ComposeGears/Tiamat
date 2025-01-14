@@ -97,7 +97,7 @@ fun TabContent(tabName: String) {
 
 private val NavTabsSubTabScreen1 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -112,7 +112,7 @@ private val NavTabsSubTabScreen1 by navDestination<Unit> {
 
 private val NavTabsSubTabScreen2 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -135,7 +135,7 @@ private val NavTabsSubTabScreen2 by navDestination<Unit> {
 
 private val NavTabsSubTabScreen3 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

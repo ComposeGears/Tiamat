@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
@@ -22,7 +23,10 @@ import composegears.tiamat.example.ui.core.*
 
 val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
     Screen("Back stack alteration") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val nc = rememberNavController(
                 key = "BS alteration nav controller",
                 startDestination = AdvBackStackAlterationScreenA,
@@ -39,18 +43,22 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 }
             }
             VSpacer()
-            Text("Here some simple examples of backStack editing")
             Text(
-                "Current stack is: " +
+                text = "Here some simple examples of backStack editing",
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "Current stack is: " +
                     "${if (backStack.isNotBlank()) "$backStack ->" else ""} " +
-                    "${nc.current?.name?.substringAfter("Screen")} (current)"
+                    "${nc.current?.name?.substringAfter("Screen")} (current)",
+                textAlign = TextAlign.Center
             )
             VSpacer()
             Row {
-                Column {
+                Column(Modifier.weight(1f, false).widthIn(200.dp).width(IntrinsicSize.Min)) {
                     AppButton(
                         "Append ScreenA",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenA) }
                             editsCount++
@@ -58,7 +66,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     )
                     AppButton(
                         "Append ScreenB",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenB) }
                             editsCount++
@@ -66,7 +74,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     )
                     AppButton(
                         "Append ScreenC",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenC) }
                             editsCount++
@@ -74,10 +82,10 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     )
                 }
                 HSpacer()
-                Column {
+                Column(Modifier.weight(1f, false).widthIn(200.dp).width(IntrinsicSize.Min)) {
                     AppButton(
                         "Clear",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { clear() }
                             editsCount++
@@ -85,7 +93,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     )
                     AppButton(
                         "Remove Last",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { removeLast() }
                             editsCount++
@@ -93,7 +101,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     )
                     AppButton(
                         "Remove First",
-                        modifier = Modifier.widthIn(min = 200.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { removeAt(0) }
                             editsCount++
@@ -106,7 +114,6 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 nc,
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
         }
@@ -115,7 +122,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
 
 private val AdvBackStackAlterationScreenA by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen A", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -131,7 +138,7 @@ private val AdvBackStackAlterationScreenA by navDestination<Unit> {
 
 private val AdvBackStackAlterationScreenB by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen B", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -147,7 +154,7 @@ private val AdvBackStackAlterationScreenB by navDestination<Unit> {
 
 private val AdvBackStackAlterationScreenC by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen C", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

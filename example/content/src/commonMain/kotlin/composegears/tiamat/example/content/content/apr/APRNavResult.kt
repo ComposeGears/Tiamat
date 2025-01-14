@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.AppButton
@@ -43,13 +44,14 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
 private val APRNavResultScreen1 by navDestination<Unit> {
     val nc = navController()
     val result = navResult<Any?>()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text(
-                "`NavResult` is a data passed back to this screen\n" +
-                    "You can clear navResult after processing."
+                text = "`NavResult` is a data passed back to this screen\n" +
+                    "You can clear navResult after processing.",
+                textAlign = TextAlign.Center
             )
             VSpacer()
             AnimatedContent(result, Modifier.fillMaxWidth()) {
@@ -62,7 +64,10 @@ private val APRNavResultScreen1 by navDestination<Unit> {
                             onClick = { clearNavResult() }
                         )
                     } else {
-                        Text("Click button and select the result to be returned to this screen")
+                        Text(
+                            text = "Click button and select the result to be returned to this screen",
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
@@ -78,7 +83,7 @@ private val APRNavResultScreen1 by navDestination<Unit> {
 
 private val APRNavResultScreen2 by navDestination<Int> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

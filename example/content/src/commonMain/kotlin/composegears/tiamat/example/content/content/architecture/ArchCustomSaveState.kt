@@ -25,8 +25,8 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
             var showNavigation by remember { mutableStateOf(true) }
             VSpacer()
             AnimatedContent(showNavigation) {
-                if (it) AppButton("Hide", onClick = { showNavigation = false })
-                else AppButton("Show", onClick = { showNavigation = true })
+                if (it) AppButton("Save", onClick = { showNavigation = false })
+                else AppButton("Restore", onClick = { showNavigation = true })
             }
             if (showNavigation) {
                 val nc = rememberNavController(
@@ -73,7 +73,7 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
 
 private val ArchCustomSaveStateScreen1 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -88,7 +88,7 @@ private val ArchCustomSaveStateScreen1 by navDestination<Unit> {
 
 private val ArchCustomSaveStateScreen2 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -111,7 +111,7 @@ private val ArchCustomSaveStateScreen2 by navDestination<Unit> {
 
 private val ArchCustomSaveStateScreen3 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.AppButton
@@ -42,17 +43,21 @@ val APRFreeArgs by navDestination<Unit>(ScreenInfo()) {
 
 private val APRFreeArgsScreen1 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text(
-                "`FreeArgs` is a free form(type) data\n" +
+                text = "`FreeArgs` is a free form(type) data\n" +
                     "Expect to be used as intent/call-to-action/meta-data\n" +
-                    "You can clear freeArgs after processing."
+                    "You can clear freeArgs after processing.",
+                textAlign = TextAlign.Center
             )
             VSpacer()
-            Text("Click button to pass free-args value to next screen")
+            Text(
+                text = "Click button to pass free-args value to next screen",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             AppButton(
                 "Next (Pass `String`)",
@@ -85,14 +90,17 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
 private val APRFreeArgsScreen2 by navDestination<Unit> {
     val nc = navController()
     val args = freeArgs<Any?>()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             AnimatedContent(args, Modifier.fillMaxWidth()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (it != null) {
-                        Text("Type: ${it::class.simpleName}\nFreeArgs value: $it")
+                        Text(
+                            text = "Type: ${it::class.simpleName}\nFreeArgs value: $it",
+                            textAlign = TextAlign.Center
+                        )
                         VSpacer()
                         AppButton(
                             "Clear",

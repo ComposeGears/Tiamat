@@ -40,7 +40,7 @@ val NavForwardAndBack by navDestination<Unit>(ScreenInfo()) {
 // we define type here to bypass circular initialization issue
 private val NavForwardAndBackScreen1: NavDestination<Unit> by navDestination {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -55,7 +55,7 @@ private val NavForwardAndBackScreen1: NavDestination<Unit> by navDestination {
 
 private val NavForwardAndBackScreen2 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -78,7 +78,7 @@ private val NavForwardAndBackScreen2 by navDestination<Unit> {
 
 private val NavForwardAndBackScreen3 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
@@ -42,7 +43,7 @@ val NavReplace by navDestination<Unit>(ScreenInfo()) {
 
 private val NavReplaceScreen1 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -57,11 +58,17 @@ private val NavReplaceScreen1 by navDestination<Unit> {
 
 private val NavReplaceScreen2 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
-            Text("Click replace button to replace current screen")
-            Text("it will not be placed at back stack")
+            Text(
+                text = "Click replace button to replace current screen",
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "it will not be placed at back stack",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             Row {
                 AppButton(
@@ -82,10 +89,13 @@ private val NavReplaceScreen2 by navDestination<Unit> {
 
 private val NavReplaceScreen3 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
-            Text("""Click "Back" to see "Screen 1"""")
+            Text(
+                text = """Click "Back" to see "Screen 1"""",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             AppButton(
                 "Back",

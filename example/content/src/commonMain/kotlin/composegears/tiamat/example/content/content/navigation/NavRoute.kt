@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.*
@@ -17,7 +18,10 @@ import composegears.tiamat.example.ui.core.*
 @OptIn(TiamatExperimentalApi::class)
 val NavRoute by navDestination<Unit>(ScreenInfo()) {
     Screen("Routing") {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val nc = rememberNavController(
                 key = "Route nav controller",
                 startDestination = null,
@@ -29,8 +33,14 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
                 )
             )
             VSpacer()
-            Text("Here some simple examples of Route-api")
-            Text("There is more complex option available")
+            Text(
+                text = "Here some simple examples of Route-api",
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "There is more complex option available",
+                textAlign = TextAlign.Center
+            )
             VSpacer()
             AppButton(
                 "Route: 1->2->3 direct",
@@ -82,7 +92,6 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
                 nc,
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
         }
@@ -90,7 +99,7 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
 }
 
 private val NavRouteStub by navDestination<Unit> {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Stub", style = MaterialTheme.typography.headlineMedium)
         }
@@ -99,7 +108,7 @@ private val NavRouteStub by navDestination<Unit> {
 
 private val NavRouteScreen1 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -114,7 +123,7 @@ private val NavRouteScreen1 by navDestination<Unit> {
 
 private val NavRouteScreen2 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
@@ -137,7 +146,7 @@ private val NavRouteScreen2 by navDestination<Unit> {
 
 private val NavRouteScreen3 by navDestination<Unit> {
     val nc = navController()
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()

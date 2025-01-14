@@ -13,6 +13,7 @@ import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.Navigation
 import com.composegears.tiamat.navController
@@ -61,7 +62,11 @@ private fun ItemContent(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(group, style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = group,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center
+        )
         val nc = rememberNavController(
             key = group,
             startDestination = NavNestedScreen1,
