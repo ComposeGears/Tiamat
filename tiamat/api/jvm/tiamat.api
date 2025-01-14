@@ -1,6 +1,5 @@
 public final class com/composegears/tiamat/ComposableSingletons$ComposeKt {
 	public static final field INSTANCE Lcom/composegears/tiamat/ComposableSingletons$ComposeKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
 	public final fun getLambda-1$tiamat ()Lkotlin/jvm/functions/Function4;
 }
