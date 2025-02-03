@@ -7,7 +7,7 @@
     <a target="_blank" href="https://github.com/ComposeGears/Tiamat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ComposeGears/Tiamat.svg"></a>
 </p>
 
-![](.readme/promo.jpeg)
+
 <p align="center">
     <a target="_blank" href="https://composegears.github.io/Tiamat/"><img src="https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000"></a>
 </p>
