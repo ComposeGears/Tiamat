@@ -8,6 +8,9 @@
 </p>
 
 ![](.readme/promo.jpeg)
+<p align="center">
+    <a target="_blank" href="https://composegears.github.io/Tiamat/"><img src="https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000"></a>
+</p>
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
@@ -135,6 +138,7 @@ The screen content scoped in `NavDestinationScope<Args>`
 
 The scope provides a number of composable functions:
 
+Some examples:
 - `navController` - provides current NavController to navigate back/further
 - `navArgs` - the arguments provided to this screen by `NavControllr:navigate(screen, args)` fun
 - `navArgsOrNull` - same as `navArgs` but provides `null` if there is no data passed or if it was lost
@@ -172,19 +176,33 @@ fun Content() {
 }
 ```
 
+NavController will keep the screens data, view models, and states during navigation
+
+> [!IMPORTANT]
+> The data may be cleared by system (eg: Android may clear memory)
+> 
+> Upon restoration state there is few cases depend on `storageMode`
+
 ### Extensions
 
-You can attach an extension to any destination, common case is to track screens
+You can attach an extension to any destination<br>
+There is 2 extension types: with and without content<br>
+The content-extension allows to process content before destination body and after by specifying type (`Overlay`, `Underlay`)<br>
+Here is simple tracker extension:
 
 ```kotlin
 
 // define extension
-class AnalyticsExt<T>(private val name: String) : Extension<T>() {
+class AnalyticsExt(private val name: String) : ContentExtension<Any?>() {
+
     @Composable
-    override fun NavDestinationScope<T>.content() {
+    override fun NavDestinationScope<out Any?>.Content() {
+        val entry = navEntry()
         LaunchedEffect(Unit) {
-            val service = ... // receive tracker
-            service.trackScreen(name)
+            LaunchedEffect(Unit) {
+                val service = ... // receive tracker
+                service.trackScreen(screenName = name, destination = entry.destination.name)
+            }
         }
     }
 }
@@ -197,13 +215,6 @@ val SomeScreen by navDestination<Unit>(
 }
 
 ```
-
-NavController will keep the screens data, view models, and states during navigation
-
-> [!IMPORTANT]
-> The data may be cleared by system (eg: Android may clear memory)
-> 
-> Upon restoration state there is few cases depend on `storageMode`
 
 ### Storage mode
 
@@ -257,49 +268,16 @@ NavController will keep the screens data, view models, and states during navigat
 Samples
 -------
 
-#### Simple back and forward navigation:
+See the examples [here](example/content/src/commonMain/kotlin/composegears/tiamat/example/content/content)
 
-[1-simple-fb.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/fbf88bc1-d366-4088-ad34-5ac9471d0b18)
-
-#### Bottom bar navigation:
-
-[2-bot-bar.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/e541d4a4-119a-41d4-a1e5-26ef35dc7073)
-
-#### Passing data to next screen:
-
-[3-data-params.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/9d151430-7fe9-47f6-83d2-9c58b700fe9a)
-
-#### Passing data to previous screen:
-
-[4-data-result.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/9706867d-2c88-4d50-8c3d-d5d7d44aade3)
-
-Custom transition:
-
-[5-custom-transition.webm](https://github.com/ComposeGears/Tiamat/assets/3141818/9bfe1545-a321-495f-8d64-8d928746bc81)
-
-### Examples code
-
-- [SimpleForwardBack.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/SimpleForwardBack.kt) - Simple back and forward navigation
-- [SimpleReplace.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/SimpleReplace.kt) - Example of `replace` navigation
-- [Tabs.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/Tabs.kt) - Bottom navigation example
-- [NestedNavigation.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/NestedNavigation.kt) - Nested nav controller interaction
-- [DataPassingParams.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingParams.kt) - How to pass data to next screen
-- [DataPassingFreeArgs.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingFreeArgs.kt) - How to pass addition type-free data to next screen (useful to metadata/deeplink)
-- [DataPassingResult.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/DataPassingResult.kt) - How to provide result
-- [ViewModels.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/ViewModels.kt) - ViewModels usage
-- [CustomTransition.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/CustomTransition.kt) - Custom animations/transition
-- [CustomStateSaver.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/CustomStateSaver.kt) - Custom save/restore state
-- [Root.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/multimodule/Root.kt) - Multi-module communication example (using Signals/Broadcast-api) 
-- [BackStackAlteration.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/BackStackAlteration.kt) - Alteration(modification) of backstack (deeplinks)
-- [TwoPaneResizableExample.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/TwoPaneResizableExample.kt) - 2 pane example (list+details, dynamic switch between 1-pane or 2-pane layout)
-- [KoinIntegrationScreen.kt](example/sample-koin/src/commonMain/kotlin/composegears/tiamat/sample/koin/KoinIntegrationScreen.kt) - Koin integration
+Or try them in browser (require WASM support) [here](https://composegears.github.io/Tiamat/) 
 
 Hint
 ----
 
 ### Multiplatform
 
-I want to navigate true multiple nav steps in 1 call (e.g handle deeplink)
+I want to navigate thrue multiple nav steps in 1 call (e.g handle deeplink)
 
 ```kotlin
 // there is 2 common ideas behind handle complex navigation
@@ -341,36 +319,12 @@ val DeeplinkScreen by navDestination<Unit> {
 
 if (deeplink != null) {
     @OptIn(TiamatExperimentalApi::class)
-    navController?.route(Route
-        .start {
-            // we are in the root nav controller
-            // in case we are not at DeeplinkScreen
-            // clear history and open it
-            // else do nothing, route will be continued in the DeeplinkScreen screen
-            if (current != DeeplinkScreen) {
-                editBackStack {
-                    clear()
-                    add(MainScreen)
-                    add(PlatformExamplesScreen)
-                }
-                replace(DeeplinkScreen)
-            }
-        }
-        .next {
-            // we are in the DeeplinkScreen`s nested nav controller
-            // if there is multiple nested controlled - use `next(selector=...)
-            // we can check a backstack or just open full flow for deeplink
-            editBackStack {
-                clear()
-                add(ShopScreen)
-                add(CategoryScreen, deeplink.categoryId)
-            }
-            replace(
-                dest = DetailScreen,
-                navArgs = DetailParams(deeplink.productName, deeplink.productId),
-                transition = navigationNone()
-            )
-        }
+    navController?.route(
+        Route.build(
+            ShopScreen.toNavEntry(),
+            CategoryScreen.toNavEntry(navArgs = deeplink.categoryId),
+            DetailScreen.toNavEntry(navArgs = DetailParams(deeplink.productName, deeplink.productId)),
+        )
     )
     deepLinkController.clearDeepLink()
 }

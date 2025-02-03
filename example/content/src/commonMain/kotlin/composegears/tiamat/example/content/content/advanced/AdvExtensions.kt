@@ -82,6 +82,10 @@ object GlobalExtension : ContentExtension<Any?> {
             activeDestination = entry.destination.name
         }
     }
+
+    // optional override, default type is Overlay,
+    // Underlay means that composable content of the ext will be placed before destination content
+    override fun getType() = ContentExtension.Type.Underlay
 }
 
 class LocalExtension(val logMessage: String) : ContentExtension<Any?> {
