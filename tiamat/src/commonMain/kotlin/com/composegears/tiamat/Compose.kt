@@ -2,7 +2,6 @@ package com.composegears.tiamat
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
@@ -22,19 +21,20 @@ public enum class StorageMode {
     SavedState,
 
     /**
-     * In memory data storage, navController will reset on data loss
+     * In memory data storage, NavController will reset on data loss
      */
     Memory
 }
 
 /**
- * Create and provide [NavController] instance to be used in [Navigation]
+ * Remembers a `NavController`.
  *
- * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
- * @param startDestination destination to be used as initial
- * @param destinations array of allowed destinations for this controller
- * @param configuration an action to be called after [NavController] created/restored
+ * @param key The key for the NavController.
+ * @param storageMode The storage mode for the NavController.
+ * @param startDestination The start destination for the NavController.
+ * @param destinations The array of allowed destinations for this NavController.
+ * @param configuration The action to be called after NavController created/restored.
+ * @return The remembered NavController.
  */
 @Composable
 @Suppress("ComposableParamOrder")
@@ -53,15 +53,16 @@ public fun rememberNavController(
 )
 
 /**
- * Create and provide [NavController] instance to be used in [Navigation]
+ * Remembers a `NavController`.
  *
- * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
- * @param startDestination destination to be used as initial
- * @param startDestinationNavArgs initial destination navArgs
- * @param startDestinationFreeArgs initial destination freeArgs
- * @param destinations array of allowed destinations for this controller
- * @param configuration an action to be called after [NavController] created/restored
+ * @param key The key for the NavController.
+ * @param storageMode The storage mode for the NavController.
+ * @param startDestination The start destination for the NavController.
+ * @param startDestinationNavArgs The navigation navArgs for the start destination.
+ * @param startDestinationFreeArgs The navigation freeArgs for the start destination.
+ * @param destinations The array of allowed destinations for this NavController.
+ * @param configuration The action to be called after NavController created/restored.
+ * @return The remembered NavController.
  */
 @Composable
 @Suppress("ComposableParamOrder")
@@ -85,13 +86,14 @@ public fun <T> rememberNavController(
 )
 
 /**
- * Create and provide [NavController] instance to be used in [Navigation]
+ * Remembers a `NavController`.
  *
- * @param key optional key, used to identify NavController's (eg: nc.parent.key == ...)
- * @param storageMode data storage mode, default is parent mode or if it is root [StorageMode]
- * @param startDestination destination entry (destination + args) to be used as initial
- * @param destinations array of allowed destinations for this controller
- * @param configuration an action to be called after [NavController] created/restored
+ * @param key The key for the NavController.
+ * @param storageMode The storage mode for the NavController.
+ * @param startDestination The start destination for the NavController.
+ * @param destinations The array of allowed destinations for this NavController.
+ * @param configuration The action to be called after NavController created/restored.
+ * @return The remembered NavController.
  */
 @Composable
 @Suppress("ComposableParamOrder")
@@ -131,7 +133,7 @@ public fun <T> rememberNavController(
                 destinations = destinations
             )
             .apply(configuration)
-            .apply { followRoute() }
+            .apply { followParentsRoute() }
     }
     // attach/detach to parent storage
     DisposableEffect(navController) {
@@ -147,46 +149,84 @@ public fun <T> rememberNavController(
 }
 
 @Composable
-private fun <Args> AnimatedVisibilityScope.DestinationContent(
+@Suppress("CognitiveComplexMethod")
+private fun <Args> AnimatedVisibilityScope.EntryContent(
     entry: NavEntry<Args>
 ) {
-    val scope = remember(entry) { NavDestinationScopeImpl(entry, this) }
-    with(entry.destination) {
-        scope.PlatformContentWrapper {
-            Content()
-            extensions.onEach { ext -> ext.ExtensionContent(scope) }
+    Box {
+        val navController = LocalNavController.current ?: error("NavController is not attached")
+        // gen save state
+        val saveRegistry = remember(entry) {
+            val registry = SaveableStateRegistry(entry.savedState, navController.canBeSaved)
+            entry.savedStateSaver = registry::performSave
+            registry
+        }
+        // display content
+        CompositionLocalProvider(
+            LocalSaveableStateRegistry provides saveRegistry,
+            LocalNavEntry provides entry,
+        ) {
+            val scope = remember(entry) { NavDestinationScopeImpl(entry, this@EntryContent) }
+            // entry content
+            scope.PlatformContentWrapper {
+                // extensions before-content
+                entry.destination.extensions.onEach {
+                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
+                        Content()
+                    }
+                }
+                // destination content
+                with(entry.destination) {
+                    Content()
+                }
+                // extensions after-content
+                entry.destination.extensions.onEach {
+                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
+                        Content()
+                    }
+                }
+            }
+        }
+        // prevent clicks during transition animation
+        if (transition.isRunning) Box(
+            modifier = Modifier
+                .matchParentSize()
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach {
+                                it.consume()
+                            }
+                        }
+                    }
+                }
+        )
+        // save state when `this entry`/`parent entry` goes into backStack
+        DisposableEffect(entry) {
+            // invalidate navController routing state
+            navController.invalidateRoute()
+            // save state handle
+            onDispose {
+                entry.savedStateSaver = null
+                // entry goes into backstack, save active subNavController
+                if (entry in navController.getBackStack() || entry == navController.currentNavEntry) {
+                    entry.saveState(saveRegistry.performSave())
+                } else {
+                    entry.close()
+                }
+            }
         }
     }
 }
 
-@Composable
-private fun BoxScope.Overlay() {
-    Box(
-        modifier = Modifier
-            .matchParentSize()
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach {
-                            it.consume()
-                        }
-                    }
-                }
-            }
-    )
-}
-
 /**
- * Created a content of [NavController] (see [rememberNavController])
+ * Displays a content of `NavController` (see [rememberNavController])
  *
- * Root element of the content is [AnimatedContent]
- *
- * @param navController displayed navController
- * @param modifier modifier to be passed to root [AnimatedContent]
- * @param handleSystemBackEvent allow to call [NavController.back] on system `back` event if possible
- * @param contentTransformProvider default nav transition provided to be used
- * if no transition provided by navigation functions
+ * @param navController The NavController to use.
+ * @param modifier The modifier to apply to the content.
+ * @param handleSystemBackEvent Whether to handle the system back event.
+ * @param contentTransformProvider The provider for the content transform.
  *
  * @see [NavController.navigate]
  * @see [NavController.replace]]
@@ -198,7 +238,6 @@ private fun BoxScope.Overlay() {
  */
 @Composable
 @Suppress("CognitiveComplexMethod")
-@OptIn(ExperimentalAnimationApi::class)
 public fun Navigation(
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -207,62 +246,32 @@ public fun Navigation(
 ) {
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
-    AnimatedContent(
-        targetState = navController.currentNavEntry,
-        contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
-        contentAlignment = Alignment.Center,
-        modifier = modifier,
-        transitionSpec = {
-            when {
-                navController.isInitialTransition -> ContentTransform(
-                    targetContentEnter = EnterTransition.None,
-                    initialContentExit = ExitTransition.None,
-                    sizeTransform = null
-                )
-                navController.contentTransition != null -> navController.contentTransition!!
-                else -> contentTransformProvider(navController.isForwardTransition)
-            }
-        },
-        label = "nav_controller_${navController.key ?: "no_key"}",
-    ) {
-        if (it != null) Box {
-            // gen save state
-            val saveRegistry = remember(it) {
-                val registry = SaveableStateRegistry(it.savedState, navController.canBeSaved)
-                it.savedStateSaver = registry::performSave
-                registry
-            }
-            // display content
-            CompositionLocalProvider(
-                LocalSaveableStateRegistry provides saveRegistry,
-                LocalNavController provides navController,
-                LocalNavEntry provides it,
-            ) {
-                DestinationContent(it)
-            }
-            // prevent clicks during transition animation
-            if (transition.isRunning) Overlay()
-            // save state when `this entry`/`parent entry` goes into backStack
-            DisposableEffect(it) {
-                // invalidate navController routing state
-                navController.invalidateRoute()
-                // save state handle
-                onDispose {
-                    it.savedStateSaver = null
-                    // entry goes into backstack, save active subNavController
-                    if (it in navController.getBackStack() || it == navController.currentNavEntry) {
-                        it.saveState(saveRegistry.performSave())
-                    } else {
-                        it.close()
-                    }
+    CompositionLocalProvider(LocalNavController provides navController) {
+        AnimatedContent(
+            targetState = navController.currentNavEntry,
+            contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
+            contentAlignment = Alignment.Center,
+            modifier = modifier,
+            transitionSpec = {
+                when {
+                    navController.isInitialTransition -> ContentTransform(
+                        targetContentEnter = EnterTransition.None,
+                        initialContentExit = ExitTransition.None,
+                        sizeTransform = null
+                    )
+                    navController.contentTransition != null -> navController.contentTransition!!
+                    else -> contentTransformProvider(navController.isForwardTransition)
                 }
-            }
+            },
+            label = "nav_controller_${navController.key ?: "no_key"}",
+        ) {
+            if (it != null) EntryContent(it)
         }
     }
 }
 
 /**
- * Provides current [NavController] instance
+ * @return The current [NavController].
  */
 @Composable
 @Suppress("UnusedReceiverParameter")
@@ -270,18 +279,26 @@ public fun NavDestinationScope<*>.navController(): NavController =
     LocalNavController.current ?: error("not attached to navController")
 
 /**
- * Provides current [NavEntry] instance
+ * @return The current [NavEntry].
  */
 @Composable
 public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
 
 /**
- * Provides nav arguments passed into navigate forward function for current destination
+ * Gets the extension of the specified type from the current [NavDestination].
  *
- * @see [NavController.navigate]
- * @see [NavController.replace]
+ * @param P The type of the extension.
+ * @return The extension of the specified type, or null if not found.
+ */
+@Composable
+public inline fun <reified P : Extension<*>> NavDestinationScope<*>.ext(): P? =
+    navEntry().destination.ext<P>()
+
+/**
+ * Gets the navigation arguments from the current [NavEntry] or throw an exception.
  *
- * @return navigation arguments provided to [NavController.navigate] function or exception
+ * @param Args The type of the navigation arguments.
+ * @return The navigation arguments.
  */
 @Composable
 @Suppress("CastToNullableType")
@@ -290,12 +307,10 @@ public fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
 }
 
 /**
- * Provides nav arguments passed into navigate forward function for current destination
+ * Gets the navigation arguments from the current [NavEntry], or null if not provided.
  *
- * @see [NavController.navigate]
- * @see [NavController.replace]
- *
- * @return navigation arguments provided to [NavController.navigate] function or null
+ * @param Args The type of the navigation arguments.
+ * @return The navigation arguments, or null if not provided.
  */
 @Composable
 @Suppress("CastToNullableType")
@@ -304,42 +319,43 @@ public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
 }
 
 /**
- * Provides free nav arguments passed into navigate forward function for current destination
+ * Gets the free arguments from the current [NavEntry].
  *
- * @see [NavController.navigate]
- * @see [NavController.replace]
- *
- * @return free nav arguments provided to [NavController.navigate] function or null
+ * @param T The type of the free arguments.
+ * @return The free arguments, or null if not provided.
  */
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
 public fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
 
 /**
- * Clear provided free args
+ * Clears the free arguments from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearFreeArgs() {
     navEntry.freeArgs = null
 }
 
 /**
- * Provides nav arguments provided as result into navigate back function for current destination
+ * Gets the navigation result from the current [NavEntry].
  *
- * @see [NavController.back]
+ * @param Result The type of the navigation result.
+ * @return The navigation result, or null if not provided.
  */
 @Suppress("UNCHECKED_CAST", "CastToNullableType")
 public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
 
 /**
- * Clear provided nav result
+ * Clears the navigation result from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavResult() {
     navEntry.navResult = null
 }
 
 /**
- * Provide (create or restore) viewModel instance bound to navigation entry
+ * Remembers a ViewModel in the [NavEntry].
  *
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered ViewModel.
  */
 @Composable
 public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
@@ -347,12 +363,12 @@ public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.remem
 ): Model = rememberViewModel(className<Model>(), provider)
 
 /**
- * Recommended to use `rememberViewModel(key, provider)` instead
+ * Remembers a ViewModel in the [NavEntry].
  *
- * Provide (create or restore) viewModel instance bound to navigation entry
- *
- * @param key provides unique key part
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param key The key for the ViewModel.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered ViewModel.
  */
 @Composable
 public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
@@ -363,11 +379,11 @@ public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
 }
 
 /**
- * Provide (create or restore) viewModel instance bound to navigation entry
+ * Remembers a saveable ViewModel in the [NavEntry].
  *
- * The model will use savedState to save/restore its state
- *
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered saveable ViewModel.
  */
 @Composable
 public inline fun <reified Model> NavDestinationScope<*>.rememberSaveableViewModel(
@@ -376,14 +392,12 @@ public inline fun <reified Model> NavDestinationScope<*>.rememberSaveableViewMod
     rememberSaveableViewModel(className<Model>(), provider)
 
 /**
- * Recommended to use `rememberViewModel(key, provider)` instead
+ * Remembers a saveable ViewModel in the [NavEntry].
  *
- * Provide (create or restore) viewModel instance bound to navigation entry
- *
- * The model will use savedState to save/restore its state
- *
- * @param key provides unique key part
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param key The key for the ViewModel.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered saveable ViewModel.
  */
 @Composable
 public fun <Model> NavDestinationScope<*>.rememberSaveableViewModel(
@@ -398,10 +412,12 @@ public fun <Model> NavDestinationScope<*>.rememberSaveableViewModel(
 )
 
 /**
- * Provide sharedViewModel instance to provided [NavController] (default is current)
+ * Remembers a shared ViewModel in the [NavController].
  *
- * @param navController current navController to which the ViewModel will be attached
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param navController The NavController to bind to.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered shared ViewModel.
  */
 @Composable
 public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
@@ -410,11 +426,13 @@ public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.remem
 ): Model = rememberSharedViewModel(className<Model>(), navController, provider)
 
 /**
- * Provide sharedViewModel instance to provided [NavController] (default is current)
+ * Remembers a shared ViewModel in the [NavController].
  *
- * @param key provides unique key part
- * @param navController current navController to which the ViewModel will be attached
- * @param provider default viewModel instance provider
+ * @param Model The type of the ViewModel.
+ * @param key The key for the ViewModel.
+ * @param navController The NavController to bind to.
+ * @param provider The provider for the ViewModel.
+ * @return The remembered shared ViewModel.
  */
 @Composable
 public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(

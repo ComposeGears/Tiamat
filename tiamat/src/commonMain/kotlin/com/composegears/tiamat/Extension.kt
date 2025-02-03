@@ -3,26 +3,51 @@ package com.composegears.tiamat
 import androidx.compose.runtime.Composable
 
 /**
- * Extension base class
+ * Extension base interface.
  */
-public abstract class Extension<Args> {
+public interface Extension<in Args>
+
+/**
+ * Content extension base interface.
+ *
+ * Default type is [ContentExtension.Type.Overlay]
+ */
+public interface ContentExtension<in Args> : Extension<Args> {
 
     @Composable
-    internal fun ExtensionContent(scope: NavDestinationScope<Args>) {
-        scope.content()
-    }
+    public fun NavDestinationScope<out Args>.Content()
 
-    /**
-     * The content of extension
-     */
-    @Composable
-    public abstract fun NavDestinationScope<Args>.content()
+    public fun getType(): Type = Type.Overlay
+
+    public enum class Type { Overlay, Underlay }
 }
 
 /**
- * Provides an attached extension of defined type
+ * Internal simple ContentExtension impl, type = Overlay
+ */
+internal open class ContentExtensionImpl<in Args>(
+    private val content: @Composable NavDestinationScope<out Args>.() -> Unit
+) : ContentExtension<Args> {
+
+    @Composable
+    override fun NavDestinationScope<out Args>.Content() {
+        content()
+    }
+}
+
+/**
+ * Create [ContentExtension.Type.Overlay] content-extension.
  *
- * @return extension or null if the ext of this type is not attached
+ * @param content extension content builder lambda
+ */
+public fun <Args> extension(
+    content: @Composable NavDestinationScope<out Args>.() -> Unit
+): Extension<Args> = ContentExtensionImpl(content)
+
+/**
+ * Retrieves the first extension of the specified type from the list of extensions.
+ *
+ * @return The first extension of type [P] if found, or `null` otherwise.
  */
 public inline fun <reified P : Extension<*>> NavDestination<*>.ext(): P? =
     extensions.firstOrNull { it is P } as? P?

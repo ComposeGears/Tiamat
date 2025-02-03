@@ -4,7 +4,8 @@ import ComposeApp
 @main
 struct iOSApp: App {
     init() {
-        KoinLib.shared.start()
+        Platform.shared.start()
+        A3rdParty.shared.start()
     }
 
 	var body: some Scene {

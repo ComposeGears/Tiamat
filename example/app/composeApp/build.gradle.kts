@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -14,7 +13,6 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
@@ -30,7 +28,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
 
-            export(projects.example.sampleKoin)
+            export(projects.example.extra)
+            export(projects.example.platform)
         }
     }
 
@@ -53,28 +52,20 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.tiamat)
-            implementation(projects.tiamatKoin)
-            implementation(projects.example.sampleKoin)
-            implementation(projects.example.uiCore)
+            implementation(projects.example.content)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.camera.camera2)
-            implementation(libs.androidx.camera.lifecycle)
-            implementation(libs.androidx.camera.view)
-            implementation(libs.androidx.concurrent.futures)
-            implementation(libs.koin.compose)
+            implementation(libs.androidx.ui.tooling)
+            implementation(libs.androidx.ui.tooling.preview.android)
         }
         iosMain.dependencies {
-            api(projects.example.sampleKoin)
-
-            implementation(libs.koin.compose)
+            api(projects.example.extra)
+            api(projects.example.platform)
         }
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation(libs.koin.compose)
                 implementation(libs.kotlin.coroutines.swing)
             }
         }

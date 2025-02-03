@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 /**
- * Hold nav entry information
+ * Navigation entry class.
  */
 @Stable
 public class NavEntry<Args> private constructor(
@@ -124,11 +124,12 @@ public class NavEntry<Args> private constructor(
 }
 
 /**
- * Converts [NavDestination] into [NavEntry]
+ * Extension function to convert a `NavDestination` to a `NavEntry`.
  *
- * @param navArgs entry navArgs
- * @param freeArgs entry freeArgs
- * @param navResult entry navResult
+ * @param navArgs Optional navigation arguments.
+ * @param freeArgs Optional free arguments.
+ * @param navResult Optional navigation result.
+ * @return A new `NavEntry` instance.
  */
 public fun <Args> NavDestination<Args>.toNavEntry(
     navArgs: Args? = null,

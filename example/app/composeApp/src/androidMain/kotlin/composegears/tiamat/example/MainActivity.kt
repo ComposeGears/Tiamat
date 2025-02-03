@@ -1,57 +1,60 @@
 package composegears.tiamat.example
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.*
-import com.composegears.tiamat.NavController
-import com.composegears.tiamat.navigationFadeInOut
-import composegears.tiamat.example.platform.DeeplinkScreen
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.composegears.tiamat.Route
+import com.composegears.tiamat.TiamatExperimentalApi
+import composegears.tiamat.example.content.App
+import composegears.tiamat.example.content.content.HomeScreen
+import composegears.tiamat.example.ui.core.LocalThemeConfig
 
 class MainActivity : ComponentActivity() {
 
-    private val deepLinkController = DeepLinkController()
+    private var deeplinkIntent by mutableStateOf<Intent?>(null)
 
+    @OptIn(TiamatExperimentalApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        deepLinkController.onIntent(intent)
         setContent {
-            var navController by remember { mutableStateOf<NavController?>(null) }
-            App(
-                controllerConfig = { navController = it },
-                content = { content ->
-                    // pass deeplink deeper and handle inside screen
-                    val deeplink = deepLinkController.deeplink
-                    // using disposable effect as it runs faster then LaunchedEffect
-                    DisposableEffect(deeplink) {
-                        if (deeplink != null) {
-                            navController?.editBackStack {
-                                clear()
-                                add(MainScreen)
-                                add(PlatformExamplesScreen)
-                            }
-                            navController?.replace(
-                                dest = DeeplinkScreen,
-                                freeArgs = deeplink,
-                                // we only animate root content switch
-                                // all nested items should use navigationNone() transition to prevent `blink`
-                                transition = navigationFadeInOut()
-                            )
-                            deepLinkController.clearDeepLink()
-                        }
-                        onDispose { }
+            App { navController ->
+                // deeplink handler
+                LaunchedEffect(deeplinkIntent) {
+                    val data = deeplinkIntent?.data
+                    if (data != null) {
+                        // process deeplink, eg: parse and use Route Api -> navController.route(...)
+                        // for now it will reopen HomeScreen on any intent
+                        navController.route(Route.build(HomeScreen))
                     }
-                    content()
+                    deeplinkIntent = null
                 }
-            )
+            }
+            // theme config handler
+            val themeConfig = LocalThemeConfig.current
+            LaunchedEffect(themeConfig.isDarkMode) {
+                if (themeConfig.isDarkMode) enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+                    navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+                ) else enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.BLACK),
+                    navigationBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.BLACK)
+                )
+            }
         }
+        deeplinkIntent = intent
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        deepLinkController.onIntent(intent)
+        deeplinkIntent = intent
     }
 }

@@ -7,7 +7,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 /**
- * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity
+ * A NavDestinationScope provides a scope for the children of NavDestination<Args> entity.
  */
 @Stable
 public abstract class NavDestinationScope<Args> internal constructor() : AnimatedVisibilityScope {
@@ -15,7 +15,7 @@ public abstract class NavDestinationScope<Args> internal constructor() : Animate
 }
 
 /**
- * Internal NavDestinationScope impl
+ * Internal NavDestinationScope impl.
  */
 internal open class NavDestinationScopeImpl<Args>(
     override val navEntry: NavEntry<Args>,
@@ -63,7 +63,7 @@ public interface NavDestination<Args> : Route.Element {
 }
 
 /**
- * internal simple NavDestination impl
+ * Internal simple NavDestination impl.
  */
 internal open class NavDestinationImpl<Args>(
     override val name: String,
@@ -78,7 +78,7 @@ internal open class NavDestinationImpl<Args>(
 }
 
 /**
- * Nav destination delegate impl
+ * Nav destination delegate impl.
  */
 public class NavDestinationInstanceDelegate<Args>(
     private val extensions: List<Extension<Args>>,
@@ -93,9 +93,12 @@ public class NavDestinationInstanceDelegate<Args>(
 }
 
 /**
- * NavDestination builder fun
+ * NavDestination builder.
  *
- * @see [NavDestination]
+ * @param name The name of the NavDestination.
+ * @param extensions Optional extensions for the NavDestination.
+ * @param content Composable function defining the content of the NavDestination.
+ * @return A NavDestination instance.
  */
 public fun <Args> NavDestination(
     name: String,
@@ -104,9 +107,11 @@ public fun <Args> NavDestination(
 ): NavDestination<Args> = NavDestinationImpl(name, extensions, content)
 
 /**
- * Nav destination delegate, destination name will be same as property name
+ * NavDestination builder.
  *
- * @param content content builder lambda
+ * @param extensions Optional extensions for the NavDestination.
+ * @param content Composable function defining the content of the NavDestination.
+ * @return A NavDestination delegate instance.
  */
 public fun <Args> navDestination(
     vararg extensions: Extension<Args>? = emptyArray(),

@@ -14,7 +14,8 @@ plugins {
 }
 
 apiValidation {
-    ignoredProjects += listOf("composeApp", "sample-koin", "ui-core")
+    val apiValidationProjects = listOf("tiamat", "tiamat-koin")
+    ignoredProjects += allprojects.map { it.name } - apiValidationProjects
 }
 
 detekt {
