@@ -5,6 +5,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.*
+import com.composegears.tiamat.destinations.InstallIn
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
@@ -63,3 +64,50 @@ fun App(
         }
     }
 }
+
+
+/*
+const val TestNavControllerDestinations = "TestKey"
+
+@InstallIn(TestNavControllerDestinations)
+val Screen1 by navDestination<Unit> { }
+
+@InstallIn(TestNavControllerDestinations)
+val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
+
+@InstallIn(TestNavControllerDestinations)
+object Screen3 : NavDestination<Int> {
+    override val name: String = "Screen3"
+    override val extensions: List<Extension<Int>> = emptyList()
+
+    @Composable
+    override fun NavDestinationScope<Int>.Content() {
+    }
+}
+
+class Screen4 : NavDestination<Int> {
+    override val name: String = "Screen4"
+    override val extensions: List<Extension<Int>> = emptyList()
+
+    @Composable
+    override fun NavDestinationScope<Int>.Content() {
+    }
+}
+
+@InstallIn(TestNavControllerDestinations)
+val Screen5 = Screen4()
+
+@Composable
+fun Test() {
+    val navController = rememberNavController(
+        key = "testNavController",
+        storageMode = StorageMode.Memory,
+        startDestination = Screen1,
+        destinations = TiamatDestinationMapping of TestNavControllerDestinations
+    )
+
+    Navigation(
+        navController = navController,
+        modifier = Modifier.fillMaxSize(),
+    )
+}*/

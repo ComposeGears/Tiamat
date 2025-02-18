@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -33,6 +34,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.tiamat)
+            api(projects.tiamatDestinations)
             api(projects.example.platform)
             api(projects.example.extra)
             api(projects.example.uiCore)
@@ -40,4 +42,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
         }
     }
+}
+
+dependencies{
+    add("kspCommonMainMetadata", projects.tiamatDestinationsKsp)
 }
