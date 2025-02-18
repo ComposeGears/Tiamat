@@ -23,6 +23,7 @@ import com.composegears.tiamat.LocalNavBackHandler
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
+import composegears.tiamat.example.platform.start
 
 @OptIn(ExperimentalFoundationApi::class)
 fun main() {

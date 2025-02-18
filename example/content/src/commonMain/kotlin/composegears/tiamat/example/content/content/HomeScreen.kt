@@ -39,6 +39,8 @@ import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
+import composegears.tiamat.example.platform.features
+import composegears.tiamat.example.platform.name
 import composegears.tiamat.example.ui.core.*
 
 private val HomeItems =

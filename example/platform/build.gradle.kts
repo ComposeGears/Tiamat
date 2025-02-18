@@ -35,5 +35,8 @@ kotlin {
             implementation(projects.tiamat)
             implementation(projects.example.uiCore)
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
+        }
     }
 }
