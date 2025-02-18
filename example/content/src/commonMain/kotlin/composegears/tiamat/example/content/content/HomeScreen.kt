@@ -31,6 +31,7 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
+import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -128,6 +129,11 @@ private val HomeItems =
                     name = "Extensions",
                     description = "Example shows how to use nav-destination extensions (eg: Analytics tracking)",
                     destination = AdvExtensions
+                ),
+                AppFeature(
+                    name = "Shared element transition",
+                    description = "Example shows how to use shared element transition",
+                    destination = AdvSharedElementTransition
                 ),
             ),
         ),

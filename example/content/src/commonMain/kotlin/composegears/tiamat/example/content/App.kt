@@ -11,6 +11,7 @@ import com.composegears.tiamat.rememberNavController
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
+import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -49,6 +50,7 @@ fun App(
                     ArchCustomSaveState,
                     AdvExtensions,
                     AdvBackStackAlteration,
+                    AdvSharedElementTransition,
                     *(Platform.features() + A3rdParty.features())
                         .map { it.destination }
                         .toTypedArray()

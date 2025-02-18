@@ -51,9 +51,7 @@ internal actual fun PredictiveBackContainer(
                 transitionController = controller,
             )
             try {
-                progress.collect { event ->
-                    controller.update(0.5f * event.progress)
-                }
+                progress.collect { controller.update(0.5f * it.progress) }
                 controller.finish()
             } catch (e: Exception) {
                 controller.cancel()

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
 import composegears.tiamat.example.ui.core.*
 
+
 @Composable
 internal expect fun PredictiveBackContainer(
     navController: NavController,
@@ -43,8 +44,9 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 Navigation(
-                    nc,
-                    Modifier.fillMaxSize()
+                    navController = nc,
+                    modifier = Modifier.fillMaxSize(),
+                    contentTransformProvider = { navigationSlideInOut(it) }
                 )
             }
         }
