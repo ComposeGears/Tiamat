@@ -267,7 +267,8 @@ public fun Navigation(
                     .transformWhile { item ->
                         emit(item)
                         item is Update
-                    }.collect { item ->
+                    }
+                    .collect { item ->
                         when (item) {
                             is Cancel -> {
                                 animate(transitionState.fraction, 0f, 0f, item.animationSpec) { v, _ ->
@@ -289,7 +290,7 @@ public fun Navigation(
         }
         // content
         val transition = rememberTransition(transitionState)
-        var contentZIndex by remember { mutableStateOf(0f) }
+        var contentZIndex by remember { mutableFloatStateOf(0f) }
         transition.AnimatedContent(
             contentKey = { (it as? NavEntry<*>)?.let { d -> "${d.destination.name}:${d.navId}" }.orEmpty() },
             contentAlignment = Alignment.Center,
