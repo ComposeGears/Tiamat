@@ -7,6 +7,9 @@ insert_final_newline = false
 max_line_length = 120
 tab_width = 4
 
+[*.yml]
+indent_size = 2
+
 [{*.kt,*.kts}]
 ij_kotlin_line_break_after_multiline_when_entry = false
 ij_kotlin_name_count_to_use_star_import = 5
