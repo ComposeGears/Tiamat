@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.composegears.tiamat.NavController
-import com.composegears.tiamat.Navigation
-import com.composegears.tiamat.StorageMode
-import com.composegears.tiamat.rememberNavController
+import com.composegears.tiamat.*
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
@@ -57,7 +54,11 @@ fun App(
                 ),
                 configuration = navControllerConfig
             )
-            Navigation(rootNavController, Modifier.fillMaxSize())
+            Navigation(
+                navController = rootNavController,
+                modifier = Modifier.fillMaxSize(),
+                contentTransformProvider = { navigationPlatformDefault(it) }
+            )
             overlay(rootNavController)
         }
     }

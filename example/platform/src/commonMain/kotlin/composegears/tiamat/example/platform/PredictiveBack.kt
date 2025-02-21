@@ -45,7 +45,7 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
                 Navigation(
                     navController = nc,
                     modifier = Modifier.fillMaxSize(),
-                    contentTransformProvider = { navigationSlideInOut(it) }
+                    contentTransformProvider = { navigationPlatformDefault(it) }
                 )
             }
         }

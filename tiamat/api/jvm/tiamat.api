@@ -60,6 +60,10 @@ public final class com/composegears/tiamat/NavContentTransformKt {
 	public static final fun navigationSlideOutToBottom ()Landroidx/compose/animation/ContentTransform;
 }
 
+public final class com/composegears/tiamat/NavContentTransform_jvmKt {
+	public static final fun navigationPlatformDefault (Z)Landroidx/compose/animation/ContentTransform;
+}
+
 public final class com/composegears/tiamat/NavController {
 	public static final field $stable I
 	public static final field Companion Lcom/composegears/tiamat/NavController$Companion;

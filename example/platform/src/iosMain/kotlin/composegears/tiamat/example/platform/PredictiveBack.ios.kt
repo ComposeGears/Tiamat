@@ -1,10 +1,12 @@
 package composegears.tiamat.example.platform
 
 import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavController
 import com.composegears.tiamat.TransitionController
@@ -45,12 +46,12 @@ internal actual fun PredictiveBackContainer(
                             start = it.x
                         },
                         onDragEnd = {
-                            if (slop > 0) controller?.finish()
-                            else controller?.cancel()
+                            if (slop > 0) controller?.finish(tween(durationMillis = 200, easing = FastOutSlowInEasing))
+                            else controller?.cancel(tween(durationMillis = 200, easing = FastOutSlowInEasing))
                             controller = null
                         },
                         onDragCancel = {
-                            controller?.cancel()
+                            controller?.cancel(tween(durationMillis = 200, easing = FastOutSlowInEasing))
                             controller = null
                         },
                         onHorizontalDrag = { _, v ->
@@ -60,19 +61,22 @@ internal actual fun PredictiveBackContainer(
                                 controller = TransitionController()
                                 navController.back(
                                     transition = ContentTransform(
-                                        targetContentEnter = slideIn(tween(easing = LinearEasing)) {
-                                            IntOffset(x = -it.width, y = 0)
-                                        },
-                                        initialContentExit = slideOut(tween(easing = LinearEasing)) {
-                                            IntOffset(x = it.width, y = 0)
-                                        },
-                                        sizeTransform = null
+                                        targetContentEnter = slideInHorizontally(
+                                            animationSpec = tween(durationMillis = 350, easing = LinearEasing),
+                                            initialOffsetX = { -it / 3 }
+                                        ) + fadeIn(tween(100)),
+                                        initialContentExit = slideOutHorizontally(
+                                            animationSpec = tween(durationMillis = 350, easing = LinearEasing),
+                                            targetOffsetX = { it }
+                                        ),
+                                        sizeTransform = null,
+                                        targetContentZIndex = -1f
                                     ),
                                     transitionController = controller
                                 )
                             }
-                            val pdX = dist / (constraints.maxWidth - start)
-                            controller?.update(pdX.coerceIn(0f, 1f))
+                            val progress = (dist / (constraints.maxWidth - start)).coerceIn(0f, 1f)
+                            controller?.update(progress)
                         }
                     )
                 }

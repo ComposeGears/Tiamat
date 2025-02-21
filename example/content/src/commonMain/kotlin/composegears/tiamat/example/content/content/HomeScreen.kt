@@ -152,7 +152,10 @@ private val HomeItems =
 val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
     val navController = navController()
     Box(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         var selectedItem by rememberSaveable { mutableStateOf<String?>(null) }

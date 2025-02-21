@@ -3,8 +3,8 @@ package composegears.tiamat.example.platform
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.NavController
 import com.composegears.tiamat.TransitionController
@@ -60,12 +59,8 @@ internal actual fun PredictiveBackContainer(
                                 controller = TransitionController()
                                 navController.back(
                                     transition = ContentTransform(
-                                        targetContentEnter = slideIn(tween(easing = LinearEasing)) {
-                                            IntOffset(x = -it.width, y = 0)
-                                        },
-                                        initialContentExit = slideOut(tween(easing = LinearEasing)) {
-                                            IntOffset(x = it.width, y = 0)
-                                        },
+                                        targetContentEnter = slideInHorizontally(tween(easing = LinearEasing)) { -it },
+                                        initialContentExit = slideOutHorizontally(tween(easing = LinearEasing)) { it },
                                         sizeTransform = null
                                     ),
                                     transitionController = controller
