@@ -449,7 +449,7 @@ public class NavController internal constructor(
         var isCurrentDestinationChanged = false
         if (pendingEntries.isNotEmpty()) {
             // last entry should be shown as `new` current
-            val upcomingCurrent = pendingEntries.removeLast()
+            val upcomingCurrent = pendingEntries.removeAt(pendingEntries.lastIndex)
             // calculate how many entries we can skip
             var skipCount = 0
             if (!pendingRoute.forceReplace) {
@@ -583,14 +583,14 @@ public class NavController internal constructor(
         this.transitionController = transitionController
         if (to != null) {
             while (backStack.isNotEmpty() && backStack.last().destination.name != to.name) {
-                backStack.removeLast().close()
+                backStack.removeAt(backStack.lastIndex).close()
             }
             if (inclusive && backStack.isNotEmpty()) {
-                backStack.removeLast().close()
+                backStack.removeAt(backStack.lastIndex).close()
             }
         }
         return if (backStack.isNotEmpty()) {
-            val target = backStack.removeLast()
+            val target = backStack.removeAt(backStack.lastIndex)
             target.navResult = result
             setCurrentNavEntryInternal(target)
             true
@@ -682,7 +682,7 @@ public class NavController internal constructor(
          */
         public fun removeLast(): Boolean {
             return if (backStack.isNotEmpty()) {
-                backStack.removeLast().close()
+                backStack.removeAt(backStack.lastIndex).close()
                 true
             } else false
         }
@@ -750,7 +750,7 @@ public class NavController internal constructor(
          */
         public fun clear() {
             while (backStack.isNotEmpty()) {
-                backStack.removeLast().close()
+                backStack.removeAt(backStack.lastIndex).close()
             }
         }
 
