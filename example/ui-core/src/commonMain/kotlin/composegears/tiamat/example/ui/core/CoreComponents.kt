@@ -1,5 +1,6 @@
 package composegears.tiamat.example.ui.core
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -125,7 +126,12 @@ fun <T> NavDestinationScope<T>.Screen(
 ) {
     val nc = navController()
     // val si = ext<ScreenInfo<*>>() // todo add code reference to UI
-    Column(Modifier.fillMaxSize().navigationBarsPadding()) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .navigationBarsPadding()
+    ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             tonalElevation = 4.dp

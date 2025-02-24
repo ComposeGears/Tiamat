@@ -39,3 +39,5 @@ public fun navigationSlideOutToBottom(): ContentTransform =
         targetContentZIndex = -1f,
         sizeTransform = null
     )
+
+public expect fun navigationPlatformDefault(isForward: Boolean): ContentTransform

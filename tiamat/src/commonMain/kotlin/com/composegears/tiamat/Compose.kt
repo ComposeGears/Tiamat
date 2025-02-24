@@ -1,6 +1,9 @@
 package com.composegears.tiamat
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.SeekableTransitionState
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
@@ -10,6 +13,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import com.composegears.tiamat.TransitionController.Event.*
+import kotlinx.coroutines.flow.transformWhile
+import kotlinx.coroutines.launch
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
@@ -247,13 +253,50 @@ public fun Navigation(
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
     CompositionLocalProvider(LocalNavController provides navController) {
-        AnimatedContent(
-            targetState = navController.currentNavEntry,
-            contentKey = { it?.let { "${it.destination.name}:${it.navId}" }.orEmpty() },
+        val stubEntry = remember { NavEntry(NavDestination.Stub) }
+        val transitionState = remember {
+            SeekableTransitionState<NavEntry<*>>(navController.currentNavEntry ?: stubEntry)
+        }
+        // state controller
+        LaunchedEffect(navController.currentNavEntry) {
+            val targetValue = navController.currentNavEntry ?: stubEntry
+            val controller = navController.transitionController
+            if (controller != null) {
+                controller
+                    .updates
+                    .transformWhile { item ->
+                        emit(item)
+                        item is Update
+                    }
+                    .collect { item ->
+                        when (item) {
+                            is Cancel -> {
+                                animate(transitionState.fraction, 0f, 0f, item.animationSpec) { v, _ ->
+                                    this@LaunchedEffect.launch {
+                                        transitionState.seekTo(v)
+                                    }
+                                }
+                                transitionState.snapTo(transitionState.currentState)
+                                navController.navigate(
+                                    entry = transitionState.currentState,
+                                    transition = navigationNone()
+                                )
+                            }
+                            is Finish -> transitionState.animateTo(targetValue, item.animationSpec)
+                            is Update -> transitionState.seekTo(item.value, targetValue)
+                        }
+                    }
+            } else transitionState.animateTo(targetValue)
+        }
+        // content
+        val transition = rememberTransition(transitionState)
+        var contentZIndex by remember { mutableFloatStateOf(0f) }
+        transition.AnimatedContent(
+            contentKey = { (it as? NavEntry<*>)?.let { d -> "${d.destination.name}:${d.navId}" }.orEmpty() },
             contentAlignment = Alignment.Center,
             modifier = modifier,
             transitionSpec = {
-                when {
+                val transform = when {
                     navController.isInitialTransition -> ContentTransform(
                         targetContentEnter = EnterTransition.None,
                         initialContentExit = ExitTransition.None,
@@ -262,10 +305,16 @@ public fun Navigation(
                     navController.contentTransition != null -> navController.contentTransition!!
                     else -> contentTransformProvider(navController.isForwardTransition)
                 }
+                contentZIndex += transform.targetContentZIndex
+                ContentTransform(
+                    targetContentEnter = transform.targetContentEnter,
+                    initialContentExit = transform.initialContentExit,
+                    targetContentZIndex = contentZIndex,
+                    sizeTransform = transform.sizeTransform
+                )
             },
-            label = "nav_controller_${navController.key ?: "no_key"}",
         ) {
-            if (it != null) EntryContent(it)
+            if (it != stubEntry) EntryContent(it)
         }
     }
 }
