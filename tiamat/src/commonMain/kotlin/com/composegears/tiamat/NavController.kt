@@ -81,6 +81,8 @@ public class NavController internal constructor(
         private set
     internal var contentTransition: ContentTransform? = null
         private set
+    internal var transitionController: TransitionController? = null
+        private set
 
     private var pendingEntryNavId = 0L
 
@@ -220,16 +222,6 @@ public class NavController internal constructor(
         canGoBack = backStack.isNotEmpty()
     }
 
-    private fun replaceInternal(
-        entry: NavEntry<*>,
-        transition: ContentTransform? = null
-    ) {
-        isForwardTransition = true
-        isInitialTransition = currentNavEntry == null
-        contentTransition = transition
-        setCurrentNavEntryInternal(entry)
-    }
-
     /**
      * Sets the pending back transition.
      *
@@ -261,13 +253,17 @@ public class NavController internal constructor(
      *
      * @param entry The navigation entry to navigate to.
      * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
      */
     public fun <Args> navigate(
         entry: NavEntry<Args>,
-        transition: ContentTransform? = null
-    ) {
-        navigate(entry.destination, entry.navArgs, entry.freeArgs, transition)
-    }
+        transition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
+    ): Unit = navigateInternal(
+        entry = entry,
+        transition = transition,
+        transitionController = transitionController
+    )
 
     /**
      * Navigates to the specified destination.
@@ -276,16 +272,86 @@ public class NavController internal constructor(
      * @param navArgs The navigation navArgs.
      * @param freeArgs The navigation freeArgs.
      * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
      */
     public fun <Args> navigate(
         dest: NavDestination<Args>,
         navArgs: Args? = null,
         freeArgs: Any? = null,
-        transition: ContentTransform? = null
+        transition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
+    ): Unit = navigateInternal(
+        entry = NavEntry(dest, navArgs, freeArgs),
+        transition = transition,
+        transitionController = transitionController
+    )
+
+    // internal nav impl
+    private fun <Args> navigateInternal(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
     ) {
-        requireKnownDestination(dest)
+        requireKnownDestination(entry.destination)
         currentNavEntry?.let { backStack.add(it) }
-        replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
+        replaceInternal(
+            entry = entry,
+            contentTransition = transition,
+            transitionController = transitionController
+        )
+    }
+
+    /**
+     * Replaces the current entry with the specified entry.
+     *
+     * @param entry The navigation entry to replace with.
+     * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
+     */
+    public fun <Args> replace(
+        entry: NavEntry<Args>,
+        transition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
+    ): Unit = replace(
+        dest = entry.destination,
+        navArgs = entry.navArgs,
+        freeArgs = entry.freeArgs,
+        transition = transition,
+        transitionController = transitionController
+    )
+
+    /**
+     * Replaces the current destination with the specified destination.
+     *
+     * @param dest The destination to replace with.
+     * @param navArgs The navigation navArgs.
+     * @param freeArgs The navigation freeArgs.
+     * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
+     */
+    public fun <Args> replace(
+        dest: NavDestination<Args>,
+        navArgs: Args? = null,
+        freeArgs: Any? = null,
+        transition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
+    ): Unit = replaceInternal(
+        entry = NavEntry(dest, navArgs, freeArgs),
+        contentTransition = transition,
+        transitionController = transitionController
+    )
+
+    // internal replace impl
+    private fun replaceInternal(
+        entry: NavEntry<*>,
+        contentTransition: ContentTransform? = null,
+        transitionController: TransitionController? = null,
+    ) {
+        isForwardTransition = true
+        isInitialTransition = currentNavEntry == null
+        this.contentTransition = contentTransition
+        this.transitionController = transitionController
+        setCurrentNavEntryInternal(entry)
     }
 
     /**
@@ -307,38 +373,12 @@ public class NavController internal constructor(
         if (entry != null) {
             currentNavEntry?.let { backStack.add(it) }
             backStack.remove(entry)
-            replaceInternal(entry, transition)
+            replaceInternal(
+                entry = entry,
+                contentTransition = transition,
+                transitionController = null
+            )
         } else orElse()
-    }
-
-    /**
-     * Replaces the current entry with the specified entry.
-     *
-     * @param entry The navigation entry to replace with.
-     * @param transition The content transform for the transition.
-     */
-    public fun <Args> replace(
-        entry: NavEntry<Args>,
-        transition: ContentTransform? = null
-    ) {
-        replace(entry.destination, entry.navArgs, entry.freeArgs, transition)
-    }
-
-    /**
-     * Replaces the current destination with the specified destination.
-     *
-     * @param dest The destination to replace with.
-     * @param navArgs The navigation navArgs.
-     * @param freeArgs The navigation freeArgs.
-     * @param transition The content transform for the transition.
-     */
-    public fun <Args> replace(
-        dest: NavDestination<Args>,
-        navArgs: Args? = null,
-        freeArgs: Any? = null,
-        transition: ContentTransform? = null
-    ) {
-        replaceInternal(NavEntry(dest, navArgs, freeArgs), transition)
     }
 
     /**
@@ -490,12 +530,20 @@ public class NavController internal constructor(
      *
      * @param result The result to pass back.
      * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
      * @return `true` if the back navigation was successful, `false` otherwise.
      */
     public fun back(
         result: Any? = null,
-        transition: ContentTransform? = pendingBackTransition
-    ): Boolean = backInternal(null, result, false, transition)
+        transition: ContentTransform? = pendingBackTransition,
+        transitionController: TransitionController? = null,
+    ): Boolean = backInternal(
+        to = null,
+        result = result,
+        inclusive = false,
+        contentTransition = transition,
+        transitionController = transitionController
+    )
 
     /**
      * Navigates back to the specified destination.
@@ -504,24 +552,35 @@ public class NavController internal constructor(
      * @param result The result to pass back.
      * @param inclusive Whether to include the destination in the navigation.
      * @param transition The content transform for the transition.
+     * @param transitionController The controller for the transition.
      * @return `true` if the back navigation was successful, `false` otherwise.
      */
     public fun back(
         to: NavDestination<*>,
         result: Any? = null,
         inclusive: Boolean = false,
-        transition: ContentTransform? = pendingBackTransition
-    ): Boolean = backInternal(to, result, inclusive, transition)
+        transition: ContentTransform? = pendingBackTransition,
+        transitionController: TransitionController? = null,
+    ): Boolean = backInternal(
+        to = to,
+        result = result,
+        inclusive = inclusive,
+        contentTransition = transition,
+        transitionController = transitionController
+    )
 
+    // internal back impl
     private fun backInternal(
         to: NavDestination<*>? = null,
         result: Any? = null,
         inclusive: Boolean = false,
-        transition: ContentTransform? = pendingBackTransition
+        contentTransition: ContentTransform? = pendingBackTransition,
+        transitionController: TransitionController? = null,
     ): Boolean {
         isForwardTransition = false
         isInitialTransition = currentNavEntry == null
-        contentTransition = transition
+        this.contentTransition = contentTransition
+        this.transitionController = transitionController
         if (to != null) {
             while (backStack.isNotEmpty() && backStack.last().destination.name != to.name) {
                 backStack.removeAt(backStack.lastIndex).close()
@@ -536,10 +595,11 @@ public class NavController internal constructor(
             setCurrentNavEntryInternal(target)
             true
         } else {
-            parent?.backInternal(to, result, inclusive, transition) ?: false
+            parent?.backInternal(to, result, inclusive, contentTransition) ?: false
         }
     }
 
+    // close and cleanup refs
     internal fun close() {
         editBackStack { clear() }
         currentNavEntry?.close()
