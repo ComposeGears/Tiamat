@@ -84,6 +84,8 @@ public class NavController internal constructor(
     internal var transitionController: TransitionController? = null
         private set
 
+    private var onNavigationListener: OnNavigationListener? = null
+
     private var pendingEntryNavId = 0L
 
     init {
@@ -175,6 +177,17 @@ public class NavController internal constructor(
     }
 
     /**
+     * Sets a navigation listener to receive callbacks when navigation transitions occur.
+     *
+     * @param listener The listener to set, or null to remove the current listener.
+     *                The listener will receive callbacks through [NavigationListener.onTransition]
+     *                whenever navigation changes occur.
+     */
+    public fun setOnNavigationListener(listener: OnNavigationListener?) {
+        onNavigationListener = listener
+    }
+
+    /**
      * Finds a destination that matches the given predicate.
      *
      * @param predicate A function that takes a `NavDestination` and returns `true` if it matches the criteria.
@@ -216,10 +229,12 @@ public class NavController internal constructor(
         navEntry: NavEntry<*>?,
     ) {
         if (navEntry != null && navEntry.navId < 0) navEntry.navId = pendingEntryNavId++
+        val oldNavEntry = currentNavEntry
         currentNavEntry = navEntry
         current = navEntry?.destination
         pendingBackTransition = null
         canGoBack = backStack.isNotEmpty()
+        onNavigationListener?.onNavigate(oldNavEntry, navEntry, isForwardTransition)
     }
 
     /**
@@ -760,5 +775,19 @@ public class NavController internal constructor(
          * @return The size of the back stack.
          */
         public fun size(): Int = backStack.size
+    }
+
+    /**
+     * Interface for listening to navigation transitions between screens.
+     */
+    public fun interface OnNavigationListener {
+        /**
+         * Called when a navigation transition occurs.
+         *
+         * @param from The [NavEntry] being navigated from
+         * @param to The [NavEntry] being navigated to
+         * @param isForward True if navigating forward, false if navigating backward
+         */
+        public fun onNavigate(from: NavEntry<*>?, to: NavEntry<*>?, isForward: Boolean)
     }
 }

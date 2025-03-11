@@ -309,8 +309,8 @@ public fun Navigation(
                 ContentTransform(
                     targetContentEnter = transform.targetContentEnter,
                     initialContentExit = transform.initialContentExit,
+                    sizeTransform = transform.sizeTransform,
                     targetContentZIndex = contentZIndex,
-                    sizeTransform = transform.sizeTransform
                 )
             },
         ) {

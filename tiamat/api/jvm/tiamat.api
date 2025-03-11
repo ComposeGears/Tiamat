@@ -94,6 +94,7 @@ public final class com/composegears/tiamat/NavController {
 	public static synthetic fun replace$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/animation/ContentTransform;Lcom/composegears/tiamat/TransitionController;ILjava/lang/Object;)V
 	public static synthetic fun replace$default (Lcom/composegears/tiamat/NavController;Lcom/composegears/tiamat/NavEntry;Landroidx/compose/animation/ContentTransform;Lcom/composegears/tiamat/TransitionController;ILjava/lang/Object;)V
 	public final fun route (Lcom/composegears/tiamat/Route;)V
+	public final fun setOnNavigationListener (Lcom/composegears/tiamat/NavController$OnNavigationListener;)V
 	public final fun setPendingBackTransition (Landroidx/compose/animation/ContentTransform;)V
 	public static synthetic fun setPendingBackTransition$default (Lcom/composegears/tiamat/NavController;Landroidx/compose/animation/ContentTransform;ILjava/lang/Object;)V
 }
@@ -117,6 +118,10 @@ public final class com/composegears/tiamat/NavController$BackStackEditScope {
 }
 
 public final class com/composegears/tiamat/NavController$Companion {
+}
+
+public abstract interface class com/composegears/tiamat/NavController$OnNavigationListener {
+	public abstract fun onNavigate (Lcom/composegears/tiamat/NavEntry;Lcom/composegears/tiamat/NavEntry;Z)V
 }
 
 public abstract interface class com/composegears/tiamat/NavDestination : com/composegears/tiamat/Route$Element {
