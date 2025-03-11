@@ -58,10 +58,6 @@ public interface NavDestination<Args> : Route.Element {
     public val name: String
     public val extensions: List<Extension<Args>>
 
-    public companion object {
-        internal val Stub: NavDestination<Unit> = NavDestinationImpl("Stub", emptyList()) {}
-    }
-
     @Composable
     public fun NavDestinationScope<Args>.Content()
 }

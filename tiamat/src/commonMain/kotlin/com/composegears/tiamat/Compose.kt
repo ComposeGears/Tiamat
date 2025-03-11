@@ -253,7 +253,8 @@ public fun Navigation(
     if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
     CompositionLocalProvider(LocalNavController provides navController) {
-        val stubEntry = remember { NavEntry(NavDestination.Stub) }
+        // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
+        val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
         val transitionState = remember {
             SeekableTransitionState<NavEntry<*>>(navController.currentNavEntry ?: stubEntry)
         }
