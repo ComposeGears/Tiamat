@@ -1,5 +1,5 @@
-public final class com/composegears/tiamat/ComposableSingletons$NavDestinationKt {
-	public static final field INSTANCE Lcom/composegears/tiamat/ComposableSingletons$NavDestinationKt;
+public final class com/composegears/tiamat/ComposableSingletons$ComposeKt {
+	public static final field INSTANCE Lcom/composegears/tiamat/ComposableSingletons$ComposeKt;
 	public fun <init> ()V
 	public final fun getLambda-1$tiamat_release ()Lkotlin/jvm/functions/Function3;
 }
@@ -119,13 +119,9 @@ public abstract interface class com/composegears/tiamat/NavController$OnNavigati
 }
 
 public abstract interface class com/composegears/tiamat/NavDestination : com/composegears/tiamat/Route$Element {
-	public static final field Companion Lcom/composegears/tiamat/NavDestination$Companion;
 	public abstract fun Content (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun getExtensions ()Ljava/util/List;
 	public abstract fun getName ()Ljava/lang/String;
-}
-
-public final class com/composegears/tiamat/NavDestination$Companion {
 }
 
 public final class com/composegears/tiamat/NavDestinationInstanceDelegate : kotlin/properties/ReadOnlyProperty {
