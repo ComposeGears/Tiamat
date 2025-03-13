@@ -18,6 +18,7 @@ import com.composegears.tiamat.*
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
+import composegears.tiamat.example.platform.start
 import composegears.tiamat.example.ui.core.LocalScreenHandler
 import composegears.tiamat.example.ui.core.ScreenInfo
 import kotlinx.browser.window

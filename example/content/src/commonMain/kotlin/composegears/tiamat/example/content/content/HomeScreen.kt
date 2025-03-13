@@ -31,6 +31,7 @@ import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
+import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -39,6 +40,8 @@ import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
+import composegears.tiamat.example.platform.features
+import composegears.tiamat.example.platform.name
 import composegears.tiamat.example.ui.core.*
 
 private val HomeItems =
@@ -127,6 +130,11 @@ private val HomeItems =
                     description = "Example shows how to use nav-destination extensions (eg: Analytics tracking)",
                     destination = AdvExtensions
                 ),
+                AppFeature(
+                    name = "Shared element transition",
+                    description = "Example shows how to use shared element transition",
+                    destination = AdvSharedElementTransition
+                ),
             ),
         ),
         HomeItem(
@@ -144,7 +152,10 @@ private val HomeItems =
 val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
     val navController = navController()
     Box(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .systemBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         var selectedItem by rememberSaveable { mutableStateOf<String?>(null) }
