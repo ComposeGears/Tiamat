@@ -20,7 +20,6 @@ dependencyResolutionManagement {
 
 include(":tiamat")
 include(":tiamat-destinations")
-include(":tiamat-destinations-ksp")
 include(":tiamat-koin")
 
 include(":example:app:composeApp")

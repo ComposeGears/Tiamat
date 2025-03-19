@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -42,8 +41,4 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
         }
     }
-}
-
-dependencies{
-    add("kspCommonMainMetadata", projects.tiamatDestinationsKsp)
 }

@@ -31,6 +31,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(projects.tiamat)
         }
     }
 }

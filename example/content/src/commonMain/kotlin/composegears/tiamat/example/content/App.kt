@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.*
 import com.composegears.tiamat.destinations.InstallIn
+import com.composegears.tiamat.destinations.TiamatDestinations
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
@@ -20,6 +21,7 @@ import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.features
 import composegears.tiamat.example.ui.core.AppTheme
+import kotlin.reflect.KClass
 
 @Composable
 @Suppress("SpreadOperator")
@@ -66,16 +68,15 @@ fun App(
 }
 
 
-/*
-const val TestNavControllerDestinations = "TestKey"
+object TestNavControllerDestinations : TiamatDestinations
 
-@InstallIn(TestNavControllerDestinations)
+@InstallIn(TestNavControllerDestinations::class)
 val Screen1 by navDestination<Unit> { }
 
-@InstallIn(TestNavControllerDestinations)
+@InstallIn(TestNavControllerDestinations::class)
 val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
 
-@InstallIn(TestNavControllerDestinations)
+@InstallIn(TestNavControllerDestinations::class)
 object Screen3 : NavDestination<Int> {
     override val name: String = "Screen3"
     override val extensions: List<Extension<Int>> = emptyList()
@@ -94,7 +95,7 @@ class Screen4 : NavDestination<Int> {
     }
 }
 
-@InstallIn(TestNavControllerDestinations)
+@InstallIn(TestNavControllerDestinations::class)
 val Screen5 = Screen4()
 
 @Composable
@@ -103,11 +104,11 @@ fun Test() {
         key = "testNavController",
         storageMode = StorageMode.Memory,
         startDestination = Screen1,
-        destinations = TiamatDestinationMapping of TestNavControllerDestinations
+        destinations = TestNavControllerDestinations.items()
     )
 
     Navigation(
         navController = navController,
         modifier = Modifier.fillMaxSize(),
     )
-}*/
+}
