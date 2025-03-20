@@ -4,6 +4,7 @@ android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
 
+autoService = "1.1.1"
 detekt = "1.23.8"
 jetbrains-compose = "1.7.3"
 kotlin = "2.1.10"
@@ -18,6 +19,7 @@ androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
 androidx-ui-tooling = "androidx.compose.ui:ui-tooling:1.7.8"
 androidx-ui-tooling-preview-android = "androidx.compose.ui:ui-tooling-preview-android:1.7.8"
 
+auto-service = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
