@@ -1,3 +1,5 @@
+@file:OptIn(TiamatExperimentalApi::class)
+
 package composegears.tiamat.example.content
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.*
 import com.composegears.tiamat.destinations.InstallIn
-import com.composegears.tiamat.destinations.TiamatDestinations
+import com.composegears.tiamat.destinations.TiamatGraph
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
@@ -23,18 +25,16 @@ import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.features
 import composegears.tiamat.example.ui.core.AppTheme
 
-object G1 : TiamatDestinations
-object TestNavControllerDestinations : TiamatDestinations {
-    override fun items(): Array<NavDestination<*>> = error("Naniii")
-}
+object G1 : TiamatGraph
+object TestNavGraph : TiamatGraph
 
-@InstallIn(TestNavControllerDestinations::class)
+@InstallIn(TestNavGraph::class)
 val Screen1 by navDestination<Unit> { }
 
-@InstallIn(TestNavControllerDestinations::class)
+@InstallIn(TestNavGraph::class)
 val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
 
-@InstallIn(TestNavControllerDestinations::class)
+@InstallIn(TestNavGraph::class)
 object Screen3 : NavDestination<Int> {
     override val name: String = "Screen3"
     override val extensions: List<Extension<Int>> = emptyList()
@@ -54,8 +54,18 @@ class Screen4Class : NavDestination<Int> {
 }
 
 @InstallIn(G1::class)
-@InstallIn(TestNavControllerDestinations::class)
+@InstallIn(TestNavGraph::class)
 val Screen4 = Screen4Class()
+
+@Composable
+fun T() {
+    val nc = rememberNavController(
+        key = "test",
+        startDestination = Screen4,
+        graph = G1 + TestNavGraph
+    )
+    Navigation(nc)
+}
 
 @Composable
 @Suppress("SpreadOperator")
@@ -64,10 +74,12 @@ fun App(
     overlay: @Composable (navController: NavController) -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
-        println("TestNavControllerDestinations -> items:")
-        println(TestNavControllerDestinations.items().joinToString("\n") { it.name })
+        println("TestNavGraph -> items:")
+        println(TestNavGraph.destinations().joinToString("\n") { it.name })
         println("G1 -> items:")
-        println(G1.items().joinToString("\n") { it.name })
+        println(G1.destinations().joinToString("\n") { it.name })
+        println("G1+TestNavGraph -> items:")
+        println((G1 + TestNavGraph).destinations().joinToString("\n") { it.name })
     }
     AppTheme {
         Surface(Modifier.fillMaxSize()) {

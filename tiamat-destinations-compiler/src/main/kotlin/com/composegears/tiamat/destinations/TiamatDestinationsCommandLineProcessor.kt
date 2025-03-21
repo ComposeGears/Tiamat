@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class TiamatDestinationsCommandLineProcessor : CommandLineProcessor {
-    override val pluginId: String = "tiamat-destinations-compiler-plugin"
+    override val pluginId: String = "tiamat-destinations-compiler"
 
     override val pluginOptions: Collection<AbstractCliOption> = emptyList()
 

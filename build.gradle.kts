@@ -10,11 +10,12 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.tiamat.destinations.compiler) apply false
     alias(libs.plugins.m2p) apply false
 }
 
 apiValidation {
-    val apiValidationProjects = listOf("tiamat", "tiamat-koin")
+    val apiValidationProjects = listOf("tiamat", "tiamat-koin", "tiamat-destinations")
     ignoredProjects += allprojects.map { it.name } - apiValidationProjects
 }
 

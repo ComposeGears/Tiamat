@@ -1,8 +1,7 @@
-@file:OptIn(FirIncompatiblePluginAPI::class, UnsafeDuringIrConstructionAPI::class)
+@file:OptIn(UnsafeDuringIrConstructionAPI::class)
 
 package com.composegears.tiamat.destinations
 
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -40,10 +39,10 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             |Unsupported notation: $message
             |
             |Only objects and properties of `NavDestination` type are supported.
-            |Annotation param should be `TiamatDestinations` subclass (DO NOT USE `TiamatDestinations` itself)
+            |Annotation param should be `TiamatGraph` subclass (DO NOT USE `TiamatGraph` itself)
             |Example:
             |
-            |object MyGraph : TiamatDestinations
+            |object MyGraph : TiamatGraph
             |
             |@InstallIn(MyGraph::class)
             |val Screen1 by navDestination<Unit> { }
@@ -65,9 +64,9 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
         logger.log("[TD] TiamatDestinationsIrGenerationExtension started")
 
         val installInAnnotation = FqName("com.composegears.tiamat.destinations.InstallIn")
-        val tiamatDestinationsClass = ClassId(
+        val tiamatGraphClass = ClassId(
             packageFqName = FqName("com.composegears.tiamat.destinations"),
-            topLevelName = Name.identifier("TiamatDestinations")
+            topLevelName = Name.identifier("TiamatGraph")
         )
 
         // Find all variables and classes annotated with @InstallIn
@@ -113,7 +112,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
         listOfNotNull(
             annotatedElements
                 .map { it.key }
-                .filter { !it.owner.isSubclassOf(tiamatDestinationsClass, pluginContext) }
+                .filter { !it.owner.isSubclassOf(tiamatGraphClass, pluginContext) }
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString(
                     prefix = "Annotation value: [\n",
@@ -145,15 +144,15 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             logger.log("[TD] ]")
         }
 
-        // For each TiamatDestinations class, override the items() function
+        // For each TiamatGraph class, override the destinations() function
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
-                if (declaration.isSubclassOf(tiamatDestinationsClass, pluginContext)) {
+                if (declaration.isSubclassOf(tiamatGraphClass, pluginContext)) {
                     logger.log("[TD] Found ${declaration.name}")
                     val annotatedForThisClass = annotatedElements[declaration.symbol]
                     if (!annotatedForThisClass.isNullOrEmpty()) {
                         // Create or override the items() function
-                        logger.log("[TD] Modifying ${declaration.name}::items() function")
+                        logger.log("[TD] Modifying ${declaration.name}::destinations() function")
                         addOrReplaceItemsFunction(declaration, annotatedForThisClass, pluginContext)
                     }
                 }
@@ -177,12 +176,12 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
         irClass
             .declarations
             .filterIsInstance<IrSimpleFunction>()
-            .find { it.name.asString() == "items" }
+            .find { it.name.asString() == "destinations" }
             ?.let { irClass.declarations.remove(it) }
 
         // Create mew `items` function
         irClass.addFunction(
-            name = "items",
+            name = "destinations",
             modality = Modality.OPEN,
             returnType = pluginContext.irBuiltIns.arrayClass.typeWith(navDestinationType.defaultType)
         ).apply {

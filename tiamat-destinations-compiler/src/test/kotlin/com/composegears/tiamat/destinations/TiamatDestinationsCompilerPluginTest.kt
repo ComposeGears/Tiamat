@@ -22,8 +22,8 @@ class TiamatDestinationsCompilerPluginTest {
             @Retention(AnnotationRetention.RUNTIME)
             annotation class InstallIn(val target: KClass<*>)
             
-            interface TiamatDestinations {
-                fun items(): Array<com.composegears.tiamat.NavDestination<*>> = emptyArray()
+            interface TiamatGraph {
+                fun destinations(): Array<com.composegears.tiamat.NavDestination<*>> = emptyArray()
             }
         """.trimIndent()
     )
@@ -91,16 +91,16 @@ class TiamatDestinationsCompilerPluginTest {
             import com.composegears.tiamat.*
             import com.composegears.tiamat.destinations.*
             
-            object MyDestinations : TiamatDestinations
-            object OtherGraph : TiamatDestinations
+            object MyGraph : TiamatGraph
+            object OtherGraph : TiamatGraph
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             val Screen1 by navDestination<Unit> { }
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             object Screen3 : NavDestination<Int> {
                 override val name: String = "Screen3"
                 override val extensions: List<Extension<Int>> = emptyList()
@@ -113,14 +113,14 @@ class TiamatDestinationsCompilerPluginTest {
                 override fun NavDestinationScope<Int>.Content() {}
             }
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             @InstallIn(OtherGraph::class)
             val Screen4 = Screen4Class()
             
             fun main() {
-                println(MyDestinations.items().joinToString("\n") { it.name })
+                println(MyGraph.destinations().joinToString("\n") { it.name })
                 println("--")
-                println(OtherGraph.items().joinToString("\n") { it.name })
+                println(OtherGraph.destinations().joinToString("\n") { it.name })
             }
         """.trimIndent()
         )
@@ -153,16 +153,16 @@ class TiamatDestinationsCompilerPluginTest {
             import com.composegears.tiamat.*
             import com.composegears.tiamat.destinations.*
             
-            object MyDestinations : TiamatDestinations
-            object OtherGraph : TiamatDestinations
+            object MyGraph : TiamatGraph
+            object OtherGraph : TiamatGraph
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             val Screen1 by navDestination<Unit> { }
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
             
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
             object Screen3 : NavDestination<Int> {
                 override val name: String = "Screen3"
                 override val extensions: List<Extension<Int>> = emptyList()
@@ -182,15 +182,16 @@ class TiamatDestinationsCompilerPluginTest {
             @InstallIn(OtherGraph::class)
             object Boo
             
-            @InstallIn(TiamatDestinations::class)
-            @InstallIn(MyDestinations::class)
+            @InstallIn(MyGraph::class)
+            @InstallIn(OtherGraph::class)
+            @InstallIn(TiamatGraph::class)
             val Screen4 = Screen4Class()
             
             @InstallIn(OtherGraph::class)
             val a = 1
             
             fun main() {
-                println(MyDestinations.items().joinToString("\n") { it.name })
+                println(MyGraph.destinations().joinToString("\n") { it.name })
             }
         """.trimIndent()
         )
