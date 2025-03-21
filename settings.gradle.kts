@@ -18,11 +18,19 @@ dependencyResolutionManagement {
     }
 }
 
-includeBuild("tiamat-destinations-compiler")
-
 include(":tiamat")
 include(":tiamat-destinations")
 include(":tiamat-koin")
+
+includeBuild("tiamat-destinations-compiler/compiler-plugin"){
+    name = "tiamat-destinations-compiler"
+    dependencySubstitution {
+        substitute(module("io.github.composegears:tiamat-destinations-compiler:1.0.0")).using(project(":"))
+    }
+}
+includeBuild("tiamat-destinations-compiler/gradle-plugin") {
+    name = "tiamat-destinations-gradle-plugin"
+}
 
 include(":example:app:composeApp")
 include(":example:content")

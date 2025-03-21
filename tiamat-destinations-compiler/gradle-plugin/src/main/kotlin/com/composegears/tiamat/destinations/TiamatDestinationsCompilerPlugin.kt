@@ -8,10 +8,10 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
-    override fun getCompilerPluginId(): String = "tiamat-destinations-compiler"
+    override fun getCompilerPluginId(): String = "TiamatDestinationsCompiler"
 
     override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
-        groupId = "com.composegears.tiamat",
+        groupId = "io.github.composegears",
         artifactId = "tiamat-destinations-compiler",
         version = "1.0.0"
     )
