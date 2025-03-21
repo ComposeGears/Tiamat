@@ -3,11 +3,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     includeBuild("plugins")
-    includeBuild("tiamat-destinations-compiler")
     repositories {
         google()
         mavenCentral()
-        mavenLocal()
         gradlePluginPortal()
     }
 }
@@ -17,9 +15,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        mavenLocal()
     }
 }
+
+includeBuild("tiamat-destinations-compiler")
 
 include(":tiamat")
 include(":tiamat-destinations")
