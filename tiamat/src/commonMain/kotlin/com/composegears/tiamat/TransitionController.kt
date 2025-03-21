@@ -22,9 +22,9 @@ public class TransitionController(
     internal val updates: StateFlow<Event> = _updates.asStateFlow()
 
     init {
-        require(start >= end) { "`start`($start) value should be smaller then `end`($end)" }
-        require(start !in 0f..1f) { "`start`($start) value should be in range 0..1" }
-        require(end !in 0f..1f) { "`end`($end) value should be in range 0..1" }
+        require(start <= end) { "`start`($start) value should be less than or equal to `end`($end)" }
+        require(start in 0f..1f) { "`start`($start) value should be in range 0..1" }
+        require(end in 0f..1f) { "`end`($end) value should be in range 0..1" }
     }
 
     private fun ensureActive() {
