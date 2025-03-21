@@ -95,7 +95,6 @@ public class Route private constructor(
                 val entries = this.entriesProvider(nc)
                 if (entries != null && entries.all { nc.isKnownDestination(it.destination) }) entries else null
             }
-            else -> null
         }
     }
 
