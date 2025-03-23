@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.4.0"
+version = "1.4.1"
 
 kotlin {
     explicitApi()
@@ -27,8 +27,8 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+        browser()
         binaries.executable()
-        nodejs()
     }
 
     sourceSets {
