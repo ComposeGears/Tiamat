@@ -12,7 +12,7 @@ by applying `InstallIn` annotation on `navDestiantions`
 ```kotlin
 // Apply compiler plugin in the plugins section
 plugins {
-    id("io.github.composegears.tiamat.destinations.compiler") version "1.0.0"
+    id("io.github.composegears.tiamat.destinations.compiler") version "$version"
 }
 
 ```
