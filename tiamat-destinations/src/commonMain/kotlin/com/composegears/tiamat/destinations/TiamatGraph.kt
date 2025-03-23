@@ -3,7 +3,7 @@ package com.composegears.tiamat.destinations
 import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.TiamatExperimentalApi
 
-@TiamatExperimentalApi
+@SubclassOptInRequired(TiamatExperimentalApi::class)
 public interface TiamatGraph {
     public fun destinations(): Array<NavDestination<*>> = error("Graph is empty")
 

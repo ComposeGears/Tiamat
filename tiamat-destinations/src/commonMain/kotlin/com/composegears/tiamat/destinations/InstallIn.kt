@@ -5,6 +5,6 @@ import kotlin.reflect.KClass
 
 @Repeatable
 @TiamatExperimentalApi
-@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 public annotation class InstallIn(val obj: KClass<out TiamatGraph>)
