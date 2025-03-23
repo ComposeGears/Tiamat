@@ -15,13 +15,19 @@ https://github.com/user-attachments/assets/daa73bec-47f6-42bf-b38f-6378793540ee
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
-| Module      |                                                                                            Version                                                                                            |
-|-------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| tiamat      |      [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)      |
-| tiamat-koin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin) |
+| Module                     |                                                                                                                     Version                                                                                                                      |
+|----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| tiamat                     |                               [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)                                |
+| tiamat-koin                |                          [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin)                           |
+| tiamat-destinations plugin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-tiamat-destinations-gradle-plugin) |
+| tiamat-destinations        |                  [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations)                   |
 
 #### Multiplatform
 ```kotlin
+
+io.github.composegears.tiamat.destinations.compiler
+tiamat-destinations
+
 sourceSets {
     commonMain.dependencies {
         // core library
@@ -31,6 +37,24 @@ sourceSets {
     }
 }
 ```
+
+#### Tiamat destinations
+```kotlin
+plugins {
+    // Tiamat-destinations kotlin compiler plugin
+    id("io.github.composegears.tiamat.destinations.compiler") version "$version"
+}
+
+sourceSets {
+    commonMain.dependencies {
+        // InstallIn annotations and Graph base class  
+        implementation("io.github.composegears:tiamat-destinations:$version")
+    }
+}
+
+```
+
+See more details in [Destinations README](tiamat-destinations-compiler/README.md)
 
 #### Android / jvm
 
