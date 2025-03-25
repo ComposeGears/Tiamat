@@ -1,5 +1,3 @@
-@file:OptIn(TiamatExperimentalApi::class)
-
 package composegears.tiamat.example.content
 
 import androidx.compose.foundation.layout.fillMaxSize

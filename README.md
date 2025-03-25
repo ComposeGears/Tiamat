@@ -24,10 +24,6 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 
 #### Multiplatform
 ```kotlin
-
-io.github.composegears.tiamat.destinations.compiler
-tiamat-destinations
-
 sourceSets {
     commonMain.dependencies {
         // core library
@@ -132,7 +128,7 @@ Setup
     }
    ```
 
-see example: [App.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/App.kt#L27)
+see example: [App.kt](example/content/src/commonMain/kotlin/composegears/tiamat/example/content/App.kt)
 
 Overview
 --------
@@ -275,7 +271,7 @@ val SomeScreen by navDestination<Unit>(
 > }
 > ```
 > 
-> Appears when it is circular initialization happen (Screen1 knows about Screen2 whot knows about Screen1 ...)
+> Appears when it is circular initialization happen (Screen1 knows about Screen2 who knows about Screen1 ...)
 > 
 > Solution: just define types of root(any in chain) screens explicitly 
 > 
@@ -302,7 +298,7 @@ Hint
 
 ### Multiplatform
 
-I want to navigate thrue multiple nav steps in 1 call (e.g handle deeplink)
+I want to navigate through multiple nav steps in 1 call (e.g. handle deeplink)
 
 ```kotlin
 // there is 2 common ideas behind handle complex navigation
@@ -413,7 +409,7 @@ fun main() = application {
 
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/app/composeApp/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
+See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/platform/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
 
 ### iOS
 

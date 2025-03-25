@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version libs.versions.kotlin
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.0"
+version = "1.5.0"
 group = "io.github.composegears"
 
 dependencies {
@@ -11,7 +11,7 @@ dependencies {
 
     testImplementation(libs.kotlin.compiler.embeddable)
     testImplementation(libs.zacsweers.kctfork)
-    testImplementation(libs.junit)
+    testImplementation(libs.kotlin.test)
 }
 
 m2p {

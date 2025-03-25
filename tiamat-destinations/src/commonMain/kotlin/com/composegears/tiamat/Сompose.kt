@@ -1,5 +1,3 @@
-@file:OptIn(TiamatExperimentalApi::class)
-
 package com.composegears.tiamat
 
 import androidx.compose.runtime.Composable

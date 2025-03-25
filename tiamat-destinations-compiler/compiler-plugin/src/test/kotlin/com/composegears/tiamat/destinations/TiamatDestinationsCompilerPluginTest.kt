@@ -5,8 +5,6 @@ import com.tschuchort.compiletesting.SourceFile
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 
 class TiamatDestinationsCompilerPluginTest {
 
@@ -81,8 +79,8 @@ class TiamatDestinationsCompilerPluginTest {
     )
 
 
-    @OptIn(ExperimentalCompilerApi::class)
     @Test
+    @OptIn(ExperimentalCompilerApi::class)
     fun `test plugin handles multiple destination types`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
@@ -143,8 +141,8 @@ class TiamatDestinationsCompilerPluginTest {
         print("\n\n----------- END OF INVOCATION -----------\n\n")
     }
 
-    @OptIn(ExperimentalCompilerApi::class)
     @Test
+    @OptIn(ExperimentalCompilerApi::class)
     fun `test plugin failed with incorrect annotation use`() {
         val source = SourceFile.kotlin(
             "Test.kt", """

@@ -4,11 +4,8 @@ android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
 
-autoService = "1.1.1"
-core = "0.7.0"
 detekt = "1.23.8"
 jetbrains-compose = "1.7.3"
-junit = "4.13.2"
 kotlin = "2.1.20"
 
 [libraries]
@@ -21,11 +18,10 @@ androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
 androidx-ui-tooling = "androidx.compose.ui:ui-tooling:1.7.8"
 androidx-ui-tooling-preview-android = "androidx.compose.ui:ui-tooling-preview-android:1.7.8"
 
-zacsweers-kctfork = { module = "dev.zacsweers.kctfork:core", version.ref = "core" }
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.0"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
-junit = { module = "junit:junit", version.ref = "junit" }
 koin-compose = "io.insert-koin:koin-compose:4.0.2"
 
 kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.1"
@@ -40,6 +36,7 @@ binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.1
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }

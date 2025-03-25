@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.0"
+version = "1.5.0"
 
 kotlin {
     explicitApi()
@@ -35,7 +35,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.tiamat)
 
-            implementation(libs.koin.compose)
+            implementation(compose.runtime)
         }
     }
 }

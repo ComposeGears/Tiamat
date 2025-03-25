@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version libs.versions.kotlin
     id("java-gradle-plugin")
+    alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.m2p)
 }
 
-version = "1.0.0"
+version = "1.5.0"
 group = "io.github.composegears"
 
 dependencies {
