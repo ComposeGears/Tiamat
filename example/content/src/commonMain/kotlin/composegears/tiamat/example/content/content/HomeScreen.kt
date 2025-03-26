@@ -30,6 +30,7 @@ import com.composegears.tiamat.NavDestination
 import com.composegears.tiamat.navController
 import com.composegears.tiamat.navDestination
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
+import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
 import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
@@ -134,6 +135,11 @@ private val HomeItems =
                     name = "Shared element transition",
                     description = "Example shows how to use shared element transition",
                     destination = AdvSharedElementTransition
+                ),
+                AppFeature(
+                    name = "Auto destinations graph",
+                    description = "Example shows how to use `InstallIn` annotation and generate destinations graph",
+                    destination = AdvDestinationsGraph
                 ),
             ),
         ),

@@ -1,11 +1,10 @@
 import io.gitlab.arturbosch.detekt.DetektPlugin
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.binary.compatibility)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -14,7 +13,7 @@ plugins {
 }
 
 apiValidation {
-    val apiValidationProjects = listOf("tiamat", "tiamat-koin")
+    val apiValidationProjects = listOf("tiamat", "tiamat-koin", "tiamat-destinations")
     ignoredProjects += allprojects.map { it.name } - apiValidationProjects
 }
 
@@ -50,19 +49,25 @@ allprojects {
     }
 }
 
-subprojects {
-    tasks.withType<KotlinCompile>().configureEach {
-        val outPath = layout.buildDirectory.dir("compose_compiler").get().asFile.absoluteFile
-
-        compilerOptions {
-            if (project.findProperty("composeCompilerReports") == "true") {
-                composeCompiler {
-                    reportsDestination = outPath
-                    metricsDestination = outPath
-                }
-            }
+rootProject.tasks.register("createLocalM2") {
+    val publishTasks = allprojects
+        .filter { it.extensions.findByType<M2PExtension>() != null }
+        .map { it.tasks["publish"] }
+    dependsOn(publishTasks)
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":publish"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":publish"))
+    doLast {
+        val m2Dir = File(rootDir, "build/m2")
+        fileTree(m2Dir).files.onEach {
+            if (
+                it.name.endsWith(".asc.md5") or
+                it.name.endsWith(".asc.sha1") or
+                it.name.endsWith(".sha256") or
+                it.name.endsWith(".sha512") or
+                it.name.equals("maven-metadata.xml.sha1") or
+                it.name.equals("maven-metadata.xml.md5") or
+                it.name.equals("maven-metadata.xml")
+            ) it.delete()
         }
     }
 }
-
-createM2PTask()

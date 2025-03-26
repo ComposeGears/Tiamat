@@ -4,19 +4,19 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
-    alias(libs.plugins.tiamat.destinations.compiler)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.m2p)
 }
 
-android {
-    namespace = "composegears.tiamat.example.content"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-}
+version = "1.5.0"
 
 kotlin {
+    explicitApi()
+
     jvm()
     androidTarget {
+        publishLibraryVariants("release")
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
@@ -33,13 +33,21 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(projects.tiamat)
-            api(projects.tiamatDestinations)
-            api(projects.example.platform)
-            api(projects.example.extra)
-            api(projects.example.uiCore)
+            implementation(projects.tiamat)
 
-            implementation(compose.components.uiToolingPreview)
+            implementation(compose.runtime)
         }
     }
+}
+
+android {
+    namespace = "com.composegears.tiamat.destinations"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+}
+
+m2p {
+    description = "Tiamat Destinations"
 }

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import com.composegears.tiamat.*
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
+import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
 import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
@@ -48,6 +49,7 @@ fun App(
                     AdvExtensions,
                     AdvBackStackAlteration,
                     AdvSharedElementTransition,
+                    AdvDestinationsGraph,
                     *(Platform.features() + A3rdParty.features())
                         .map { it.destination }
                         .toTypedArray()

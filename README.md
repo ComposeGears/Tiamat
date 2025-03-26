@@ -15,10 +15,12 @@ https://github.com/user-attachments/assets/daa73bec-47f6-42bf-b38f-6378793540ee
 
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
-| Module      |                                                                                            Version                                                                                            |
-|-------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| tiamat      |      [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)      |
-| tiamat-koin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin) |
+| Module                     |                                                                                                                     Version                                                                                                                      |
+|----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| tiamat                     |                               [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)                                |
+| tiamat-koin                |                          [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin)                           |
+| tiamat-destinations plugin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-tiamat-destinations-gradle-plugin) |
+| tiamat-destinations        |                  [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations)                   |
 
 #### Multiplatform
 ```kotlin
@@ -31,6 +33,24 @@ sourceSets {
     }
 }
 ```
+
+#### Tiamat destinations
+```kotlin
+plugins {
+    // Tiamat-destinations kotlin compiler plugin
+    id("io.github.composegears.tiamat.destinations.compiler") version "$version"
+}
+
+sourceSets {
+    commonMain.dependencies {
+        // InstallIn annotations and Graph base class  
+        implementation("io.github.composegears:tiamat-destinations:$version")
+    }
+}
+
+```
+
+See more details in [Destinations README](tiamat-destinations-compiler/README.md)
 
 #### Android / jvm
 
@@ -108,7 +128,7 @@ Setup
     }
    ```
 
-see example: [App.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/App.kt#L27)
+see example: [App.kt](example/content/src/commonMain/kotlin/composegears/tiamat/example/content/App.kt)
 
 Overview
 --------
@@ -251,7 +271,7 @@ val SomeScreen by navDestination<Unit>(
 > }
 > ```
 > 
-> Appears when it is circular initialization happen (Screen1 knows about Screen2 whot knows about Screen1 ...)
+> Appears when it is circular initialization happen (Screen1 knows about Screen2 who knows about Screen1 ...)
 > 
 > Solution: just define types of root(any in chain) screens explicitly 
 > 
@@ -278,7 +298,7 @@ Hint
 
 ### Multiplatform
 
-I want to navigate thrue multiple nav steps in 1 call (e.g handle deeplink)
+I want to navigate through multiple nav steps in 1 call (e.g. handle deeplink)
 
 ```kotlin
 // there is 2 common ideas behind handle complex navigation
@@ -389,7 +409,7 @@ fun main() = application {
 
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/app/composeApp/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
+See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/platform/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
 
 ### iOS
 

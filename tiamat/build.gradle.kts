@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.4.1"
+version = "1.5.0"
 
 kotlin {
     explicitApi()

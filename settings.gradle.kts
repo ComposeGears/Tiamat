@@ -5,8 +5,8 @@ pluginManagement {
     includeBuild("plugins")
     repositories {
         google()
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -19,7 +19,18 @@ dependencyResolutionManagement {
 }
 
 include(":tiamat")
+include(":tiamat-destinations")
 include(":tiamat-koin")
+
+includeBuild("tiamat-destinations-compiler/compiler-plugin") {
+    name = "tiamat-destinations-compiler"
+    dependencySubstitution {
+        substitute(module("io.github.composegears:tiamat-destinations-compiler:1.5.0")).using(project(":"))
+    }
+}
+includeBuild("tiamat-destinations-compiler/gradle-plugin") {
+    name = "tiamat-destinations-gradle-plugin"
+}
 
 include(":example:app:composeApp")
 include(":example:content")

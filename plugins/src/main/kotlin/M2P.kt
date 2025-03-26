@@ -6,8 +6,12 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningExtension
+import java.io.File
 
 interface M2PExtension {
+    val groupId: Property<String>
+    val artifactId: Property<String>
+    val version: Property<String>
     val description: Property<String>
 }
 
@@ -18,6 +22,9 @@ class M2P : Plugin<Project> {
         plugins.apply("signing")
         configure<PublishingExtension> {
             publications.withType<MavenPublication> {
+                extension.groupId.orNull?.let { groupId = it }
+                extension.artifactId.orNull?.let { artifactId = it }
+                extension.version.orNull?.let { version = it }
                 // Stub javadoc.jar artifact
                 artifact(tasks.register<Jar>("${name}JavadocJar") {
                     archiveClassifier.set("javadoc")
@@ -54,7 +61,9 @@ class M2P : Plugin<Project> {
             }
             repositories {
                 maven {
-                    url = uri(rootProject.layout.buildDirectory.dir("m2"))
+                    var rootGradle = gradle
+                    while (rootGradle.parent!=null) rootGradle = rootGradle.parent!!
+                    url = uri(File(rootGradle.rootProject.rootDir, "build/m2"))
                 }
             }
         }
@@ -73,28 +82,4 @@ class M2P : Plugin<Project> {
 
 fun Project.m2p(action: M2PExtension.() -> Unit) {
     configure<M2PExtension>(action)
-}
-
-fun Project.createM2PTask() {
-    rootProject.tasks.register("createLocalM2") {
-        val publishTasks = allprojects
-            .filter { it.extensions.findByType<M2PExtension>() != null }
-            .map { it.tasks["publish"] }
-        dependsOn(publishTasks)
-        doLast {
-            val m2Dir = rootProject.layout.buildDirectory.dir("m2")
-            fileTree(m2Dir).files.onEach {
-                if (
-                    it.name.endsWith(".asc.md5") or
-                    it.name.endsWith(".asc.sha1") or
-                    it.name.endsWith(".sha256") or
-                    it.name.endsWith(".sha256") or
-                    it.name.endsWith(".sha512") or
-                    it.name.equals("maven-metadata.xml.sha1") or
-                    it.name.equals("maven-metadata.xml.md5") or
-                    it.name.equals("maven-metadata.xml")
-                ) it.delete()
-            }
-        }
-    }
 }
