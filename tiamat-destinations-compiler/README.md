@@ -16,6 +16,7 @@ plugins {
 }
 
 ```
+
 ```kotlin
 // Add dependency
 sourceSets {
@@ -33,6 +34,7 @@ Create graph `object` extends from `TiamatGraph`
 ```kotlin
 private object Graph : TiamatGraph
 ```
+
 Annotate `navDestination` with `InstallIn` annotation (multiple installations allowed), here is some valid options:
 
 ```kotlin
@@ -70,6 +72,7 @@ class Screen4Class : NavDestination<Int> {
 @InstallIn(SomneOtherGraph::class)
 val Screen4 = Screen4Class()
 ```
+
 Use graph instead of `destinations`
 
 ```kotlin
@@ -81,6 +84,7 @@ val nc = rememberNavController(
 ```
 
 Multiple graphs usage also allowed
+
 ```kotlin
 ///...
 private object Graph1 : TiamatGraph
@@ -96,12 +100,19 @@ val nc = rememberNavController(
 
 ## Emergency case
 
-In case the plugin problems, there is backport solution: override graph `destinations` function manually and disable compiler plugin
+In case the plugin problems, there is backport solution: override graph `destinations` function manually and disable
+compiler plugin
 
 ```kotlin
-private object Graph : TiamatGraph{
+private object Graph : TiamatGraph {
     override fun destinations(): Array<NavDestination<*>> = arrayOf(
         Screen1, Screen2, Screen3
     )
 }
 ```
+
+## Plugin & Kotlin versions compatibility
+
+| Plugin Version | Kotlin Version |
+|----------------|:--------------:|
+| 1.5.0          |     2.1.20     |
