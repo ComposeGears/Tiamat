@@ -108,7 +108,7 @@ Setup
     }
    ```
 
-see example: [App.kt](example/content/src/commonMain/kotlin/composegears/tiamat/example/content/App.kt#L31)
+see example: [App.kt](example/app/composeApp/src/commonMain/kotlin/composegears/tiamat/example/App.kt#L27)
 
 Overview
 --------
@@ -389,7 +389,7 @@ fun main() = application {
 
 `Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/platform/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
+See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/app/composeApp/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
 
 ### iOS
 
