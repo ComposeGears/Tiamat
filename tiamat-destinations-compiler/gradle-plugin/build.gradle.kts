@@ -29,10 +29,20 @@ m2p {
     description = "Tiamat Destinations Gradle Plugin"
 }
 
+tasks.register("sourcesJar", Jar::class) {
+    group = "build"
+    description = "Assembles Kotlin sources"
+
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+    dependsOn(tasks.classes)
+}
+
 publishing {
     publications {
         create<MavenPublication>("gradlePlugin") {
             from(components["java"])
+            artifact(tasks["sourcesJar"])
         }
     }
 }

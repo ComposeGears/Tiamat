@@ -19,10 +19,20 @@ m2p {
     description = "Tiamat Destinations Compiler Plugin"
 }
 
+tasks.register("sourcesJar", Jar::class) {
+    group = "build"
+    description = "Assembles Kotlin sources"
+
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allSource)
+    dependsOn(tasks.classes)
+}
+
 publishing {
     publications {
         create<MavenPublication>("kotlinCompilerPlugin") {
             from(components["kotlin"])
+            artifact(tasks["sourcesJar"])
         }
     }
 }
