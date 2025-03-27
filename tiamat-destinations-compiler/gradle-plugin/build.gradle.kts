@@ -20,6 +20,10 @@ gradlePlugin {
     }
 }
 
+afterEvaluate {
+    tasks["signPluginMavenPublication"].dependsOn(tasks["publishGradlePluginPublicationToMavenRepository"])
+}
+
 m2p {
     artifactId = "tiamat-destinations-gradle-plugin"
     description = "Tiamat Destinations Gradle Plugin"
