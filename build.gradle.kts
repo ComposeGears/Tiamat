@@ -23,9 +23,9 @@ detekt {
     parallel = true
 }
 
+// not include `includeBuild` (tiamat-dest gradle & kotlin plugins)
+// as they are not projects  (they are count as included-projects)
 allprojects {
-    group = "io.github.composegears"
-
     apply<DetektPlugin>()
     detekt {
         buildUponDefaultConfig = true

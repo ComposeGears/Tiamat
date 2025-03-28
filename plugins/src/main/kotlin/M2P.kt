@@ -9,9 +9,6 @@ import org.gradle.plugins.signing.SigningExtension
 import java.io.File
 
 interface M2PExtension {
-    val groupId: Property<String>
-    val artifactId: Property<String>
-    val version: Property<String>
     val description: Property<String>
 }
 
@@ -22,9 +19,6 @@ class M2P : Plugin<Project> {
         plugins.apply("signing")
         configure<PublishingExtension> {
             publications.withType<MavenPublication> {
-                extension.groupId.orNull?.let { groupId = it }
-                extension.artifactId.orNull?.let { artifactId = it }
-                extension.version.orNull?.let { version = it }
                 // Stub javadoc.jar artifact
                 artifact(tasks.register<Jar>("${name}JavadocJar") {
                     archiveClassifier.set("javadoc")
@@ -62,7 +56,7 @@ class M2P : Plugin<Project> {
             repositories {
                 maven {
                     var rootGradle = gradle
-                    while (rootGradle.parent!=null) rootGradle = rootGradle.parent!!
+                    while (rootGradle.parent != null) rootGradle = rootGradle.parent!!
                     url = uri(File(rootGradle.rootProject.rootDir, "build/m2"))
                 }
             }

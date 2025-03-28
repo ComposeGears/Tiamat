@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.5.0"
+version = libConfig.versions.tiamat.destinations.get()
 group = "io.github.composegears"
 
 dependencies {
@@ -21,12 +21,7 @@ gradlePlugin {
 }
 
 afterEvaluate {
-    tasks["signPluginMavenPublication"].dependsOn(tasks["publishGradlePluginPublicationToMavenRepository"])
-}
-
-m2p {
-    artifactId = "tiamat-destinations-gradle-plugin"
-    description = "Tiamat Destinations Gradle Plugin"
+    //tasks["signPluginMavenPublication"].dependsOn(tasks["publishGradlePluginPublicationToMavenRepository"])
 }
 
 tasks.register("sourcesJar", Jar::class) {
@@ -41,8 +36,12 @@ tasks.register("sourcesJar", Jar::class) {
 publishing {
     publications {
         create<MavenPublication>("gradlePlugin") {
-            from(components["java"])
+            //from(components["java"])
             artifact(tasks["sourcesJar"])
         }
     }
+}
+
+m2p {
+    description = "Tiamat Destinations Gradle Plugin"
 }

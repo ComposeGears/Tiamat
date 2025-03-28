@@ -16,6 +16,11 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    versionCatalogs {
+        create("libConfig") {
+            from(files("libConfig.toml"))
+        }
+    }
 }
 
 include(":tiamat")
@@ -25,7 +30,8 @@ include(":tiamat-koin")
 includeBuild("tiamat-destinations-compiler/compiler-plugin") {
     name = "tiamat-destinations-compiler"
     dependencySubstitution {
-        substitute(module("io.github.composegears:tiamat-destinations-compiler:1.5.0")).using(project(":"))
+        substitute(module("io.github.composegears:tiamat-destinations-compiler"))
+            .using(project(":"))
     }
 }
 includeBuild("tiamat-destinations-compiler/gradle-plugin") {
