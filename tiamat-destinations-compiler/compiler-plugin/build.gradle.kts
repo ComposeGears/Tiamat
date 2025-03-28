@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.5.0"
+version = libConfig.versions.tiamat.destinations.get()
 group = "io.github.composegears"
 
 dependencies {
@@ -12,11 +12,6 @@ dependencies {
     testImplementation(libs.kotlin.compiler.embeddable)
     testImplementation(libs.zacsweers.kctfork)
     testImplementation(libs.kotlin.test)
-}
-
-m2p {
-    artifactId = "tiamat-destinations-compiler"
-    description = "Tiamat Destinations Compiler Plugin"
 }
 
 tasks.register("sourcesJar", Jar::class) {
@@ -35,4 +30,8 @@ publishing {
             artifact(tasks["sourcesJar"])
         }
     }
+}
+
+m2p {
+    description = "Tiamat Destinations Compiler Plugin"
 }
