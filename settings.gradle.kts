@@ -30,8 +30,7 @@ include(":tiamat-koin")
 includeBuild("tiamat-destinations-compiler/compiler-plugin") {
     name = "tiamat-destinations-compiler"
     dependencySubstitution {
-        substitute(module("io.github.composegears:tiamat-destinations-compiler"))
-            .using(project(":"))
+        substitute(module("io.github.composegears:tiamat-destinations-compiler")).using(project(":"))
     }
 }
 includeBuild("tiamat-destinations-compiler/gradle-plugin") {
