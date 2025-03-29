@@ -23,7 +23,7 @@ gradlePlugin {
 // ----------   BuildConfig   ----------
 // generating BuildConfig in order to pass compiler plugin version from config into code
 
-// generated src dit
+// generated src dir
 val buildConfigDir = project.layout.buildDirectory.dir("generated/main/kotlin")
 // attach generated folder as src
 sourceSets {
