@@ -13,7 +13,7 @@ class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
     override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
         groupId = "io.github.composegears",
         artifactId = "tiamat-destinations-compiler",
-        version = "1.5.0"
+        version = BuildConfig.COMPILER_PLUGIN_VERSION
     )
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

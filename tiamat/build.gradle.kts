@@ -9,7 +9,8 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = "1.5.0"
+version = libConfig.versions.tiamat.core.get()
+group = "io.github.composegears"
 
 kotlin {
     explicitApi()

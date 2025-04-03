@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.DetektPlugin
 
 plugins {
+    base // expose `clear` task, so we can modify it
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.binary.compatibility)
@@ -23,9 +24,9 @@ detekt {
     parallel = true
 }
 
+// not include `includeBuild` (tiamat-dest gradle & kotlin plugins)
+// as they are not projects  (they are count as included-projects)
 allprojects {
-    group = "io.github.composegears"
-
     apply<DetektPlugin>()
     detekt {
         buildUponDefaultConfig = true
@@ -47,6 +48,12 @@ allprojects {
         detektPlugins(rootProject.project.libs.detekt.compose)
         detektPlugins(rootProject.project.libs.detekt.formatting)
     }
+}
+
+// root `clean` task not include subprojects by default, so add them directly
+rootProject.tasks["clean"].apply {
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":clean"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":clean"))
 }
 
 rootProject.tasks.register("createLocalM2") {
