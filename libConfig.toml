@@ -1,0 +1,7 @@
+[versions]
+tiamat-core = "1.5.0"
+tiamat-koin = "1.5.0"
+tiamat-destinations = "1.5.0"
+
+# [metadata]
+# metadata = "some metadata"
