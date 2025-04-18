@@ -1,26 +1,28 @@
-<h1 align="center">Tiamat</h1>
-<h2 align="center">Compose multiplatform navigation library</h2>
+<h2 align="center">Tiamat - Compose multiplatform navigation library</h2>
 
-<p align="center">
-    <a target="_blank" href="https://github.com/ComposeGears/Tiamat/stargazers"><img src="https://img.shields.io/github/stars/ComposeGears/Tiamat.svg"></a>
-    <a href="https://github.com/ComposeGears/Tiamat/network"><img alt="API" src="https://img.shields.io/github/forks/ComposeGears/Tiamat.svg"/></a>
-    <a target="_blank" href="https://github.com/ComposeGears/Tiamat/blob/main/LICENSE"><img src="https://img.shields.io/github/license/ComposeGears/Tiamat.svg"></a>
-</p>
+<div align="center">
+
+[![Stars][badge:stars]][url:gh-stars]
+[![Forks][badge:forks]][url:gh-forks]
+[![License][badge:license]][url:gh-license]
+
+[![Telegram][badge:telegram-invite]][url:telegram-invite]
+[![Slack][badge:slack-invite]][url:slack-invite]
+
+[![Slack][badge:wasm-sample]][url:wasm-sample]
+
+</div>
 
 https://github.com/user-attachments/assets/daa73bec-47f6-42bf-b38f-6378793540ee
 
-<p align="center">
-    <a target="_blank" href="https://composegears.github.io/Tiamat/"><img src="https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000"></a>
-</p>
-
 Add the dependency below to your **module**'s `build.gradle.kts` file:
 
-| Module                     |                                                                                                                     Version                                                                                                                      |
-|----------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| tiamat                     |                               [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat)                                |
-| tiamat-koin                |                          [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin)                           |
-| tiamat-destinations plugin | [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-tiamat-destinations-gradle-plugin) |
-| tiamat-destinations        |                  [![Maven Central](https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=flat-square)](https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations)                   |
+| Module                       |                                                       Version                                                        |
+|------------------------------|:--------------------------------------------------------------------------------------------------------------------:|
+| tiamat                       |                                  [![Tiamat][badge:maven-tiamat]][url:maven-tiamat]                                   |
+| tiamat-koin                  |                           [![Tiamat koin][badge:maven-tiamat-koin]][url:maven-tiamat-koin]                           |
+| tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
+| tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 
 #### Multiplatform
 ```kotlin
@@ -441,7 +443,7 @@ Thank you for your help! ❤️
 
 # License
 ```
-Developed by ComposeGears 2024
+Developed by ComposeGears 2025
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -455,3 +457,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+[badge:stars]: https://img.shields.io/github/stars/ComposeGears/Tiamat.svg?style=for-the-badge&labelColor=black&color=white
+[badge:forks]: https://img.shields.io/github/forks/ComposeGears/Tiamat.svg?style=for-the-badge&labelColor=black&color=white
+[badge:license]: https://img.shields.io/github/license/ComposeGears/Tiamat?style=for-the-badge&labelColor=black&color=white
+
+[badge:slack-invite]: https://img.shields.io/badge/slack-blue.svg?logo=slack&style=for-the-badge&labelColor=black&color=white
+[badge:telegram-invite]: https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&style=for-the-badge&labelColor=black&color=white&logoColor=white
+[badge:wasm-sample]: https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000?logo=webassembly&style=for-the-badge&color=black&logoColor=white
+
+[badge:maven-tiamat]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
+[badge:maven-tiamat-koin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
+[badge:maven-tiamat-destinations]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
+[badge:maven-tiamat-destinations-gradle-plugin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=for-the-badge&logo=gradle&label=&labelColor=black&color=white
+
+[url:gh-stars]: https://github.com/ComposeGears/Tiamat/stargazers
+[url:gh-forks]: https://github.com/ComposeGears/Tiamat/network
+[url:gh-license]: https://github.com/ComposeGears/Tiamat/blob/main/LICENSE
+
+[url:telegram-invite]: https://t.me/composegears
+[url:slack-invite]: https://join.slack.com/t/composegears/shared_invite/zt-2noleve52-D~zrFPmC1cdhThsuQUW61A
+[url:wasm-sample]: https://composegears.github.io/Tiamat/
+
+[url:maven-tiamat]: https://central.sonatype.com/artifact/io.github.composegears/tiamat
+[url:maven-tiamat-koin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin
+[url:maven-tiamat-destinations]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations
+[url:maven-tiamat-destinations-gradle-plugin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations-gradle-plugin
