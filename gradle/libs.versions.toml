@@ -15,7 +15,7 @@ androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
 androidx-camera-view = "androidx.camera:camera-view:1.4.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.2.0"
 androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
-androidx-ui-tooling = "androidx.compose.ui:ui-tooling:1.7.8"
+androidx-ui-tooling = "androidx.compose.ui:ui-tooling:1.8.0"
 androidx-ui-tooling-preview-android = "androidx.compose.ui:ui-tooling-preview-android:1.7.8"
 
 zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.0"
