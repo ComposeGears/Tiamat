@@ -35,7 +35,7 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "tiamatApp"
+        outputModuleName = "tiamatApp"
         browser {
             commonWebpackConfig {
                 outputFileName = "tiamatApp.js"
