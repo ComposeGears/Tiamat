@@ -16,7 +16,7 @@ androidx-camera-view = "androidx.camera:camera-view:1.4.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.2.0"
 androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.0"
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
