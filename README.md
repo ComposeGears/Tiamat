@@ -423,7 +423,7 @@ Android: `./gradlew example:app:composeApp:assembleDebug`
 
 Desktop: `./gradlew example:app:composeApp:run`
 
-Web: `./gradlew example:app:composeApp:wasmJsBrowserRun`
+Web: `./gradlew example:app:composeApp:wasmJsBrowserDevelopmentRun`
 
 iOS: run XCode project or else use [KMM](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) plugin iOS target
 
