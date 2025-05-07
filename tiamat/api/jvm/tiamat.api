@@ -169,7 +169,6 @@ public final class com/composegears/tiamat/NavEntryKt {
 }
 
 public final class com/composegears/tiamat/Platform_jvmKt {
-	public static final fun NavBackHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static final fun getLocalNavBackHandler ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 

@@ -162,10 +162,6 @@ public final class com/composegears/tiamat/NavEntryKt {
 	public static synthetic fun toNavEntry$default (Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)Lcom/composegears/tiamat/NavEntry;
 }
 
-public final class com/composegears/tiamat/Platform_androidKt {
-	public static final fun NavBackHandler (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-}
-
 public final class com/composegears/tiamat/Route {
 	public static final field $stable I
 	public static final field Companion Lcom/composegears/tiamat/Route$Companion;
