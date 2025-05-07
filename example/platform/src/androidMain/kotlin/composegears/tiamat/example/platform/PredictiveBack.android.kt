@@ -1,6 +1,5 @@
 package composegears.tiamat.example.platform
 
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInSine
@@ -9,13 +8,16 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.IntOffset
 import com.composegears.tiamat.NavController
 import com.composegears.tiamat.TransitionController
 import kotlin.coroutines.cancellation.CancellationException
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Suppress("SwallowedException")
 internal actual fun PredictiveBackContainer(

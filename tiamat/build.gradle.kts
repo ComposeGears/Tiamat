@@ -15,6 +15,10 @@ group = "io.github.composegears"
 kotlin {
     explicitApi()
 
+    compilerOptions {
+        freeCompilerArgs.addAll("-opt-in=androidx.compose.ui.ExperimentalComposeUiApi")
+    }
+
     jvm()
     androidTarget {
         publishLibraryVariants("release")
@@ -37,6 +41,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
+            implementation(libs.ui.backhandler)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)

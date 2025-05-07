@@ -11,7 +11,9 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
 import com.composegears.tiamat.TransitionController.Event.*
 import kotlinx.coroutines.flow.transformWhile
@@ -250,7 +252,7 @@ public fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() }
 ) {
-    if (handleSystemBackEvent) NavBackHandler(navController.canGoBack, navController::back)
+    if (handleSystemBackEvent) BackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
     CompositionLocalProvider(LocalNavController provides navController) {
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
