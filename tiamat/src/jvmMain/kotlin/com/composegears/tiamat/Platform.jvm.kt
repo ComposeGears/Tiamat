@@ -30,22 +30,6 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
 }
 
 /**
- * Platform provided system back handler
- */
-@Composable
-public actual fun NavBackHandler(enabled: Boolean, onBackEvent: () -> Unit) {
-    if (enabled) {
-        val backHandler = LocalNavBackHandler.current
-        DisposableEffect(onBackEvent) {
-            backHandler.add(onBackEvent)
-            onDispose {
-                backHandler.remove(onBackEvent)
-            }
-        }
-    }
-}
-
-/**
  * We can not call T::class in @Composable functions,
  *
  * workaround is to call it outside of @Composable via regular inline fun
