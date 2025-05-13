@@ -26,7 +26,7 @@ internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 @Composable
 public fun rememberNavController(
     key: String?,
-    saveable: Boolean = true,
+    saveable: Boolean? = null,
     startDestination: NavDestination<*>? = null,
     savedState: SavedState? = null,
     configuration: NavController.() -> Unit = {}
@@ -39,9 +39,10 @@ public fun rememberNavController(
 )
 
 @Composable
+@Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
 public fun rememberNavController(
     key: String?,
-    saveable: Boolean = true,
+    saveable: Boolean? = null,
     startEntry: NavEntry<*>? = null,
     savedState: SavedState? = null,
     configuration: NavController.() -> Unit = {}
@@ -49,24 +50,26 @@ public fun rememberNavController(
     val parent = LocalNavController.current
     val parentNavEntry = LocalNavEntry.current
     val navControllersStorage = parentNavEntry?.navControllersStorage
+    val isSaveable = saveable ?: parent?.saveable ?: true
 
     fun createNavController() =
         if (savedState != null) NavController.restoreFromSavedState(parent, savedState)
-        else NavController.create(key, saveable, parent, startEntry, configuration)
+        else NavController.create(key, isSaveable, parent, startEntry, configuration)
 
     val navController =
-        if (saveable && navControllersStorage == null) rememberSaveable(
+        if (isSaveable && navControllersStorage == null) rememberSaveable(
             key = key,
             saver = Saver(
                 save = { it.saveToSavedState() },
-                restore = { NavController.restoreFromSavedState(parent, it) }),
+                restore = { NavController.restoreFromSavedState(parent, it) }
+            ),
             init = { createNavController() }
         ) else remember {
             if (navControllersStorage != null) {
                 var navController = navControllersStorage.get(key)
                 if (navController == null) {
                     navController = createNavController()
-                    if (saveable) navControllersStorage.add(navController)
+                    if (isSaveable) navControllersStorage.add(navController)
                 }
                 navController
             } else createNavController()
@@ -78,7 +81,7 @@ public fun rememberNavController(
             // 1. NavEntry is closed due to navigation (detached from UI, attached to NC)
             // 2. `rememberNavController` composable leave entry composition (eg: switch between 2 Nav-s)
             val shouldClear = when {
-                !saveable -> true // not saveable -> clear
+                !isSaveable -> true // not saveable -> clear
                 navControllersStorage == null -> true // no storage + dispose means root NC leave composition -> clear
                 parentNavEntry.isAttachedToUI -> true // NC leave entry composition till entry on screen -> clear
                 else -> false
@@ -103,7 +106,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
         // gen save state
         val saveRegistry = remember(entry) {
             val registry = SaveableStateRegistry(
-                restoredValues = entry.savedState as Map<String, List<Any?>>?,
+                restoredValues = entry.savedState as? Map<String, List<Any?>>?,
                 canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
             )
             entry.savedStateSaver = registry::performSave
@@ -164,6 +167,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
 }
 
 @Composable
+@Suppress("CognitiveComplexMethod")
 public fun Navigation(
     navController: NavController,
     destinations: Array<NavDestination<*>>,

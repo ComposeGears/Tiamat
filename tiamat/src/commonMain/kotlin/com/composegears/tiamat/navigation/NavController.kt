@@ -1,5 +1,7 @@
 package com.composegears.tiamat.navigation
 
+import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.navigation.NavDestination.Companion.UnresolvedDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -8,8 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 public class NavController internal constructor(
     public val key: String?,
     public val saveable: Boolean,
-) : RouteElement {
-
+) {
     public companion object {
 
         private const val KEY_KEY = "key"
@@ -21,13 +22,13 @@ public class NavController internal constructor(
             key: String? = null,
             saveable: Boolean,
             parent: NavController? = null,
-            startDestination: NavDestination<*>? = null,
+            startDestination: NavDestination<*>,
             config: NavController.() -> Unit = {}
         ): NavController = create(
             key = key,
             saveable = saveable,
             parent = parent,
-            startDestination = startDestination?.toNavEntry(),
+            startEntry = startDestination.toNavEntry(),
             config = config
         )
 
@@ -36,11 +37,11 @@ public class NavController internal constructor(
             key: String? = null,
             saveable: Boolean,
             parent: NavController? = null,
-            startDestination: NavEntry<*>? = null,
+            startEntry: NavEntry<*>? = null,
             config: NavController.() -> Unit = {}
         ): NavController {
             val navController = NavController(key, saveable)
-            if (startDestination != null) navController.navigate(startDestination)
+            if (startEntry != null) navController.navigate(startEntry)
             navController.parent = parent
             navController.config()
             return navController
@@ -52,7 +53,7 @@ public class NavController internal constructor(
             savedState: SavedState,
         ): NavController {
             val navController = NavController(
-                key = savedState[KEY_KEY] as String?,
+                key = savedState[KEY_KEY] as? String?,
                 saveable = savedState[KEY_SAVEABLE] as Boolean
             )
             val current = (savedState[KEY_CURRENT] as? SavedState)?.let { NavEntry.restoreFromSavedState(it) }
@@ -71,7 +72,7 @@ public class NavController internal constructor(
     }
 
     // ----------- internal properties ---------------------------------------------------------------------------------
-    //todo add test for transition data is passed when nav with it
+    // todo add test for transition data is passed when nav with it
     private var internalCurrentTransitionFlow: MutableStateFlow<Transition?> = MutableStateFlow(null)
     private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
     private var onNavigationListener: OnNavigationListener? = null
@@ -173,7 +174,46 @@ public class NavController internal constructor(
         } else orElse()
     }
 
-    public fun route(vararg elements: RouteElement): Unit = TODO()
+    @TiamatExperimentalApi
+    public fun route(routeBuilder: Route.() -> Unit) {
+        route(Route(routeBuilder))
+    }
+
+    @TiamatExperimentalApi
+    public fun route(route: Route) {
+        val elements = route.elements.takeIf { it.isNotEmpty() }?.toMutableList() ?: error("Route is empty")
+        val pendingStack = mutableListOf<NavEntry<*>>()
+        // process entries till the end or NavController
+        elements.dropWhile { element ->
+            when (element) {
+                is NavEntry<*> -> element
+                is NavDestination<*> -> element.toNavEntry()
+                is Route.Destination -> UnresolvedDestination(element.name).toNavEntry()
+                else -> null
+            }?.also { entry: NavEntry<*> ->
+                pendingStack.add(entry)
+            } != null
+        }
+
+        if (pendingStack.isEmpty()) error("Route: no start entry for NavController:$key")
+        val pendingCurrentEntry = pendingStack.removeLast()
+        // run route for nested NavController
+        elements
+            .takeIf { it.isNotEmpty() }
+            ?.removeAt(0)
+            ?.let { it as? Route.NavController }
+            ?.let {
+                val nc = create(it.key, it.saveable ?: saveable, this)
+                pendingCurrentEntry.navControllersStorage.add(nc)
+                nc.route(Route(elements))
+            }
+        // apply pending stack
+        editBackStack {
+            clear()
+            pendingStack.forEach { add(it) }
+        }
+        replace(pendingCurrentEntry)
+    }
 
     // todo update tests
     public fun back(

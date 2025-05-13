@@ -19,15 +19,13 @@ import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
 
-
 val APRFreeArgs by navDestination<Unit>(ScreenInfo()) {
     Screen("FreeArgs") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
                 key = "FreeArgs nav controller",
                 startDestination = APRFreeArgsScreen1,
-
-                )
+            )
             Navigation(
                 navController = nc,
                 destinations = arrayOf(

@@ -35,8 +35,7 @@ val APRNavArgs by navDestination<Unit>(ScreenInfo("NavArgs")) {
             val nc = rememberNavController(
                 key = "NavArgs nav controller",
                 startDestination = APRNavArgsScreen1,
-
-                )
+            )
             Navigation(
                 navController = nc,
                 destinations = arrayOf(

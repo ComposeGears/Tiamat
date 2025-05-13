@@ -13,9 +13,9 @@ public interface NavDestination<Args> : RouteElement {
             navResult = navResult
         )
 
-        internal class UnresolvedDestination<Args>(
+        internal data class UnresolvedDestination(
             override val name: String
-        ) : NavDestination<Args>
+        ) : NavDestination<Any?>
     }
 
     public val name: String

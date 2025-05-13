@@ -3,7 +3,6 @@ package com.composegears.tiamat.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.composegears.tiamat.rememberDestinationLifecycleOwner
 
 /**
  * Wrap platform content and provides additional info/providable-s

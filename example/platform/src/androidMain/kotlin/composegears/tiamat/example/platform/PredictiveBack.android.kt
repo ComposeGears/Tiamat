@@ -1,5 +1,6 @@
 package composegears.tiamat.example.platform
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInSine
@@ -20,9 +21,10 @@ import com.composegears.tiamat.compose.canGoBackAsState
 import com.composegears.tiamat.navigation.NavController
 import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Suppress("SwallowedException")
+@OptIn(ExperimentalComposeUiApi::class)
+@SuppressLint("UnusedBoxWithConstraintsScope")
 internal actual fun PredictiveBackContainer(
     navController: NavController,
     enabled: Boolean,
@@ -61,7 +63,7 @@ internal actual fun PredictiveBackContainer(
             try {
                 progress.collect { controller.update(0.5f * it.progress) }
                 controller.finish()
-            } catch (e: CancellationException) {
+            } catch (_: CancellationException) {
                 controller.cancel()
             }
         }

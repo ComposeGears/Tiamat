@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
-import com.composegears.tiamat.*
+import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.ext
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
@@ -114,7 +114,7 @@ fun appendState(navController: NavController) {
             window.history.pushState(navControllerRoute.toJsString(), "", "./#$navControllerPath")
         }
     }
-    setTitle(navController.current?.name ?: TITLE)
+    setTitle(navController.getCurrentNavEntry()?.destination?.name ?: TITLE)
 }
 
 // --------------- helpers --------------------------------------
@@ -155,7 +155,10 @@ fun <Args> NavDestination<Args>.parseEntry(argStr: String?): NavEntry<Args> {
 }
 
 @OptIn(TiamatExperimentalApi::class)
+@Suppress("all") // todo remove me after implementation, detekt goes crazy
 fun NavController.setRoute(path: String) {
+    // todo remake route2path & path2route according new api
+    /*
     route(
         Route.build(forceReplace = true) {
             path.split("/").forEach { segment ->
@@ -175,6 +178,7 @@ fun NavController.setRoute(path: String) {
             }
         }
     )
+     */
 }
 
 private fun <Args> NavEntry<Args>.toPath(): String? {
@@ -188,7 +192,7 @@ fun NavController.getRoute(): String {
     val segments = mutableListOf<String>()
     var nc: NavController? = this
     while (nc != null) {
-        nc.currentNavEntry?.toPath()?.let { segments.add(0, it) }
+        nc.getCurrentNavEntry()?.toPath()?.let { segments.add(0, it) }
         nc = nc.parent
     }
     return segments.joinToString("/")

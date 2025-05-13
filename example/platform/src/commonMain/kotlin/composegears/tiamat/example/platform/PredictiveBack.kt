@@ -32,8 +32,7 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "PredictiveBack nav controller",
                 startDestination = PredictiveBackScreen1,
-
-                )
+            )
             PredictiveBackContainer(
                 navController = nc,
                 enabled = true,

@@ -88,7 +88,6 @@ public fun <Args> NavController.popToTop(
     orElse = orElse
 )
 
-
 // ------------ Back ---------------------------------------------------------------------------------------------------
 
 public fun NavController.back(

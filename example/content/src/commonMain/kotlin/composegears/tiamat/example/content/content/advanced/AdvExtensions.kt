@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-
 val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
     Screen("Extensions") {
         Column(
@@ -28,8 +27,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Extensions nav controller",
                 startDestination = AdvExtensionsScreen1,
-
-                )
+            )
             val currentNavDestination by nc.currentNavDestinationAsState()
             VSpacer()
             Text(

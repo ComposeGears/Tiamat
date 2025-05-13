@@ -22,7 +22,6 @@ import com.composegears.tiamat.*
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 private val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("No scope provided") }
 
@@ -33,8 +32,7 @@ val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "SharedElementTransition nav controller",
                 startDestination = AdvSharedElementTransitionScreen1,
-
-                )
+            )
             SharedTransitionLayout {
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this

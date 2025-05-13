@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-
 val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
     Screen("Back stack alteration") {
         Column(

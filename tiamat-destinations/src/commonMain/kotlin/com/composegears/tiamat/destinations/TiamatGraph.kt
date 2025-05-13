@@ -1,7 +1,7 @@
 package com.composegears.tiamat.destinations
 
-import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.navigation.NavDestination
 
 @SubclassOptInRequired(TiamatExperimentalApi::class)
 public interface TiamatGraph {

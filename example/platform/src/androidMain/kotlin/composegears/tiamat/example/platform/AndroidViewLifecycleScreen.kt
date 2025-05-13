@@ -35,6 +35,7 @@ import androidx.concurrent.futures.await
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.currentStateAsState
 import com.composegears.tiamat.compose.navDestination
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
@@ -70,7 +71,7 @@ val AndroidViewLifecycleScreen by navDestination<Unit> {
                 }
 
                 val lf = LocalLifecycleOwner.current
-                Text("Lifecycle State: ${lf.lifecycle.currentState}")
+                Text("Lifecycle State: ${lf.lifecycle.currentStateAsState()}")
             }
         } else {
             PermissionDeclined {

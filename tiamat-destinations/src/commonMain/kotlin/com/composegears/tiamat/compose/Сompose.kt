@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import com.composegears.tiamat.destinations.TiamatGraph
 import com.composegears.tiamat.navigation.NavController
 
-
 @Composable
 public fun Navigation(
     navController: NavController,

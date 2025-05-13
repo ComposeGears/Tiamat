@@ -30,8 +30,7 @@ val ArchViewModel by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "View Models nav controller",
                 startDestination = ArchViewModelScreen1,
-
-                )
+            )
             Navigation(
                 navController = nc,
                 destinations = arrayOf(
