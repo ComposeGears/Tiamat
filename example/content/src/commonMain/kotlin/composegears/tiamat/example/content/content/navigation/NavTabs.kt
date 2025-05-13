@@ -9,17 +9,13 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
-import com.composegears.tiamat.compose.Navigation
-import com.composegears.tiamat.compose.navController
-import com.composegears.tiamat.compose.navDestination
-import com.composegears.tiamat.compose.navigate
-import com.composegears.tiamat.compose.rememberNavController
+import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
@@ -37,6 +33,7 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
                 key = "Tabs nav controller",
                 startDestination = NavTab1,
             )
+            val activeTab by nc.currentNavDestinationAsState()
             Navigation(
                 navController = nc,
                 destinations = tabs,
@@ -58,7 +55,7 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
                     // current tab in backstack
                     AppButton(
                         text = it.name,
-                        enabled = nc.current != it,
+                        enabled = activeTab != it,
                         shape = RectangleShape,
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         onClick = { nc.popToTop(it) }

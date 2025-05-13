@@ -30,6 +30,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                 startDestination = AdvExtensionsScreen1,
 
                 )
+            val currentNavDestination by nc.currentNavDestinationAsState()
             VSpacer()
             Text(
                 text = buildString {
@@ -37,11 +38,11 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                     append("—————\n")
                     append("Last active screen reported by global extension: ${GlobalExtension.activeDestination}\n")
                     append("—————\n")
-                    append("Current screen log message: ${nc.current?.ext<LocalExtension>()?.logMessage}\n")
+                    append("Current screen log message: ${currentNavDestination?.ext<LocalExtension>()?.logMessage}\n")
                     append("—————\n")
                     append(
                         "Current screen extensions: ${
-                            nc.current?.let { it as ComposeNavDestination<*> }?.extensions?.joinToString(
+                            currentNavDestination?.let { it as ComposeNavDestination<*> }?.extensions?.joinToString(
                                 ", ",
                                 transform = { it::class.simpleName ?: "???" }
                             )
@@ -70,7 +71,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
 
 // Marker/Simple ext have no content and may be a marker/data handler to be used
 // in tandem with other extensions
-class MarkerExtension(val data: String) : Extension<Any?>
+class MarkerExtension(val data: String) : NavExtension<Any?>
 
 // having a dedicated object or class allows you cal ext fun to get extension ref
 // eg: nc.current.ext<GlobalExtension>() -> return GlobalExtension or null if not attached

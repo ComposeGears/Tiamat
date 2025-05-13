@@ -1,22 +1,16 @@
 @file:Suppress("Filename")
+@file:OptIn(ExperimentalComposeUiApi::class)
 
 package composegears.tiamat.example
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.PointerMatcher
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.onClick
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.LocalBackGestureDispatcher
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -29,7 +23,6 @@ import composegears.tiamat.example.platform.start
 fun main() {
     Platform.start()
     A3rdParty.start()
-    LocalBackGestureDispatcher
     application {
         Window(
             onCloseRequest = ::exitApplication,
@@ -38,22 +31,9 @@ fun main() {
                 position = WindowPosition.Aligned(Alignment.Center),
                 size = DpSize(1200.dp, 800.dp)
             ),
-            onKeyEvent = {
-               // it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back()
-                false
-            },
             title = "Tiamat Nav-Example"
         ) {
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    /*.onClick(
-                        enabled = true,
-                        matcher = PointerMatcher.mouse(PointerButton.Back),
-                        onClick = { backHandler.back() }
-                    )*/
-            ) {
+            Box(Modifier.fillMaxSize()) {
                 App()
             }
         }

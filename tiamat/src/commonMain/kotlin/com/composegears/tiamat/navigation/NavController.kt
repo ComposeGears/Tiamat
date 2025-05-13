@@ -59,10 +59,12 @@ public class NavController internal constructor(
             val backStack = (savedState[KEY_BACK_STACK] as? List<*>)?.mapNotNull { item ->
                 (item as? SavedState)?.let { NavEntry.restoreFromSavedState(it) }
             }
-            // todo add test - ensure loaded bs & current are attached
-            navController.backStack.addAll(backStack ?: emptyList())
-            navController.backStack.onEach { it.attachToNavController() }
-            if (current != null) navController.navigate(current)
+            if (backStack != null && backStack.isNotEmpty()) {
+                navController.editBackStack { backStack.onEach { add(it) } }
+            }
+            if (current != null) {
+                navController.navigate(current)
+            }
             navController.parent = parent
             return navController
         }
@@ -71,8 +73,8 @@ public class NavController internal constructor(
     // ----------- internal properties ---------------------------------------------------------------------------------
     //todo add test for transition data is passed when nav with it
     private var internalCurrentTransitionFlow: MutableStateFlow<Transition?> = MutableStateFlow(null)
+    private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
     private var onNavigationListener: OnNavigationListener? = null
-    private val backStack: ArrayList<NavEntry<*>> = ArrayList()
 
     // ----------- public properties -----------------------------------------------------------------------------------
 
@@ -80,17 +82,15 @@ public class NavController internal constructor(
         private set
     public val sharedViewModelsStorage: ViewModelsStorage = ViewModelsStorage()
     public val currentTransitionFlow: StateFlow<Transition?> = internalCurrentTransitionFlow
-    public val currentNavEntry: NavEntry<*>? get() = currentTransitionFlow.value?.targetEntry
-    public val current: NavDestination<*>? get() = currentNavEntry?.destination
-    public val canGoBack: Boolean get() = backStack.isNotEmpty()
+    public val currentBackStackFlow: StateFlow<List<NavEntry<*>>> = internalCurrentBackStackFlow
 
     // ----------- public methods --------------------------------------------------------------------------------------
 
     public fun saveToSavedState(): SavedState = SavedState(
         KEY_KEY to key,
         KEY_SAVEABLE to saveable,
-        KEY_CURRENT to currentNavEntry?.saveToSavedState(),
-        KEY_BACK_STACK to backStack.map { it.saveToSavedState() }
+        KEY_CURRENT to getCurrentNavEntry()?.saveToSavedState(),
+        KEY_BACK_STACK to getBackStack().map { it.saveToSavedState() }
     )
 
     public fun setOnNavigationListener(listener: OnNavigationListener?) {
@@ -106,10 +106,16 @@ public class NavController internal constructor(
         return null
     }
 
-    public fun getBackStack(): List<NavEntry<*>> = backStack
+    public fun getCurrentNavEntry(): NavEntry<*>? = currentTransitionFlow.value?.targetEntry
+
+    public fun getBackStack(): List<NavEntry<*>> = internalCurrentBackStackFlow.value
+
+    public fun canGoBack(): Boolean = getBackStack().isNotEmpty()
 
     public fun editBackStack(actions: BackStackEditScope.() -> Unit) {
-        BackStackEditScope().actions()
+        BackStackEditScope(getBackStack())
+            .apply(actions)
+            .let { updateBackStackInternal(it.backStack) }
     }
 
     // ----------- public methods --------------------------------------------------------------------------------------
@@ -119,8 +125,8 @@ public class NavController internal constructor(
         transitionData: Any? = null,
     ) {
         entry.ensureDetachedAndAttach()
-        val currentNavEntry = currentNavEntry
-        currentNavEntry?.let { backStack.add(it) }
+        val currentNavEntry = getCurrentNavEntry()
+        currentNavEntry?.let { editBackStack { addWithoutAttach(it) } }
         updateCurrentNavEntryInternal(
             from = currentNavEntry,
             to = entry,
@@ -134,7 +140,8 @@ public class NavController internal constructor(
         transitionData: Any? = null,
     ) {
         entry.ensureDetachedAndAttach()
-        val currentNavEntry = currentNavEntry
+        val currentNavEntry = getCurrentNavEntry()
+        currentNavEntry?.detachFromNavController()
         updateCurrentNavEntryInternal(
             from = currentNavEntry,
             to = entry,
@@ -150,11 +157,13 @@ public class NavController internal constructor(
             navigate(dest.toNavEntry(), transitionData)
         }
     ) {
-        val existingEntry = backStack.firstOrNull { it.destination == dest }
+        val existingEntry = getBackStack().firstOrNull { it.destination == dest }
         if (existingEntry != null) {
-            val currentNavEntry = currentNavEntry
-            backStack.remove(existingEntry)
-            currentNavEntry?.let { backStack.add(it) }
+            val currentNavEntry = getCurrentNavEntry()
+            editBackStack {
+                removeWithoutDetach(existingEntry)
+                currentNavEntry?.let { addWithoutAttach(it) }
+            }
             updateCurrentNavEntryInternal(
                 from = currentNavEntry,
                 to = existingEntry,
@@ -176,6 +185,7 @@ public class NavController internal constructor(
             parent?.back() ?: false
         }
     ): Boolean {
+        val backStack = getBackStack()
         val targetIndex =
             if (to != null) backStack
                 .indexOfLast { it.destination == to }
@@ -183,25 +193,20 @@ public class NavController internal constructor(
                 .also { if (it < 0) error("Destination not found") }
             else backStack.size - 1
         return if (targetIndex >= 0) {
-            val currentNavEntry = currentNavEntry
+            val currentNavEntry = getCurrentNavEntry()
             val targetNavEntry = backStack[targetIndex]
             targetNavEntry.navResult = result
-            while (backStack.size > targetIndex + 1) {
-                backStack.removeLast().detachFromNavController()
-            }
-            backStack.removeLast()
             currentNavEntry?.detachFromNavController()
+            editBackStack {
+                while (backStack.lastIndex != targetIndex) removeLast()
+                removeWithoutDetach(targetNavEntry)
+            }
             updateCurrentNavEntryInternal(currentNavEntry, targetNavEntry, false, transitionData)
             true
         } else orElse()
     }
 
     // ----------- internal methods ------------------------------------------------------------------------------------
-
-    private fun NavEntry<*>.ensureDetachedAndAttach() {
-        if (isAttachedToNavController) error("NavEntry is already attached to a NavController")
-        attachToNavController()
-    }
 
     private fun updateCurrentNavEntryInternal(
         from: NavEntry<*>?,
@@ -219,17 +224,21 @@ public class NavController internal constructor(
         onNavigationListener?.onNavigate(from, to, isForward)
     }
 
+    private fun updateBackStackInternal(newBackStack: List<NavEntry<*>>) {
+        internalCurrentBackStackFlow.tryEmit(newBackStack)
+    }
+
     internal fun close() {
-        currentNavEntry?.detachFromNavController()
+        getCurrentNavEntry()?.detachFromNavController()
         internalCurrentTransitionFlow.tryEmit(null)
-        backStack.onEach { it.detachFromNavController() }
-        backStack.clear()
+        getBackStack().onEach { it.detachFromNavController() }
+        updateBackStackInternal(emptyList())
     }
 
     // ----------- other -----------------------------------------------------------------------------------------------
 
     override fun toString(): String =
-        "NavController2(key=$key, current=${current?.name}, parent=${parent?.key}}"
+        "NavController2(key=$key, current=${getCurrentNavEntry()?.destination?.name}, parent=${parent?.key}}"
 
     // ----------- support classes -------------------------------------------------------------------------------------
 
@@ -240,7 +249,23 @@ public class NavController internal constructor(
     )
 
     // todo add test remove->detach entry, add -> check for not be attached
-    public inner class BackStackEditScope internal constructor() {
+    public class BackStackEditScope internal constructor(
+        initialBackStack: List<NavEntry<*>>
+    ) {
+
+        private val internalEditableBackStack = initialBackStack.toMutableList()
+        public val backStack: List<NavEntry<*>> = internalEditableBackStack
+
+        // used internally to add current entry into backstack
+        internal fun addWithoutAttach(entry: NavEntry<*>) {
+            internalEditableBackStack.add(entry)
+        }
+
+        // used internally to remove entry from backstack in order to make it current
+        internal fun removeWithoutDetach(entry: NavEntry<*>) {
+            internalEditableBackStack.remove(entry)
+        }
+
         /**
          * Adds a navigation entry to the back stack.
          *
@@ -250,7 +275,7 @@ public class NavController internal constructor(
             entry: NavEntry<Args>,
         ) {
             entry.ensureDetachedAndAttach()
-            backStack.add(entry)
+            internalEditableBackStack.add(entry)
         }
 
         /**
@@ -279,7 +304,7 @@ public class NavController internal constructor(
             entry: NavEntry<Args>,
         ) {
             entry.ensureDetachedAndAttach()
-            backStack.add(index, entry)
+            internalEditableBackStack.add(index, entry)
         }
 
         /**
@@ -306,7 +331,7 @@ public class NavController internal constructor(
          */
         public fun removeAt(index: Int) {
             if (index in backStack.indices)
-                backStack.removeAt(index).detachFromNavController()
+                internalEditableBackStack.removeAt(index).detachFromNavController()
         }
 
         /**
@@ -316,7 +341,7 @@ public class NavController internal constructor(
          */
         public fun removeLast(): Boolean {
             return if (backStack.isNotEmpty()) {
-                backStack.removeAt(backStack.lastIndex).detachFromNavController()
+                internalEditableBackStack.removeAt(backStack.lastIndex).detachFromNavController()
                 true
             } else false
         }
@@ -329,7 +354,7 @@ public class NavController internal constructor(
          */
         public fun removeLast(dest: NavDestination<*>): Boolean {
             val ind = backStack.indexOfLast { it.destination.name == dest.name }
-            if (ind >= 0) backStack.removeAt(ind).detachFromNavController()
+            if (ind >= 0) internalEditableBackStack.removeAt(ind).detachFromNavController()
             return ind >= 0
         }
 
@@ -341,7 +366,7 @@ public class NavController internal constructor(
          */
         public fun removeLast(predicate: (NavEntry<*>) -> Boolean): Boolean {
             val ind = backStack.indexOfLast(predicate)
-            if (ind >= 0) backStack.removeAt(ind).detachFromNavController()
+            if (ind >= 0) internalEditableBackStack.removeAt(ind).detachFromNavController()
             return ind >= 0
         }
 
@@ -354,7 +379,7 @@ public class NavController internal constructor(
             var i = 0
             while (i < backStack.size) {
                 if (predicate(backStack[i])) {
-                    backStack.removeAt(i).detachFromNavController()
+                    internalEditableBackStack.removeAt(i).detachFromNavController()
                 } else i++
             }
         }
@@ -384,7 +409,7 @@ public class NavController internal constructor(
          */
         public fun clear() {
             while (backStack.isNotEmpty()) {
-                backStack.removeAt(backStack.lastIndex).detachFromNavController()
+                internalEditableBackStack.removeAt(backStack.lastIndex).detachFromNavController()
             }
         }
 

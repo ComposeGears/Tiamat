@@ -6,7 +6,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 public interface ComposeNavDestination<Args> : NavDestination<Args> {
-    public val extensions: List<Extension<Args>>
+    public val extensions: List<NavExtension<Args>>
 
     @Composable
     public fun NavDestinationScope<Args>.Content()
@@ -17,7 +17,7 @@ public interface ComposeNavDestination<Args> : NavDestination<Args> {
  */
 internal open class NavDestinationImpl<Args>(
     override val name: String,
-    override val extensions: List<Extension<Args>>,
+    override val extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit
 ) : ComposeNavDestination<Args> {
 
@@ -31,7 +31,7 @@ internal open class NavDestinationImpl<Args>(
  * Nav destination delegate impl.
  */
 public class NavDestinationInstanceDelegate<Args>(
-    private val extensions: List<Extension<Args>>,
+    private val extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit,
 ) : ReadOnlyProperty<Nothing?, ComposeNavDestination<Args>> {
     private var destination: ComposeNavDestination<Args>? = null
@@ -53,7 +53,7 @@ public class NavDestinationInstanceDelegate<Args>(
 @Suppress("FunctionName")
 public fun <Args> NavDestination(
     name: String,
-    extensions: List<Extension<Args>> = emptyList(),
+    extensions: List<NavExtension<Args>> = emptyList(),
     content: @Composable NavDestinationScope<Args>.() -> Unit
 ): ComposeNavDestination<Args> = NavDestinationImpl(name, extensions, content)
 
@@ -65,7 +65,7 @@ public fun <Args> NavDestination(
  * @return A NavDestination delegate instance.
  */
 public fun <Args> navDestination(
-    vararg extensions: Extension<Args>? = emptyArray(),
+    vararg extensions: NavExtension<Args>? = emptyArray(),
     content: @Composable NavDestinationScope<Args>.() -> Unit
 ): NavDestinationInstanceDelegate<Args> =
     NavDestinationInstanceDelegate(listOfNotNull(*extensions), content)

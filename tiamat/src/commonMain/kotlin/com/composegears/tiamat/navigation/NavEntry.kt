@@ -95,6 +95,11 @@ public class NavEntry<Args> public constructor(
         if (!isAttachedToNavController && !isAttachedToUI) close()
     }
 
+    internal fun ensureDetachedAndAttach() {
+        if (isAttachedToNavController) error("NavEntry is already attached to a NavController")
+        attachToNavController()
+    }
+
     internal fun attachToUI() {
         isAttachedToUI = true
     }

@@ -104,7 +104,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
         val saveRegistry = remember(entry) {
             val registry = SaveableStateRegistry(
                 restoredValues = entry.savedState as Map<String, List<Any?>>?,
-                canBeSaved = { parentRegistry?.canBeSaved(it) ?: true}
+                canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
             )
             entry.savedStateSaver = registry::performSave
             registry
@@ -171,17 +171,18 @@ public fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
 ) {
-    if (handleSystemBackEvent) BackHandler(navController.canGoBack, navController::back)
+    if (handleSystemBackEvent) {
+        val canGoGoBack by navController.canGoBackAsState()
+        BackHandler(canGoGoBack, navController::back)
+    }
     // display current entry + animate enter/exit
     CompositionLocalProvider(LocalNavController provides navController) {
-        // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
-        val transitionState = remember {
-            SeekableTransitionState(navController.currentNavEntry ?: stubEntry)
-        }
         val state by navController.currentTransitionFlow.collectAsState()
+        // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val targetValue = remember(state) { state?.targetEntry ?: stubEntry }
         val transitionData = remember(state) { state?.transitionData as? TransitionData }
+        val transitionState = remember { SeekableTransitionState<NavEntry<*>>(stubEntry) }
         // state controller
         LaunchedEffect(state) {
             if (!targetValue.isResolved()) targetValue.resolveDestination(destinations)
@@ -222,7 +223,7 @@ public fun Navigation(
             modifier = modifier,
             transitionSpec = {
                 val transform = when {
-                    transition.currentState == stubEntry -> ContentTransform(
+                    transition.targetState == stubEntry || transition.currentState == stubEntry -> ContentTransform(
                         targetContentEnter = EnterTransition.None,
                         initialContentExit = ExitTransition.None,
                         sizeTransform = null
@@ -242,6 +243,24 @@ public fun Navigation(
             if (it != stubEntry) EntryContent(it)
         }
     }
+}
+
+@Composable
+public fun NavController.canGoBackAsState(): State<Boolean> {
+    val backstack by currentBackStackFlow.collectAsState()
+    return remember(backstack) { derivedStateOf { backstack.isNotEmpty() } }
+}
+
+@Composable
+public fun NavController.currentNavEntryAsState(): State<NavEntry<*>?> {
+    val state by currentTransitionFlow.collectAsState()
+    return remember(state) { derivedStateOf { state?.targetEntry } }
+}
+
+@Composable
+public fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?> {
+    val state by currentTransitionFlow.collectAsState()
+    return remember(state) { derivedStateOf { state?.targetEntry?.destination } }
 }
 
 /**
@@ -265,7 +284,7 @@ public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
  * @return The extension of the specified type, or null if not found.
  */
 @Composable
-public inline fun <reified P : Extension<*>> NavDestinationScope<*>.ext(): P? =
+public inline fun <reified P : NavExtension<*>> NavDestinationScope<*>.ext(): P? =
     navEntry().destination.ext<P>()
 
 /**

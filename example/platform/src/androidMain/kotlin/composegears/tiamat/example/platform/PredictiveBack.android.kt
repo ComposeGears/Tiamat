@@ -8,13 +8,16 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.IntOffset
+import com.composegears.tiamat.compose.TransitionController
+import com.composegears.tiamat.compose.back
+import com.composegears.tiamat.compose.canGoBackAsState
 import com.composegears.tiamat.navigation.NavController
-import com.composegears.tiamat.TransitionController
 import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -28,7 +31,8 @@ internal actual fun PredictiveBackContainer(
 ) {
     BoxWithConstraints(modifier) {
         content()
-        PredictiveBackHandler(navController.canGoBack && enabled) { progress ->
+        val canGoBack by navController.canGoBackAsState()
+        PredictiveBackHandler(canGoBack && enabled) { progress ->
             val controller = TransitionController()
             navController.back(
                 transition = ContentTransform(

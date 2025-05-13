@@ -15,10 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.compose.Navigation
-import com.composegears.tiamat.compose.navController
-import com.composegears.tiamat.compose.navDestination
-import com.composegears.tiamat.compose.rememberNavController
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 
@@ -32,8 +29,9 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 key = "BS alteration nav controller",
                 startDestination = AdvBackStackAlterationScreenA,
             )
+            val currentDestination by nc.currentNavDestinationAsState()
             var editsCount by remember { mutableIntStateOf(0) }
-            val backStack = remember(nc.current, editsCount) {
+            val backStack = remember(currentDestination, editsCount) {
                 nc.getBackStack().joinToString(", ") {
                     it.destination.name.substringAfter("Screen")
                 }
@@ -46,7 +44,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
             Text(
                 text = "Current stack is: " +
                     "${if (backStack.isNotBlank()) "$backStack ->" else ""} " +
-                    "${nc.current?.name?.substringAfter("Screen")} (current)",
+                    "${currentDestination?.name?.substringAfter("Screen")} (current)",
                 textAlign = TextAlign.Center
             )
             VSpacer()
@@ -115,11 +113,17 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 ),
                 modifier = Modifier
                     .fillMaxSize()
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = RoundedCornerShape(8.dp)
+                    )
             )
         }
     }
 }
+
+// using nc.canGoBackAsState().value instead nc.canGoBack() due to changes in backStack
 
 private val AdvBackStackAlterationScreenA by navDestination<Unit> {
     val nc = navController()
@@ -129,7 +133,7 @@ private val AdvBackStackAlterationScreenA by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBack,
+                enabled = nc.canGoBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -145,7 +149,7 @@ private val AdvBackStackAlterationScreenB by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBack,
+                enabled = nc.canGoBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -161,7 +165,7 @@ private val AdvBackStackAlterationScreenC by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBack,
+                enabled = nc.canGoBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
