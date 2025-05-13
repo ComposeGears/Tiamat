@@ -26,9 +26,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.NavDestination
-import com.composegears.tiamat.navController
-import com.composegears.tiamat.navDestination
+import com.composegears.tiamat.compose.navController
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.compose.navigate
+import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
 import composegears.tiamat.example.content.content.advanced.AdvExtensions

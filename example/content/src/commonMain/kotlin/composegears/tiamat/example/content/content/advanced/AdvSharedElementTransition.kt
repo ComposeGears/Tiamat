@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
+
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 private val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("No scope provided") }
@@ -31,18 +33,19 @@ val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "SharedElementTransition nav controller",
                 startDestination = AdvSharedElementTransitionScreen1,
-                destinations = arrayOf(
-                    AdvSharedElementTransitionScreen1,
-                    AdvSharedElementTransitionScreen2,
-                    AdvSharedElementTransitionScreen3,
+
                 )
-            )
             SharedTransitionLayout {
                 CompositionLocalProvider(
                     LocalSharedTransitionScope provides this
                 ) {
                     Navigation(
                         navController = nc,
+                        destinations = arrayOf(
+                            AdvSharedElementTransitionScreen1,
+                            AdvSharedElementTransitionScreen2,
+                            AdvSharedElementTransitionScreen3,
+                        ),
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp)

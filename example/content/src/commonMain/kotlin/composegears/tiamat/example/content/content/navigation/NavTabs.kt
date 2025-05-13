@@ -15,6 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.Navigation
+import com.composegears.tiamat.compose.navController
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.compose.navigate
+import com.composegears.tiamat.compose.rememberNavController
+import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
 val NavTabs by navDestination<Unit>(ScreenInfo()) {
@@ -30,11 +36,11 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Tabs nav controller",
                 startDestination = NavTab1,
-                destinations = tabs
             )
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = tabs,
+                modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(16.dp)
@@ -85,13 +91,16 @@ fun TabContent(tabName: String) {
         val nc = rememberNavController(
             key = "$tabName content",
             startDestination = NavTabsSubTabScreen1,
+        )
+        Navigation(
+            navController = nc,
             destinations = arrayOf(
                 NavTabsSubTabScreen1,
                 NavTabsSubTabScreen2,
                 NavTabsSubTabScreen3,
-            )
+            ),
+            modifier = Modifier.fillMaxSize()
         )
-        Navigation(nc, Modifier.fillMaxSize())
     }
 }
 

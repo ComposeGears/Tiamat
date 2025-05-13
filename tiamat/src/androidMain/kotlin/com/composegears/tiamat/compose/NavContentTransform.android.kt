@@ -1,4 +1,4 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing

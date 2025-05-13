@@ -1,15 +1,9 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
-
-/**
- * @return platform root NavControllers storage object
- */
-@Composable
-internal actual fun rootNavControllersStore(): NavControllersStorage = rememberRootDataStore()
+import com.composegears.tiamat.rememberDestinationLifecycleOwner
 
 /**
  * Wrap platform content and provides additional info/providable-s
@@ -26,9 +20,4 @@ internal actual fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
     }
 }
 
-/**
- * We can not call T::class in @Composable functions,
- *
- * workaround is to call it outside of @Composable via regular inline fun
- */
 public actual inline fun <reified T : Any> className(): String = T::class.qualifiedName!!

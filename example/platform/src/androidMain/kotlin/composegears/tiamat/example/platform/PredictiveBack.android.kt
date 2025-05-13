@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.IntOffset
-import com.composegears.tiamat.NavController
+import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.TransitionController
 import kotlin.coroutines.cancellation.CancellationException
 

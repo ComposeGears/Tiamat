@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.NavDestinationScope
-import com.composegears.tiamat.navController
+import com.composegears.tiamat.compose.NavDestinationScope
+import com.composegears.tiamat.compose.navController
 
 @Composable
 fun VSpacer(height: Dp = 16.dp) {

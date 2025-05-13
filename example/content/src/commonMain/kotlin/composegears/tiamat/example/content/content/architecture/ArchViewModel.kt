@@ -13,7 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.Saveable
+import com.composegears.tiamat.navigation.SavedState
+import com.composegears.tiamat.navigation.TiamatViewModel
 import composegears.tiamat.example.ui.core.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,15 +30,16 @@ val ArchViewModel by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "View Models nav controller",
                 startDestination = ArchViewModelScreen1,
+
+                )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     ArchViewModelScreen1,
                     ArchViewModelScreen2,
                     ArchViewModelScreen3,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))

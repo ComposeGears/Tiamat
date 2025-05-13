@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
+
 
 val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
     Screen("Extensions") {
@@ -27,12 +28,8 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Extensions nav controller",
                 startDestination = AdvExtensionsScreen1,
-                destinations = arrayOf(
-                    AdvExtensionsScreen1,
-                    AdvExtensionsScreen2,
-                    AdvExtensionsScreen3,
+
                 )
-            )
             VSpacer()
             Text(
                 text = buildString {
@@ -44,7 +41,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                     append("—————\n")
                     append(
                         "Current screen extensions: ${
-                            nc.current?.extensions?.joinToString(
+                            nc.current?.let { it as ComposeNavDestination<*> }?.extensions?.joinToString(
                                 ", ",
                                 transform = { it::class.simpleName ?: "???" }
                             )
@@ -55,8 +52,13 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             )
             VSpacer()
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = arrayOf(
+                    AdvExtensionsScreen1,
+                    AdvExtensionsScreen2,
+                    AdvExtensionsScreen3,
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )

@@ -14,7 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.example.ui.core.*
 
 @Composable
@@ -31,12 +32,8 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "PredictiveBack nav controller",
                 startDestination = PredictiveBackScreen1,
-                destinations = arrayOf(
-                    PredictiveBackScreen1,
-                    PredictiveBackScreen2,
-                    PredictiveBackScreen3,
+
                 )
-            )
             PredictiveBackContainer(
                 navController = nc,
                 enabled = true,
@@ -44,6 +41,11 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
             ) {
                 Navigation(
                     navController = nc,
+                    destinations = arrayOf(
+                        PredictiveBackScreen1,
+                        PredictiveBackScreen2,
+                        PredictiveBackScreen3,
+                    ),
                     modifier = Modifier.fillMaxSize(),
                     contentTransformProvider = { navigationPlatformDefault(it) }
                 )

@@ -5,6 +5,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.Navigation
+import com.composegears.tiamat.compose.navigationPlatformDefault
+import com.composegears.tiamat.compose.rememberNavController
+import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
 import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
@@ -31,8 +35,11 @@ fun App(
         Surface(Modifier.fillMaxSize()) {
             val rootNavController = rememberNavController(
                 key = "rootNavController",
-                storageMode = StorageMode.Memory,
                 startDestination = HomeScreen,
+                configuration = navControllerConfig
+            )
+            Navigation(
+                navController = rootNavController,
                 destinations = arrayOf(
                     HomeScreen,
                     NavForwardAndBack,
@@ -54,10 +61,6 @@ fun App(
                         .map { it.destination }
                         .toTypedArray()
                 ),
-                configuration = navControllerConfig
-            )
-            Navigation(
-                navController = rootNavController,
                 modifier = Modifier.fillMaxSize(),
                 contentTransformProvider = { navigationPlatformDefault(it) }
             )

@@ -1,6 +1,6 @@
 package com.composegears.tiamat.destinations
 
-import com.composegears.tiamat.NavDestination
+import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.TiamatExperimentalApi
 
 @SubclassOptInRequired(TiamatExperimentalApi::class)

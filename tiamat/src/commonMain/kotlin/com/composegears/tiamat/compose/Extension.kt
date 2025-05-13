@@ -1,6 +1,7 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
+import com.composegears.tiamat.navigation.NavDestination
 
 /**
  * Extension base interface.
@@ -50,4 +51,4 @@ public fun <Args> extension(
  * @return The first extension of type [P] if found, or `null` otherwise.
  */
 public inline fun <reified P : Extension<*>> NavDestination<*>.ext(): P? =
-    extensions.firstOrNull { it is P } as? P?
+    (this as? ComposeNavDestination<*>?)?.extensions?.firstOrNull { it is P } as? P?

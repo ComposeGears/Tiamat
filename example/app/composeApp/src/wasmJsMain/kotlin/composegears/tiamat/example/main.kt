@@ -15,6 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
 import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.ext
+import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavDestination
+import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
+import com.composegears.tiamat.navigation.NavEntry
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform

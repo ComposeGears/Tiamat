@@ -11,6 +11,7 @@ import androidx.compose.foundation.onClick
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.LocalBackGestureDispatcher
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -19,7 +20,6 @@ import androidx.compose.ui.input.pointer.PointerButton
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import com.composegears.tiamat.LocalNavBackHandler
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
@@ -29,8 +29,8 @@ import composegears.tiamat.example.platform.start
 fun main() {
     Platform.start()
     A3rdParty.start()
+    LocalBackGestureDispatcher
     application {
-        val backHandler = LocalNavBackHandler.current
         Window(
             onCloseRequest = ::exitApplication,
             state = rememberWindowState(
@@ -39,18 +39,20 @@ fun main() {
                 size = DpSize(1200.dp, 800.dp)
             ),
             onKeyEvent = {
-                it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back()
+               // it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back()
+                false
             },
             title = "Tiamat Nav-Example"
         ) {
+
             Box(
                 Modifier
                     .fillMaxSize()
-                    .onClick(
+                    /*.onClick(
                         enabled = true,
                         matcher = PointerMatcher.mouse(PointerButton.Back),
                         onClick = { backHandler.back() }
-                    )
+                    )*/
             ) {
                 App()
             }

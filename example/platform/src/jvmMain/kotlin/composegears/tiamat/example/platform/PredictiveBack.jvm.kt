@@ -1,22 +1,9 @@
 package composegears.tiamat.example.platform
 
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.NavController
-import com.composegears.tiamat.TransitionController
+import com.composegears.tiamat.navigation.NavController
 
 @Composable
 internal actual fun PredictiveBackContainer(
@@ -27,7 +14,8 @@ internal actual fun PredictiveBackContainer(
 ) {
     BoxWithConstraints(modifier) {
         content()
-        if (enabled) Box(
+        TODO()
+        /*if (enabled) Box(
             Modifier
                 .fillMaxHeight()
                 .width(64.dp)
@@ -71,6 +59,6 @@ internal actual fun PredictiveBackContainer(
                         }
                     )
                 }
-        )
+        )*/
     }
 }

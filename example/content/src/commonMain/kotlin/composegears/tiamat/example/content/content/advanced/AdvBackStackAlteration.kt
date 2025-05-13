@@ -15,11 +15,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.Navigation
-import com.composegears.tiamat.navController
-import com.composegears.tiamat.navDestination
-import com.composegears.tiamat.rememberNavController
+import com.composegears.tiamat.compose.Navigation
+import com.composegears.tiamat.compose.navController
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.compose.rememberNavController
 import composegears.tiamat.example.ui.core.*
+
 
 val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
     Screen("Back stack alteration") {
@@ -30,11 +31,6 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "BS alteration nav controller",
                 startDestination = AdvBackStackAlterationScreenA,
-                destinations = arrayOf(
-                    AdvBackStackAlterationScreenA,
-                    AdvBackStackAlterationScreenB,
-                    AdvBackStackAlterationScreenC,
-                )
             )
             var editsCount by remember { mutableIntStateOf(0) }
             val backStack = remember(nc.current, editsCount) {
@@ -111,8 +107,13 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
             }
             VSpacer()
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = arrayOf(
+                    AdvBackStackAlterationScreenA,
+                    AdvBackStackAlterationScreenB,
+                    AdvBackStackAlterationScreenC,
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )

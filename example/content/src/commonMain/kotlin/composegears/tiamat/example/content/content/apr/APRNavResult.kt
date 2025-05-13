@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
@@ -25,14 +25,15 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "NavResult nav controller",
                 startDestination = APRNavResultScreen1,
+
+                )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     APRNavResultScreen1,
                     APRNavResultScreen2,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))

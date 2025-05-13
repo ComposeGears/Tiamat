@@ -1,12 +1,6 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
-
-/**
- * @return platform root NavControllers storage object.
- */
-@Composable
-internal expect fun rootNavControllersStore(): NavControllersStorage
 
 /**
  * Wrap platform content and provides additional info/providable-s.
@@ -17,8 +11,9 @@ internal expect fun <Args> NavDestinationScope<Args>.PlatformContentWrapper(
 )
 
 /**
- * We can not call T::class in @Composable functions,
+ * 1) We can not call T::class in @Composable functions,
+ * 2) Wasm only allows to use `simpleName` for wasm, and other platforms suppose to use`qualifiedName`
  *
- * workaround is to call it outside of @Composable via regular inline fun.
+ * Workaround is to call it outside of @Composable via regular inline fun.
  */
 public expect inline fun <reified T : Any> className(): String

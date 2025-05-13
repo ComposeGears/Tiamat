@@ -1,5 +1,3 @@
-@file:OptIn(TiamatExperimentalApi::class)
-
 package composegears.tiamat.example.content.content.advanced
 
 import androidx.compose.foundation.border
@@ -13,10 +11,15 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.Navigation
+import com.composegears.tiamat.compose.navController
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.compose.navigate
+import com.composegears.tiamat.compose.rememberNavController
 import com.composegears.tiamat.destinations.InstallIn
 import com.composegears.tiamat.destinations.TiamatGraph
 import composegears.tiamat.example.ui.core.*
+
 
 private object Graph : TiamatGraph
 
@@ -25,11 +28,11 @@ val AdvDestinationsGraph by navDestination<Unit>(ScreenInfo()) {
         val nc = rememberNavController(
             key = "F&B nav controller",
             startDestination = AdvDestinationsGraphScreen1,
-            graph = Graph
         )
         Navigation(
-            nc,
-            Modifier
+            navController = nc,
+            graph = Graph,
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))

@@ -1,4 +1,4 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.SeekableTransitionState
@@ -11,161 +11,101 @@ import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
-import com.composegears.tiamat.TransitionController.Event.*
+import com.composegears.tiamat.compose.TransitionController.Event.*
+import com.composegears.tiamat.navigation.*
+import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
-public enum class StorageMode {
-    /**
-     * Savable storage, persist internal cleanups
-     */
-    SavedState,
-
-    /**
-     * In memory data storage, NavController will reset on data loss
-     */
-    Memory
-}
-
-/**
- * Remembers a `NavController`.
- *
- * @param key The key for the NavController.
- * @param storageMode The storage mode for the NavController.
- * @param startDestination The start destination for the NavController.
- * @param destinations The array of allowed destinations for this NavController.
- * @param configuration The action to be called after NavController created/restored.
- * @return The remembered NavController.
- */
 @Composable
-@Suppress("ComposableParamOrder")
 public fun rememberNavController(
-    key: String? = null,
-    storageMode: StorageMode? = null,
+    key: String?,
+    saveable: Boolean = true,
     startDestination: NavDestination<*>? = null,
-    destinations: Array<NavDestination<*>>,
+    savedState: SavedState? = null,
     configuration: NavController.() -> Unit = {}
 ): NavController = rememberNavController(
     key = key,
-    storageMode = storageMode,
-    startDestination = startDestination?.toNavEntry(),
-    destinations = destinations,
-    configuration = configuration
+    saveable = saveable,
+    startEntry = startDestination?.toNavEntry(),
+    savedState = savedState,
+    configuration = configuration,
 )
 
-/**
- * Remembers a `NavController`.
- *
- * @param key The key for the NavController.
- * @param storageMode The storage mode for the NavController.
- * @param startDestination The start destination for the NavController.
- * @param startDestinationNavArgs The navigation navArgs for the start destination.
- * @param startDestinationFreeArgs The navigation freeArgs for the start destination.
- * @param destinations The array of allowed destinations for this NavController.
- * @param configuration The action to be called after NavController created/restored.
- * @return The remembered NavController.
- */
 @Composable
-@Suppress("ComposableParamOrder")
-public fun <T> rememberNavController(
-    key: String? = null,
-    storageMode: StorageMode? = null,
-    startDestination: NavDestination<T>,
-    startDestinationNavArgs: T? = null,
-    startDestinationFreeArgs: Any? = null,
-    destinations: Array<NavDestination<*>>,
-    configuration: NavController.() -> Unit = {}
-): NavController = rememberNavController(
-    key = key,
-    storageMode = storageMode,
-    startDestination = startDestination.toNavEntry(
-        navArgs = startDestinationNavArgs,
-        freeArgs = startDestinationFreeArgs
-    ),
-    destinations = destinations,
-    configuration = configuration
-)
-
-/**
- * Remembers a `NavController`.
- *
- * @param key The key for the NavController.
- * @param storageMode The storage mode for the NavController.
- * @param startDestination The start destination for the NavController.
- * @param destinations The array of allowed destinations for this NavController.
- * @param configuration The action to be called after NavController created/restored.
- * @return The remembered NavController.
- */
-@Composable
-@Suppress("ComposableParamOrder")
-public fun <T> rememberNavController(
-    key: String? = null,
-    storageMode: StorageMode? = null,
-    startDestination: NavEntry<T>?,
-    destinations: Array<NavDestination<*>>,
+public fun rememberNavController(
+    key: String?,
+    saveable: Boolean = true,
+    startEntry: NavEntry<*>? = null,
+    savedState: SavedState? = null,
     configuration: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
     val parentNavEntry = LocalNavEntry.current
-    val navControllersStorage = parentNavEntry?.navControllersStorage ?: rootNavControllersStore()
-    val finalStorageMode = storageMode ?: parent?.storageMode ?: StorageMode.Memory
+    val navControllersStorage = parentNavEntry?.navControllersStorage
 
-    // attach to system save logic and perform model save on it
-    if (parent == null) rememberSaveable(
-        saver = Saver(
-            save = { navControllersStorage.saveToSaveState() },
-            restore = { navControllersStorage.restoreFromSavedState(it) }
-        ),
-        init = { }
-    )
-    // create/restore nav controller from storage
-    val parentRegistry = LocalSaveableStateRegistry.current
-    val navController = remember {
-        navControllersStorage
-            .restoreOrCreate(
-                key = key,
-                parent = parent,
-                storageMode = finalStorageMode,
-                canBeSaved = parentRegistry
-                    ?.takeIf { storageMode == StorageMode.SavedState }
-                    ?.let { it::canBeSaved }
-                    ?: { true },
-                startDestination = startDestination,
-                destinations = destinations
-            )
-            .apply(configuration)
-            .apply { followParentsRoute() }
-    }
-    // attach/detach to parent storage
+    fun createNavController() =
+        if (savedState != null) NavController.restoreFromSavedState(parent, savedState)
+        else NavController.create(key, saveable, parent, startEntry, configuration)
+
+    val navController =
+        if (saveable && navControllersStorage == null) rememberSaveable(
+            key = key,
+            saver = Saver(
+                save = { it.saveToSavedState() },
+                restore = { NavController.restoreFromSavedState(parent, it) }),
+            init = { createNavController() }
+        ) else remember {
+            if (navControllersStorage != null) {
+                var navController = navControllersStorage.get(key)
+                if (navController == null) {
+                    navController = createNavController()
+                    if (saveable) navControllersStorage.add(navController)
+                }
+                navController
+            } else createNavController()
+        }
+
     DisposableEffect(navController) {
-        navControllersStorage.attachNavController(navController)
         onDispose {
-            navControllersStorage.detachNavController(navController)
-            // we should close navController in case it is not `saved` to be restored later
-            if (!navControllersStorage.isSaved(navController))
+            // Dispose called in 2 cases
+            // 1. NavEntry is closed due to navigation (detached from UI, attached to NC)
+            // 2. `rememberNavController` composable leave entry composition (eg: switch between 2 Nav-s)
+            val shouldClear = when {
+                !saveable -> true // not saveable -> clear
+                navControllersStorage == null -> true // no storage + dispose means root NC leave composition -> clear
+                parentNavEntry.isAttachedToUI -> true // NC leave entry composition till entry on screen -> clear
+                else -> false
+            }
+            if (shouldClear) {
+                navControllersStorage?.remove(navController)
                 navController.close()
+            }
         }
     }
     return navController
 }
 
 @Composable
-@Suppress("CognitiveComplexMethod")
+@Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
 private fun <Args> AnimatedVisibilityScope.EntryContent(
     entry: NavEntry<Args>
 ) {
-    Box {
-        val navController = LocalNavController.current ?: error("NavController is not attached")
+    val destination = entry.destination
+    if (destination is ComposeNavDestination<Args>) Box {
+        val parentRegistry = LocalSaveableStateRegistry.current
         // gen save state
         val saveRegistry = remember(entry) {
-            val registry = SaveableStateRegistry(entry.savedState, navController.canBeSaved)
+            val registry = SaveableStateRegistry(
+                restoredValues = entry.savedState as Map<String, List<Any?>>?,
+                canBeSaved = { parentRegistry?.canBeSaved(it) ?: true}
+            )
             entry.savedStateSaver = registry::performSave
             registry
         }
@@ -178,17 +118,17 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
             // entry content
             scope.PlatformContentWrapper {
                 // extensions before-content
-                entry.destination.extensions.onEach {
+                destination.extensions.onEach {
                     if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
                         Content()
                     }
                 }
                 // destination content
-                with(entry.destination) {
+                with(destination) {
                     Content()
                 }
                 // extensions after-content
-                entry.destination.extensions.onEach {
+                destination.extensions.onEach {
                     if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
                         Content()
                     }
@@ -212,45 +152,24 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
         )
         // save state when `this entry`/`parent entry` goes into backStack
         DisposableEffect(entry) {
-            // invalidate navController routing state
-            navController.invalidateRoute()
+            entry.attachToUI()
             // save state handle
             onDispose {
                 entry.savedStateSaver = null
-                // entry goes into backstack, save active subNavController
-                if (entry in navController.getBackStack() || entry == navController.currentNavEntry) {
-                    entry.saveState(saveRegistry.performSave())
-                } else {
-                    entry.close()
-                }
+                if (entry.isAttachedToNavController) entry.savedState = saveRegistry.performSave()
+                entry.detachFromUI()
             }
         }
     }
 }
 
-/**
- * Displays a content of `NavController` (see [rememberNavController])
- *
- * @param navController The NavController to use.
- * @param modifier The modifier to apply to the content.
- * @param handleSystemBackEvent Whether to handle the system back event.
- * @param contentTransformProvider The provider for the content transform.
- *
- * @see [NavController.navigate]
- * @see [NavController.replace]]
- * @see [NavController.back]
- * @see [navController]
- * @see [navArgs]
- * @see [navResult]
- * @see [rememberViewModel]
- */
 @Composable
-@Suppress("CognitiveComplexMethod")
 public fun Navigation(
     navController: NavController,
+    destinations: Array<NavDestination<*>>,
     modifier: Modifier = Modifier,
     handleSystemBackEvent: Boolean = true,
-    contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() }
+    contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
 ) {
     if (handleSystemBackEvent) BackHandler(navController.canGoBack, navController::back)
     // display current entry + animate enter/exit
@@ -258,12 +177,15 @@ public fun Navigation(
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
         val transitionState = remember {
-            SeekableTransitionState<NavEntry<*>>(navController.currentNavEntry ?: stubEntry)
+            SeekableTransitionState(navController.currentNavEntry ?: stubEntry)
         }
+        val state by navController.currentTransitionFlow.collectAsState()
+        val targetValue = remember(state) { state?.targetEntry ?: stubEntry }
+        val transitionData = remember(state) { state?.transitionData as? TransitionData }
         // state controller
-        LaunchedEffect(navController.currentNavEntry) {
-            val targetValue = navController.currentNavEntry ?: stubEntry
-            val controller = navController.transitionController
+        LaunchedEffect(state) {
+            if (!targetValue.isResolved()) targetValue.resolveDestination(destinations)
+            val controller = transitionData?.transitionController
             if (controller != null) {
                 controller
                     .updates
@@ -295,18 +217,18 @@ public fun Navigation(
         val transition = rememberTransition(transitionState)
         var contentZIndex by remember { mutableFloatStateOf(0f) }
         transition.AnimatedContent(
-            contentKey = { (it as? NavEntry<*>)?.let { d -> "${d.destination.name}:${d.navId}" }.orEmpty() },
+            contentKey = { "${it.destination.name}:${it.uid}" },
             contentAlignment = Alignment.Center,
             modifier = modifier,
             transitionSpec = {
                 val transform = when {
-                    navController.isInitialTransition -> ContentTransform(
+                    transition.currentState == stubEntry -> ContentTransform(
                         targetContentEnter = EnterTransition.None,
                         initialContentExit = ExitTransition.None,
                         sizeTransform = null
                     )
-                    navController.contentTransition != null -> navController.contentTransition!!
-                    else -> contentTransformProvider(navController.isForwardTransition)
+                    transitionData?.contentTransform != null -> transitionData.contentTransform
+                    else -> contentTransformProvider(state?.isForward ?: true)
                 }
                 contentZIndex += transform.targetContentZIndex
                 ContentTransform(
@@ -337,7 +259,7 @@ public fun NavDestinationScope<*>.navController(): NavController =
 public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
 
 /**
- * Gets the extension of the specified type from the current [NavDestination].
+ * Gets the extension of the specified type from the current [ComposeNavDestination].
  *
  * @param P The type of the extension.
  * @return The extension of the specified type, or null if not found.
@@ -427,7 +349,7 @@ public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
     key: String,
     provider: () -> Model
 ): Model = remember {
-    navEntry.viewModels.getModel(key, provider)
+    navEntry.viewModelsStorage.get(key, provider)
 }
 
 /**
@@ -458,9 +380,9 @@ public fun <Model> NavDestinationScope<*>.rememberSaveableViewModel(
 ): Model where Model : TiamatViewModel, Model : Saveable = rememberSaveable(
     saver = Saver(
         save = { it.saveToSaveState() },
-        restore = { navEntry.viewModels.getModel(key) { provider(it) } }
+        restore = { navEntry.viewModelsStorage.get(key) { provider(it) } }
     ),
-    init = { navEntry.viewModels.getModel(key) { provider(null) } }
+    init = { navEntry.viewModelsStorage.get(key) { provider(null) } }
 )
 
 /**
@@ -492,16 +414,5 @@ public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewMo
     navController: NavController = navController(),
     provider: () -> Model
 ): Model = remember {
-    navController.sharedViewModels.getModel(key, provider)
-}
-
-// ------------------ internal utils -------------------------
-
-@Suppress("UNCHECKED_CAST")
-internal fun <Model : TiamatViewModel> MutableMap<String, TiamatViewModel>.getModel(
-    key: String,
-    provider: () -> Model
-): Model {
-    val storeKey = "Model#$key"
-    return getOrPut(storeKey, provider) as Model
+    navController.sharedViewModelsStorage.get(key, provider)
 }

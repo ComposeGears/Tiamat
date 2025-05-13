@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.NavController
+import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.TransitionController
 
 @Composable

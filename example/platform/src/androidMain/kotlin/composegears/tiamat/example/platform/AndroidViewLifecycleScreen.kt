@@ -35,7 +35,7 @@ import androidx.concurrent.futures.await
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.composegears.tiamat.navDestination
+import com.composegears.tiamat.compose.navDestination
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 
@@ -123,7 +123,9 @@ private fun CameraView() {
             .clipToBounds()
     ) {
         AndroidView(
-            modifier = Modifier.fillMaxSize().align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxSize()
+                .align(Alignment.Center),
             factory = { previewView }
         )
         Icon(
