@@ -1,6 +1,6 @@
 package composegears.tiamat.example.platform
 
-import androidx.activity.compose.PredictiveBackHandler
+import android.annotation.SuppressLint
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInSine
@@ -9,15 +9,22 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.PredictiveBackHandler
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.IntOffset
-import com.composegears.tiamat.NavController
-import com.composegears.tiamat.TransitionController
+import com.composegears.tiamat.compose.TransitionController
+import com.composegears.tiamat.compose.back
+import com.composegears.tiamat.compose.canGoBackAsState
+import com.composegears.tiamat.navigation.NavController
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 @Suppress("SwallowedException")
+@OptIn(ExperimentalComposeUiApi::class)
+@SuppressLint("UnusedBoxWithConstraintsScope")
 internal actual fun PredictiveBackContainer(
     navController: NavController,
     enabled: Boolean,
@@ -26,7 +33,8 @@ internal actual fun PredictiveBackContainer(
 ) {
     BoxWithConstraints(modifier) {
         content()
-        PredictiveBackHandler(navController.canGoBack && enabled) { progress ->
+        val canGoBack by navController.canGoBackAsState()
+        PredictiveBackHandler(canGoBack && enabled) { progress ->
             val controller = TransitionController()
             navController.back(
                 transition = ContentTransform(
@@ -55,7 +63,7 @@ internal actual fun PredictiveBackContainer(
             try {
                 progress.collect { controller.update(0.5f * it.progress) }
                 controller.finish()
-            } catch (e: CancellationException) {
+            } catch (_: CancellationException) {
                 controller.cancel()
             }
         }

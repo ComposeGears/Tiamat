@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -31,11 +32,6 @@ val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "SharedElementTransition nav controller",
                 startDestination = AdvSharedElementTransitionScreen1,
-                destinations = arrayOf(
-                    AdvSharedElementTransitionScreen1,
-                    AdvSharedElementTransitionScreen2,
-                    AdvSharedElementTransitionScreen3,
-                )
             )
             SharedTransitionLayout {
                 CompositionLocalProvider(
@@ -43,6 +39,11 @@ val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
                 ) {
                     Navigation(
                         navController = nc,
+                        destinations = arrayOf(
+                            AdvSharedElementTransitionScreen1,
+                            AdvSharedElementTransitionScreen2,
+                            AdvSharedElementTransitionScreen3,
+                        ),
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp)
@@ -68,7 +69,7 @@ private val AdvSharedElementTransitionScreen1 by navDestination<Unit> {
                     "This is SHARED element on screen 1",
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState("element"),
+                            sharedContentState = rememberSharedContentState("element"),
                             animatedVisibilityScope = this@navDestination,
                         )
                         .renderInSharedTransitionScopeOverlay()
@@ -100,7 +101,7 @@ private val AdvSharedElementTransitionScreen2 by navDestination<Unit> {
                     "This is SHARED element on screen 2",
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState("element"),
+                            sharedContentState = rememberSharedContentState("element"),
                             animatedVisibilityScope = this@navDestination,
                         )
                         .renderInSharedTransitionScopeOverlay()
@@ -140,7 +141,7 @@ private val AdvSharedElementTransitionScreen3 by navDestination<Unit> {
                     "This is SHARED element on screen 3",
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState("element"),
+                            sharedContentState = rememberSharedContentState("element"),
                             animatedVisibilityScope = this@navDestination,
                         )
                         .renderInSharedTransitionScopeOverlay()

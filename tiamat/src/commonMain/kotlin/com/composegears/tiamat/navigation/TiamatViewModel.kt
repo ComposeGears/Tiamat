@@ -1,4 +1,4 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.navigation
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +11,7 @@ import kotlin.coroutines.CoroutineContext
  */
 public abstract class TiamatViewModel {
 
-    private val _viewModelScope = ComposeModelCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val _viewModelScope = ModelCoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     protected val viewModelScope: CoroutineScope = _viewModelScope
 
     public open fun onClosed(): Unit = Unit
@@ -21,7 +21,7 @@ public abstract class TiamatViewModel {
         onClosed()
     }
 
-    internal class ComposeModelCoroutineScope(context: CoroutineContext) : CoroutineScope {
+    internal class ModelCoroutineScope(context: CoroutineContext) : CoroutineScope {
         override val coroutineContext: CoroutineContext = context
 
         fun close() {

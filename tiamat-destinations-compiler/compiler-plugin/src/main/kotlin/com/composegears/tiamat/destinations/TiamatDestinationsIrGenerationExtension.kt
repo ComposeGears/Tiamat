@@ -170,7 +170,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
         pluginContext: IrPluginContext
     ) {
         val navDestinationType = pluginContext.referenceClass(
-            ClassId(FqName("com.composegears.tiamat"), Name.identifier("NavDestination"))
+            ClassId(FqName("com.composegears.tiamat.navigation"), Name.identifier("NavDestination"))
         )!!
 
         // Remove defined function (cover from those who may try to override by their own)
@@ -221,7 +221,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
 
     private fun isValidAnnotationTarget(symbol: IrSymbol, pluginContext: IrPluginContext): Boolean {
         val navDestinationType = pluginContext.referenceClass(
-            ClassId(FqName("com.composegears.tiamat"), Name.identifier("NavDestination"))
+            ClassId(FqName("com.composegears.tiamat.navigation"), Name.identifier("NavDestination"))
         )!!
         return when (symbol) {
             is IrPropertySymbol -> {

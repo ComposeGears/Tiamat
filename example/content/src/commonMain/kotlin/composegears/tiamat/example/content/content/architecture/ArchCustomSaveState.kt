@@ -15,7 +15,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.Navigation
+import com.composegears.tiamat.compose.navController
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.compose.navigate
+import com.composegears.tiamat.compose.rememberNavController
+import com.composegears.tiamat.navigation.SavedState
+import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.example.ui.core.*
 
 val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
@@ -32,23 +38,23 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
                 val nc = rememberNavController(
                     key = "Arch custom save state nav controller",
                     startDestination = ArchCustomSaveStateScreen1,
+                    savedState = ncSavedState,
+                )
+                Navigation(
+                    navController = nc,
                     destinations = arrayOf(
                         ArchCustomSaveStateScreen1,
                         ArchCustomSaveStateScreen2,
                         ArchCustomSaveStateScreen3,
                     ),
-                    configuration = { ncSavedState?.let(::loadFromSavedState) }
-                )
-                Navigation(
-                    nc,
-                    Modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                 )
                 DisposableEffect(Unit) {
                     onDispose {
-                        ncSavedState = nc.getSavedState()
+                        ncSavedState = nc.saveToSavedState()
                     }
                 }
             } else {

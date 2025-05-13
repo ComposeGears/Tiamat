@@ -64,6 +64,7 @@ kotlin {
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(libs.ui.backhandler)
                 implementation(libs.kotlin.coroutines.swing)
             }
         }

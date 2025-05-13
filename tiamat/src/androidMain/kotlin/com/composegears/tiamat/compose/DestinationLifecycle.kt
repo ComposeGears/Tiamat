@@ -1,4 +1,4 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.composegears.tiamat.navigation.TiamatViewModel
 
 /**
  * Internal view model

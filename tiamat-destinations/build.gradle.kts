@@ -37,6 +37,8 @@ kotlin {
             implementation(projects.tiamat)
 
             implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
         }
     }
 }

@@ -1,6 +1,6 @@
 package composegears.tiamat.example.ui.core
 
-import com.composegears.tiamat.NavDestination
+import com.composegears.tiamat.navigation.NavDestination
 
 data class AppFeature(
     val name: String,

@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.composegears.tiamat.Route
 import com.composegears.tiamat.TiamatExperimentalApi
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.content.content.HomeScreen

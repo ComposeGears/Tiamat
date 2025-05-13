@@ -28,7 +28,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     val navDestinationSource = SourceFile.kotlin(
         "NavDestination.kt", """
-            package com.composegears.tiamat
+            package com.composegears.tiamat.navigation
             
             import kotlin.properties.ReadOnlyProperty
             import kotlin.reflect.KProperty
@@ -86,7 +86,7 @@ class TiamatDestinationsCompilerPluginTest {
             "Test.kt", """
             package com.test
             
-            import com.composegears.tiamat.*
+            import com.composegears.tiamat.navigation.*
             import com.composegears.tiamat.destinations.*
             
             object MyGraph : TiamatGraph
@@ -148,7 +148,7 @@ class TiamatDestinationsCompilerPluginTest {
             "Test.kt", """
             package com.test
             
-            import com.composegears.tiamat.*
+            import com.composegears.tiamat.navigation.*
             import com.composegears.tiamat.destinations.*
             
             object MyGraph : TiamatGraph
