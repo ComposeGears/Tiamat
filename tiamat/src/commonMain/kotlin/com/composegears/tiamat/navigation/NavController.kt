@@ -1,7 +1,6 @@
 package com.composegears.tiamat.navigation
 
 import com.composegears.tiamat.TiamatExperimentalApi
-import com.composegears.tiamat.navigation.NavDestination.Companion.UnresolvedDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -119,7 +118,7 @@ public class NavController internal constructor(
             .let { updateBackStackInternal(it.backStack) }
     }
 
-    // ----------- public methods --------------------------------------------------------------------------------------
+    // ----------- navigation methods ----------------------------------------------------------------------------------
 
     public fun <Args> navigate(
         entry: NavEntry<Args>,

@@ -12,11 +12,11 @@ public interface NavDestination<Args> : RouteElement {
             freeArgs = freeArgs,
             navResult = navResult
         )
-
-        internal data class UnresolvedDestination(
-            override val name: String
-        ) : NavDestination<Any?>
     }
 
     public val name: String
 }
+
+internal data class UnresolvedDestination(
+    override val name: String
+) : NavDestination<Any?>

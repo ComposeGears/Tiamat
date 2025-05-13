@@ -1,7 +1,6 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
-import com.composegears.tiamat.navigation.NavDestination.Companion.UnresolvedDestination
 
 @Stable
 public class NavEntry<Args> public constructor(
