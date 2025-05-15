@@ -14,6 +14,7 @@ class TiamatDestinationsCompilerPluginTest {
             package com.composegears.tiamat.destinations
             
             import kotlin.reflect.KClass
+            import com.composegears.tiamat.navigation.*
             
             @Repeatable
             @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
@@ -21,7 +22,7 @@ class TiamatDestinationsCompilerPluginTest {
             annotation class InstallIn(val target: KClass<*>)
             
             interface TiamatGraph {
-                fun destinations(): Array<com.composegears.tiamat.NavDestination<*>> = emptyArray()
+                fun destinations(): Array<NavDestination<*>> = emptyArray()
             }
         """.trimIndent()
     )
@@ -88,6 +89,7 @@ class TiamatDestinationsCompilerPluginTest {
             
             import com.composegears.tiamat.navigation.*
             import com.composegears.tiamat.destinations.*
+            import org.junit.Assert.assertEquals
             
             object MyGraph : TiamatGraph
             object OtherGraph : TiamatGraph
@@ -116,9 +118,15 @@ class TiamatDestinationsCompilerPluginTest {
             val Screen4 = Screen4Class()
             
             fun main() {
-                println(MyGraph.destinations().joinToString("\n") { it.name })
-                println("--")
-                println(OtherGraph.destinations().joinToString("\n") { it.name })
+                val mgd = MyGraph.destinations()
+                val ogd = OtherGraph.destinations()
+                assertEquals(true, mgd.size == 4)
+                assertEquals(true, mgd.contains(Screen1))
+                assertEquals(true, mgd.contains(Screen2))
+                assertEquals(true, mgd.contains(Screen3))
+                assertEquals(true, mgd.contains(Screen4))
+                assertEquals(true, ogd.size == 1)
+                assertEquals(true, ogd.contains(Screen4))
             }
         """.trimIndent()
         )
@@ -137,7 +145,7 @@ class TiamatDestinationsCompilerPluginTest {
 
         // Execute main function to verify our generated items() function works
         print("\n\n---------- BEGIN OF INVOCATION ----------\n\n")
-        main?.invoke(null)
+        main?.invoke(null, null)
         print("\n\n----------- END OF INVOCATION -----------\n\n")
     }
 
