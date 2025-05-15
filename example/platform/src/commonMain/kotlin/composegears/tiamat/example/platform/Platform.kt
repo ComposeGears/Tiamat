@@ -9,10 +9,4 @@ expect fun Platform.name(): String
 expect fun Platform.platformFeatures(): List<AppFeature>
 
 fun Platform.features(): List<AppFeature> =
-    platformFeatures() + listOf(
-        AppFeature(
-            name = "Predictive back",
-            description = "Platform predictive back",
-            destination = PredictiveBack
-        )
-    )
+    platformFeatures()

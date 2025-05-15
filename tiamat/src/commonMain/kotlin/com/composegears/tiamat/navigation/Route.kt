@@ -10,8 +10,7 @@ public class Route(elements: List<RouteElement>) : RouteElement {
         builder()
     }
 
-    @Suppress("MemberNameEqualsClassName")
-    public fun route(routeElement: RouteElement) {
+    public fun element(routeElement: RouteElement) {
         elements.add(routeElement)
     }
 

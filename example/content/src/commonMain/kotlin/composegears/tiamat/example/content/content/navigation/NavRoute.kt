@@ -43,9 +43,9 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
                 modifier = Modifier.widthIn(min = 400.dp),
                 onClick = {
                     nc.route {
-                        route(NavRouteScreen1)
-                        route(NavRouteScreen2)
-                        route(NavRouteScreen3)
+                        element(NavRouteScreen1)
+                        element(NavRouteScreen2)
+                        element(NavRouteScreen3)
                     }
                 }
             )

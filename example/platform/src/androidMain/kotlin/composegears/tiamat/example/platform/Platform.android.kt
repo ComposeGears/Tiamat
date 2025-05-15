@@ -11,5 +11,10 @@ actual fun Platform.platformFeatures(): List<AppFeature> = listOf(
         name = "CameraX",
         description = "AndroidView + lifecycle handling",
         destination = AndroidViewLifecycleScreen
+    ),
+    AppFeature(
+        name = "Predictive back",
+        description = "Android predictive back",
+        destination = PredictiveBack
     )
 )
