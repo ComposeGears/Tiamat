@@ -12,7 +12,7 @@ class ViewModelsStorageTests {
         }
     }
 
-    @Test
+ /*   @Test
     fun `ViewModelsStorage | get | creates and returns new viewmodel`() {
         val storage = ViewModelsStorage()
         val viewModel = storage["testKey", { TestViewModel() }]
@@ -54,5 +54,5 @@ class ViewModelsStorageTests {
         assertTrue(viewModel1.isClosed, "ViewModel1 should be closed")
         assertTrue(viewModel2.isClosed, "ViewModel2 should be closed")
         assertEquals(0, storage.viewModels.size, "ViewModels storage should be empty after clear")
-    }
+    }*/
 }

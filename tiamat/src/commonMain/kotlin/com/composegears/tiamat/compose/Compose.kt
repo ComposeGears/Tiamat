@@ -25,7 +25,7 @@ internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
 @Composable
 public fun rememberNavController(
-    key: String?,
+    key: String? = null,
     saveable: Boolean? = null,
     startDestination: NavDestination<*>? = null,
     savedState: SavedState? = null,
@@ -41,7 +41,7 @@ public fun rememberNavController(
 @Composable
 @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
 public fun rememberNavController(
-    key: String?,
+    key: String? = null,
     saveable: Boolean? = null,
     startEntry: NavEntry<*>? = null,
     savedState: SavedState? = null,

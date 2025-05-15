@@ -78,3 +78,14 @@ rootProject.tasks.register("createLocalM2") {
         }
     }
 }
+
+rootProject.tasks.register("tiamatCleanJvmTest") {
+    dependsOn(":tiamat-destinations:cleanJvmTest")
+}
+
+rootProject.tasks.register("tiamatJvmTests") {
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))
+    dependsOn(":tiamat-destinations:jvmTest")
+}
+
+rootProject.tasks["tiamatJvmTests"].shouldRunAfter(":tiamat-destinations:cleanJvmTest")

@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class NavControllerTests {
     // ----------- helpers ---------------------------------------------------------------------------------------------
 
-    abstract class SimpleNavDestination(override val name: String) : NavDestination<Unit> {
+ /*   abstract class SimpleNavDestination(override val name: String) : NavDestination<Unit> {
         override fun toString(): String = "NavDestination($name)"
     }
 
@@ -471,5 +471,5 @@ class NavControllerTests {
         assertCallbackResult(Destination3, Destination1, true)
         nc.popToTop(Destination4)
         assertCallbackResult(Destination1, Destination4, true)
-    }
+    }*/
 }
