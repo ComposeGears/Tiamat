@@ -20,7 +20,7 @@ class NavEntryTests {
     }
 
   /*  @Test
-    fun `NavEntry | saveState | saved to state`() {
+    fun `saveState # saved to state`() {
         val destination = TestDestination
         val navArgs = "test_args"
         val freeArgs = 42
@@ -37,7 +37,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | saveState | restored from state`() {
+    fun `saveState # restored from state`() {
         val destination = TestDestination
         val navArgs = "test_args"
         val freeArgs = 42
@@ -54,7 +54,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | destination | destination is unresolved if loaded from saved state`() {
+    fun `destination # destination is unresolved if loaded from saved state`() {
         val destination = TestDestination
         val originalEntry = NavEntry(destination)
         val savedState = originalEntry.saveToSavedState()
@@ -67,7 +67,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | destination | destination is resolved if created from real destination`() {
+    fun `destination # destination is resolved if created from real destination`() {
         val destination = TestDestination
         val entry = NavEntry(destination)
         assertTrue(entry.isResolved())
@@ -75,7 +75,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | destination | destination is resolved after calling "resolveDestination"`() {
+    fun `destination # destination is resolved after calling "resolveDestination"`() {
         val destination = TestDestination
         val originalEntry = NavEntry(destination)
         val savedState = originalEntry.saveToSavedState()
@@ -90,7 +90,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | destination | error is thrown if destination is not found when calling "resolveDestination"`() {
+    fun `destination # error is thrown if destination is not found when calling "resolveDestination"`() {
         val destination = TestDestination
         val originalEntry = NavEntry(destination)
         val savedState = originalEntry.saveToSavedState()
@@ -103,7 +103,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | close | clears viewModelsStorage`() {
+    fun `close # clears viewModelsStorage`() {
         val entry = NavEntry(TestDestination)
         val viewModel1 = entry.viewModelsStorage["vm1", { TestViewModel() }]
         val viewModel2 = entry.viewModelsStorage["vm2", { TestViewModel() }]
@@ -117,7 +117,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `NavEntry | close | works with empty viewModelsStorage`() {
+    fun `close # works with empty viewModelsStorage`() {
         val entry = NavEntry(TestDestination)
         entry.viewModelsStorage["vm1", { TestViewModel() }]
         assertEquals(1, entry.viewModelsStorage.viewModels.size)

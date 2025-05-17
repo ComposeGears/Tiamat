@@ -5,7 +5,7 @@ public class NavControllersStorage {
         private const val KEY_ITEMS = "items"
     }
 
-    private var internalNestedNavControllers: ArrayList<NavController> = ArrayList()
+    private val internalNestedNavControllers: ArrayList<NavController> = ArrayList()
     public val nestedNavControllers: List<NavController> = internalNestedNavControllers
 
     internal fun saveToSavedState(): SavedState = SavedState(
@@ -13,16 +13,18 @@ public class NavControllersStorage {
     )
 
     @Suppress("UNCHECKED_CAST")
-    internal fun loadFromSavedState(savedState: SavedState?) {
+    internal fun loadFromSavedState(parent: NavController?, savedState: SavedState?) {
+        clear()
         savedState ?: return
-        internalNestedNavControllers = savedState[KEY_ITEMS] as ArrayList<NavController>
+        (savedState[KEY_ITEMS] as Iterable<SavedState>)
+            .map { NavController.restoreFromSavedState(parent, it) }
+            .let { internalNestedNavControllers.addAll(it) }
     }
 
     internal fun get(key: String?): NavController? =
         internalNestedNavControllers.firstOrNull { it.key == key }
 
     internal fun add(navController: NavController) {
-        // todo add test only unique nc-s allowed
         if (get(navController.key) != null) error(
             "NavController with key ${navController.key} already exists"
         )

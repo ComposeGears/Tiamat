@@ -23,6 +23,7 @@ public class NavEntry<Args> public constructor(
 
         @Suppress("UNCHECKED_CAST")
         public fun restoreFromSavedState(
+            parent: NavController?,
             savedState: SavedState
         ): NavEntry<*> {
             val destination = savedState[KEY_DESTINATION]?.toString()
@@ -39,7 +40,7 @@ public class NavEntry<Args> public constructor(
                 navResult = navResult,
             ).also {
                 it.savedState = entrySavedState
-                it.navControllersStorage.loadFromSavedState(navControllers)
+                it.navControllersStorage.loadFromSavedState(parent, navControllers)
             }
         }
     }

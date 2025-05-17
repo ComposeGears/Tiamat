@@ -15,13 +15,13 @@ class TiamatDestinationsGraphTest {
     }
 
     @Test
-    fun `empty graph throw exception when destinations called`() {
+    fun `destinations # empty graph throw exception when destinations called`() {
         val graph = object : TiamatGraph {}
         assertFails { graph.destinations() }
     }
 
     @Test
-    fun `merging graphs combines destinations`() {
+    fun `plus # merging graphs combines destinations`() {
         val mockDestination1 = createMockDestination("dest1")
         val mockDestination2 = createMockDestination("dest2")
         val mockDestination3 = createMockDestination("dest3")
@@ -48,7 +48,7 @@ class TiamatDestinationsGraphTest {
     }
 
     @Test
-    fun `merging multiple graphs combines destinations`() {
+    fun `plus # merging multiple graphs combines destinations`() {
         val mockDestination1 = createMockDestination("dest1")
         val mockDestination2 = createMockDestination("dest2")
         val mockDestination3 = createMockDestination("dest3")
@@ -81,7 +81,7 @@ class TiamatDestinationsGraphTest {
     }
 
     @Test
-    fun `merged graph contains unique destinations`() {
+    fun `plus # merged graph contains unique destinations`() {
         val mockDestination1 = createMockDestination("dest1")
         val mockDestination2 = createMockDestination("dest2")
 

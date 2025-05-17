@@ -32,7 +32,7 @@ class TiamatDestinationsComposeTest {
 
     @Test
     @OptIn(ExperimentalTestApi::class)
-    fun `Navigation displays content when used with TiamatGraph`() = runComposeUiTest {
+    fun `Navigation # displays content when used with TiamatGraph`() = runComposeUiTest {
         setContent {
             val nc = rememberNavController(
                 startDestination = Screen,

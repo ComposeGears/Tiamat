@@ -82,7 +82,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `plugin handles multiple destination types`() {
+    fun `compiler # plugin handles multiple destination types`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -151,7 +151,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `plugin failed with incorrect annotation use`() {
+    fun `compiler # plugin failed with incorrect annotation use`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test

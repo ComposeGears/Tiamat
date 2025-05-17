@@ -55,10 +55,13 @@ public class NavController internal constructor(
                 key = savedState[KEY_KEY] as? String?,
                 saveable = savedState[KEY_SAVEABLE] as Boolean
             )
-            val current = (savedState[KEY_CURRENT] as? SavedState)?.let { NavEntry.restoreFromSavedState(it) }
-            val backStack = (savedState[KEY_BACK_STACK] as? List<*>)?.mapNotNull { item ->
-                (item as? SavedState)?.let { NavEntry.restoreFromSavedState(it) }
-            }
+            val current = (savedState[KEY_CURRENT] as? SavedState)
+                ?.let { NavEntry.restoreFromSavedState(navController, it) }
+            val backStack = (savedState[KEY_BACK_STACK] as? List<*>)
+                ?.mapNotNull { item ->
+                    (item as? SavedState)
+                        ?.let { NavEntry.restoreFromSavedState(navController, it) }
+                }
             if (backStack != null && backStack.isNotEmpty()) {
                 navController.editBackStack { backStack.onEach { add(it) } }
             }

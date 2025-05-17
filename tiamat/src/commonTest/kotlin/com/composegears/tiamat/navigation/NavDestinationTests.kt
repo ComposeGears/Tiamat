@@ -5,12 +5,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NavDestinationTests {
-    class AnyTestDestination<T> : NavDestination<T> {
-        override val name: String = "AnyTestDestination"
-    }
 
     @Test
-    fun `NavDestination | companion | convert to NavEntry`() {
+    fun `companion # toNavEntry # convert to NavEntry`() {
         val intNavEntry = AnyTestDestination<Int>()
         val intEntry = intNavEntry.toNavEntry(
             navArgs = 2,
@@ -40,6 +37,9 @@ class NavDestinationTests {
         assertEquals(true, booleanEntry.navArgs)
         assertEquals("extra data", booleanEntry.freeArgs)
         assertEquals(3.14, booleanEntry.navResult)
+    }
 
+    class AnyTestDestination<T> : NavDestination<T> {
+        override val name: String = "AnyTestDestination"
     }
 }

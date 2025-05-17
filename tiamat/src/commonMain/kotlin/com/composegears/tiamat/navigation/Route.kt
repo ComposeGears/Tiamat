@@ -2,7 +2,7 @@ package com.composegears.tiamat.navigation
 
 public sealed interface RouteElement
 
-public class Route(elements: List<RouteElement>) : RouteElement {
+public class Route(elements: List<RouteElement>) {
 
     internal val elements = elements.toMutableList()
 
