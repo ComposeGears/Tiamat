@@ -79,13 +79,10 @@ public class NavEntry<Args> public constructor(
         KEY_NAV_ARGS to navArgs,
         KEY_FREE_ARGS to freeArgs,
         KEY_NAV_RESULT to navResult,
-        // todo add test saver used if it presend, saved state othervise
         KEY_SAVED_STATE to (savedStateSaver?.invoke() ?: savedState),
-        // todo add test it is saved & only saveable is saved
         KEY_NAV_CONTROLLERS to navControllersStorage.saveToSavedState(),
     )
 
-    // todo add attach/detach tests  (if detached from all -> should close)
     internal fun attachToNavController() {
         isAttachedToNavController = true
     }

@@ -3,125 +3,203 @@ package com.composegears.tiamat.navigation
 import kotlin.test.*
 
 class NavEntryTests {
-    private object TestDestination : NavDestination<String> {
-        override val name: String = "test_destination"
-    }
 
-    private object AnotherTestDestination : NavDestination<String> {
-        override val name: String = "another_test_destination"
-    }
-
-    private class TestViewModel : TiamatViewModel() {
-        var isClosed = false
-
-        override fun onClosed() {
-            isClosed = true
-        }
-    }
-
-  /*  @Test
-    fun `saveState # saved to state`() {
+    @Test
+    fun `init # initializes with provided values`() {
         val destination = TestDestination
-        val navArgs = "test_args"
-        val freeArgs = 42
-        val navResult = "test_result"
-        val entry = NavEntry(destination, navArgs, freeArgs, navResult)
+        val navArgs = "test-args"
+        val freeArgs = "free-args"
+        val navResult = "result"
 
+        val entry = NavEntry(
+            destination = destination,
+            navArgs = navArgs,
+            freeArgs = freeArgs,
+            navResult = navResult
+        )
+
+        assertEquals(destination, entry.destination)
+        assertEquals(navArgs, entry.navArgs)
+        assertEquals(freeArgs, entry.freeArgs)
+        assertEquals(navResult, entry.navResult)
+        assertNotNull(entry.navControllersStorage)
+        assertNotNull(entry.viewModelsStorage)
+    }
+
+    @Test
+    fun `isResolved # returns false for unresolved destination`() {
+        val entry = NavEntry(destination = UnresolvedDestination("test"))
+        assertFalse(entry.isResolved())
+    }
+
+    @Test
+    fun `isResolved # returns true for resolved destination`() {
+        val entry = NavEntry(destination = TestDestination)
+        assertTrue(entry.isResolved())
+    }
+
+    @Test
+    fun `resolveDestination # finds matching destination by name`() {
+        val destinationName = TestDestination.name
+        val entry = NavEntry(destination = UnresolvedDestination(destinationName))
+        val destinations = arrayOf<NavDestination<*>>(
+            AnotherTestDestination,
+            TestDestination
+        )
+        entry.resolveDestination(destinations)
+        assertTrue(entry.isResolved())
+        assertEquals(destinationName, entry.destination.name)
+    }
+
+    @Test
+    fun `resolveDestination # throws error when destination not found`() {
+        val entry = NavEntry(destination = UnresolvedDestination("non_existent"))
+        val destinations = arrayOf<NavDestination<*>>(
+            TestDestination,
+            AnotherTestDestination
+        )
+        assertFails { entry.resolveDestination(destinations) }
+    }
+
+    @Test
+    fun `saveToSavedState # saves all entry properties`() {
+        val destination = TestDestination
+        val navArgs = "test-args"
+        val freeArgs = "free-args"
+        val navResult = "result"
+        val entry = NavEntry(
+            destination = destination,
+            navArgs = navArgs,
+            freeArgs = freeArgs,
+            navResult = navResult
+        )
         val savedState = entry.saveToSavedState()
-
         assertEquals(destination.name, savedState["destination"])
         assertEquals(navArgs, savedState["navArgs"])
         assertEquals(freeArgs, savedState["freeArgs"])
         assertEquals(navResult, savedState["navResult"])
-        assertNotNull(savedState)
+        assertNotNull(savedState["navControllers"])
     }
 
     @Test
-    fun `saveState # restored from state`() {
+    fun `saveToSavedState # uses savedStateSaver when available`() {
         val destination = TestDestination
-        val navArgs = "test_args"
-        val freeArgs = 42
-        val navResult = "test_result"
-        val originalEntry = NavEntry(destination, navArgs, freeArgs, navResult)
-        val savedState = originalEntry.saveToSavedState()
-
-        val restoredEntry = NavEntry.restoreFromSavedState(savedState)
-
-        assertEquals(destination.name, restoredEntry.destination.name)
-        assertEquals(navArgs, restoredEntry.navArgs)
-        assertEquals(freeArgs, restoredEntry.freeArgs)
-        assertEquals(navResult, restoredEntry.navResult)
+        val customSavedState = SavedState("custom" to "value")
+        val entry = NavEntry(destination = destination)
+        entry.savedStateSaver = { customSavedState }
+        val savedState = entry.saveToSavedState()
+        assertEquals(customSavedState, savedState["savedState"])
     }
 
     @Test
-    fun `destination # destination is unresolved if loaded from saved state`() {
+    fun `saveToSavedState # uses savedState when savedStateSaver is null`() {
         val destination = TestDestination
-        val originalEntry = NavEntry(destination)
-        val savedState = originalEntry.saveToSavedState()
-
-        val restoredEntry = NavEntry.restoreFromSavedState(savedState)
-
-        assertTrue(restoredEntry.destination is UnresolvedDestination)
-        assertFalse(restoredEntry.isResolved())
-        assertEquals(destination.name, restoredEntry.destination.name)
+        val customSavedState = SavedState("custom" to "value")
+        val entry = NavEntry(destination = destination)
+        entry.savedState = customSavedState
+        val savedState = entry.saveToSavedState()
+        assertEquals(customSavedState, savedState["savedState"])
     }
 
     @Test
-    fun `destination # destination is resolved if created from real destination`() {
-        val destination = TestDestination
-        val entry = NavEntry(destination)
-        assertTrue(entry.isResolved())
-        assertEquals(destination, entry.destination)
+    fun `restoreFromSavedState # creates entry with saved values`() {
+        val parentNC = NavController.create("parent", saveable = true)
+        val childNC = NavController.create("child", saveable = true)
+        val destinationName = "test_destination"
+        val navArgs = "test-args"
+        val freeArgs = "free-args"
+        val navResult = "result"
+        val entrySavedState = SavedState("test" to "value")
+
+        val savedState = NavEntry(
+            destination = TestDestination,
+            navArgs = navArgs,
+            freeArgs = freeArgs,
+            navResult = navResult
+        ).also {
+            it.navControllersStorage.add(childNC)
+            it.savedState = entrySavedState
+        }.saveToSavedState()
+        val entry = NavEntry.restoreFromSavedState(parentNC, savedState)
+        assertEquals(destinationName, entry.destination.name)
+        assertEquals(navArgs, entry.navArgs)
+        assertEquals(freeArgs, entry.freeArgs)
+        assertEquals(navResult, entry.navResult)
+        assertEquals(entrySavedState, entry.savedState)
+        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(parentNC, entry.navControllersStorage.nestedNavControllers[0].parent)
+        assertFalse(entry.isResolved())
     }
 
     @Test
-    fun `destination # destination is resolved after calling "resolveDestination"`() {
-        val destination = TestDestination
-        val originalEntry = NavEntry(destination)
-        val savedState = originalEntry.saveToSavedState()
-        val restoredEntry = NavEntry.restoreFromSavedState(savedState)
-        assertFalse(restoredEntry.isResolved())
-
-        restoredEntry.resolveDestination(arrayOf(destination))
-
-        assertTrue(restoredEntry.isResolved())
-        assertEquals(destination.name, restoredEntry.destination.name)
-        assertEquals("test_destination", restoredEntry.destination.name)
+    fun `restoreFromSavedState # throws error when destination is null`() {
+        val savedState = SavedState()
+        assertFails { NavEntry.restoreFromSavedState(null, savedState) }
     }
 
     @Test
-    fun `destination # error is thrown if destination is not found when calling "resolveDestination"`() {
-        val destination = TestDestination
-        val originalEntry = NavEntry(destination)
-        val savedState = originalEntry.saveToSavedState()
-        val restoredEntry = NavEntry.restoreFromSavedState(savedState)
-        assertFalse(restoredEntry.isResolved())
-
-        assertFailsWith<Exception> {
-            restoredEntry.resolveDestination(arrayOf(AnotherTestDestination))
-        }
+    fun `attachToNavController # sets isAttachedToNavController to true`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.attachToNavController()
+        assertTrue(entry.isAttachedToNavController)
     }
 
     @Test
-    fun `close # clears viewModelsStorage`() {
-        val entry = NavEntry(TestDestination)
-        val viewModel1 = entry.viewModelsStorage["vm1", { TestViewModel() }]
-        val viewModel2 = entry.viewModelsStorage["vm2", { TestViewModel() }]
-
-        assertEquals(2, entry.viewModelsStorage.viewModels.size)
-        entry.close()
-
-        assertTrue(viewModel1.isClosed, "ViewModel1 should be closed")
-        assertTrue(viewModel2.isClosed, "ViewModel2 should be closed")
-        assertEquals(0, entry.viewModelsStorage.viewModels.size, "ViewModels storage should be empty after close")
+    fun `detachFromNavController # sets isAttachedToNavController to false`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.attachToNavController()
+        entry.detachFromNavController()
+        assertFalse(entry.isAttachedToNavController)
     }
 
     @Test
-    fun `close # works with empty viewModelsStorage`() {
-        val entry = NavEntry(TestDestination)
-        entry.viewModelsStorage["vm1", { TestViewModel() }]
+    fun `ensureDetachedAndAttach # attaches if not already attached`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.ensureDetachedAndAttach()
+        assertTrue(entry.isAttachedToNavController)
+    }
+
+    @Test
+    fun `ensureDetachedAndAttach # throws error if already attached`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.attachToNavController()
+        assertFails { entry.ensureDetachedAndAttach() }
+    }
+
+    @Test
+    fun `attachToUI # sets isAttachedToUI to true`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.attachToUI()
+        assertTrue(entry.isAttachedToUI)
+    }
+
+    @Test
+    fun `detachFromUI # sets isAttachedToUI to false`() {
+        val entry = NavEntry(destination = TestDestination)
+        entry.attachToUI()
+        entry.detachFromUI()
+        assertFalse(entry.isAttachedToUI)
+    }
+
+    @Test
+    fun `close # clears viewModelsStorage and navControllersStorage`() {
+        val entry = NavEntry(destination = TestDestination)
+        val navController = NavController.create("test", true, startEntry = entry)
+        entry.navControllersStorage.add(NavController.create("tmp", true))
+        entry.viewModelsStorage.get("tmpVM") { object : TiamatViewModel() {} }
         assertEquals(1, entry.viewModelsStorage.viewModels.size)
-        entry.close()
+        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
+        navController.close()
         assertEquals(0, entry.viewModelsStorage.viewModels.size)
-    }*/
+        assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
+    }
+
+    // Test helper objects
+    private object TestDestination : NavDestination<String> {
+        override val name: String = "test_destination"
+    }
+
+    private object AnotherTestDestination : NavDestination<Int> {
+        override val name: String = "another_test_destination"
+    }
 }
