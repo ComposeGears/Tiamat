@@ -48,6 +48,10 @@ public class NavEntry<Args> public constructor(
     // used to get current SavedState when attached to UI
     private var savedStateSaver: (() -> SavedState)? = null
 
+    internal val navControllersStorage: NavControllersStorage = NavControllersStorage()
+    internal val viewModelsStorage: ViewModelsStorage = ViewModelsStorage()
+    internal var savedState: SavedState? = null
+
     internal var isAttachedToNavController = false
         private set
     internal var isAttachedToUI = false
@@ -62,10 +66,6 @@ public class NavEntry<Args> public constructor(
         internal set
     public var navResult: Any? = navResult
         internal set
-    public var savedState: SavedState? = null
-        internal set
-    public val navControllersStorage: NavControllersStorage = NavControllersStorage()
-    public val viewModelsStorage: ViewModelsStorage = ViewModelsStorage()
 
     internal fun isResolved() = destination !is UnresolvedDestination
 

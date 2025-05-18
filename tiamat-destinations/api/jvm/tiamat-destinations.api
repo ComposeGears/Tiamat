@@ -1,3 +1,7 @@
+public final class com/composegears/tiamat/compose/СomposeKt {
+	public static final fun Navigation (Lcom/composegears/tiamat/navigation/NavController;Lcom/composegears/tiamat/destinations/TiamatGraph;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+}
+
 public abstract interface annotation class com/composegears/tiamat/destinations/InstallIn : java/lang/annotation/Annotation {
 	public abstract fun obj ()Ljava/lang/Class;
 }
@@ -7,18 +11,12 @@ public abstract interface annotation class com/composegears/tiamat/destinations/
 }
 
 public abstract interface class com/composegears/tiamat/destinations/TiamatGraph {
-	public abstract fun destinations ()[Lcom/composegears/tiamat/NavDestination;
+	public abstract fun destinations ()[Lcom/composegears/tiamat/navigation/NavDestination;
 	public abstract fun plus (Lcom/composegears/tiamat/destinations/TiamatGraph;)Lcom/composegears/tiamat/destinations/TiamatGraph;
 }
 
 public final class com/composegears/tiamat/destinations/TiamatGraph$DefaultImpls {
-	public static fun destinations (Lcom/composegears/tiamat/destinations/TiamatGraph;)[Lcom/composegears/tiamat/NavDestination;
+	public static fun destinations (Lcom/composegears/tiamat/destinations/TiamatGraph;)[Lcom/composegears/tiamat/navigation/NavDestination;
 	public static fun plus (Lcom/composegears/tiamat/destinations/TiamatGraph;Lcom/composegears/tiamat/destinations/TiamatGraph;)Lcom/composegears/tiamat/destinations/TiamatGraph;
-}
-
-public final class com/composegears/tiamat/СomposeKt {
-	public static final fun rememberNavController (Ljava/lang/String;Lcom/composegears/tiamat/StorageMode;Lcom/composegears/tiamat/NavDestination;Lcom/composegears/tiamat/destinations/TiamatGraph;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/NavController;
-	public static final fun rememberNavController (Ljava/lang/String;Lcom/composegears/tiamat/StorageMode;Lcom/composegears/tiamat/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Lcom/composegears/tiamat/destinations/TiamatGraph;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/NavController;
-	public static final fun rememberNavController (Ljava/lang/String;Lcom/composegears/tiamat/StorageMode;Lcom/composegears/tiamat/NavEntry;Lcom/composegears/tiamat/destinations/TiamatGraph;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)Lcom/composegears/tiamat/NavController;
 }
 

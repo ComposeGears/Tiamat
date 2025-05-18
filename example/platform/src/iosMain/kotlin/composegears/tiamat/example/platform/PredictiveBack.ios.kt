@@ -29,7 +29,6 @@ import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.example.ui.core.*
 import kotlin.coroutines.cancellation.CancellationException
 
-
 @OptIn(TiamatExperimentalApi::class)
 val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
     Screen("PredictiveBack") {
@@ -150,7 +149,7 @@ private val PredictiveBackScreen3 by navDestination<Unit> {
 internal fun PredictiveBackContainer(
     navController: NavController,
     enabled: Boolean,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     BoxWithConstraints(modifier) {

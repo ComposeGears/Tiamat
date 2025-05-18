@@ -182,6 +182,7 @@ public class NavController internal constructor(
     }
 
     @TiamatExperimentalApi
+    @Suppress("CyclomaticComplexMethod")
     public fun route(route: Route) {
         val elements = route.elements.takeIf { it.isNotEmpty() }?.toMutableList() ?: error("Route is empty")
         val pendingStack = mutableListOf<NavEntry<*>>()
