@@ -33,9 +33,11 @@ class MainActivity : ComponentActivity() {
                     if (data != null) {
                         // process deeplink, eg: parse and use Route Api -> navController.route(...)
                         // for now it will reopen HomeScreen on any intent
-                        navController.route(Route {
-                            element(HomeScreen)
-                        })
+                        navController.route(
+                            Route {
+                                element(HomeScreen)
+                            }
+                        )
                     }
                     deeplinkIntent = null
                 }
