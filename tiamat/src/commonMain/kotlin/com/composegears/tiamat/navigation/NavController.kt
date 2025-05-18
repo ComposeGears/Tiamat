@@ -79,11 +79,12 @@ public class NavController internal constructor(
     private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
     private var onNavigationListener: OnNavigationListener? = null
 
+    internal val sharedViewModelsStorage: ViewModelsStorage = ViewModelsStorage()
+
     // ----------- public properties -----------------------------------------------------------------------------------
 
     public var parent: NavController? = null
         private set
-    public val sharedViewModelsStorage: ViewModelsStorage = ViewModelsStorage()
     public val currentTransitionFlow: StateFlow<Transition?> = internalCurrentTransitionFlow
     public val currentBackStackFlow: StateFlow<List<NavEntry<*>>> = internalCurrentBackStackFlow
 

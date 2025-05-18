@@ -1,12 +1,12 @@
 package com.composegears.tiamat.navigation
 
-public class NavControllersStorage {
+internal class NavControllersStorage {
     private companion object {
         private const val KEY_ITEMS = "items"
     }
 
     private val internalNestedNavControllers: ArrayList<NavController> = ArrayList()
-    public val nestedNavControllers: List<NavController> = internalNestedNavControllers
+    internal val nestedNavControllers: List<NavController> = internalNestedNavControllers
 
     internal fun saveToSavedState(): SavedState = SavedState(
         KEY_ITEMS to internalNestedNavControllers.filter { it.saveable }.map { it.saveToSavedState() }

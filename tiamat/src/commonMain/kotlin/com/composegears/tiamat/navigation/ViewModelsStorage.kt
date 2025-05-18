@@ -1,8 +1,8 @@
 package com.composegears.tiamat.navigation
 
-public class ViewModelsStorage {
+internal class ViewModelsStorage {
     private val internalViewModels = mutableMapOf<String, TiamatViewModel>()
-    public val viewModels: Map<String, TiamatViewModel> = internalViewModels
+    internal val viewModels: Map<String, TiamatViewModel> = internalViewModels
 
     @Suppress("UNCHECKED_CAST")
     internal fun <Model : TiamatViewModel> get(key: String, factory: () -> Model): Model =
