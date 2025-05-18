@@ -46,13 +46,16 @@ public class NavEntry<Args> public constructor(
     }
 
     // used to get current SavedState when attached to UI
-    internal var savedStateSaver: (() -> SavedState)? = null
+    private var savedStateSaver: (() -> SavedState)? = null
+
     internal var isAttachedToNavController = false
+        private set
     internal var isAttachedToUI = false
+        private set
 
     public val uid: Long = globalUID++
     public var destination: NavDestination<Args> = destination
-        internal set
+        private set
     public var navArgs: Args? = navArgs
         internal set
     public var freeArgs: Any? = freeArgs
@@ -82,6 +85,10 @@ public class NavEntry<Args> public constructor(
         KEY_SAVED_STATE to (savedStateSaver?.invoke() ?: savedState),
         KEY_NAV_CONTROLLERS to navControllersStorage.saveToSavedState(),
     )
+
+    internal fun setSavedStateSaver(saver: (() -> SavedState)?) {
+        savedStateSaver = saver
+    }
 
     internal fun attachToNavController() {
         isAttachedToNavController = true

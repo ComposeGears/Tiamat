@@ -109,7 +109,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
                 restoredValues = entry.savedState as? Map<String, List<Any?>>?,
                 canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
             )
-            entry.savedStateSaver = registry::performSave
+            entry.setSavedStateSaver(registry::performSave)
             registry
         }
         // display content
@@ -158,7 +158,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
             entry.attachToUI()
             // save state handle
             onDispose {
-                entry.savedStateSaver = null
+                entry.setSavedStateSaver(null)
                 if (entry.isAttachedToNavController) entry.savedState = saveRegistry.performSave()
                 entry.detachFromUI()
             }

@@ -86,7 +86,7 @@ class NavEntryTests {
         val destination = TestDestination
         val customSavedState = SavedState("custom" to "value")
         val entry = NavEntry(destination = destination)
-        entry.savedStateSaver = { customSavedState }
+        entry.setSavedStateSaver { customSavedState }
         val savedState = entry.saveToSavedState()
         assertEquals(customSavedState, savedState["savedState"])
     }
@@ -135,6 +135,16 @@ class NavEntryTests {
     fun `restoreFromSavedState # throws error when destination is null`() {
         val savedState = SavedState()
         assertFails { NavEntry.restoreFromSavedState(null, savedState) }
+    }
+
+    @Test
+    fun `setSavedStateSaver # uses custom saver if provided`() {
+        val destination = TestDestination
+        val customSavedState = SavedState()
+        val entry = NavEntry(destination = destination)
+        entry.savedState = customSavedState
+        val savedState = entry.saveToSavedState()
+        assertEquals(customSavedState, savedState["savedState"])
     }
 
     @Test
