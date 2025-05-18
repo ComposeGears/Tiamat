@@ -2,6 +2,17 @@ package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
 
+/**
+ * Represents a navigation entry in the navigation stack.
+ *
+ * A NavEntry is a combination of a destination and its associated navigation arguments.
+ * It can also store results, free arguments, and maintain view models.
+ *
+ * @param destination The navigation destination this entry represents
+ * @param navArgs Optional typed arguments to pass to the destination
+ * @param freeArgs Optional untyped arguments to pass to the destination
+ * @param navResult Optional result value for this entry
+ */
 @Stable
 public class NavEntry<Args> public constructor(
     destination: NavDestination<Args>,
@@ -22,7 +33,7 @@ public class NavEntry<Args> public constructor(
         private var globalUID = 0L
 
         @Suppress("UNCHECKED_CAST")
-        public fun restoreFromSavedState(
+        internal fun restoreFromSavedState(
             parent: NavController?,
             savedState: SavedState
         ): NavEntry<*> {
@@ -56,14 +67,29 @@ public class NavEntry<Args> public constructor(
         private set
     internal var isAttachedToUI = false
         private set
+    internal val uid: Long = globalUID++
 
-    public val uid: Long = globalUID++
+    /**
+     * The destination this entry represents.
+     */
     public var destination: NavDestination<Args> = destination
         private set
+
+    /**
+     * Typed arguments passed to the destination.
+     */
     public var navArgs: Args? = navArgs
         internal set
+
+    /**
+     * Untyped arguments passed to the destination.
+     */
     public var freeArgs: Any? = freeArgs
         internal set
+
+    /**
+     * Result value for this navigation entry.
+     */
     public var navResult: Any? = navResult
         internal set
 

@@ -5,7 +5,16 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-// todo add NavEntry.close logic & tests
+/**
+ * Controls navigation between screens in an application.
+ *
+ * The NavController manages a back stack of destinations that represent the
+ * navigation history. It provides methods to navigate between destinations,
+ * handle back navigation, and manage the back stack.
+ *
+ * @property key An optional identifier for this NavController
+ * @property saveable Whether this NavController's state should be saved and restored
+ */
 public class NavController internal constructor(
     public val key: String?,
     public val saveable: Boolean,
@@ -83,9 +92,22 @@ public class NavController internal constructor(
 
     // ----------- public properties -----------------------------------------------------------------------------------
 
+    /**
+     * The parent NavController in a hierarchical navigation structure.
+     */
     public var parent: NavController? = null
         private set
+
+    /**
+     * Flow of the current navigation transition.
+     * Emits a new value when navigation occurs.
+     */
     public val currentTransitionFlow: StateFlow<Transition?> = internalCurrentTransitionFlow
+
+    /**
+     * Flow of the current back stack.
+     * Emits a new value when the back stack changes.
+     */
     public val currentBackStackFlow: StateFlow<List<NavEntry<*>>> = internalCurrentBackStackFlow
 
     // ----------- public methods --------------------------------------------------------------------------------------
@@ -291,17 +313,31 @@ public class NavController internal constructor(
 
     // ----------- support classes -------------------------------------------------------------------------------------
 
+    /**
+     * Represents a transition between navigation entries.
+     *
+     * @property targetEntry The navigation entry being navigated to
+     * @property transitionData Optional data to customize the transition
+     * @property isForward Whether the transition is moving forward (true) or backward (false) in the navigation stack
+     */
     public data class Transition(
         val targetEntry: NavEntry<*>?,
         val transitionData: Any?,
         val isForward: Boolean,
     )
 
+    /**
+     * Scope for editing the back stack.
+     */
     public class BackStackEditScope internal constructor(
         initialBackStack: List<NavEntry<*>>
     ) {
 
         private val internalEditableBackStack = initialBackStack.toMutableList()
+
+        /**
+         * The current back stack.
+         */
         public val backStack: List<NavEntry<*>> = internalEditableBackStack
 
         // used internally to add current entry into backstack

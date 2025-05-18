@@ -5,22 +5,52 @@ import com.composegears.tiamat.navigation.NavDestination
 
 /**
  * Extension base interface.
+ *
+ * NavExtensions provide additional functionality to navigation destinations.
+ *
+ * @param Args The type of arguments the destination accepts
  */
 public interface NavExtension<in Args>
 
 /**
  * Content extension base interface.
  *
+ * Allows adding additional UI content to a navigation destination.
  * Default type is [ContentExtension.Type.Overlay]
+ *
+ * @param Args The type of arguments the destination accepts
  */
 public interface ContentExtension<in Args> : NavExtension<Args> {
 
+    /**
+     * Provides the content to be rendered for this extension.
+     *
+     * This method is called within the context of a NavDestinationScope.
+     */
     @Composable
     public fun NavDestinationScope<out Args>.Content()
 
+    /**
+     * Returns the type of content extension.
+     *
+     * @return The type of the content extension, defaults to [Type.Overlay]
+     */
     public fun getType(): Type = Type.Overlay
 
-    public enum class Type { Overlay, Underlay }
+    /**
+     * Defines how the extension content should be positioned relative to the destination content.
+     */
+    public enum class Type {
+        /**
+         * Content will be rendered on top of the destination content
+         */
+        Overlay,
+
+        /**
+         * Content will be rendered behind the destination content
+         */
+        Underlay
+    }
 }
 
 /**
@@ -39,7 +69,8 @@ internal open class ContentExtensionImpl<in Args>(
 /**
  * Create [ContentExtension.Type.Overlay] content-extension.
  *
- * @param content extension content builder lambda
+ * @param content Extension content builder lambda
+ * @return A new content extension
  */
 public fun <Args> extension(
     content: @Composable NavDestinationScope<out Args>.() -> Unit
