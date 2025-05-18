@@ -20,9 +20,26 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
+/**
+ * CompositionLocal that provides access to the current NavController.
+ */
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
+
+/**
+ * CompositionLocal that provides access to the current NavEntry.
+ */
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
+/**
+ * Creates and remembers a NavController.
+ *
+ * @param key Optional identifier for this NavController
+ * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
+ * @param startDestination The initial destination to navigate to
+ * @param savedState Optional saved state to restore from
+ * @param configuration Additional configuration actions to apply to the NavController
+ * @return A remembered NavController instance
+ */
 @Composable
 public fun rememberNavController(
     key: String? = null,
@@ -38,6 +55,16 @@ public fun rememberNavController(
     configuration = configuration,
 )
 
+/**
+ * Creates and remembers a NavController.
+ *
+ * @param key Optional identifier for this NavController
+ * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
+ * @param startEntry The initial entry to navigate to
+ * @param savedState Optional saved state to restore from
+ * @param configuration Additional configuration actions to apply to the NavController
+ * @return A remembered NavController instance
+ */
 @Composable
 @Suppress("CyclomaticComplexMethod", "CognitiveComplexMethod")
 public fun rememberNavController(
@@ -166,6 +193,15 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
     }
 }
 
+/**
+ * The main navigation composable that displays the current destination and handles transitions.
+ *
+ * @param navController The NavController to use for navigation
+ * @param destinations Array of available destinations for this navigation
+ * @param modifier Modifier to apply to the navigation container
+ * @param handleSystemBackEvent Whether to handle system back events (default: true)
+ * @param contentTransformProvider Provider function for content transitions based on navigation direction
+ */
 @Composable
 @Suppress("CognitiveComplexMethod")
 public fun Navigation(
@@ -249,18 +285,35 @@ public fun Navigation(
     }
 }
 
+/**
+ * Collects values from this [NavController.currentBackStackFlow] and represents its latest value via State.
+ *
+ * @return A State containing a boolean value that is true when back navigation is possible
+ */
 @Composable
 public fun NavController.canGoBackAsState(): State<Boolean> {
     val backstack by currentBackStackFlow.collectAsState()
     return remember(backstack) { derivedStateOf { backstack.isNotEmpty() } }
 }
 
+/**
+ * Collects values from [NavController.currentTransitionFlow], extracts the targetEntry
+ * from the current transition, and represents its latest value via State.
+ *
+ * @return A State containing the current NavEntry, or null if there isn't one
+ */
 @Composable
 public fun NavController.currentNavEntryAsState(): State<NavEntry<*>?> {
     val state by currentTransitionFlow.collectAsState()
     return remember(state) { derivedStateOf { state?.targetEntry } }
 }
 
+/**
+ * Collects values from [NavController.currentTransitionFlow], extracts the targetDestination
+ * from the current transition, and represents its latest value via State.
+ *
+ * @return A State containing the current NavDestination, or null if there isn't one
+ */
 @Composable
 public fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?> {
     val state by currentTransitionFlow.collectAsState()

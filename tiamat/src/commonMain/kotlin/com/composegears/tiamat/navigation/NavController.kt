@@ -112,6 +112,11 @@ public class NavController internal constructor(
 
     // ----------- public methods --------------------------------------------------------------------------------------
 
+    /**
+     * Saves the current state of the NavController.
+     *
+     * @return A SavedState object representing the NavController's current state
+     */
     public fun saveToSavedState(): SavedState = SavedState(
         KEY_KEY to key,
         KEY_SAVEABLE to saveable,
@@ -119,10 +124,21 @@ public class NavController internal constructor(
         KEY_BACK_STACK to getBackStack().map { it.saveToSavedState() }
     )
 
+    /**
+     * Sets a listener to be notified when navigation occurs.
+     *
+     * @param listener The listener to be notified, or null to remove any existing listener
+     */
     public fun setOnNavigationListener(listener: OnNavigationListener?) {
         onNavigationListener = listener
     }
 
+    /**
+     * Finds a parent NavController with the specified key.
+     *
+     * @param key The key of the parent NavController to find
+     * @return The parent NavController with the specified key, or null if not found
+     */
     public fun findParentNavController(key: String): NavController? {
         var nc: NavController? = this
         while (nc != null) {
@@ -132,12 +148,32 @@ public class NavController internal constructor(
         return null
     }
 
+    /**
+     * Gets the current navigation entry.
+     *
+     * @return The current navigation entry, or null if there is none
+     */
     public fun getCurrentNavEntry(): NavEntry<*>? = currentTransitionFlow.value?.targetEntry
 
+    /**
+     * Gets the current back stack.
+     *
+     * @return A list of the navigation entries in the back stack
+     */
     public fun getBackStack(): List<NavEntry<*>> = internalCurrentBackStackFlow.value
 
+    /**
+     * Checks if the NavController can navigate back.
+     *
+     * @return True if the back stack is not empty, false otherwise
+     */
     public fun canGoBack(): Boolean = getBackStack().isNotEmpty()
 
+    /**
+     * Edits the back stack using the provided actions.
+     *
+     * @param actions The actions to perform on the back stack
+     */
     public fun editBackStack(actions: BackStackEditScope.() -> Unit) {
         BackStackEditScope(getBackStack())
             .apply(actions)
@@ -146,6 +182,13 @@ public class NavController internal constructor(
 
     // ----------- navigation methods ----------------------------------------------------------------------------------
 
+    /**
+     * Navigates to a new destination.
+     * The current destination is added to the back stack.
+     *
+     * @param entry The navigation entry to navigate to
+     * @param transitionData Optional data to customize the transition animation
+     */
     public fun <Args> navigate(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
@@ -161,6 +204,13 @@ public class NavController internal constructor(
         )
     }
 
+    /**
+     * Replaces the current destination with a new one.
+     * The current destination is not added to the back stack.
+     *
+     * @param entry The navigation entry to replace with
+     * @param transitionData Optional data to customize the transition animation
+     */
     public fun <Args> replace(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
@@ -176,6 +226,13 @@ public class NavController internal constructor(
         )
     }
 
+    /**
+     * Pops the back stack to an existing destination, or navigates to it if not in the back stack.
+     *
+     * @param dest The destination to pop to
+     * @param transitionData Optional data to customize the transition animation
+     * @param orElse Action to perform if the destination is not found in the back stack
+     */
     public fun <Args> popToTop(
         dest: NavDestination<Args>,
         transitionData: Any? = null,
@@ -199,11 +256,21 @@ public class NavController internal constructor(
         } else orElse()
     }
 
+    /**
+     * Navigates using a route builder.
+     *
+     * @param routeBuilder Builder function to construct the route
+     */
     @TiamatExperimentalApi
     public fun route(routeBuilder: Route.() -> Unit) {
         route(Route(routeBuilder))
     }
 
+    /**
+     * Navigates using a provided route.
+     *
+     * @param route The route to navigate
+     */
     @TiamatExperimentalApi
     @Suppress("CyclomaticComplexMethod")
     public fun route(route: Route) {
@@ -243,6 +310,16 @@ public class NavController internal constructor(
         replace(pendingCurrentEntry)
     }
 
+    /**
+     * Navigates back in the navigation hierarchy.
+     *
+     * @param to Optional destination to navigate back to
+     * @param result Optional result to pass to the destination
+     * @param inclusive Whether to include the destination in the back operation
+     * @param transitionData Optional data to customize the transition animation
+     * @param orElse Action to perform if back navigation is not possible in this NavController
+     * @return True if back navigation was handled, false otherwise
+     */
     public fun back(
         to: NavDestination<*>? = null,
         result: Any? = null,
@@ -470,6 +547,7 @@ public class NavController internal constructor(
 
         /**
          * Sets the back stack to the specified destinations.
+         * This clears the current back stack before adding the new destinations.
          *
          * @param destinations The destinations to set.
          */
@@ -480,6 +558,7 @@ public class NavController internal constructor(
 
         /**
          * Sets the back stack to the specified entries.
+         * This clears the current back stack before adding the new entries.
          *
          * @param entries The entries to set.
          */

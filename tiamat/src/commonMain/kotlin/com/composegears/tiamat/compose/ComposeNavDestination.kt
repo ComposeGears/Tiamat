@@ -5,9 +5,20 @@ import com.composegears.tiamat.navigation.NavDestination
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+/**
+ * A navigation destination with Compose UI implementation.
+ *
+ * @param Args The type of arguments this destination accepts
+ */
 public interface ComposeNavDestination<Args> : NavDestination<Args> {
+    /**
+     * List of extensions attached to this destination.
+     */
     public val extensions: List<NavExtension<Args>>
 
+    /**
+     * The UI content of this destination.
+     */
     @Composable
     public fun NavDestinationScope<Args>.Content()
 }
@@ -28,7 +39,12 @@ internal open class NavDestinationImpl<Args>(
 }
 
 /**
- * Nav destination delegate impl.
+ * Nav destination delegate implementation.
+ *
+ * Provides lazy initialization of a ComposeNavDestination when accessed through a delegated property.
+ *
+ * @param extensions List of extensions for the destination
+ * @param content Composable function defining the content of the destination
  */
 public class NavDestinationInstanceDelegate<Args>(
     private val extensions: List<NavExtension<Args>>,
@@ -43,12 +59,12 @@ public class NavDestinationInstanceDelegate<Args>(
 }
 
 /**
- * NavDestination builder.
+ * Creates a ComposeNavDestination instance.
  *
- * @param name The name of the NavDestination.
- * @param extensions Optional extensions for the NavDestination.
- * @param content Composable function defining the content of the NavDestination.
- * @return A NavDestination instance.
+ * @param name The name of the NavDestination
+ * @param extensions Optional extensions for the NavDestination
+ * @param content The content of the NavDestination
+ * @return A ComposeNavDestination instance
  */
 @Suppress("FunctionName")
 public fun <Args> NavDestination(
@@ -58,11 +74,21 @@ public fun <Args> NavDestination(
 ): ComposeNavDestination<Args> = NavDestinationImpl(name, extensions, content)
 
 /**
- * NavDestination builder.
+ * Creates a NavDestinationInstanceDelegate for use with property delegation.
  *
- * @param extensions Optional extensions for the NavDestination.
- * @param content Composable function defining the content of the NavDestination.
- * @return A NavDestination delegate instance.
+ * This allows for declaring destinations as delegated properties where
+ * the property name becomes the destination name.
+ *
+ * Example usage:
+ * ```
+ * val Home by navDestination<Unit> {
+ *     // destination content here
+ * }
+ * ```
+ *
+ * @param extensions Optional extensions for the NavDestination
+ * @param content Composable function defining the content of the NavDestination
+ * @return A delegate that creates and caches a ComposeNavDestination
  */
 public fun <Args> navDestination(
     vararg extensions: NavExtension<Args>? = emptyArray(),
