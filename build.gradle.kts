@@ -87,7 +87,7 @@ rootProject.tasks.register("tiamatCleanJvmTest") {
 rootProject.tasks.register("tiamatJvmTests") {
     dependsOn(":tiamat:jvmTest")
     dependsOn(":tiamat-destinations:jvmTest")
-    // todo enable dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))
 }
 
 rootProject.tasks["tiamatJvmTests"].shouldRunAfter(":tiamat-destinations:cleanJvmTest")

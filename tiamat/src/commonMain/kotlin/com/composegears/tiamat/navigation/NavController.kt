@@ -74,7 +74,7 @@ public class NavController internal constructor(
     }
 
     // ----------- internal properties ---------------------------------------------------------------------------------
-    // todo add test for transition data is passed when nav with it
+
     private var internalCurrentTransitionFlow: MutableStateFlow<Transition?> = MutableStateFlow(null)
     private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
     private var onNavigationListener: OnNavigationListener? = null
@@ -186,19 +186,21 @@ public class NavController internal constructor(
         val elements = route.elements.takeIf { it.isNotEmpty() }?.toMutableList() ?: error("Route is empty")
         val pendingStack = mutableListOf<NavEntry<*>>()
         // process entries till the end or NavController
-        elements.dropWhile { element ->
+        do {
+            val element = elements[0]
             when (element) {
                 is NavEntry<*> -> element
                 is NavDestination<*> -> element.toNavEntry()
                 is Route.Destination -> UnresolvedDestination(element.name).toNavEntry()
-                else -> null
+                is Route.NavController -> null
             }?.also { entry: NavEntry<*> ->
+                elements.removeAt(0)
                 pendingStack.add(entry)
-            } != null
-        }
+            } ?: break
+        } while (elements.isNotEmpty())
 
         if (pendingStack.isEmpty()) error("Route: no start entry for NavController:$key")
-        val pendingCurrentEntry = pendingStack.removeLast()
+        val pendingCurrentEntry = pendingStack.removeAt(pendingStack.lastIndex)
         // run route for nested NavController
         elements
             .takeIf { it.isNotEmpty() }
@@ -217,14 +219,18 @@ public class NavController internal constructor(
         replace(pendingCurrentEntry)
     }
 
-    // todo update tests
     public fun back(
         to: NavDestination<*>? = null,
         result: Any? = null,
         inclusive: Boolean = false,
         transitionData: Any? = null,
         orElse: NavController.() -> Boolean = {
-            parent?.back() ?: false
+            parent?.back(
+                to = to,
+                result = result,
+                inclusive = inclusive,
+                transitionData = transitionData
+            ) ?: false
         }
     ): Boolean {
         val backStack = getBackStack()
@@ -232,7 +238,6 @@ public class NavController internal constructor(
             if (to != null) backStack
                 .indexOfLast { it.destination == to }
                 .let { if (inclusive) it - 1 else it }
-                .also { if (it < 0) error("Destination not found") }
             else backStack.size - 1
         return if (targetIndex >= 0) {
             val currentNavEntry = getCurrentNavEntry()
@@ -240,7 +245,7 @@ public class NavController internal constructor(
             targetNavEntry.navResult = result
             currentNavEntry?.detachFromNavController()
             editBackStack {
-                while (backStack.lastIndex != targetIndex) removeLast()
+                while (this.backStack.lastIndex != targetIndex) removeLast()
                 removeWithoutDetach(targetNavEntry)
             }
             updateCurrentNavEntryInternal(currentNavEntry, targetNavEntry, false, transitionData)
@@ -290,7 +295,6 @@ public class NavController internal constructor(
         val isForward: Boolean,
     )
 
-    // todo add test remove->detach entry, add -> check for not be attached
     public class BackStackEditScope internal constructor(
         initialBackStack: List<NavEntry<*>>
     ) {
