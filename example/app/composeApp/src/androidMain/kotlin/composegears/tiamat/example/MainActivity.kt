@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.navigation.Route
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.content.content.HomeScreen
 import composegears.tiamat.example.ui.core.LocalThemeConfig
@@ -32,7 +33,9 @@ class MainActivity : ComponentActivity() {
                     if (data != null) {
                         // process deeplink, eg: parse and use Route Api -> navController.route(...)
                         // for now it will reopen HomeScreen on any intent
-                        navController.route(Route.build(HomeScreen))
+                        navController.route(Route {
+                            element(HomeScreen)
+                        })
                     }
                     deeplinkIntent = null
                 }

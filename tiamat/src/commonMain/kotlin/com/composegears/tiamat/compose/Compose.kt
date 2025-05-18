@@ -258,7 +258,7 @@ public fun Navigation(
         val transition = rememberTransition(transitionState)
         var contentZIndex by remember { mutableFloatStateOf(0f) }
         transition.AnimatedContent(
-            contentKey = { "${it.destination.name}:${it.uid}" },
+            contentKey = { "${it.destination.name}:${it.uuid}" },
             contentAlignment = Alignment.Center,
             modifier = modifier,
             transitionSpec = {

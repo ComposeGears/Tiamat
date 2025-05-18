@@ -1,6 +1,8 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * Represents a navigation entry in the navigation stack.
@@ -24,13 +26,12 @@ public class NavEntry<Args> public constructor(
     public companion object {
 
         private const val KEY_DESTINATION = "destination"
+        private const val KEY_UUID = "uuid"
         private const val KEY_NAV_ARGS = "navArgs"
         private const val KEY_FREE_ARGS = "freeArgs"
         private const val KEY_NAV_RESULT = "navResult"
         private const val KEY_SAVED_STATE = "savedState"
         private const val KEY_NAV_CONTROLLERS = "navControllers"
-
-        private var globalUID = 0L
 
         @Suppress("UNCHECKED_CAST")
         internal fun restoreFromSavedState(
@@ -39,6 +40,7 @@ public class NavEntry<Args> public constructor(
         ): NavEntry<*> {
             val destination = savedState[KEY_DESTINATION]?.toString()
                 ?: error("Unable to restore NavEntry: destination is null")
+            val uuid = savedState[KEY_UUID]?.toString()
             val navArgs = savedState[KEY_NAV_ARGS]
             val freeArgs = savedState[KEY_FREE_ARGS]
             val navResult = savedState[KEY_NAV_RESULT]
@@ -50,6 +52,7 @@ public class NavEntry<Args> public constructor(
                 freeArgs = freeArgs,
                 navResult = navResult,
             ).also {
+                if (uuid != null) it.uuid = uuid
                 it.savedState = entrySavedState
                 it.navControllersStorage.loadFromSavedState(parent, navControllers)
             }
@@ -67,7 +70,10 @@ public class NavEntry<Args> public constructor(
         private set
     internal var isAttachedToUI = false
         private set
-    internal val uid: Long = globalUID++
+
+    @OptIn(ExperimentalUuidApi::class)
+    internal var uuid: String = Uuid.random().toHexString()
+        private set
 
     /**
      * The destination this entry represents.
@@ -105,6 +111,7 @@ public class NavEntry<Args> public constructor(
 
     internal fun saveToSavedState(): SavedState = SavedState(
         KEY_DESTINATION to destination.name,
+        KEY_UUID to uuid,
         KEY_NAV_ARGS to navArgs,
         KEY_FREE_ARGS to freeArgs,
         KEY_NAV_RESULT to navResult,

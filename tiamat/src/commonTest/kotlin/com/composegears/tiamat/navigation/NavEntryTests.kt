@@ -110,8 +110,7 @@ class NavEntryTests {
         val freeArgs = "free-args"
         val navResult = "result"
         val entrySavedState = SavedState("test" to "value")
-
-        val savedState = NavEntry(
+        val savedEntry = NavEntry(
             destination = TestDestination,
             navArgs = navArgs,
             freeArgs = freeArgs,
@@ -119,9 +118,11 @@ class NavEntryTests {
         ).also {
             it.navControllersStorage.add(childNC)
             it.savedState = entrySavedState
-        }.saveToSavedState()
+        }
+        val savedState = savedEntry.saveToSavedState()
         val entry = NavEntry.restoreFromSavedState(parentNC, savedState)
         assertEquals(destinationName, entry.destination.name)
+        assertEquals(savedEntry.uuid, entry.uuid)
         assertEquals(navArgs, entry.navArgs)
         assertEquals(freeArgs, entry.freeArgs)
         assertEquals(navResult, entry.navResult)
