@@ -433,6 +433,8 @@ other commands:
 
 - check API changes: `./gradlew apiCheck`
 
+- kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
+
 ## Contributors
 
 Thank you for your help! ❤️

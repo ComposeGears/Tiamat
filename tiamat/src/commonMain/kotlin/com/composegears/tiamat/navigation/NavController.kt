@@ -1,5 +1,6 @@
 package com.composegears.tiamat.navigation
 
+import com.composegears.tiamat.ExcludeFromTests
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,7 @@ public class NavController internal constructor(
 
         public fun create(
             key: String? = null,
-            saveable: Boolean,
+            saveable: Boolean = true,
             parent: NavController? = null,
             startDestination: NavDestination<*>,
             config: NavController.() -> Unit = {}
@@ -43,7 +44,7 @@ public class NavController internal constructor(
         @Suppress("UNCHECKED_CAST")
         public fun create(
             key: String? = null,
-            saveable: Boolean,
+            saveable: Boolean = true,
             parent: NavController? = null,
             startEntry: NavEntry<*>? = null,
             config: NavController.() -> Unit = {}
@@ -61,16 +62,15 @@ public class NavController internal constructor(
             savedState: SavedState,
         ): NavController {
             val navController = NavController(
-                key = savedState[KEY_KEY] as? String?,
+                key = savedState[KEY_KEY] as? String,
                 saveable = savedState[KEY_SAVEABLE] as Boolean
             )
             val current = (savedState[KEY_CURRENT] as? SavedState)
                 ?.let { NavEntry.restoreFromSavedState(navController, it) }
-            val backStack = (savedState[KEY_BACK_STACK] as? List<*>)
-                ?.mapNotNull { item ->
-                    (item as? SavedState)
-                        ?.let { NavEntry.restoreFromSavedState(navController, it) }
-                }
+            val backStackItems = savedState[KEY_BACK_STACK] as? List<SavedState>
+            val backStack = backStackItems?.map { item ->
+                NavEntry.restoreFromSavedState(navController, item)
+            }
             if (backStack != null && backStack.isNotEmpty()) {
                 navController.editBackStack { backStack.onEach { add(it) } }
             }
@@ -274,7 +274,9 @@ public class NavController internal constructor(
     @TiamatExperimentalApi
     @Suppress("CyclomaticComplexMethod")
     public fun route(route: Route) {
-        val elements = route.elements.takeIf { it.isNotEmpty() }?.toMutableList() ?: error("Route is empty")
+        val elements =
+            if (route.elements.isEmpty()) error("Route is empty")
+            else route.elements.toMutableList()
         val pendingStack = mutableListOf<NavEntry<*>>()
         // process entries till the end or NavController
         do {
@@ -293,12 +295,11 @@ public class NavController internal constructor(
         if (pendingStack.isEmpty()) error("Route: no start entry for NavController:$key")
         val pendingCurrentEntry = pendingStack.removeAt(pendingStack.lastIndex)
         // run route for nested NavController
-        elements
-            .takeIf { it.isNotEmpty() }
-            ?.removeAt(0)
-            ?.let { it as? Route.NavController }
-            ?.let {
-                val nc = create(it.key, it.saveable ?: saveable, this)
+        if (elements.isNotEmpty()) elements
+            .removeAt(0)
+            .let {
+                val ncData = it as Route.NavController
+                val nc = create(ncData.key, ncData.saveable ?: saveable, this)
                 pendingCurrentEntry.navControllersStorage.add(nc)
                 nc.route(Route(elements))
             }
@@ -385,8 +386,9 @@ public class NavController internal constructor(
 
     // ----------- other -----------------------------------------------------------------------------------------------
 
+    @ExcludeFromTests
     override fun toString(): String =
-        "NavController2(key=$key, current=${getCurrentNavEntry()?.destination?.name}, parent=${parent?.key}}"
+        "NavController(key=$key, current=${getCurrentNavEntry()}, parent=${parent?.key}}"
 
     // ----------- support classes -------------------------------------------------------------------------------------
 
@@ -491,8 +493,7 @@ public class NavController internal constructor(
          * @param index The index of the entry to remove.
          */
         public fun removeAt(index: Int) {
-            if (index in backStack.indices)
-                internalEditableBackStack.removeAt(index).detachFromNavController()
+            internalEditableBackStack.removeAt(index).detachFromNavController()
         }
 
         /**

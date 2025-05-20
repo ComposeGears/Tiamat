@@ -1,6 +1,7 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
+import com.composegears.tiamat.ExcludeFromTests
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -38,21 +39,22 @@ public class NavEntry<Args> public constructor(
             parent: NavController?,
             savedState: SavedState
         ): NavEntry<*> {
-            val destination = savedState[KEY_DESTINATION]?.toString()
+            val destination = savedState[KEY_DESTINATION] as? String
                 ?: error("Unable to restore NavEntry: destination is null")
-            val uuid = savedState[KEY_UUID]?.toString()
+            val uuid = savedState[KEY_UUID] as? String
+                ?: error("Unable to restore NavEntry: uuid is null")
             val navArgs = savedState[KEY_NAV_ARGS]
             val freeArgs = savedState[KEY_FREE_ARGS]
             val navResult = savedState[KEY_NAV_RESULT]
-            val entrySavedState = savedState[KEY_SAVED_STATE] as? SavedState?
-            val navControllers = savedState[KEY_NAV_CONTROLLERS] as? SavedState?
+            val entrySavedState = savedState[KEY_SAVED_STATE] as? SavedState
+            val navControllers = savedState[KEY_NAV_CONTROLLERS] as? SavedState
             return NavEntry(
                 destination = UnresolvedDestination(destination),
                 navArgs = navArgs,
                 freeArgs = freeArgs,
                 navResult = navResult,
             ).also {
-                if (uuid != null) it.uuid = uuid
+                it.uuid = uuid
                 it.savedState = entrySavedState
                 it.navControllersStorage.loadFromSavedState(parent, navControllers)
             }
@@ -105,19 +107,22 @@ public class NavEntry<Args> public constructor(
     internal fun resolveDestination(destinations: Array<NavDestination<*>>) {
         destination = destinations
             .firstOrNull { it.name == destination.name }
-            ?.let { it as? NavDestination<Args> }
+            ?.let { it as NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
     }
 
-    internal fun saveToSavedState(): SavedState = SavedState(
-        KEY_DESTINATION to destination.name,
-        KEY_UUID to uuid,
-        KEY_NAV_ARGS to navArgs,
-        KEY_FREE_ARGS to freeArgs,
-        KEY_NAV_RESULT to navResult,
-        KEY_SAVED_STATE to (savedStateSaver?.invoke() ?: savedState),
-        KEY_NAV_CONTROLLERS to navControllersStorage.saveToSavedState(),
-    )
+    internal fun saveToSavedState(): SavedState {
+        if (savedStateSaver != null) savedState = savedStateSaver!!()
+        return SavedState(
+            KEY_DESTINATION to destination.name,
+            KEY_UUID to uuid,
+            KEY_NAV_ARGS to navArgs,
+            KEY_FREE_ARGS to freeArgs,
+            KEY_NAV_RESULT to navResult,
+            KEY_SAVED_STATE to savedState,
+            KEY_NAV_CONTROLLERS to navControllersStorage.saveToSavedState(),
+        )
+    }
 
     internal fun setSavedStateSaver(saver: (() -> SavedState)?) {
         savedStateSaver = saver
@@ -129,7 +134,7 @@ public class NavEntry<Args> public constructor(
 
     internal fun detachFromNavController() {
         isAttachedToNavController = false
-        if (!isAttachedToNavController && !isAttachedToUI) close()
+        if (!isAttachedToUI) close()
     }
 
     internal fun ensureDetachedAndAttach() {
@@ -143,11 +148,15 @@ public class NavEntry<Args> public constructor(
 
     internal fun detachFromUI() {
         isAttachedToUI = false
-        if (!isAttachedToNavController && !isAttachedToUI) close()
+        if (!isAttachedToNavController) close()
     }
 
     private fun close() {
         viewModelsStorage.clear()
         navControllersStorage.clear()
     }
+
+    @ExcludeFromTests
+    override fun toString(): String =
+        "NavEntry(destination=${destination.name})"
 }

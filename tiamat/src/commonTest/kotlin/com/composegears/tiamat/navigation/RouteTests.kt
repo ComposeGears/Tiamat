@@ -66,10 +66,17 @@ class RouteTests {
     @Test
     fun `navController # add navController`() {
         val route = Route(emptyList())
-        route.navController("main")
+        route.navController("nc1")
+        route.navController("nc2", true)
+        route.navController("nc3", false)
 
-        assertEquals(1, route.elements.size)
+        assertEquals(3, route.elements.size)
         assertTrue(route.elements[0] is Route.NavController)
-        assertEquals("main", (route.elements[0] as Route.NavController).key)
+        assertEquals("nc1", (route.elements[0] as Route.NavController).key)
+        assertEquals(null, (route.elements[0] as Route.NavController).saveable)
+        assertEquals("nc2", (route.elements[1] as Route.NavController).key)
+        assertEquals(true, (route.elements[1] as Route.NavController).saveable)
+        assertEquals("nc3", (route.elements[2] as Route.NavController).key)
+        assertEquals(false, (route.elements[2] as Route.NavController).saveable)
     }
 }

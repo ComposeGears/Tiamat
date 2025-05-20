@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlinx.kover)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
@@ -66,4 +67,14 @@ android {
 
 m2p {
     description = "KMM Navigation library"
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                this.annotatedBy("com.composegears.tiamat.ExcludeFromTests")
+            }
+        }
+    }
 }

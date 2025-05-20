@@ -46,8 +46,8 @@ public class Route(elements: List<RouteElement>) {
      *
      * @param key The key of the navigation controller
      */
-    public fun navController(key: String) {
-        elements.add(NavController(key))
+    public fun navController(key: String, saveable: Boolean? = null) {
+        elements.add(NavController(key, saveable))
     }
 
     internal data class Destination(val name: String) : RouteElement

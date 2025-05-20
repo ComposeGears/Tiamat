@@ -228,6 +228,7 @@ public final class com/composegears/tiamat/navigation/NavEntry : com/composegear
 	public final fun getFreeArgs ()Ljava/lang/Object;
 	public final fun getNavArgs ()Ljava/lang/Object;
 	public final fun getNavResult ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/composegears/tiamat/navigation/NavEntry$Companion {
@@ -239,7 +240,8 @@ public final class com/composegears/tiamat/navigation/Route {
 	public fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public final fun destination (Ljava/lang/String;)V
 	public final fun element (Lcom/composegears/tiamat/navigation/RouteElement;)V
-	public final fun navController (Ljava/lang/String;)V
+	public final fun navController (Ljava/lang/String;Ljava/lang/Boolean;)V
+	public static synthetic fun navController$default (Lcom/composegears/tiamat/navigation/Route;Ljava/lang/String;Ljava/lang/Boolean;ILjava/lang/Object;)V
 }
 
 public abstract interface class com/composegears/tiamat/navigation/RouteElement {
