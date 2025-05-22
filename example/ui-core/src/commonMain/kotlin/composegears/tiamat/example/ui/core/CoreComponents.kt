@@ -106,7 +106,7 @@ internal fun AppButtonContent(
     startIcon: ImageVector? = null,
     endIcon: ImageVector? = null,
 ) {
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         if (startIcon != null) Icon(startIcon, "", Modifier.size(24.dp))
         Text(
             text,
