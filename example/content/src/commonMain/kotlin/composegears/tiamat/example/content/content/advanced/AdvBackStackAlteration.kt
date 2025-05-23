@@ -7,10 +7,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -29,12 +27,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 startDestination = AdvBackStackAlterationScreenA,
             )
             val currentDestination by nc.currentNavDestinationAsState()
-            var editsCount by remember { mutableIntStateOf(0) }
-            val backStack = remember(currentDestination, editsCount) {
-                nc.getBackStack().joinToString(", ") {
-                    it.destination.name.substringAfter("Screen")
-                }
-            }
+            val backStack by nc.currentBackStackFlow.collectAsState()
             VSpacer()
             Text(
                 text = "Here some simple examples of backStack editing",
@@ -42,8 +35,10 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
             )
             Text(
                 text = "Current stack is: " +
-                    "${if (backStack.isNotBlank()) "$backStack ->" else ""} " +
-                    "${currentDestination?.name?.substringAfter("Screen")} (current)",
+                    backStack.joinToString(postfix = if (backStack.isEmpty()) "" else " -> ") {
+                        it.destination.name.substringAfter("Screen")
+                    }
+                    + "${currentDestination?.name?.substringAfter("Screen")} (current)",
                 textAlign = TextAlign.Center
             )
             VSpacer()
@@ -54,7 +49,6 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenA) }
-                            editsCount++
                         }
                     )
                     AppButton(
@@ -62,7 +56,6 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenB) }
-                            editsCount++
                         }
                     )
                     AppButton(
@@ -70,7 +63,6 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             nc.editBackStack { add(AdvBackStackAlterationScreenC) }
-                            editsCount++
                         }
                     )
                 }
@@ -79,26 +71,20 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                     AppButton(
                         "Clear",
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            nc.editBackStack { clear() }
-                            editsCount++
-                        }
+                        enabled = backStack.isNotEmpty(),
+                        onClick = { nc.editBackStack { clear() } }
                     )
                     AppButton(
                         "Remove Last",
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            nc.editBackStack { removeLast() }
-                            editsCount++
-                        }
+                        enabled = backStack.isNotEmpty(),
+                        onClick = { nc.editBackStack { removeLast() } }
                     )
                     AppButton(
                         "Remove First",
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            nc.editBackStack { removeAt(0) }
-                            editsCount++
-                        }
+                        enabled = backStack.isNotEmpty(),
+                        onClick = { nc.editBackStack { removeAt(0) } }
                     )
                 }
             }

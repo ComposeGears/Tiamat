@@ -29,6 +29,8 @@ import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.example.ui.core.*
 import kotlin.coroutines.cancellation.CancellationException
 
+// fixme after being predictive-back-ed once... it stop working
+//  enable `show device bazels to enable pb for simulator`
 @OptIn(TiamatExperimentalApi::class)
 val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
     Screen("PredictiveBack") {
