@@ -72,6 +72,8 @@ public class NavEntry<Args> public constructor(
         private set
     internal var isAttachedToUI = false
         private set
+    internal var isResolved = destination !is UnresolvedDestination
+        private set
 
     @OptIn(ExperimentalUuidApi::class)
     internal var uuid: String = Uuid.random().toHexString()
@@ -101,14 +103,13 @@ public class NavEntry<Args> public constructor(
     public var navResult: Any? = navResult
         internal set
 
-    internal fun isResolved() = destination !is UnresolvedDestination
-
     @Suppress("UNCHECKED_CAST")
     internal fun resolveDestination(destinations: Array<NavDestination<*>>) {
         destination = destinations
             .firstOrNull { it.name == destination.name }
             ?.let { it as NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
+        isResolved = true
     }
 
     internal fun saveToSavedState(): SavedState {

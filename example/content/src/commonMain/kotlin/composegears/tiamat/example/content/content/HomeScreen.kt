@@ -30,10 +30,7 @@ import com.composegears.tiamat.compose.navController
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.compose.navigate
 import com.composegears.tiamat.navigation.NavDestination
-import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
-import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
-import composegears.tiamat.example.content.content.advanced.AdvExtensions
-import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
+import composegears.tiamat.example.content.content.advanced.*
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -141,6 +138,11 @@ private val HomeItems =
                     name = "Auto destinations graph",
                     description = "Example shows how to use `InstallIn` annotation and generate destinations graph",
                     destination = AdvDestinationsGraph
+                ),
+                AppFeature(
+                    name = "Two pane example",
+                    description = "Example shows how to display two pane UI (list + details)",
+                    destination = AdvTwoPane
                 ),
             ),
         ),

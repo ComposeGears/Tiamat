@@ -37,8 +37,8 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
                 text = "Current stack is: " +
                     backStack.joinToString(postfix = if (backStack.isEmpty()) "" else " -> ") {
                         it.destination.name.substringAfter("Screen")
-                    }
-                    + "${currentDestination?.name?.substringAfter("Screen")} (current)",
+                    } +
+                    "${currentDestination?.name?.substringAfter("Screen")} (current)",
                 textAlign = TextAlign.Center
             )
             VSpacer()

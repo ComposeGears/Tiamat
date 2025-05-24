@@ -29,13 +29,13 @@ class NavEntryTests {
     @Test
     fun `isResolved # returns false for unresolved destination`() {
         val entry = NavEntry(destination = UnresolvedDestination("test"))
-        assertFalse(entry.isResolved())
+        assertFalse(entry.isResolved)
     }
 
     @Test
     fun `isResolved # returns true for resolved destination`() {
         val entry = NavEntry(destination = TestDestination)
-        assertTrue(entry.isResolved())
+        assertTrue(entry.isResolved)
     }
 
     @Test
@@ -47,7 +47,7 @@ class NavEntryTests {
             TestDestination
         )
         entry.resolveDestination(destinations)
-        assertTrue(entry.isResolved())
+        assertTrue(entry.isResolved)
         assertEquals(destinationName, entry.destination.name)
     }
 
@@ -123,7 +123,7 @@ class NavEntryTests {
         assertEquals(entrySavedState, entry.savedState)
         assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
         assertEquals(parentNC, entry.navControllersStorage.nestedNavControllers[0].parent)
-        assertFalse(entry.isResolved())
+        assertFalse(entry.isResolved)
     }
 
     @Test

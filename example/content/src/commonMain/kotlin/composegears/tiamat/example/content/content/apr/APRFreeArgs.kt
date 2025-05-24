@@ -104,7 +104,7 @@ private val APRFreeArgsScreen2 by navDestination<Unit> {
                         VSpacer()
                         AppButton(
                             "Clear",
-                            onClick = { clearFreeArgs() }
+                            onClick = { clearFreeArgs() } // todo indicate it was actually cleared
                         )
                     } else {
                         Text("FreeArgs is empty")

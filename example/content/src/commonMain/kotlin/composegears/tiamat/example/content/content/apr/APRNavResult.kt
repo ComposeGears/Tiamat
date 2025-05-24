@@ -61,7 +61,7 @@ private val APRNavResultScreen1 by navDestination<Unit> {
                         VSpacer()
                         AppButton(
                             "Clear",
-                            onClick = { clearNavResult() }
+                            onClick = { clearNavResult() } // todo indicate it was actually cleared
                         )
                     } else {
                         Text(

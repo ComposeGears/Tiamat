@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
@@ -65,19 +64,21 @@ private val AdvSharedElementTransitionScreen1 by navDestination<Unit> {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             with(LocalSharedTransitionScope.current) {
-                Text(
-                    "This is SHARED element on screen 1",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState("element"),
-                            animatedVisibilityScope = this@navDestination,
-                        )
-                        .renderInSharedTransitionScopeOverlay()
-                        .animateEnterExit()
-                        .background(Color.Green.copy(alpha = 0.3f))
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                with(LocalNavAnimatedVisibilityScope.current!!) {
+                    Text(
+                        "This is SHARED element on screen 1",
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("element"),
+                                animatedVisibilityScope = this,
+                            )
+                            .renderInSharedTransitionScopeOverlay()
+                            .animateEnterExit()
+                            .background(Color.Green.copy(alpha = 0.3f))
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
             VSpacer()
             AppButton(
@@ -97,19 +98,21 @@ private val AdvSharedElementTransitionScreen2 by navDestination<Unit> {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             with(LocalSharedTransitionScope.current) {
-                Text(
-                    "This is SHARED element on screen 2",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState("element"),
-                            animatedVisibilityScope = this@navDestination,
-                        )
-                        .renderInSharedTransitionScopeOverlay()
-                        .animateEnterExit()
-                        .background(Color.Red.copy(alpha = 0.3f))
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                with(LocalNavAnimatedVisibilityScope.current!!) {
+                    Text(
+                        "This is SHARED element on screen 2",
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("element"),
+                                animatedVisibilityScope = this,
+                            )
+                            .renderInSharedTransitionScopeOverlay()
+                            .animateEnterExit()
+                            .background(Color.Red.copy(alpha = 0.3f))
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
             VSpacer()
             Row {
@@ -137,19 +140,21 @@ private val AdvSharedElementTransitionScreen3 by navDestination<Unit> {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             with(LocalSharedTransitionScope.current) {
-                Text(
-                    "This is SHARED element on screen 3",
-                    modifier = Modifier
-                        .sharedElement(
-                            sharedContentState = rememberSharedContentState("element"),
-                            animatedVisibilityScope = this@navDestination,
-                        )
-                        .renderInSharedTransitionScopeOverlay()
-                        .animateEnterExit()
-                        .background(Color.Blue.copy(alpha = 0.3f))
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                with(LocalNavAnimatedVisibilityScope.current!!) {
+                    Text(
+                        "This is SHARED element on screen 3",
+                        modifier = Modifier
+                            .sharedElement(
+                                sharedContentState = rememberSharedContentState("element"),
+                                animatedVisibilityScope = this,
+                            )
+                            .renderInSharedTransitionScopeOverlay()
+                            .animateEnterExit()
+                            .background(Color.Blue.copy(alpha = 0.3f))
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
             }
             VSpacer()
             AppButton(

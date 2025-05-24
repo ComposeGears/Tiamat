@@ -14,6 +14,7 @@ import composegears.tiamat.example.content.content.advanced.AdvBackStackAlterati
 import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
 import composegears.tiamat.example.content.content.advanced.AdvExtensions
 import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
+import composegears.tiamat.example.content.content.advanced.AdvTwoPane
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -57,6 +58,7 @@ fun App(
                     AdvBackStackAlteration,
                     AdvSharedElementTransition,
                     AdvDestinationsGraph,
+                    AdvTwoPane,
                     *(Platform.features() + A3rdParty.features())
                         .map { it.destination }
                         .toTypedArray()

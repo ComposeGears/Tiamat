@@ -21,6 +21,12 @@ import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
 /**
+ * CompositionLocal that provides current [AnimatedVisibilityScope].
+ */
+public val LocalNavAnimatedVisibilityScope: ProvidableCompositionLocal<AnimatedVisibilityScope?> =
+    staticCompositionLocalOf { null }
+
+/**
  * CompositionLocal that provides access to the current NavController.
  */
 internal val LocalNavController = staticCompositionLocalOf<NavController?> { null }
@@ -31,11 +37,10 @@ internal val LocalNavController = staticCompositionLocalOf<NavController?> { nul
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
 /**
- * Creates and remembers a NavController.
+ * Creates and remembers a NavController without a start destination.
  *
  * @param key Optional identifier for this NavController
  * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
- * @param startDestination The initial destination to navigate to
  * @param savedState Optional saved state to restore from
  * @param configuration Additional configuration actions to apply to the NavController
  * @return A remembered NavController instance
@@ -44,8 +49,32 @@ internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 public fun rememberNavController(
     key: String? = null,
     saveable: Boolean? = null,
-    startDestination: NavDestination<*>? = null,
     savedState: SavedState? = null,
+    configuration: NavController.() -> Unit = {}
+): NavController = rememberNavController(
+    key = key,
+    saveable = saveable,
+    startEntry = null,
+    savedState = savedState,
+    configuration = configuration,
+)
+
+/**
+ * Creates and remembers a NavController.
+ *
+ * @param key Optional identifier for this NavController
+ * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
+ * @param savedState Optional saved state to restore from
+ * @param startDestination The initial destination to navigate to
+ * @param configuration Additional configuration actions to apply to the NavController
+ * @return A remembered NavController instance
+ */
+@Composable
+public fun rememberNavController(
+    key: String? = null,
+    saveable: Boolean? = null,
+    savedState: SavedState? = null,
+    startDestination: NavDestination<*>? = null,
     configuration: NavController.() -> Unit = {}
 ): NavController = rememberNavController(
     key = key,
@@ -60,8 +89,8 @@ public fun rememberNavController(
  *
  * @param key Optional identifier for this NavController
  * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
- * @param startEntry The initial entry to navigate to
  * @param savedState Optional saved state to restore from
+ * @param startEntry The initial entry to navigate to
  * @param configuration Additional configuration actions to apply to the NavController
  * @return A remembered NavController instance
  */
@@ -70,8 +99,8 @@ public fun rememberNavController(
 public fun rememberNavController(
     key: String? = null,
     saveable: Boolean? = null,
-    startEntry: NavEntry<*>? = null,
     savedState: SavedState? = null,
+    startEntry: NavEntry<*>? = null,
     configuration: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
@@ -124,7 +153,7 @@ public fun rememberNavController(
 
 @Composable
 @Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
-private fun <Args> AnimatedVisibilityScope.EntryContent(
+private fun <Args> NavEntryContent(
     entry: NavEntry<Args>
 ) {
     val destination = entry.destination
@@ -144,7 +173,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
             LocalSaveableStateRegistry provides saveRegistry,
             LocalNavEntry provides entry,
         ) {
-            val scope = remember(entry) { NavDestinationScopeImpl(entry, this@EntryContent) }
+            val scope = remember(entry) { NavDestinationScopeImpl(entry) }
             // entry content
             scope.PlatformContentWrapper {
                 // extensions before-content
@@ -165,21 +194,6 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
                 }
             }
         }
-        // prevent clicks during transition animation
-        if (transition.isRunning) Box(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            event.changes.forEach {
-                                it.consume()
-                            }
-                        }
-                    }
-                }
-        )
         // save state when `this entry`/`parent entry` goes into backStack
         DisposableEffect(entry) {
             entry.attachToUI()
@@ -203,7 +217,7 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
  * @param contentTransformProvider Provider function for content transitions based on navigation direction
  */
 @Composable
-@Suppress("CognitiveComplexMethod")
+@Suppress("CognitiveComplexMethod", "CyclomaticComplexMethod")
 public fun Navigation(
     navController: NavController,
     destinations: Array<NavDestination<*>>,
@@ -211,21 +225,19 @@ public fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
 ) {
-    if (handleSystemBackEvent) {
-        val canGoGoBack by navController.canGoBackAsState()
-        BackHandler(canGoGoBack, navController::back)
-    }
-    // display current entry + animate enter/exit
-    CompositionLocalProvider(LocalNavController provides navController) {
+    NavigationScene(
+        navController = navController,
+        destinations = destinations,
+        handleSystemBackEvent = handleSystemBackEvent,
+    ) {
         val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
         val state by navController.currentTransitionFlow.collectAsState()
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val targetValue = remember(state) { state?.targetEntry ?: stubEntry }
         val transitionData = remember(state) { state?.transitionData as? TransitionData }
         val transitionState = remember { SeekableTransitionState<NavEntry<*>>(stubEntry) }
-        // state controller
+        // state/transition controller
         LaunchedEffect(state) {
-            if (!targetValue.isResolved()) targetValue.resolveDestination(destinations)
             val controller = transitionData?.transitionController
             if (controller != null) {
                 controller
@@ -258,7 +270,7 @@ public fun Navigation(
         val transition = rememberTransition(transitionState)
         var contentZIndex by remember { mutableFloatStateOf(0f) }
         transition.AnimatedContent(
-            contentKey = { "${it.destination.name}:${it.uuid}" },
+            contentKey = { "${it.destination.name}:${it.uuid}" }, // todo move into NavEntry `fun contentKey()`
             contentAlignment = Alignment.Center,
             modifier = modifier,
             transitionSpec = {
@@ -280,8 +292,88 @@ public fun Navigation(
                 )
             },
         ) {
-            if (it != stubEntry) EntryContent(it)
+            if (it != stubEntry) CompositionLocalProvider(
+                LocalNavAnimatedVisibilityScope provides this
+            ) {
+                Box {
+                    EntryContent(it)
+                    // prevent clicks during transition animation
+                    if (transition.isRunning) Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .pointerInput(Unit) {
+                                awaitPointerEventScope {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        event.changes.forEach { e ->
+                                            e.consume()
+                                        }
+                                    }
+                                }
+                            }
+                    )
+                }
+            }
         }
+    }
+}
+
+/**
+ * Provides a customizable way to display navigation content managed by a [NavController].
+ *
+ * `NavigationScene` offers a [NavigationSceneScope] that allows for fine-grained control over
+ * how and where individual navigation entries are rendered using [NavigationSceneScope.EntryContent].
+ * This is particularly useful for implementing custom layouts (e.g., side-by-side panes, lists with details) or
+ * complex animated transitions that are not covered by the standard [Navigation] composable.
+ *
+ * Example usage:
+ * ```
+ * NavigationScene(navController, destinations) { // this: NavigationSceneScope
+ *     val currentEntry by navController.currentNavEntryAsState()
+ *     AnimatedContent(
+ *         targetState = currentEntry,
+ *         transitionSpec = { navigationFadeInOut() }
+ *     ) {
+ *         EntryContent(it) // Renders the content of the current navigation entry
+ *     }
+ * }
+ * ```
+ *
+ * @param navController The NavController to use for navigation
+ * @param destinations Array of available destinations for this navigation
+ * @param handleSystemBackEvent Whether to handle system back events (default: true)
+ * @param scene Scene builder composable function that defines how navigation entries are rendered
+ */
+@Composable
+@Suppress("CognitiveComplexMethod")
+public fun NavigationScene(
+    navController: NavController,
+    destinations: Array<NavDestination<*>>,
+    handleSystemBackEvent: Boolean = true,
+    scene: @Composable NavigationSceneScope.() -> Unit
+) {
+    if (handleSystemBackEvent) {
+        val canGoGoBack by navController.canGoBackAsState()
+        BackHandler(canGoGoBack, navController::back)
+    }
+    val visibleEntries = remember { mutableSetOf<NavEntry<*>>() }
+    // display current entry + animate enter/exit
+    CompositionLocalProvider(LocalNavController provides navController) {
+        val navScope = remember {
+            NavigationSceneScope { entry ->
+                if (!entry.isResolved) entry.resolveDestination(destinations)
+                NavEntryContent(entry)
+                DisposableEffect(entry) {
+                    if (visibleEntries.contains(entry))
+                        error("The same entry (${entry.destination.name}) should not be displayed twice")
+                    visibleEntries.add(entry)
+                    onDispose {
+                        visibleEntries.remove(entry)
+                    }
+                }
+            }
+        }
+        navScope.scene()
     }
 }
 
