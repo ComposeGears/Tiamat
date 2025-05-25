@@ -157,7 +157,7 @@ public class NavEntry<Args> public constructor(
         navControllersStorage.clear()
     }
 
-    public fun contentKey(): String = "${destination.name}-${uuid}"
+    public fun contentKey(): String = "${destination.name}-$uuid"
 
     @ExcludeFromTests
     override fun toString(): String =
