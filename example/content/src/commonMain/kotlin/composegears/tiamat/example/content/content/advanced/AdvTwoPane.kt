@@ -65,6 +65,7 @@ val AdvTwoPane by navDestination<Unit>(ScreenInfo()) {
                         }
                         AnimatedContent(
                             targetState = extraEntry,
+                            contentKey = { it?.contentKey() },
                             modifier = Modifier
                                 .composed {
                                     if (extraEntry != null) weight(1f)

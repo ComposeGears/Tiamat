@@ -16,6 +16,7 @@ import com.composegears.tiamat.navigation.NavEntry
  *     val currentEntry by navController.currentNavEntryAsState()
  *     AnimatedContent(
  *         targetState = currentEntry,
+ *         contentKey = { it?.contentKey() },
  *         transitionSpec = { navigationFadeInOut() }
  *     ) {
  *         EntryContent(it)

@@ -273,6 +273,12 @@ class NavEntryTests {
         assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
     }
 
+    @Test
+    fun `contentKey # returns correct key`() {
+        val entry = NavEntry(destination = TestDestination)
+        assertEquals("test_destination-${entry.uuid}", entry.contentKey())
+    }
+
     // Test helper objects
     private object TestDestination : NavDestination<String> {
         override val name: String = "test_destination"

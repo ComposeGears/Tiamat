@@ -270,7 +270,7 @@ public fun Navigation(
         val transition = rememberTransition(transitionState)
         var contentZIndex by remember { mutableFloatStateOf(0f) }
         transition.AnimatedContent(
-            contentKey = { "${it.destination.name}:${it.uuid}" }, // todo move into NavEntry `fun contentKey()`
+            contentKey = { it.contentKey() },
             contentAlignment = Alignment.Center,
             modifier = modifier,
             transitionSpec = {
@@ -332,6 +332,7 @@ public fun Navigation(
  *     val currentEntry by navController.currentNavEntryAsState()
  *     AnimatedContent(
  *         targetState = currentEntry,
+ *         contentKey = { it?.contentKey() },
  *         transitionSpec = { navigationFadeInOut() }
  *     ) {
  *         EntryContent(it) // Renders the content of the current navigation entry
