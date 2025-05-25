@@ -9,6 +9,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -89,7 +93,7 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
 
 private val APRFreeArgsScreen2 by navDestination<Unit> {
     val nc = navController()
-    val args = freeArgs<Any?>()
+    var args by remember { mutableStateOf<Any?>(freeArgs()) }
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
@@ -104,7 +108,10 @@ private val APRFreeArgsScreen2 by navDestination<Unit> {
                         VSpacer()
                         AppButton(
                             "Clear",
-                            onClick = { clearFreeArgs() } // todo indicate it was actually cleared
+                            onClick = {
+                                clearFreeArgs()
+                                args = null
+                            }
                         )
                     } else {
                         Text("FreeArgs is empty")

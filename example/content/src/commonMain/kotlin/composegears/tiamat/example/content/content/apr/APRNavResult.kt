@@ -9,6 +9,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +47,7 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
 
 private val APRNavResultScreen1 by navDestination<Unit> {
     val nc = navController()
-    val result = navResult<Any?>()
+    var result by remember { mutableStateOf(navResult<Any?>()) }
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
@@ -61,7 +65,10 @@ private val APRNavResultScreen1 by navDestination<Unit> {
                         VSpacer()
                         AppButton(
                             "Clear",
-                            onClick = { clearNavResult() } // todo indicate it was actually cleared
+                            onClick = {
+                                clearNavResult()
+                                result = null
+                            }
                         )
                     } else {
                         Text(

@@ -20,6 +20,8 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
+// ------------- Local Providers ---------------------------------------------------------------------------------------
+
 /**
  * CompositionLocal that provides current [AnimatedVisibilityScope].
  */
@@ -35,6 +37,8 @@ internal val LocalNavController = staticCompositionLocalOf<NavController?> { nul
  * CompositionLocal that provides access to the current NavEntry.
  */
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
+
+// ------------- NavController -----------------------------------------------------------------------------------------
 
 /**
  * Creates and remembers a NavController without a start destination.
@@ -150,6 +154,8 @@ public fun rememberNavController(
     }
     return navController
 }
+
+// ------------- Navigation & nav-content ------------------------------------------------------------------------------
 
 @Composable
 @Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
@@ -378,6 +384,8 @@ public fun NavigationScene(
     }
 }
 
+// ------------- Nav controller extras ---------------------------------------------------------------------------------
+
 /**
  * Collects values from this [NavController.currentBackStackFlow] and represents its latest value via State.
  *
@@ -413,6 +421,9 @@ public fun NavController.currentNavDestinationAsState(): State<NavDestination<*>
     return remember(state) { derivedStateOf { state?.targetEntry?.destination } }
 }
 
+// ------------- NavDestinationScope extras ----------------------------------------------------------------------------
+// ------------- NavDestinationScope extras : general ------------------------------------------------------------------
+
 /**
  * @return The current [NavController].
  */
@@ -437,17 +448,17 @@ public fun NavDestinationScope<*>.navEntry(): NavEntry<*> = navEntry
 public inline fun <reified P : NavExtension<*>> NavDestinationScope<*>.ext(): P? =
     navEntry().destination.ext<P>()
 
+// ------------- NavDestinationScope extras : navArgs ------------------------------------------------------------------
+
 /**
  * Gets the navigation arguments from the current [NavEntry] or throw an exception.
  *
  * @param Args The type of the navigation arguments.
  * @return The navigation arguments.
  */
-@Composable
 @Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
+public fun <Args> NavDestinationScope<Args>.navArgs(): Args =
     navEntry.navArgs ?: error("args not provided or null, consider use navArgsOrNull()")
-}
 
 /**
  * Gets the navigation arguments from the current [NavEntry], or null if not provided.
@@ -455,11 +466,17 @@ public fun <Args> NavDestinationScope<Args>.navArgs(): Args = remember {
  * @param Args The type of the navigation arguments.
  * @return The navigation arguments, or null if not provided.
  */
-@Composable
 @Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
-    navEntry.navArgs
+public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = navEntry.navArgs
+
+/**
+ * Clears the navigation arguments from the [NavEntry].
+ */
+public fun NavDestinationScope<*>.clearNavArgs() {
+    navEntry.navArgs = null
 }
+
+// ------------- NavDestinationScope extras : freeArgs -----------------------------------------------------------------
 
 /**
  * Gets the free arguments from the current [NavEntry].
@@ -477,6 +494,8 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
     navEntry.freeArgs = null
 }
 
+// ------------- NavDestinationScope extras : navResult ----------------------------------------------------------------
+
 /**
  * Gets the navigation result from the current [NavEntry].
  *
@@ -490,8 +509,10 @@ public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navRe
  * Clears the navigation result from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavResult() {
-    navEntry.navResult = null
+    navEntry.freeArgs = null
 }
+
+// ------------- NavDestinationScope extras : ViewModel ----------------------------------------------------------------
 
 /**
  * Remembers a ViewModel in the [NavEntry].
