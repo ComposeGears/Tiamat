@@ -4,17 +4,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.composegears.tiamat.*
 import com.composegears.tiamat.compose.Navigation
 import com.composegears.tiamat.compose.navigationPlatformDefault
 import com.composegears.tiamat.compose.rememberNavController
 import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.example.content.content.HomeScreen
-import composegears.tiamat.example.content.content.advanced.AdvBackStackAlteration
-import composegears.tiamat.example.content.content.advanced.AdvDestinationsGraph
-import composegears.tiamat.example.content.content.advanced.AdvExtensions
-import composegears.tiamat.example.content.content.advanced.AdvSharedElementTransition
-import composegears.tiamat.example.content.content.advanced.AdvTwoPane
+import composegears.tiamat.example.content.content.advanced.*
 import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
@@ -59,6 +54,7 @@ fun App(
                     AdvSharedElementTransition,
                     AdvDestinationsGraph,
                     AdvTwoPane,
+                    AdvAdaptiveListDetails,
                     *(Platform.features() + A3rdParty.features())
                         .map { it.destination }
                         .toTypedArray()

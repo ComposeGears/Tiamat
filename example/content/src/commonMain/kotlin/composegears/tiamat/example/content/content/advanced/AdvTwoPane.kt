@@ -84,7 +84,6 @@ val AdvTwoPane by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 private val AdvTwoPaneList by navDestination<Unit> {
     val nc = navController()
     val items = remember {
@@ -119,7 +118,6 @@ private val AdvTwoPaneList by navDestination<Unit> {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 private val AdvTwoPaneDetails1 by navDestination<String> {
     val nc = navController()
     val args = navArgs()
@@ -158,7 +156,6 @@ private val AdvTwoPaneDetails1 by navDestination<String> {
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 private val AdvTwoPaneDetails2 by navDestination<String> {
     val nc = navController()
     Box(

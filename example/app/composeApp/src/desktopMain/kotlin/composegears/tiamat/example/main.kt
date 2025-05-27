@@ -29,7 +29,7 @@ fun main() {
             state = rememberWindowState(
                 placement = WindowPlacement.Floating,
                 position = WindowPosition.Aligned(Alignment.Center),
-                size = DpSize(1200.dp, 800.dp)
+                size = DpSize(1200.dp, 1000.dp)
             ),
             title = "Tiamat Nav-Example"
         ) {

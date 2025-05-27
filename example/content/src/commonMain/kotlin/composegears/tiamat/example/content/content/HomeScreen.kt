@@ -144,6 +144,11 @@ private val HomeItems =
                     description = "Example shows how to display two pane UI (list + details)",
                     destination = AdvTwoPane
                 ),
+                AppFeature(
+                    name = "Adaptive list + details",
+                    description = "Example shows how to display list + details UI based on screen size",
+                    destination = AdvAdaptiveListDetails
+                ),
             ),
         ),
         HomeItem(
