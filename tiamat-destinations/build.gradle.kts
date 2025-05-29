@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.m2p)
@@ -17,10 +17,14 @@ kotlin {
     explicitApi()
 
     jvm()
-    androidTarget {
-        publishLibraryVariants("release")
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
+    androidLibrary {
+        namespace = "com.composegears.tiamat.destinations"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+        compilations.configureEach {
+            compilerOptions.configure {
+                jvmTarget = JvmTarget.JVM_1_8
+            }
         }
     }
     iosX64()
@@ -47,14 +51,6 @@ kotlin {
             implementation(compose.uiTest)
             implementation(libs.kotlin.test)
         }
-    }
-}
-
-android {
-    namespace = "com.composegears.tiamat.destinations"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
 
