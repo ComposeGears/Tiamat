@@ -35,7 +35,7 @@ kotlin {
             implementation(projects.tiamat)
             implementation(projects.example.uiCore)
 
-            implementation(libs.ui.backhandler)
+            implementation(libs.compose.ui.backhandler)
         }
         androidMain.dependencies {
             implementation(libs.androidx.camera.camera2)

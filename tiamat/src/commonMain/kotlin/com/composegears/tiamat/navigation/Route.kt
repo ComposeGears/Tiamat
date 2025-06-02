@@ -46,11 +46,11 @@ public class Route(elements: List<RouteElement>) {
      *
      * @param key The key of the navigation controller
      */
-    public fun navController(key: String, saveable: Boolean? = null) {
+    public fun navController(key: String?, saveable: Boolean? = null) {
         elements.add(NavController(key, saveable))
     }
 
     internal data class Destination(val name: String) : RouteElement
 
-    internal data class NavController(val key: String, val saveable: Boolean? = null) : RouteElement
+    internal data class NavController(val key: String?, val saveable: Boolean? = null) : RouteElement
 }

@@ -360,8 +360,8 @@ public fun NavigationScene(
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
     if (handleSystemBackEvent) {
-        val canGoGoBack by navController.canGoBackAsState()
-        BackHandler(canGoGoBack, navController::back)
+        val hasBackEntries by navController.hasBackEntriesAsState()
+        BackHandler(hasBackEntries, navController::back)
     }
     val visibleEntries = remember { mutableSetOf<NavEntry<*>>() }
     // display current entry + animate enter/exit
@@ -392,9 +392,9 @@ public fun NavigationScene(
  * @return A State containing a boolean value that is true when back navigation is possible
  */
 @Composable
-public fun NavController.canGoBackAsState(): State<Boolean> {
+public fun NavController.hasBackEntriesAsState(): State<Boolean> {
     val backstack by currentBackStackFlow.collectAsState()
-    return remember(backstack) { derivedStateOf { backstack.isNotEmpty() } }
+    return remember { derivedStateOf { backstack.isNotEmpty() } }
 }
 
 /**
@@ -406,7 +406,7 @@ public fun NavController.canGoBackAsState(): State<Boolean> {
 @Composable
 public fun NavController.currentNavEntryAsState(): State<NavEntry<*>?> {
     val state by currentTransitionFlow.collectAsState()
-    return remember(state) { derivedStateOf { state?.targetEntry } }
+    return remember { derivedStateOf { state?.targetEntry } }
 }
 
 /**

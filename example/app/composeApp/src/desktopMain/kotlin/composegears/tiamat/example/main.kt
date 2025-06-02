@@ -5,12 +5,9 @@ package composegears.tiamat.example
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
@@ -33,9 +30,7 @@ fun main() {
             ),
             title = "Tiamat Nav-Example"
         ) {
-            Box(Modifier.fillMaxSize()) {
-                App()
-            }
+            App()
         }
     }
 }

@@ -167,7 +167,7 @@ public class NavController internal constructor(
      *
      * @return True if the back stack is not empty, false otherwise
      */
-    public fun canGoBack(): Boolean = getBackStack().isNotEmpty()
+    public fun hasBackEntries(): Boolean = getBackStack().isNotEmpty()
 
     /**
      * Edits the back stack using the provided actions.

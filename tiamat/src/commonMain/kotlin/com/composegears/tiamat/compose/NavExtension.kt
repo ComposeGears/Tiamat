@@ -77,9 +77,17 @@ public fun <Args> extension(
 ): NavExtension<Args> = ContentExtensionImpl(content)
 
 /**
+ * Retrieves the list of extensions associated with this navigation destination.
+ *
+ * @return The list of extensions, or `null` if the destination does not support extensions.
+ */
+public fun NavDestination<*>.extensions(): List<NavExtension<*>>? =
+    (this as? ComposeNavDestination<*>?)?.extensions
+
+/**
  * Retrieves the first extension of the specified type from the list of extensions.
  *
  * @return The first extension of type [P] if found, or `null` otherwise.
  */
 public inline fun <reified P : NavExtension<*>> NavDestination<*>.ext(): P? =
-    (this as? ComposeNavDestination<*>?)?.extensions?.firstOrNull { it is P } as? P?
+    this.extensions()?.firstOrNull { it is P } as? P?

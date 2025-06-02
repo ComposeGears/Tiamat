@@ -46,7 +46,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
-            implementation(libs.ui.backhandler)
+            implementation(libs.compose.ui.backhandler)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)

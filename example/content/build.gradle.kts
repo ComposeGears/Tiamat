@@ -40,6 +40,7 @@ kotlin {
             api(projects.example.uiCore)
 
             implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.material3.window.size)
         }
     }
 }

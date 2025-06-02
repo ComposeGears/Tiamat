@@ -40,7 +40,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                     append("—————\n")
                     append(
                         "Current screen extensions: ${
-                            currentNavDestination?.let { it as ComposeNavDestination<*> }?.extensions?.joinToString(
+                            currentNavDestination?.extensions()?.joinToString(
                                 ", ",
                                 transform = { it::class.simpleName ?: "???" }
                             )

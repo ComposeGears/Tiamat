@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.0-alpha05"
 android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
@@ -26,7 +26,8 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 
-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
+compose-ui-backhandler = "org.jetbrains.compose.ui:ui-backhandler:1.8.1"
+compose-material3-window-size = "org.jetbrains.compose.material3:material3-window-size-class:1.8.1"
 
 zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 

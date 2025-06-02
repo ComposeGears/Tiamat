@@ -159,8 +159,8 @@ internal fun PredictiveBackContainer(
 ) {
     BoxWithConstraints(modifier) {
         content()
-        val canGoBack by navController.canGoBackAsState()
-        PredictiveBackHandler(canGoBack && enabled) { progress ->
+        val hasBackEntries by navController.hasBackEntriesAsState()
+        PredictiveBackHandler(hasBackEntries && enabled) { progress ->
             val controller = TransitionController()
             navController.back(
                 transition = ContentTransform(

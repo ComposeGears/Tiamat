@@ -127,18 +127,18 @@ class NavControllerTests {
     }
 
     @Test
-    fun `canGoBack # returns true when backstack is not empty`() {
+    fun `hasBackEntries # returns true when backstack is not empty`() {
         val nc = createSimpleNavController(startDestination = Destination1)
         nc.navigate(Destination2.toNavEntry())
         assertTrue(nc.getBackStack().isNotEmpty())
-        assertTrue(nc.canGoBack())
+        assertTrue(nc.hasBackEntries())
     }
 
     @Test
-    fun `canGoBack # returns false when backstack is empty`() {
+    fun `hasBackEntries # returns false when backstack is empty`() {
         val nc = createSimpleNavController(startDestination = Destination1)
         assertTrue(nc.getBackStack().isEmpty())
-        assertFalse(nc.canGoBack())
+        assertFalse(nc.hasBackEntries())
     }
 
     @Test

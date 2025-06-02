@@ -108,7 +108,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-// using nc.canGoBackAsState().value instead nc.canGoBack() due to changes in backStack
+// We are using nc.hasBackEntriesAsState().value instead nc.hasBackEntries() due to changes in backStack
 
 private val AdvBackStackAlterationScreenA by navDestination<Unit> {
     val nc = navController()
@@ -118,7 +118,7 @@ private val AdvBackStackAlterationScreenA by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBackAsState().value,
+                enabled = nc.hasBackEntriesAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -134,7 +134,7 @@ private val AdvBackStackAlterationScreenB by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBackAsState().value,
+                enabled = nc.hasBackEntriesAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -150,7 +150,7 @@ private val AdvBackStackAlterationScreenC by navDestination<Unit> {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.canGoBackAsState().value,
+                enabled = nc.hasBackEntriesAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
