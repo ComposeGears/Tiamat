@@ -32,7 +32,7 @@ zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.17.0"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-alpha10"}
