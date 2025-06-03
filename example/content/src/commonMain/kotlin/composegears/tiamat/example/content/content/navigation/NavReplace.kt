@@ -12,12 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.compose.Navigation
-import com.composegears.tiamat.compose.navController
-import com.composegears.tiamat.compose.navDestination
-import com.composegears.tiamat.compose.navigate
-import com.composegears.tiamat.compose.rememberNavController
-import com.composegears.tiamat.compose.replace
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 val NavReplace by navDestination<Unit>(ScreenInfo()) {

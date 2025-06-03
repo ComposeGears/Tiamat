@@ -2,7 +2,10 @@ package com.composegears.tiamat.destinations
 
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.NavDestination
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 @OptIn(TiamatExperimentalApi::class)
 class TiamatDestinationsGraphTest {

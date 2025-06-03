@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.AppButton
