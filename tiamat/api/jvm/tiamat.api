@@ -108,6 +108,7 @@ public abstract interface class com/composegears/tiamat/compose/NavExtension {
 
 public final class com/composegears/tiamat/compose/NavExtensionKt {
 	public static final fun extension (Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/compose/NavExtension;
+	public static final fun extensions (Lcom/composegears/tiamat/navigation/NavDestination;)Ljava/util/List;
 }
 
 public final class com/composegears/tiamat/compose/NavigationSceneScope {
