@@ -14,26 +14,25 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Tab
 import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
-import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 val AdvAdaptiveListDetails by navDestination<Unit> {
     BoxWithConstraints {
         val sizeClass by remember(maxWidth) {
             mutableStateOf(
-                when (maxWidth.value.roundToInt()) {
-                    in 0..800 -> SizeClass.Small
-                    in 801..1200 -> SizeClass.Medium
-                    else -> SizeClass.Expanded
-                }
+                WindowSizeClass.calculateFromSize(DpSize(maxWidth, maxHeight)).widthSizeClass
             )
         }
         val menuItems = remember {
@@ -52,7 +51,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
                     title = {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("Adaptive List Details", style = MaterialTheme.typography.titleLarge)
-                            Text("Size Class: ${sizeClass.name}", style = MaterialTheme.typography.labelSmall)
+                            Text("$sizeClass", style = MaterialTheme.typography.labelSmall)
                         }
                     },
                     navigationIcon = {
@@ -64,7 +63,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
                 )
                 // screen body content - making it `movableContentOf` as it will be moved in between row and column
                 val content = remember {
-                    movableContentOf { sizeClass: SizeClass ->
+                    movableContentOf { sizeClass: WindowWidthSizeClass ->
                         NavigationScene(
                             navController = nc,
                             destinations = arrayOf(
@@ -75,7 +74,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
                         ) {
                             val current by nc.currentNavEntryAsState()
                             // look at size class
-                            if (sizeClass == SizeClass.Small) {
+                            if (sizeClass == WindowWidthSizeClass.Compact) {
                                 // as for small screen -> render in 1 pane
                                 AnimatedContent(
                                     targetState = current,
@@ -90,7 +89,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
                                 val listEntry = remember(current) { backstack.firstOrNull() ?: current }
                                 val itemEntry = remember(current) { current?.takeIf { backstack.isNotEmpty() } }
                                 // draw list
-                                Box(Modifier.width(400.dp).fillMaxHeight()) {
+                                Box(Modifier.width(300.dp).fillMaxHeight()) {
                                     EntryContent(listEntry)
                                 }
                                 // draw last entry (unless it is list)
@@ -110,7 +109,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
                     }
                 }
                 // look at size class and draw  content depend on it
-                if (sizeClass == SizeClass.Small) Column {
+                if (sizeClass == WindowWidthSizeClass.Compact) Column {
                     Box(Modifier.weight(1f)) {
                         content(sizeClass)
                     }
@@ -225,9 +224,3 @@ private val AdvAdaptiveListDetailsDetails2 by navDestination<String> {
 }
 
 private data class MenuItem(val icon: ImageVector, val title: String)
-
-private enum class SizeClass {
-    Small,
-    Medium,
-    Expanded
-}
