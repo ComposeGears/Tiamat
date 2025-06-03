@@ -30,15 +30,13 @@ class TiamatDestinationsGraphTest {
         val mockDestination3 = createMockDestination("dest3")
 
         val graph1 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination1)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination1)
         }
 
         val graph2 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination2, mockDestination3)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination2, mockDestination3)
         }
 
         val mergedGraph = graph1 + graph2
@@ -57,24 +55,21 @@ class TiamatDestinationsGraphTest {
         val mockDestination3 = createMockDestination("dest3")
 
         val graph1 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination1)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination1)
         }
 
         val graph2 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination2)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination2)
         }
 
         val graph3 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination3)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination3)
         }
 
-        val mergedGraph = (graph1 + graph2) + graph3
+        val mergedGraph = graph1 + graph2 + graph3
         val destinations = mergedGraph.destinations()
 
         assertEquals(3, destinations.size)
@@ -89,15 +84,13 @@ class TiamatDestinationsGraphTest {
         val mockDestination2 = createMockDestination("dest2")
 
         val graph1 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination1, mockDestination2)
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination1, mockDestination2)
         }
 
         val graph2 = object : TiamatGraph {
-            override fun destinations(): Array<NavDestination<*>> {
-                return arrayOf(mockDestination1) // Duplicate destination
-            }
+            override fun destinations(): Array<NavDestination<*>> =
+                arrayOf(mockDestination1) // Duplicate destination
         }
 
         val mergedGraph = graph1 + graph2

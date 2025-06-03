@@ -36,6 +36,7 @@ allprojects {
         source.from(
             files(
                 "src/commonMain/kotlin",
+                "src/commonTest/kotlin",
                 "src/jvmMain/kotlin",
                 "src/desktopMain/kotlin",
                 "src/androidMain/kotlin",

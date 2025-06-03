@@ -10,7 +10,6 @@ class NavControllersStorageTests {
         assertTrue(storage.nestedNavControllers.isEmpty())
     }
 
-
     @Test
     fun `add # stores nav controller in internal list`() {
         val storage = NavControllersStorage()
@@ -78,7 +77,8 @@ class NavControllersStorageTests {
             .apply {
                 add(controller1)
                 add(controller2)
-            }.saveToSavedState()
+            }
+            .saveToSavedState()
         storage.loadFromSavedState(null, savedState)
         assertEquals(2, storage.nestedNavControllers.size)
         assertEquals("test1", storage.nestedNavControllers[0].key)
@@ -142,7 +142,6 @@ class NavControllersStorageTests {
     }
 
     // Helper functions
-    private fun createTestNavController(key: String, saveable: Boolean = true): NavController {
-        return NavController.create(key = key, saveable = saveable, startDestination = TestNavDestination())
-    }
+    private fun createTestNavController(key: String, saveable: Boolean = true): NavController =
+        NavController.create(key = key, saveable = saveable, startDestination = TestNavDestination())
 }

@@ -612,11 +612,17 @@ class NavControllerTests {
     fun `back # orElse called when back not possible`() {
         val nc = createSimpleNavController(startDestination = Destination1)
         var orElseCalled = false
-        nc.back(orElse = { orElseCalled = true; true })
+        nc.back(orElse = {
+            orElseCalled = true
+            true
+        })
         assertTrue(orElseCalled)
         orElseCalled = false
         nc.navigate(Destination2.toNavEntry())
-        nc.back(to = Destination3, orElse = { orElseCalled = true; true })
+        nc.back(to = Destination3, orElse = {
+            orElseCalled = true
+            true
+        })
         assertTrue(orElseCalled)
     }
 

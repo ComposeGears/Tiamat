@@ -12,7 +12,6 @@ import com.composegears.tiamat.destinations.TiamatGraph
 import com.composegears.tiamat.navigation.NavDestination
 import kotlin.test.Test
 
-
 @OptIn(TiamatExperimentalApi::class)
 class TiamatDestinationsComposeTest {
 
