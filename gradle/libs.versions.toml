@@ -5,7 +5,7 @@ android-minSdk = "21"
 android-targetSdk = "35"
 
 detekt = "1.23.8"
-jetbrains-compose = "1.7.3"
+jetbrains-compose = "1.8.1"
 kotlin = "2.1.21"
 
 [libraries]
@@ -14,9 +14,8 @@ androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.2"
 androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
 androidx-camera-view = "androidx.camera:camera-view:1.4.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.2.0"
-androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
+androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.9.0"
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.0"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
@@ -26,6 +25,8 @@ kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
+
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

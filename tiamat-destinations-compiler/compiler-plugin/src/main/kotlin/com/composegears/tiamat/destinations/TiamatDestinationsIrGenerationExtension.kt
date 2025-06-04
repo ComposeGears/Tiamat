@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -170,7 +173,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
         pluginContext: IrPluginContext
     ) {
         val navDestinationType = pluginContext.referenceClass(
-            ClassId(FqName("com.composegears.tiamat"), Name.identifier("NavDestination"))
+            ClassId(FqName("com.composegears.tiamat.navigation"), Name.identifier("NavDestination"))
         )!!
 
         // Remove defined function (cover from those who may try to override by their own)
@@ -221,7 +224,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
 
     private fun isValidAnnotationTarget(symbol: IrSymbol, pluginContext: IrPluginContext): Boolean {
         val navDestinationType = pluginContext.referenceClass(
-            ClassId(FqName("com.composegears.tiamat"), Name.identifier("NavDestination"))
+            ClassId(FqName("com.composegears.tiamat.navigation"), Name.identifier("NavDestination"))
         )!!
         return when (symbol) {
             is IrPropertySymbol -> {
