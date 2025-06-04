@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
@@ -27,12 +27,8 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Extensions nav controller",
                 startDestination = AdvExtensionsScreen1,
-                destinations = arrayOf(
-                    AdvExtensionsScreen1,
-                    AdvExtensionsScreen2,
-                    AdvExtensionsScreen3,
-                )
             )
+            val currentNavDestination by nc.currentNavDestinationAsState()
             VSpacer()
             Text(
                 text = buildString {
@@ -40,11 +36,11 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
                     append("—————\n")
                     append("Last active screen reported by global extension: ${GlobalExtension.activeDestination}\n")
                     append("—————\n")
-                    append("Current screen log message: ${nc.current?.ext<LocalExtension>()?.logMessage}\n")
+                    append("Current screen log message: ${currentNavDestination?.ext<LocalExtension>()?.logMessage}\n")
                     append("—————\n")
                     append(
                         "Current screen extensions: ${
-                            nc.current?.extensions?.joinToString(
+                            currentNavDestination?.extensions()?.joinToString(
                                 ", ",
                                 transform = { it::class.simpleName ?: "???" }
                             )
@@ -55,8 +51,13 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
             )
             VSpacer()
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = arrayOf(
+                    AdvExtensionsScreen1,
+                    AdvExtensionsScreen2,
+                    AdvExtensionsScreen3,
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
@@ -68,7 +69,7 @@ val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
 
 // Marker/Simple ext have no content and may be a marker/data handler to be used
 // in tandem with other extensions
-class MarkerExtension(val data: String) : Extension<Any?>
+class MarkerExtension(val data: String) : NavExtension<Any?>
 
 // having a dedicated object or class allows you cal ext fun to get extension ref
 // eg: nc.current.ext<GlobalExtension>() -> return GlobalExtension or null if not attached

@@ -9,11 +9,15 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
@@ -25,14 +29,14 @@ val APRFreeArgs by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "FreeArgs nav controller",
                 startDestination = APRFreeArgsScreen1,
+            )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     APRFreeArgsScreen1,
                     APRFreeArgsScreen2,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
@@ -89,7 +93,7 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
 
 private val APRFreeArgsScreen2 by navDestination<Unit> {
     val nc = navController()
-    val args = freeArgs<Any?>()
+    var args by remember { mutableStateOf<Any?>(freeArgs()) }
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
@@ -104,7 +108,10 @@ private val APRFreeArgsScreen2 by navDestination<Unit> {
                         VSpacer()
                         AppButton(
                             "Clear",
-                            onClick = { clearFreeArgs() }
+                            onClick = {
+                                clearFreeArgs()
+                                args = null
+                            }
                         )
                     } else {
                         Text("FreeArgs is empty")

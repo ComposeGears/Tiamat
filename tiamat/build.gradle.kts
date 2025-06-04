@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlinx.kover)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.m2p)
@@ -15,11 +16,19 @@ group = "io.github.composegears"
 kotlin {
     explicitApi()
 
+    compilerOptions {
+        freeCompilerArgs.addAll("-opt-in=androidx.compose.ui.ExperimentalComposeUiApi")
+    }
+
     jvm()
-    androidTarget {
-        publishLibraryVariants("release")
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_1_8
+    androidLibrary {
+        namespace = "com.composegears.tiamat"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+        compilations.configureEach {
+            compilerOptions.configure {
+                jvmTarget = JvmTarget.JVM_1_8
+            }
         }
     }
     iosX64()
@@ -37,6 +46,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
+            implementation(libs.compose.ui.backhandler)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
@@ -51,14 +61,16 @@ kotlin {
     }
 }
 
-android {
-    namespace = "io.github.composegears.tiamat"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-}
-
 m2p {
     description = "KMM Navigation library"
+}
+
+kover {
+    reports {
+        filters {
+            excludes {
+                this.annotatedBy("com.composegears.tiamat.ExcludeFromTests")
+            }
+        }
+    }
 }

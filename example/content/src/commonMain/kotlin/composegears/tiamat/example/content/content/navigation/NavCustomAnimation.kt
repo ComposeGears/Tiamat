@@ -16,7 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
@@ -28,14 +29,14 @@ val NavCustomAnimation by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Custom Animation nav controller",
                 startDestination = NavCustomAnimationScreen1,
+            )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     NavCustomAnimationScreen1,
                     NavCustomAnimationScreen2,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
@@ -126,15 +127,6 @@ private val NavCustomAnimationScreen2 by navDestination<Unit> {
                     modifier = Modifier.widthIn(min = 400.dp),
                     startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                     onClick = { nc.back(transition = navigationSlideOutToBottom()) }
-                )
-                AppButton(
-                    "Back (override pending back transition)",
-                    modifier = Modifier.widthIn(min = 400.dp),
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
-                    onClick = {
-                        nc.setPendingBackTransition(transition = navigationSlideInOut(false))
-                        nc.back()
-                    }
                 )
             }
         }

@@ -12,7 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 @OptIn(TiamatExperimentalApi::class)
@@ -25,12 +26,6 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Route nav controller",
                 startDestination = null,
-                destinations = arrayOf(
-                    NavRouteStub,
-                    NavRouteScreen1,
-                    NavRouteScreen2,
-                    NavRouteScreen3,
-                )
             )
             VSpacer()
             Text(
@@ -42,40 +37,27 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
                 textAlign = TextAlign.Center
             )
             VSpacer()
+
             AppButton(
                 "Route: 1->2->3 direct",
                 modifier = Modifier.widthIn(min = 400.dp),
                 onClick = {
-                    nc.route(Route.build(NavRouteScreen1, NavRouteScreen2, NavRouteScreen3))
+                    nc.route {
+                        element(NavRouteScreen1)
+                        element(NavRouteScreen2)
+                        element(NavRouteScreen3)
+                    }
                 }
             )
             AppButton(
                 "Route: 1->2->3 (by name)",
                 modifier = Modifier.widthIn(min = 400.dp),
                 onClick = {
-                    nc.route(
-                        Route.build {
-                            route("NavRouteScreen1")
-                            route("NavRouteScreen2")
-                            route("NavRouteScreen3")
-                        }
-                    )
-                }
-            )
-            AppButton(
-                "Route: 1->2->3 (mixed)",
-                modifier = Modifier.widthIn(min = 400.dp),
-                onClick = {
-                    nc.route(
-                        Route.build {
-                            // direct name
-                            route(NavRouteScreen1)
-                            // auto-search by name
-                            route("NavRouteScreen2")
-                            // manual resolve from nav controller
-                            route { nc -> nc.findDestination { it.name.contains("3") }?.toNavEntry() }
-                        }
-                    )
+                    nc.route {
+                        destination("NavRouteScreen1")
+                        destination("NavRouteScreen2")
+                        destination("NavRouteScreen3")
+                    }
                 }
             )
             AppButton(
@@ -89,8 +71,14 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
 
             VSpacer()
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = arrayOf(
+                    NavRouteStub,
+                    NavRouteScreen1,
+                    NavRouteScreen2,
+                    NavRouteScreen3,
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             )
@@ -121,7 +109,7 @@ private val NavRouteScreen1 by navDestination<Unit> {
     }
 }
 
-private val NavRouteScreen2 by navDestination<Unit> {
+private val NavRouteScreen2 by navDestination<Int> {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -144,7 +132,7 @@ private val NavRouteScreen2 by navDestination<Unit> {
     }
 }
 
-private val NavRouteScreen3 by navDestination<Unit> {
+private val NavRouteScreen3 by navDestination<String> {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

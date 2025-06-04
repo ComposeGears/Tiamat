@@ -14,6 +14,7 @@ class LocalThemConfig {
 
 // private val color_killMyEyesPlease = Color(0xffbd17b5)
 private val color_primary = Color(0xff1e66d6)
+private val color_secondary_container = Color(0xff1e66d6)
 
 private val LightColors = lightColorScheme(
     primary = color_primary,
@@ -23,8 +24,8 @@ private val LightColors = lightColorScheme(
 //    inversePrimary = color_killMyEyesPlease,
 //    secondary = color_killMyEyesPlease,
 //    onSecondary = color_killMyEyesPlease,
-//    secondaryContainer = color_killMyEyesPlease,
-//    onSecondaryContainer = color_killMyEyesPlease,
+    secondaryContainer = color_secondary_container,
+    onSecondaryContainer = Color.White,
 //    tertiary = color_killMyEyesPlease,
 //    onTertiary = color_killMyEyesPlease,
 //    tertiaryContainer = color_killMyEyesPlease,
@@ -62,8 +63,8 @@ private val DarkColors = darkColorScheme(
 //    inversePrimary = color_killMyEyesPlease,
 //    secondary = color_killMyEyesPlease,
 //    onSecondary = color_killMyEyesPlease,
-//    secondaryContainer = color_killMyEyesPlease,
-//    onSecondaryContainer = color_killMyEyesPlease,
+    secondaryContainer = color_secondary_container,
+    onSecondaryContainer = Color.White,
 //    tertiary = color_killMyEyesPlease,
 //    onTertiary = color_killMyEyesPlease,
 //    tertiaryContainer = color_killMyEyesPlease,

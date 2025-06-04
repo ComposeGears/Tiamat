@@ -15,10 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.Navigation
-import com.composegears.tiamat.navController
-import com.composegears.tiamat.navDestination
-import com.composegears.tiamat.rememberNavController
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 val NavNested by navDestination<Unit>(ScreenInfo()) {
@@ -70,13 +67,15 @@ private fun ItemContent(
         val nc = rememberNavController(
             key = group,
             startDestination = NavNestedScreen1,
+        )
+        Navigation(
+            navController = nc,
             destinations = arrayOf(
                 NavNestedScreen1,
                 NavNestedScreen2,
                 NavNestedScreen3
             )
         )
-        Navigation(nc)
     }
 }
 

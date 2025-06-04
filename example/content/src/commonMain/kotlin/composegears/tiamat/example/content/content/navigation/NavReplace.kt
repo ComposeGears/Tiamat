@@ -12,10 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.Navigation
-import com.composegears.tiamat.navController
-import com.composegears.tiamat.navDestination
-import com.composegears.tiamat.rememberNavController
+import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 val NavReplace by navDestination<Unit>(ScreenInfo()) {
@@ -24,15 +21,15 @@ val NavReplace by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Replace nav controller",
                 startDestination = NavReplaceScreen1,
+            )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     NavReplaceScreen1,
                     NavReplaceScreen2,
                     NavReplaceScreen3,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))

@@ -9,12 +9,14 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
 val NavTabs by navDestination<Unit>(ScreenInfo()) {
@@ -30,11 +32,12 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "Tabs nav controller",
                 startDestination = NavTab1,
-                destinations = tabs
             )
+            val activeTab by nc.currentNavDestinationAsState()
             Navigation(
-                nc,
-                Modifier
+                navController = nc,
+                destinations = tabs,
+                modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(16.dp)
@@ -52,7 +55,7 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
                     // current tab in backstack
                     AppButton(
                         text = it.name,
-                        enabled = nc.current != it,
+                        enabled = activeTab != it,
                         shape = RectangleShape,
                         modifier = Modifier.weight(1f).fillMaxHeight(),
                         onClick = { nc.popToTop(it) }
@@ -85,13 +88,16 @@ fun TabContent(tabName: String) {
         val nc = rememberNavController(
             key = "$tabName content",
             startDestination = NavTabsSubTabScreen1,
+        )
+        Navigation(
+            navController = nc,
             destinations = arrayOf(
                 NavTabsSubTabScreen1,
                 NavTabsSubTabScreen2,
                 NavTabsSubTabScreen3,
-            )
+            ),
+            modifier = Modifier.fillMaxSize()
         )
-        Navigation(nc, Modifier.fillMaxSize())
     }
 }
 

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -14,23 +14,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
-import com.composegears.tiamat.*
 import composegears.tiamat.example.content.App
 import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.start
-import composegears.tiamat.example.ui.core.LocalScreenHandler
-import composegears.tiamat.example.ui.core.ScreenInfo
 import kotlinx.browser.window
-import org.w3c.dom.PopStateEvent
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 const val TITLE = "Tiamat Wasm"
-const val HOME = "Home"
-val REDIRECT_DELAY = 100.milliseconds
-
-var redirectTimeout = now()
 
 external fun onLoadFinished()
 
@@ -39,24 +29,25 @@ fun main() {
     Platform.start()
     A3rdParty.start()
     ComposeViewport(viewportContainerId = "TiamatTarget") {
-        val screenHandler = LocalScreenHandler.current
-        DisposableEffect(Unit) {
+        LaunchedEffect(Unit) {
             onLoadFinished()
-            // update current url + add to history
-            val listener = screenHandler.addScreenOpenListener { nc, _ ->
-                appendState(nc)
-            }
-            onDispose {
-                screenHandler.removeScreenOpenListener(listener)
-            }
         }
         App(
             navControllerConfig = {
                 // open link from browser upon initialization
-                loadFromURL(this)
+                // loadFromURL(this)
                 // listen to browser back/forward navigation
-                window.addEventListener("popstate") { e ->
-                    loadFromState(this, (e as? PopStateEvent?)?.state)
+                // window.addEventListener("popstate") { e ->
+                //     loadFromState(this, (e as? PopStateEvent?)?.state)
+                // }
+                // handle navigation events
+                // setOnNavigationListener { from, to, isForward ->
+                //     if (isForward) {
+                //         appendState(this)
+                //     }
+                // }
+                setOnNavigationListener { from, to, isForward ->
+                    window.document.title = TITLE + " / " + (to?.destination?.name ?: "")
                 }
             },
             overlay = {
@@ -75,13 +66,31 @@ fun main() {
     }
 }
 
+// todo add browser history & state save/restore logic
+
 // Simple web browser history & url impl
 
 // ---------------- web operations -------------------------------
 
+/*
+const val HOME = "Home"
+val REDIRECT_DELAY = 100.milliseconds
+
+var redirectTimeout = now()
+
+fun now() = TimeSource.Monotonic.markNow()
+
+fun setTitle(title: String) {
+    window.document.title = title
+}
+
+fun getCurrentPath() = window.location.href
+    .replace(window.location.origin, "")
+    .replace("/#", "")
+
 fun loadFromURL(navController: NavController) {
     redirectTimeout = now()
-    val browserPath = currentPath()
+    val browserPath = getCurrentPath()
     val browserRoute = path2route(browserPath)
     if (browserPath.isBlank() || browserPath == "/") {
         window.history.replaceState("$HOME/".toJsString(), "", "./#$HOME")
@@ -98,7 +107,7 @@ fun loadFromState(navController: NavController, state: Any?) {
 }
 
 fun appendState(navController: NavController) {
-    val browserPath = currentPath()
+    val browserPath = getCurrentPath()
     val navControllerRoute = navController.getRoute()
     val navControllerPath = route2path(navControllerRoute)
     if (browserPath != navControllerPath) {
@@ -109,20 +118,10 @@ fun appendState(navController: NavController) {
             window.history.pushState(navControllerRoute.toJsString(), "", "./#$navControllerPath")
         }
     }
-    setTitle(navController.current?.name ?: TITLE)
+    setTitle(navController.getCurrentNavEntry()?.destination?.name ?: TITLE)
 }
 
 // --------------- helpers --------------------------------------
-
-fun currentPath() = window.location.href
-    .replace(window.location.origin, "")
-    .replace("/#", "")
-
-fun setTitle(title: String) {
-    window.document.title = title
-}
-
-fun now() = TimeSource.Monotonic.markNow()
 
 fun path2route(path: String): String {
     // here we parse path and make nav-route from it
@@ -151,25 +150,14 @@ fun <Args> NavDestination<Args>.parseEntry(argStr: String?): NavEntry<Args> {
 
 @OptIn(TiamatExperimentalApi::class)
 fun NavController.setRoute(path: String) {
-    route(
-        Route.build(forceReplace = true) {
-            path.split("/").forEach { segment ->
-                val targetName = segment.substringBefore("?")
-                val argsStr = segment.substringAfter("?", "").takeIf { it.isNotBlank() }
-                route(
-                    description = "Follow: $segment",
-                    entryProvider = { nc ->
-                        val destination = nc.findDestination {
-                            val ext = it.ext<ScreenInfo<*>>() ?: return@findDestination false
-                            val name = ext.name ?: it.name
-                            name == targetName
-                        } ?: return@route null
-                        destination.parseEntry(argsStr)
-                    }
-                )
-            }
+    route {
+        path.split("/").forEach { segment ->
+            val targetName = segment.substringBefore("?")
+            val argsStr = segment.substringAfter("?", "").takeIf { it.isNotBlank() }
+            if (targetName == "nc") navController(argsStr)
+            else destination(targetName)
         }
-    )
+    }
 }
 
 private fun <Args> NavEntry<Args>.toPath(): String? {
@@ -183,8 +171,9 @@ fun NavController.getRoute(): String {
     val segments = mutableListOf<String>()
     var nc: NavController? = this
     while (nc != null) {
-        nc.currentNavEntry?.toPath()?.let { segments.add(0, it) }
+        nc.getCurrentNavEntry()?.toPath()?.let { segments.add(0, it) }
+        segments.add(0, "nc?${nc.key}")
         nc = nc.parent
     }
     return segments.joinToString("/")
-}
+}*/

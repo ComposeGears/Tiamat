@@ -1,11 +1,11 @@
 [versions]
-agp = "8.9.2"
+agp = "8.12.0-alpha03"
 android-compileSdk = "35"
 android-minSdk = "21"
 android-targetSdk = "35"
 
 detekt = "1.23.8"
-jetbrains-compose = "1.7.3"
+jetbrains-compose = "1.8.1"
 kotlin = "2.1.21"
 
 [libraries]
@@ -14,9 +14,8 @@ androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.2"
 androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
 androidx-camera-view = "androidx.camera:camera-view:1.4.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.2.0"
-androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.7"
+androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.9.0"
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.0"
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
@@ -27,15 +26,22 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 
+compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
+compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
+
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.17.0"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-alpha10" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }
+kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.1" }
 m2p = { id = "io.github.composegears.m2p" }

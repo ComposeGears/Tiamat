@@ -8,7 +8,7 @@
 
 package com.composegears.tiamat.koin
 
-import com.composegears.tiamat.TiamatViewModel
+import com.composegears.tiamat.navigation.TiamatViewModel
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module

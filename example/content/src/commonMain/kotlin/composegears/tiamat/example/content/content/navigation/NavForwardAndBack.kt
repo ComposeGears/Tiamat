@@ -11,7 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.*
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
 val NavForwardAndBack by navDestination<Unit>(ScreenInfo()) {
@@ -20,15 +21,15 @@ val NavForwardAndBack by navDestination<Unit>(ScreenInfo()) {
             val nc = rememberNavController(
                 key = "F&B nav controller",
                 startDestination = NavForwardAndBackScreen1,
+            )
+            Navigation(
+                navController = nc,
                 destinations = arrayOf(
                     NavForwardAndBackScreen1,
                     NavForwardAndBackScreen2,
                     NavForwardAndBackScreen3,
-                )
-            )
-            Navigation(
-                nc,
-                Modifier
+                ),
+                modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))

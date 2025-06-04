@@ -7,18 +7,18 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.hot.reload)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kotlin.parcelize)
 }
 
 kotlin {
+    jvm("desktop")
     androidTarget {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_1_8
         }
     }
-    jvm("desktop")
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -64,6 +64,7 @@ kotlin {
         val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+                implementation(libs.compose.ui.backhandler)
                 implementation(libs.kotlin.coroutines.swing)
             }
         }

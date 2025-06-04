@@ -3,9 +3,10 @@ import io.gitlab.arturbosch.detekt.DetektPlugin
 plugins {
     base // expose `clear` task, so we can modify it
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.binary.compatibility)
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.compose.hot.reload) apply false
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -35,6 +36,7 @@ allprojects {
         source.from(
             files(
                 "src/commonMain/kotlin",
+                "src/commonTest/kotlin",
                 "src/jvmMain/kotlin",
                 "src/desktopMain/kotlin",
                 "src/androidMain/kotlin",
@@ -78,3 +80,16 @@ rootProject.tasks.register("createLocalM2") {
         }
     }
 }
+
+rootProject.tasks.register("tiamatCleanJvmTest") {
+    dependsOn(":tiamat:cleanJvmTest")
+    dependsOn(":tiamat-destinations:cleanJvmTest")
+}
+
+rootProject.tasks.register("tiamatJvmTests") {
+    dependsOn(":tiamat:jvmTest")
+    dependsOn(":tiamat-destinations:jvmTest")
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))
+}
+
+rootProject.tasks["tiamatJvmTests"].shouldRunAfter(":tiamat-destinations:cleanJvmTest")
