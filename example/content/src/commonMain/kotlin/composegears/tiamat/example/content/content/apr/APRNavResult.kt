@@ -47,14 +47,15 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
 
 private val APRNavResultScreen1 by navDestination<Unit> {
     val nc = navController()
-    var result by remember { mutableStateOf(navResult<Any?>()) }
+    var result = navResult<Any?>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text(
                 text = "`NavResult` is a data passed back to this screen\n" +
-                    "You can clear navResult after processing.",
+                    "You can clear navResult after processing.\n" +
+                    "navResult is NOT A STATE, clearing it will NOT cause recomposition",
                 textAlign = TextAlign.Center
             )
             VSpacer()
@@ -62,14 +63,6 @@ private val APRNavResultScreen1 by navDestination<Unit> {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (it != null) {
                         Text("Type: ${it::class.simpleName}\nResult value: $it")
-                        VSpacer()
-                        AppButton(
-                            "Clear",
-                            onClick = {
-                                clearNavResult()
-                                result = null
-                            }
-                        )
                     } else {
                         Text(
                             text = "Click button and select the result to be returned to this screen",

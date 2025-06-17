@@ -52,11 +52,14 @@ sourceSets {
 
 ```
 
-See more details in [Destinations README](tiamat-destinations-compiler/README.md)
+See more details in [Destinations README](doc/tiamat-destinations.md)
 
 #### Android / jvm
 
 Use same dependencies in the `dependencies { ... }` section
+
+#### Migration
+[Tiamat 1.* to Tiamat 2.*](doc/migration-1-2.md)
 
 Why Tiamat?
 -----------
@@ -64,10 +67,11 @@ Why Tiamat?
 - Code generation free
 - Pure compose
 - Support nested navigation
-- Support back-stack alteration (+deep-links)
+- Support back-stack alteration and deep-links
 - Easy to use
 - Allow to pass ANY types as data, even lambdas (!under small condition)
 - Customizable transitions
+- Customizable screen placement logic
 - Customizable save-state logic
 - Support of Extensions
 
@@ -105,17 +109,22 @@ Setup
 2) Create navController
     ```kotlin
      val navController = rememberNavController(
+        key = "Some nav controller",
         startDestination = Screen,
-        destinations = arrayOf(
-            Screen,
-            AnotherScreen,
-            // ...
-        )
      )
     ```
 3) Setup navigation
     ```kotlin
-    Navigation(navController)
+    Navigation(
+        navController = rootNavController,
+        destinations = arrayOf(
+            Screen,
+            AnotherScreen,
+            // ...,
+        ),
+        modifier = Modifier.fillMaxSize(),
+        contentTransformProvider = { navigationPlatformDefault(it) }
+    )
     ```
 4) Navigate
     ```kotlin
@@ -175,15 +184,11 @@ Some examples:
 
 ### NavController
 
-You may create NavController using one of `rememberNavController` functions:
+You can create NavController using one of `rememberNavController` functions:
 
 ```kotlin
 fun rememberNavController(
-    key: String? = null,
-    storageMode: StorageMode? = null,
-    startDestination: NavDestination<*>? = null,
-    destinations: Array<NavDestination<*>>,
-    configuration: NavController.() -> Unit = {}
+    //...
 )
 ```
 
@@ -193,8 +198,11 @@ and display as part of any composable function
 fun Content() {
     val navController = rememberNavController( /*... */)
     Navigation(
-        navController = navController,
-        modifier = Modifier.fillMaxSize().systemBarsPadding()
+        navController = nc,
+        destinations = arrayOf(
+            // ...
+        ),
+        modifier = Modifier.fillMaxSize()
     )
 }
 ```
@@ -204,7 +212,14 @@ NavController will keep the screens data, view models, and states during navigat
 > [!IMPORTANT]
 > The data may be cleared by system (eg: Android may clear memory)
 > 
-> Upon restoration state there is few cases depend on `storageMode`
+> ```kotlin
+> public fun rememberNavController(
+>   ...
+>   saveable: Boolean? = null,
+>   ...
+> )
+> ```
+> `saveable` property of remembered nav controller will indicate if we need to save/restore state or no 
 
 ### Extensions
 
@@ -222,10 +237,8 @@ class AnalyticsExt(private val name: String) : ContentExtension<Any?>() {
     override fun NavDestinationScope<out Any?>.Content() {
         val entry = navEntry()
         LaunchedEffect(Unit) {
-            LaunchedEffect(Unit) {
-                val service = ... // receive tracker
-                service.trackScreen(screenName = name, destination = entry.destination.name)
-            }
+            val service = ... // receive tracker
+            service.trackScreen(screenName = name, destination = entry.destination.name)
         }
     }
 }
@@ -241,13 +254,10 @@ val SomeScreen by navDestination<Unit>(
 
 ### Storage mode
 
-- `null` - will take parent NavController mode or `Memory` for root controller
-- `StorageMode.SavedState` - will store data in `savable` storage (eg: Android -> Bundle) 
 > [!IMPORTANT]
-> Only 'Savable' types of params & args will be available to use
+> Only 'Savable' types of params & args will be available to use within `saveable` nav controllers
 >
 > eg: Android - Parcelable + any bundlable primitives
-- `StorageMode.Memory` - store data in memory, allow to use any types of args & params (including lambdas). Reset nav controller upon data loss
 
 ### Known limitations
  
@@ -314,8 +324,7 @@ val DeeplinkScreen by navDestination<Unit> {
 
     val deeplinkNavController = rememberNavController(
         key = "deeplinkNavController",
-        startDestination = ShopScreen,
-        destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
+        startDestination = ShopScreen
     ) {
         // handle deeplink and open next screen
         // passing eitthe same data or appropriate parts of it
@@ -334,21 +343,18 @@ val DeeplinkScreen by navDestination<Unit> {
         }
     }
 
-    Navigation(modifier = Modifier.fillMaxSize(), navController = deeplinkNavController)
+    Navigation(...)
 }
 
 //---- idea 2 -----
 // use route-api
 
 if (deeplink != null) {
-    @OptIn(TiamatExperimentalApi::class)
-    navController?.route(
-        Route.build(
-            ShopScreen.toNavEntry(),
-            CategoryScreen.toNavEntry(navArgs = deeplink.categoryId),
-            DetailScreen.toNavEntry(navArgs = DetailParams(deeplink.productName, deeplink.productId)),
-        )
-    )
+    navController?.route {
+        element(ShopScreen)
+        element(CategoryScreen.toNavEntry(navArgs = deeplink.categoryId))
+        element(DetailScreen.toNavEntry(navArgs = DetailParams(deeplink.productName, deeplink.productId)))
+    }
     deepLinkController.clearDeepLink()
 }
 ```
@@ -361,12 +367,10 @@ of animation
 ```kotlin
     // LaunchEffect & DisposableEffect are executed on `next` frame, so you may see 1 frame of animation
     // to avoid this effect use `configuration` lambda within `rememberNavController` fun
-    // see DeeplinkScreen.kt
 
     val deeplinkNavController = rememberNavController(
         key = "deeplinkNavController",
         startDestination = ShopScreen,
-        destinations = arrayOf(ShopScreen, CategoryScreen, DetailScreen)
     ) { // executed right after being created or restored
         // we can do nav actions before 1st screen bing draw without seeing 1st frame
         if (deeplink != null) {
@@ -380,36 +384,19 @@ of animation
                 navArgs = DetailParams(deeplink.productName, deeplink.productId),
                 transition = navigationNone()
             )
-            clearFreeArgs()
+            clearFreeArgs() // clear args not to process them again when back to this destination
         }
     }
 
-``` 
+```
 
 ### Desktop
 
-There is no default 'back' action on desktop
-
-If you want to add one into the `Tiamat` navigation just use the code below:
-
-```kotlin
-fun main() = application {
-    val backHandler = LocalNavBackHandler.current // < get ref to Global back handler
-    Window(
-        // ...
-        onKeyEvent = { // < add global key event handler
-            it.key == Key.Escape && it.type == KeyEventType.KeyUp && backHandler.back() // < call backHandler.back()
-        },
-        // ...
-    ) {
-        App()
-    }
-}
-```
+Nothing specific (yet)
 
 ### Android
 
-`Tiamat-android` overrides `LocalLifecycleOwner` for each destination and compatible with lifecycle-aware components
+`Tiamat` overrides `LocalLifecycleOwner` for each destination (android only) and compatible with lifecycle-aware components
 
 See an example of camera usage: [AndroidViewLifecycleScreen.kt](example/platform/src/androidMain/kotlin/composegears/tiamat/example/platform/AndroidViewLifecycleScreen.kt)
 
