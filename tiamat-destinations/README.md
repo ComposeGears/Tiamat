@@ -76,10 +76,10 @@ val Screen4 = Screen4Class()
 Use graph instead of `destinations`
 
 ```kotlin
-val nc = rememberNavController(
-    key = "Key",
-    startDestination = Screen1,
-    graph = Graph // use it here
+val nc = rememberNavController(...)
+Navigation(
+    navController = nc,
+    graph = Graph
 )
 ```
 
@@ -91,9 +91,8 @@ private object Graph1 : TiamatGraph
 private object Graph2 : TiamatGraph
 
 //...
-val nc = rememberNavController(
-    key = "Key",
-    startDestination = Screen1,
+Navigation(
+    navController = nc,
     graph = Graph1 + Graph2
 )
 ```
