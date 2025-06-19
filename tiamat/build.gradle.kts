@@ -62,7 +62,7 @@ kotlin {
 }
 
 m2p {
-    description = "KMM Navigation library"
+    description = "Compose Multiplatform navigation library"
 }
 
 kover {
