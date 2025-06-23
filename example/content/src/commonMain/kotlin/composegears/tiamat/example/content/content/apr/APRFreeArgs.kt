@@ -48,10 +48,12 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text(
-                text = "`FreeArgs` is a free form(type) data\n" +
-                    "Expect to be used as intent/call-to-action/meta-data\n" +
-                    "You can clear freeArgs after processing.\n" +
-                    "freeArgs is NOT A STATE, clearing it will NOT cause recomposition",
+                text = """
+                    `FreeArgs` is a free form(type) data
+                     Expect to be used as intent/call-to-action/meta-data
+                     You can clear freeArgs after processing.
+                     freeArgs is NOT A STATE, clearing it will NOT cause recomposition
+                """.trimIndent(),
                 textAlign = TextAlign.Center
             )
             VSpacer()

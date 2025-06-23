@@ -34,7 +34,7 @@ val AdvTwoPane by navDestination<Unit>(ScreenInfo()) {
     Screen("SharedElementTransition") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
-                key = "SharedElementTransition nav controller",
+                key = "TwoPane nav controller",
                 startDestination = AdvTwoPaneList,
             )
             NavigationScene(

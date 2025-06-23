@@ -24,6 +24,12 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 
+Last stable version: `1.5.0`
+
+[Tiamat Destinations README](doc/tiamat-destinations.md)
+
+[Migration Tiamat 1.* -> Tiamat 2.*](doc/migration-1.5-2.0.md)
+
 #### Multiplatform
 ```kotlin
 sourceSets {
@@ -52,14 +58,9 @@ sourceSets {
 
 ```
 
-See more details in [Destinations README](doc/tiamat-destinations.md)
-
 #### Android / jvm
 
 Use same dependencies in the `dependencies { ... }` section
-
-#### Migration
-[Tiamat 1.* to Tiamat 2.*](doc/migration-1-2.md)
 
 Why Tiamat?
 -----------
@@ -385,6 +386,38 @@ of animation
                 transition = navigationNone()
             )
             clearFreeArgs() // clear args not to process them again when back to this destination
+        }
+    }
+
+```
+---
+
+How about 2-pane & custom layout?
+
+```kotlin
+    // Yep, there is 2-pane layout example. You can also create fully custom layout by using `scene` api
+
+    val nc = rememberNavController(
+        key = "nav controller",
+        startDestination = SomeDest1,
+    )
+    // using scene api
+    NavigationScene(
+        navController = nc,
+        destinations = arrayOf(
+            SomeDest1,
+            SomeDest2,
+            SomeDest3,
+        )
+    ) {
+        // place you destinations as you want ( !!!CAUTION!!! do not render same entry twice in a frame)
+        AnimatedContent(
+            targetState = nc.currentNavEntryAsState(),
+            contentKey = { it?.contentKey() },
+            transitionSpec = { navigationFadeInOut() }
+        ) {
+            // you can also draw an entries from backstack if you need (but be careful)
+            EntryContent(it)
         }
     }
 

@@ -43,7 +43,10 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
             )
         }
         var activeMenuItem by remember { mutableStateOf(menuItems.first()) }
-        val nc = rememberNavController(key = "a", startDestination = AdvAdaptiveListDetailsList)
+        val nc = rememberNavController(
+            key = "Adaptive list nav controller",
+            startDestination = AdvAdaptiveListDetailsList
+        )
         Surface {
             Column {
                 // screen content - toolbar
