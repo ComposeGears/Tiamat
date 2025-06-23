@@ -24,7 +24,7 @@ public fun <Args> NavController.navigate(
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
-) = navigate(
+): Unit = navigate(
     entry = entry.toNavEntry(
         navArgs = navArgs,
         freeArgs = freeArgs,
@@ -46,7 +46,7 @@ public fun <Args> NavController.navigate(
     entry: NavEntry<Args>,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
-) = navigate(
+): Unit = navigate(
     entry = entry,
     transitionData = TransitionData(
         contentTransform = transition,
@@ -72,7 +72,7 @@ public fun <Args> NavController.replace(
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
-) = replace(
+): Unit = replace(
     entry = entry.toNavEntry(
         navArgs = navArgs,
         freeArgs = freeArgs,
@@ -94,7 +94,7 @@ public fun <Args> NavController.replace(
     entry: NavEntry<Args>,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
-) = replace(
+): Unit = replace(
     entry = entry,
     transitionData = TransitionData(
         contentTransform = transition,
@@ -123,7 +123,7 @@ public fun <Args> NavController.popToTop(
             transitionController = transitionController
         )
     }
-) = popToTop(
+): Unit = popToTop(
     dest = dest,
     transitionData = TransitionData(
         contentTransform = transition,

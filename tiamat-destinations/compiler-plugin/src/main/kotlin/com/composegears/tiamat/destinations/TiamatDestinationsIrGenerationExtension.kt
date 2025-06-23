@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -81,7 +80,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             override fun visitProperty(declaration: IrProperty): IrStatement {
                 declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
-                    .mapNotNull { it.valueArguments.firstOrNull()?.extractContainerClass()?.symbol }
+                    .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
                     .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
                 return super.visitProperty(declaration)
             }
@@ -89,7 +88,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
-                    .mapNotNull { it.valueArguments.firstOrNull()?.extractContainerClass()?.symbol }
+                    .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
                     .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
                 return super.visitClass(declaration)
             }
@@ -215,8 +214,8 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
                     }
                 }
 
-                arrayOfCall.putTypeArgument(0, navDestinationType.defaultType)
-                arrayOfCall.putValueArgument(0, irVararg(navDestinationType.defaultType, args))
+                arrayOfCall.typeArguments.add(0, navDestinationType.defaultType)
+                arrayOfCall.arguments.add(0, irVararg(navDestinationType.defaultType, args))
                 +irReturn(arrayOfCall)
             }
         }
