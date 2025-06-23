@@ -206,7 +206,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
                     }
                 }
                 val arrayOfCall = irCall(findArrayOfSymbol(pluginContext))
-                arrayOfCall.typeArguments[0] == navDestinationType.defaultType
+                arrayOfCall.typeArguments[0] = navDestinationType.defaultType
                 arrayOfCall.arguments[0] = irVararg(navDestinationType.defaultType, args)
                 +irReturn(arrayOfCall)
             }

@@ -117,7 +117,7 @@ Setup
 3) Setup navigation
     ```kotlin
     Navigation(
-        navController = rootNavController,
+        navController = navController,
         destinations = arrayOf(
             Screen,
             AnotherScreen,
@@ -199,7 +199,7 @@ and display as part of any composable function
 fun Content() {
     val navController = rememberNavController( /*... */)
     Navigation(
-        navController = nc,
+        navController = navController,
         destinations = arrayOf(
             // ...
         ),
