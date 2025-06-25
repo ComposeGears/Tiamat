@@ -9,10 +9,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -52,9 +48,12 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
             VSpacer()
             Text(
-                text = "`FreeArgs` is a free form(type) data\n" +
-                    "Expect to be used as intent/call-to-action/meta-data\n" +
-                    "You can clear freeArgs after processing.",
+                text = """
+                    `FreeArgs` is a free form(type) data
+                     Expect to be used as intent/call-to-action/meta-data
+                     You can clear freeArgs after processing.
+                     freeArgs is NOT A STATE, clearing it will NOT cause recomposition
+                """.trimIndent(),
                 textAlign = TextAlign.Center
             )
             VSpacer()
@@ -93,7 +92,7 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
 
 private val APRFreeArgsScreen2 by navDestination<Unit> {
     val nc = navController()
-    var args by remember { mutableStateOf<Any?>(freeArgs()) }
+    var args = freeArgs<Any?>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
@@ -104,14 +103,6 @@ private val APRFreeArgsScreen2 by navDestination<Unit> {
                         Text(
                             text = "Type: ${it::class.simpleName}\nFreeArgs value: $it",
                             textAlign = TextAlign.Center
-                        )
-                        VSpacer()
-                        AppButton(
-                            "Clear",
-                            onClick = {
-                                clearFreeArgs()
-                                args = null
-                            }
                         )
                     } else {
                         Text("FreeArgs is empty")

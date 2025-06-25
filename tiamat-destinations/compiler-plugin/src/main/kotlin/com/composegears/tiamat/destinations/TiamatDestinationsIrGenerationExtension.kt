@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -17,16 +16,14 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
@@ -81,7 +78,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             override fun visitProperty(declaration: IrProperty): IrStatement {
                 declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
-                    .mapNotNull { it.valueArguments.firstOrNull()?.extractContainerClass()?.symbol }
+                    .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
                     .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
                 return super.visitProperty(declaration)
             }
@@ -89,7 +86,7 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
-                    .mapNotNull { it.valueArguments.firstOrNull()?.extractContainerClass()?.symbol }
+                    .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
                     .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
                 return super.visitClass(declaration)
             }
@@ -193,12 +190,6 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             val irBuilder = DeclarationIrBuilder(pluginContext, this.symbol)
 
             body = irBuilder.irBlockBody {
-                val arrayOfCall = irCall(
-                    callee = pluginContext.referenceFunctions(
-                        CallableId(FqName("kotlin"), Name.identifier("arrayOf"))
-                    ).first(),
-                    type = pluginContext.irBuiltIns.arrayClass.typeWith(navDestinationType.defaultType)
-                )
                 // Add each annotated element to the array
                 val args: List<IrExpression> = elements.mapNotNull { symbol ->
                     when (symbol) {
@@ -214,12 +205,21 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
                         else -> null
                     }
                 }
-
-                arrayOfCall.putTypeArgument(0, navDestinationType.defaultType)
-                arrayOfCall.putValueArgument(0, irVararg(navDestinationType.defaultType, args))
+                val arrayOfCall = irCall(findArrayOfSymbol(pluginContext))
+                arrayOfCall.typeArguments[0] = navDestinationType.defaultType
+                arrayOfCall.arguments[0] = irVararg(navDestinationType.defaultType, args)
                 +irReturn(arrayOfCall)
             }
         }
+    }
+
+    private fun findArrayOfSymbol(pluginContext: IrPluginContext): IrSimpleFunctionSymbol {
+        val callableId = CallableId(FqName("kotlin"), Name.identifier("arrayOf"))
+        // find `arrayOf<T>(vararg elements: T)`
+        return pluginContext.referenceFunctions(callableId).singleOrNull {
+            val params = it.owner.parameters
+            params.size == 1 && params[0].isVararg
+        } ?: error("arrayOf function not found")
     }
 
     private fun isValidAnnotationTarget(symbol: IrSymbol, pluginContext: IrPluginContext): Boolean {

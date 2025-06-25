@@ -1,3 +1,5 @@
+@file:OptIn(TiamatExperimentalApi::class)
+
 package composegears.tiamat.example.content.content.advanced
 
 import androidx.compose.foundation.border
@@ -17,13 +19,12 @@ import com.composegears.tiamat.destinations.InstallIn
 import com.composegears.tiamat.destinations.TiamatGraph
 import composegears.tiamat.example.ui.core.*
 
-@OptIn(TiamatExperimentalApi::class)
 private object Graph : TiamatGraph
 
 val AdvDestinationsGraph by navDestination<Unit>(ScreenInfo()) {
     Screen("Auto destinations graph") {
         val nc = rememberNavController(
-            key = "F&B nav controller",
+            key = "Auto-destinations nav controller",
             startDestination = AdvDestinationsGraphScreen1,
         )
         Navigation(

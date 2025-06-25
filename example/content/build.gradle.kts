@@ -34,7 +34,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.tiamat)
-            api(projects.tiamatDestinations)
+            api(projects.tiamatDestinations.tiamatDestinations)
             api(projects.example.platform)
             api(projects.example.extra)
             api(projects.example.uiCore)
