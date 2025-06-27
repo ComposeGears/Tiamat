@@ -24,7 +24,7 @@ public final class com/composegears/tiamat/ComposeKt {
 
 public abstract interface class com/composegears/tiamat/ContentExtension : com/composegears/tiamat/Extension {
 	public abstract fun Content (Lcom/composegears/tiamat/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun getType ()Lcom/composegears/tiamat/ContentExtension$Type;
+	public fun getType ()Lcom/composegears/tiamat/ContentExtension$Type;
 }
 
 public final class com/composegears/tiamat/ContentExtension$DefaultImpls {
@@ -140,6 +140,7 @@ public final class com/composegears/tiamat/NavDestinationKt {
 
 public abstract class com/composegears/tiamat/NavDestinationScope : androidx/compose/animation/AnimatedVisibilityScope {
 	public static final field $stable I
+	public fun animateEnterExit (Landroidx/compose/ui/Modifier;Landroidx/compose/animation/EnterTransition;Landroidx/compose/animation/ExitTransition;Ljava/lang/String;)Landroidx/compose/ui/Modifier;
 }
 
 public final class com/composegears/tiamat/NavEntry : com/composegears/tiamat/Route$Element {

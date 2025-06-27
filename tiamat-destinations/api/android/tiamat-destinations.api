@@ -7,8 +7,8 @@ public abstract interface annotation class com/composegears/tiamat/destinations/
 }
 
 public abstract interface class com/composegears/tiamat/destinations/TiamatGraph {
-	public abstract fun destinations ()[Lcom/composegears/tiamat/NavDestination;
-	public abstract fun plus (Lcom/composegears/tiamat/destinations/TiamatGraph;)Lcom/composegears/tiamat/destinations/TiamatGraph;
+	public fun destinations ()[Lcom/composegears/tiamat/NavDestination;
+	public fun plus (Lcom/composegears/tiamat/destinations/TiamatGraph;)Lcom/composegears/tiamat/destinations/TiamatGraph;
 }
 
 public final class com/composegears/tiamat/destinations/TiamatGraph$DefaultImpls {
