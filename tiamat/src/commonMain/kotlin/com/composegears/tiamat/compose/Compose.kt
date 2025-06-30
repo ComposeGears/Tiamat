@@ -231,9 +231,36 @@ public fun Navigation(
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
 ) {
+    Navigation(
+        navController = navController,
+        destinationResolver = { name -> destinations.firstOrNull { it.name == name } },
+        modifier = modifier,
+        handleSystemBackEvent = handleSystemBackEvent,
+        contentTransformProvider = contentTransformProvider
+    )
+}
+
+/**
+ * The main navigation composable that displays the current destination and handles transitions.
+ *
+ * @param navController The NavController to use for navigation
+ * @param destinationResolver A function that resolves a destination by name (used during restoration from saved state)
+ * @param modifier Modifier to apply to the navigation container
+ * @param handleSystemBackEvent Whether to handle system back events (default: true)
+ * @param contentTransformProvider Provider function for content transitions based on navigation direction
+ */
+@Composable
+@Suppress("CognitiveComplexMethod", "CyclomaticComplexMethod")
+public fun Navigation(
+    navController: NavController,
+    destinationResolver: (name: String) -> NavDestination<*>?,
+    modifier: Modifier = Modifier,
+    handleSystemBackEvent: Boolean = true,
+    contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
+) {
     NavigationScene(
         navController = navController,
-        destinations = destinations,
+        destinationResolver = destinationResolver,
         handleSystemBackEvent = handleSystemBackEvent,
     ) {
         val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
@@ -359,6 +386,49 @@ public fun NavigationScene(
     handleSystemBackEvent: Boolean = true,
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
+    NavigationScene(
+        navController = navController,
+        destinationResolver = { name -> destinations.firstOrNull { it.name == name } },
+        handleSystemBackEvent = handleSystemBackEvent,
+        scene = scene
+    )
+}
+
+/**
+ * Provides a customizable way to display navigation content managed by a [NavController].
+ *
+ * `NavigationScene` offers a [NavigationSceneScope] that allows for fine-grained control over
+ * how and where individual navigation entries are rendered using [NavigationSceneScope.EntryContent].
+ * This is particularly useful for implementing custom layouts (e.g., side-by-side panes, lists with details) or
+ * complex animated transitions that are not covered by the standard [Navigation] composable.
+ *
+ * Example usage:
+ * ```
+ * NavigationScene(navController, destinations) { // this: NavigationSceneScope
+ *     val currentEntry by navController.currentNavEntryAsState()
+ *     AnimatedContent(
+ *         targetState = currentEntry,
+ *         contentKey = { it?.contentKey() },
+ *         transitionSpec = { navigationFadeInOut() }
+ *     ) {
+ *         EntryContent(it) // Renders the content of the current navigation entry
+ *     }
+ * }
+ * ```
+ *
+ * @param navController The NavController to use for navigation
+ * @param destinationResolver A function that resolves a destination by name (used during restoration from saved state)
+ * @param handleSystemBackEvent Whether to handle system back events (default: true)
+ * @param scene Scene builder composable function that defines how navigation entries are rendered
+ */
+@Composable
+@Suppress("CognitiveComplexMethod")
+public fun NavigationScene(
+    navController: NavController,
+    destinationResolver: (name: String) -> NavDestination<*>?,
+    handleSystemBackEvent: Boolean = true,
+    scene: @Composable NavigationSceneScope.() -> Unit
+) {
     if (handleSystemBackEvent) {
         val hasBackEntries by navController.hasBackEntriesAsState()
         BackHandler(hasBackEntries, navController::back)
@@ -368,7 +438,7 @@ public fun NavigationScene(
     CompositionLocalProvider(LocalNavController provides navController) {
         val navScope = remember {
             NavigationSceneScope { entry ->
-                if (!entry.isResolved) entry.resolveDestination(destinations)
+                if (!entry.isResolved) entry.resolveDestination(destinationResolver)
                 NavEntryContent(entry)
                 DisposableEffect(entry) {
                     if (visibleEntries.contains(entry))

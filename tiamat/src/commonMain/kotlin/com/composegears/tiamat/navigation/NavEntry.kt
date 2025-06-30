@@ -104,10 +104,9 @@ public class NavEntry<Args> public constructor(
         internal set
 
     @Suppress("UNCHECKED_CAST")
-    internal fun resolveDestination(destinations: Array<NavDestination<*>>) {
-        destination = destinations
-            .firstOrNull { it.name == destination.name }
-            ?.let { it as NavDestination<Args> }
+    internal fun resolveDestination(destinationResolver: (name: String) -> NavDestination<*>?) {
+        destination = destinationResolver(destination.name)
+            ?.let { it as? NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
         isResolved = true
     }
