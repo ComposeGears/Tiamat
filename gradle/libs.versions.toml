@@ -30,7 +30,7 @@ kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin
 compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
