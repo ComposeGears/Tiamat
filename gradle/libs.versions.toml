@@ -7,6 +7,7 @@ android-targetSdk = "36"
 
 detekt = "1.23.8"
 jetbrains-compose = "1.8.2"
+lifecycle = "2.9.1"
 kotlin = "2.2.0"
 
 [libraries]
@@ -29,6 +30,8 @@ kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin
 
 compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
+compose-lifecycle = {module ="org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
+compose-viewmodel = {module ="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle"}
 
 zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.7.1"
 

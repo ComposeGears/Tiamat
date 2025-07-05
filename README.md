@@ -20,7 +20,6 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | Module                       |                                                       Version                                                        |
 |------------------------------|:--------------------------------------------------------------------------------------------------------------------:|
 | tiamat                       |                                  [![Tiamat][badge:maven-tiamat]][url:maven-tiamat]                                   |
-| tiamat-koin                  |                           [![Tiamat koin][badge:maven-tiamat-koin]][url:maven-tiamat-koin]                           |
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 

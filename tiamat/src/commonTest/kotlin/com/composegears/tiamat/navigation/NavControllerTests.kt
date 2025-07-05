@@ -470,8 +470,8 @@ class NavControllerTests {
         assertEquals("2", nc.getBackStack()[1].destination.name)
         val currentNavEntry = nc.getCurrentNavEntry()
         assertEquals("3", currentNavEntry?.destination?.name)
-        assertEquals(1, currentNavEntry?.navControllersStorage?.nestedNavControllers?.size)
-        val nestedNc = currentNavEntry?.navControllersStorage?.get("controller")
+        assertEquals(1, currentNavEntry?.navControllerStore?.navControllers?.size)
+        val nestedNc = currentNavEntry?.navControllerStore?.get("controller")
         assertNotNull(nestedNc)
         assertEquals("1", nestedNc.getCurrentNavEntry()?.destination?.name)
         assertEquals(1, nestedNc.getBackStack().size)
@@ -485,8 +485,8 @@ class NavControllerTests {
         val nc2 = createSimpleNavController(saveable = false)
         fun NavController.subNcIsSaveable() = this
             .getCurrentNavEntry()
-            ?.navControllersStorage
-            ?.nestedNavControllers[0]
+            ?.navControllerStore
+            ?.navControllers[0]
             ?.saveable
         nc1.route {
             destination("1")
@@ -609,21 +609,16 @@ class NavControllerTests {
     }
 
     @Test
-    fun `back # orElse called when back not possible`() {
-        val nc = createSimpleNavController(startDestination = Destination1)
-        var orElseCalled = false
-        nc.back(orElse = {
-            orElseCalled = true
-            true
-        })
-        assertTrue(orElseCalled)
-        orElseCalled = false
-        nc.navigate(Destination2.toNavEntry())
-        nc.back(to = Destination3, orElse = {
-            orElseCalled = true
-            true
-        })
-        assertTrue(orElseCalled)
+    fun `back # recursive=true used when back not possible`() {
+        val nc1 = createSimpleNavController(startDestination = Destination1)
+        val nc2 = createSimpleNavController(startDestination = Destination1, parent = nc1)
+        val nc3 = createSimpleNavController(startDestination = Destination1, parent = nc2)
+        nc1.navigate(Destination2.toNavEntry())
+        assertEquals(Destination2, nc1.getCurrentNavEntry()?.destination)
+        nc3.back()
+        assertEquals(Destination1, nc1.getCurrentNavEntry()?.destination)
+        assertEquals(Destination1, nc2.getCurrentNavEntry()?.destination)
+        assertEquals(Destination1, nc3.getCurrentNavEntry()?.destination)
     }
 
     @Test

@@ -12,14 +12,12 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import composegears.tiamat.example.content.App
-import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.start
 
 @OptIn(ExperimentalFoundationApi::class)
 fun main() {
     Platform.start()
-    A3rdParty.start()
     application {
         Window(
             onCloseRequest = ::exitApplication,

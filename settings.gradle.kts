@@ -25,7 +25,6 @@ dependencyResolutionManagement {
 
 include(":tiamat")
 include(":tiamat-destinations:tiamat-destinations")
-include(":tiamat-koin")
 
 includeBuild("tiamat-destinations/compiler-plugin") {
     name = "tiamat-destinations-compiler"
@@ -39,7 +38,6 @@ includeBuild("tiamat-destinations/gradle-plugin") {
 
 include(":example:app:composeApp")
 include(":example:content")
-include(":example:extra")
 include(":example:platform")
 include(":example:ui-core")
 
@@ -47,5 +45,4 @@ include(":example:ui-core")
 project(":example:app:composeApp").name = "composeApp"
 project(":example:content").name = "content"
 project(":example:platform").name = "platform"
-project(":example:extra").name = "extra"
 project(":example:ui-core").name = "ui-core"

@@ -28,7 +28,6 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
 
-            export(projects.example.extra)
             export(projects.example.platform)
         }
     }
@@ -58,7 +57,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         iosMain.dependencies {
-            api(projects.example.extra)
             api(projects.example.platform)
         }
         val desktopMain by getting {

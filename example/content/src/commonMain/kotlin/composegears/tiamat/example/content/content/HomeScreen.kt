@@ -37,7 +37,6 @@ import composegears.tiamat.example.content.content.apr.APRNavResult
 import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
-import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.features
 import composegears.tiamat.example.platform.name
@@ -154,10 +153,6 @@ private val HomeItems =
         HomeItem(
             "Platform ${Platform.name()}",
             Platform.features()
-        ),
-        HomeItem(
-            "3rd party",
-            A3rdParty.features()
         ),
     ).filter {
         it.items.isNotEmpty()
