@@ -132,4 +132,4 @@ val viewModelSavedState = rememberSaveable { MutableSavedState() }
 val saveableViewModel = viewModel { ArchViewModelSaveableViewModel(viewModelSavedState) }
 ```
 > [!IMPORTANT]
-> Solution/syntax may be changed depend on feedbacks
+> Solution/syntax may be changed depending on feedback
