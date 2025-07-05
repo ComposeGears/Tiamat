@@ -109,7 +109,7 @@ public fun rememberNavController(
 ): NavController {
     val parent = LocalNavController.current
     val parentNavEntry = LocalNavEntry.current
-    val navControllersStorage = parentNavEntry?.navControllersStorage
+    val navControllersStorage = parentNavEntry?.navControllerStore
     val isSaveable = saveable ?: parent?.saveable ?: true
 
     fun createNavController() =
@@ -580,99 +580,4 @@ public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navRe
  */
 public fun NavDestinationScope<*>.clearNavResult() {
     navEntry.freeArgs = null
-}
-
-// ------------- NavDestinationScope extras : ViewModel ----------------------------------------------------------------
-
-/**
- * Remembers a ViewModel in the [NavEntry].
- *
- * @param Model The type of the ViewModel.
- * @param provider The provider for the ViewModel.
- * @return The remembered ViewModel.
- */
-@Composable
-public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    noinline provider: () -> Model
-): Model = rememberViewModel(className<Model>(), provider)
-
-/**
- * Remembers a ViewModel in the [NavEntry].
- *
- * @param Model The type of the ViewModel.
- * @param key The key for the ViewModel.
- * @param provider The provider for the ViewModel.
- * @return The remembered ViewModel.
- */
-@Composable
-public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberViewModel(
-    key: String,
-    provider: () -> Model
-): Model = remember {
-    navEntry.viewModelsStorage.get(key, provider)
-}
-
-/**
- * Remembers a saveable ViewModel in the [NavEntry].
- *
- * @param Model The type of the ViewModel.
- * @param provider The provider for the ViewModel.
- * @return The remembered saveable ViewModel.
- */
-@Composable
-public inline fun <reified Model> NavDestinationScope<*>.rememberSaveableViewModel(
-    noinline provider: (SavedState?) -> Model
-): Model where Model : TiamatViewModel, Model : Saveable =
-    rememberSaveableViewModel(className<Model>(), provider)
-
-/**
- * Remembers a saveable ViewModel in the [NavEntry].
- *
- * @param Model The type of the ViewModel.
- * @param key The key for the ViewModel.
- * @param provider The provider for the ViewModel.
- * @return The remembered saveable ViewModel.
- */
-@Composable
-public fun <Model> NavDestinationScope<*>.rememberSaveableViewModel(
-    key: String,
-    provider: (SavedState?) -> Model
-): Model where Model : TiamatViewModel, Model : Saveable = rememberSaveable(
-    saver = Saver(
-        save = { it.saveToSaveState() },
-        restore = { navEntry.viewModelsStorage.get(key) { provider(it) } }
-    ),
-    init = { navEntry.viewModelsStorage.get(key) { provider(null) } }
-)
-
-/**
- * Remembers a shared ViewModel in the [NavController].
- *
- * @param Model The type of the ViewModel.
- * @param navController The NavController to bind to.
- * @param provider The provider for the ViewModel.
- * @return The remembered shared ViewModel.
- */
-@Composable
-public inline fun <reified Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
-    navController: NavController = navController(),
-    noinline provider: () -> Model
-): Model = rememberSharedViewModel(className<Model>(), navController, provider)
-
-/**
- * Remembers a shared ViewModel in the [NavController].
- *
- * @param Model The type of the ViewModel.
- * @param key The key for the ViewModel.
- * @param navController The NavController to bind to.
- * @param provider The provider for the ViewModel.
- * @return The remembered shared ViewModel.
- */
-@Composable
-public fun <Model : TiamatViewModel> NavDestinationScope<*>.rememberSharedViewModel(
-    key: String,
-    navController: NavController = navController(),
-    provider: () -> Model
-): Model = remember {
-    navController.sharedViewModelsStorage.get(key, provider)
 }

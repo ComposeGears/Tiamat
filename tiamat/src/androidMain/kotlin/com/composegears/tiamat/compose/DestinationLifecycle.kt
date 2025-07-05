@@ -1,20 +1,19 @@
 package com.composegears.tiamat.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.composegears.tiamat.navigation.TiamatViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /**
  * Internal view model
  *
  * Holds & provide lifecycle
  */
-private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEventObserver {
+private class LifecycleModel : ViewModel(), LifecycleOwner, LifecycleEventObserver {
+    @SuppressLint("StaticFieldLeak")
     private val registry = LifecycleRegistry(this)
     private var parentState: Lifecycle.State? = null
     private var isClosed = false
@@ -37,8 +36,8 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
         parentState = null
     }
 
-    override fun onClosed() {
-        super.onClosed()
+    override fun onCleared() {
+        super.onCleared()
         isClosed = true
         updateState()
     }
@@ -65,8 +64,9 @@ private class LifecycleModel : TiamatViewModel(), LifecycleOwner, LifecycleEvent
 }
 
 @Composable
-internal fun NavDestinationScope<*>.rememberDestinationLifecycleOwner(): LifecycleOwner {
-    val lifecycleModel = rememberViewModel { LifecycleModel() }
+@Suppress("ViewModelInjection")
+internal fun rememberDestinationLifecycleOwner(): LifecycleOwner {
+    val lifecycleModel: LifecycleModel = viewModel()
     val parentLifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleModel) {
         lifecycleModel.onAttach()

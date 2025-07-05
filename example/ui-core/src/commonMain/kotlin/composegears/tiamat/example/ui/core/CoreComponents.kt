@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.NavDestinationScope
+import com.composegears.tiamat.compose.back
 import com.composegears.tiamat.compose.hasBackEntriesAsState
 import com.composegears.tiamat.compose.navController
 

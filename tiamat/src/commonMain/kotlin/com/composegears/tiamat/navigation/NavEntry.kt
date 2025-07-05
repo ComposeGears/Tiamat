@@ -1,6 +1,8 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.composegears.tiamat.ExcludeFromTests
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -22,7 +24,7 @@ public class NavEntry<Args> public constructor(
     navArgs: Args? = null,
     freeArgs: Any? = null,
     navResult: Any? = null
-) : RouteElement {
+) : RouteElement, ViewModelStoreOwner {
 
     public companion object {
 
@@ -56,16 +58,13 @@ public class NavEntry<Args> public constructor(
             ).also {
                 it.uuid = uuid
                 it.savedState = entrySavedState
-                it.navControllersStorage.loadFromSavedState(parent, navControllers)
+                it.navControllerStore.loadFromSavedState(parent, navControllers)
             }
         }
     }
 
     // used to get current SavedState when attached to UI
     private var savedStateSaver: (() -> SavedState)? = null
-
-    internal val navControllersStorage: NavControllersStorage = NavControllersStorage()
-    internal val viewModelsStorage: ViewModelsStorage = ViewModelsStorage()
     internal var savedState: SavedState? = null
 
     internal var isAttachedToNavController = false
@@ -78,6 +77,16 @@ public class NavEntry<Args> public constructor(
     @OptIn(ExperimentalUuidApi::class)
     internal var uuid: String = Uuid.random().toHexString()
         private set
+
+    /**
+     * Returns the [NavControllerStore] associated with this NavEntry.
+     */
+    public val navControllerStore: NavControllerStore = NavControllerStore()
+
+    /**
+     * Returns the [ViewModelStore] associated with this NavEntry.
+     */
+    public override val viewModelStore: ViewModelStore = ViewModelStore()
 
     /**
      * The destination this entry represents.
@@ -120,7 +129,7 @@ public class NavEntry<Args> public constructor(
             KEY_FREE_ARGS to freeArgs,
             KEY_NAV_RESULT to navResult,
             KEY_SAVED_STATE to savedState,
-            KEY_NAV_CONTROLLERS to navControllersStorage.saveToSavedState(),
+            KEY_NAV_CONTROLLERS to navControllerStore.saveToSavedState(),
         )
     }
 
@@ -152,8 +161,8 @@ public class NavEntry<Args> public constructor(
     }
 
     private fun close() {
-        viewModelsStorage.clear()
-        navControllersStorage.clear()
+        viewModelStore.clear()
+        navControllerStore.clear()
     }
 
     public fun contentKey(): String = "${destination.name}-$uuid"

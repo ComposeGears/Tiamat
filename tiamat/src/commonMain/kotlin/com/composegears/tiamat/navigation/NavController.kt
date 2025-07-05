@@ -1,5 +1,7 @@
 package com.composegears.tiamat.navigation
 
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.composegears.tiamat.ExcludeFromTests
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
@@ -19,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 public class NavController internal constructor(
     public val key: String?,
     public val saveable: Boolean,
-) {
+) : ViewModelStoreOwner {
     public companion object {
 
         private const val KEY_KEY = "key"
@@ -88,9 +90,12 @@ public class NavController internal constructor(
     private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
     private var onNavigationListener: OnNavigationListener? = null
 
-    internal val sharedViewModelsStorage: ViewModelsStorage = ViewModelsStorage()
-
     // ----------- public properties -----------------------------------------------------------------------------------
+
+    /**
+     * Returns the [ViewModelStore] associated with this NavController.
+     */
+    public override val viewModelStore: ViewModelStore = ViewModelStore()
 
     /**
      * The parent NavController in a hierarchical navigation structure.
@@ -189,7 +194,7 @@ public class NavController internal constructor(
      * @param entry The navigation entry to navigate to
      * @param transitionData Optional data to customize the transition animation
      */
-    public fun <Args> navigate(
+    internal fun <Args> navigate(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
     ) {
@@ -211,7 +216,7 @@ public class NavController internal constructor(
      * @param entry The navigation entry to replace with
      * @param transitionData Optional data to customize the transition animation
      */
-    public fun <Args> replace(
+    internal fun <Args> replace(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
     ) {
@@ -233,7 +238,7 @@ public class NavController internal constructor(
      * @param transitionData Optional data to customize the transition animation
      * @param orElse Action to perform if the destination is not found in the back stack
      */
-    public fun <Args> popToTop(
+    internal fun <Args> popToTop(
         dest: NavDestination<Args>,
         transitionData: Any? = null,
         orElse: NavController.() -> Unit = {
@@ -254,6 +259,54 @@ public class NavController internal constructor(
                 transitionData = transitionData
             )
         } else orElse()
+    }
+
+    /**
+     * Navigates back in the navigation hierarchy.
+     *
+     * @param to Optional destination to navigate back to
+     * @param result Optional result to pass to the destination
+     * @param inclusive Whether to include the destination in the back operation
+     * @param recursive Whether to recursively navigate back if current back operation impossible
+     * @param transitionData Optional data to customize the transition animation
+     * @return True if back navigation was handled, false otherwise
+     */
+    internal fun back(
+        to: NavDestination<*>? = null,
+        result: Any? = null,
+        inclusive: Boolean = false,
+        recursive: Boolean = true,
+        transitionData: Any? = null,
+    ): Boolean {
+        val backStack = getBackStack()
+        val targetIndex =
+            if (to != null) backStack
+                .indexOfLast { it.destination == to }
+                .let { if (inclusive) it - 1 else it }
+            else backStack.size - 1
+        return when {
+            targetIndex >= 0 -> {
+                val currentNavEntry = getCurrentNavEntry()
+                val targetNavEntry = backStack[targetIndex]
+                targetNavEntry.navResult = result
+                currentNavEntry?.detachFromNavController()
+                editBackStack {
+                    while (this.backStack.lastIndex != targetIndex) removeLast()
+                    removeWithoutDetach(targetNavEntry)
+                }
+                updateCurrentNavEntryInternal(currentNavEntry, targetNavEntry, false, transitionData)
+                true
+            }
+            recursive ->
+                parent?.back(
+                    to = to,
+                    result = result,
+                    inclusive = inclusive,
+                    recursive = recursive,
+                    transitionData = transitionData
+                ) ?: false
+            else -> false
+        }
     }
 
     /**
@@ -300,7 +353,7 @@ public class NavController internal constructor(
             .let {
                 val ncData = it as Route.NavController
                 val nc = create(ncData.key, ncData.saveable ?: saveable, this)
-                pendingCurrentEntry.navControllersStorage.add(nc)
+                pendingCurrentEntry.navControllerStore.add(nc)
                 nc.route(Route(elements))
             }
         // apply pending stack
@@ -311,51 +364,7 @@ public class NavController internal constructor(
         replace(pendingCurrentEntry)
     }
 
-    /**
-     * Navigates back in the navigation hierarchy.
-     *
-     * @param to Optional destination to navigate back to
-     * @param result Optional result to pass to the destination
-     * @param inclusive Whether to include the destination in the back operation
-     * @param transitionData Optional data to customize the transition animation
-     * @param orElse Action to perform if back navigation is not possible in this NavController
-     * @return True if back navigation was handled, false otherwise
-     */
-    public fun back(
-        to: NavDestination<*>? = null,
-        result: Any? = null,
-        inclusive: Boolean = false,
-        transitionData: Any? = null,
-        orElse: NavController.() -> Boolean = {
-            parent?.back(
-                to = to,
-                result = result,
-                inclusive = inclusive,
-                transitionData = transitionData
-            ) ?: false
-        }
-    ): Boolean {
-        val backStack = getBackStack()
-        val targetIndex =
-            if (to != null) backStack
-                .indexOfLast { it.destination == to }
-                .let { if (inclusive) it - 1 else it }
-            else backStack.size - 1
-        return if (targetIndex >= 0) {
-            val currentNavEntry = getCurrentNavEntry()
-            val targetNavEntry = backStack[targetIndex]
-            targetNavEntry.navResult = result
-            currentNavEntry?.detachFromNavController()
-            editBackStack {
-                while (this.backStack.lastIndex != targetIndex) removeLast()
-                removeWithoutDetach(targetNavEntry)
-            }
-            updateCurrentNavEntryInternal(currentNavEntry, targetNavEntry, false, transitionData)
-            true
-        } else orElse()
-    }
-
-    // ----------- internal methods ------------------------------------------------------------------------------------
+    // ----------- internal helpers methods ------------------------------------------------------------------------------------
 
     private fun updateCurrentNavEntryInternal(
         from: NavEntry<*>?,
