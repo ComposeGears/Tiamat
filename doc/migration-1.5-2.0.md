@@ -65,7 +65,7 @@ Key Changes:
    The `navArgs`, `freeArgs`, and `navResult` functions now provide actual values rather than `state` objects. Manual updates are required when needed.
    Important: Calling `clearNavResult()` will not trigger recomposition if you have an existing `val nr = navResult()` call.
 
-   The `back` function no longer provides `orElse` parameter, `recurceive` option where added instead to navigate back recursively. New option is safer.  
+   The `back` function no longer provides `orElse` parameter, `recursive` option was added instead to navigate back recursively. New option is safer.
 
 ### 4. Animation Scope Changes
    With the introduction of the `scene API`, content is not guaranteed to be within an animated scope:
