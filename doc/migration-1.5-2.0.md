@@ -89,7 +89,7 @@ fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?>
 
 ### 6. Migration from custom ViewModel to `androidx.lifecycle.ViewModel`
 
-We decide to support official ViewModel's instead of custom solution
+We decided to support official ViewModel's instead of custom solution
 
 > [!IMPORTANT]
 > Limitations: ViewModels + `SavedStateHandle` is !NOT! supported due to overengineered solution from Google:
@@ -100,7 +100,7 @@ In order to support `SavedStateHandle` they did:
 ```kotlin
 internal class EntrySavedStateRegistry : SavedStateRegistryOwner {/*...*/}
 ```
-- [Create wired object that merge/use multiple unobvious interfaces](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:lifecycle/lifecycle-viewmodel-navigation3/src/commonMain/kotlin/androidx/lifecycle/viewmodel/navigation3/ViewModelStoreNavEntryDecorator.kt;l=91;drc=fb6fafab43a0720b8456e164bda2748b0d29bd56;bpv=0;bpt=1)
+- [Creates a complex object that merges/uses multiple non-obvious interfaces](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:lifecycle/lifecycle-viewmodel-navigation3/src/commonMain/kotlin/androidx/lifecycle/viewmodel/navigation3/ViewModelStoreNavEntryDecorator.kt;l=91;drc=fb6fafab43a0720b8456e164bda2748b0d29bd56;bpv=0;bpt=1)
 ```kotlin
 object :
      ViewModelStoreOwner,
@@ -111,7 +111,7 @@ object :
 - Use it as `ViewModelStoreOwner` overriding original one
 - All above bound to `Lifecycle` (why? there is `rememberSaveable` under the hood...)
 
-As from our side all the steps above creates quite big level of complexity
+From our perspective, these steps introduce a significant level of complexity.
 
 In order to save ViewModel's state use:
 
