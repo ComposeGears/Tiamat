@@ -8,7 +8,7 @@ Moved to `com.composegears.tiamat.navigation` package:
 - `TiamatViewModel` class
 - `SavedState` class
 - `NavController` class
-- Other navigation-related classes
+- Other navigation-related classes & functions
 
 Moved to `com.composegears.tiamat.compose` package:
 - `rememberNavController(...)` function
@@ -17,7 +17,8 @@ Moved to `com.composegears.tiamat.compose` package:
 - Other Compose-related classes and functions
 
 Removed:
-`com.composegears.tiamat.NavBackHandler` - use `androidx.compose.ui.backhandler.BackHandler` instead
+- `com.composegears.tiamat.NavBackHandler` - use `androidx.compose.ui.backhandler.BackHandler` instead
+- `com.composegears.tiamat.navigation.TiamatViewModel` - use `androidx.lifecycle.ViewModel` instead
 
 The navController has been decoupled from Compose dependencies, enabling you to test navigation logic without requiring Compose dependencies. Compose-related code is now consolidated in a separate package for improved organization and easier navigation.
 
@@ -64,6 +65,8 @@ Key Changes:
    The `navArgs`, `freeArgs`, and `navResult` functions now provide actual values rather than `state` objects. Manual updates are required when needed.
    Important: Calling `clearNavResult()` will not trigger recomposition if you have an existing `val nr = navResult()` call.
 
+   The `back` function no longer provides `orElse` parameter, `recursive` option was added instead to navigate back recursively. New option is safer.
+
 ### 4. Animation Scope Changes
    With the introduction of the `scene API`, content is not guaranteed to be within an animated scope:
    `NavDestinationScope` no longer inherits from `AnimatedVisibilityScope`
@@ -83,3 +86,50 @@ fun NavController.currentNavEntryAsState(): State<NavEntry<*>?>
 fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?>
 
 ```
+
+### 6. Migration from custom ViewModel to `androidx.lifecycle.ViewModel`
+
+We decided to support official ViewModel's instead of custom solution
+
+> [!IMPORTANT]
+> Limitations: ViewModels + `SavedStateHandle` is !NOT! supported due to overengineered solution from Google:
+
+In order to support `SavedStateHandle` they did:
+- [Create custom `SavedStateRegistry` and save it via `rememberSaveable`](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation3/navigation3-runtime/src/commonMain/kotlin/androidx/navigation3/runtime/SavedStateNavEntryDecorator.kt
+  )
+```kotlin
+internal class EntrySavedStateRegistry : SavedStateRegistryOwner {/*...*/}
+```
+- [Creates a complex object that merges/uses multiple non-obvious interfaces](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:lifecycle/lifecycle-viewmodel-navigation3/src/commonMain/kotlin/androidx/lifecycle/viewmodel/navigation3/ViewModelStoreNavEntryDecorator.kt;l=91;drc=fb6fafab43a0720b8456e164bda2748b0d29bd56;bpv=0;bpt=1)
+```kotlin
+object :
+     ViewModelStoreOwner,
+     SavedStateRegistryOwner by savedStateRegistryOwner,
+     HasDefaultViewModelProviderFactory {/*...*/}
+```
+
+- Use it as `ViewModelStoreOwner` overriding original one
+- All above bound to `Lifecycle` (why? there is `rememberSaveable` under the hood...)
+
+From our perspective, these steps introduce a significant level of complexity.
+
+In order to save ViewModel's state use:
+
+```kotlin
+// ViewModel
+private class ArchViewModelSaveableViewModel(
+    savedState: MutableSavedState
+) : ViewModel() {
+
+    private var _counter = savedState.recordOf("counter", 0)
+    val counter = _counter.asStateFlow()
+
+    /*...*/
+}
+
+// Compose
+val viewModelSavedState = rememberSaveable { MutableSavedState() }
+val saveableViewModel = viewModel { ArchViewModelSaveableViewModel(viewModelSavedState) }
+```
+> [!IMPORTANT]
+> Solution/syntax may be changed depending on feedback

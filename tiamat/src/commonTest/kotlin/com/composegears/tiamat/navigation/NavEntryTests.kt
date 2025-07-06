@@ -1,5 +1,6 @@
 package com.composegears.tiamat.navigation
 
+import androidx.lifecycle.ViewModel
 import kotlin.test.*
 
 class NavEntryTests {
@@ -22,8 +23,6 @@ class NavEntryTests {
         assertEquals(navArgs, entry.navArgs)
         assertEquals(freeArgs, entry.freeArgs)
         assertEquals(navResult, entry.navResult)
-        assertNotNull(entry.navControllersStorage)
-        assertNotNull(entry.viewModelsStorage)
     }
 
     @Test
@@ -110,7 +109,7 @@ class NavEntryTests {
             freeArgs = freeArgs,
             navResult = navResult
         ).also {
-            it.navControllersStorage.add(childNC)
+            it.navControllerStore.add(childNC)
             it.savedState = entrySavedState
         }
         val savedState = savedEntry.saveToSavedState()
@@ -121,8 +120,8 @@ class NavEntryTests {
         assertEquals(freeArgs, entry.freeArgs)
         assertEquals(navResult, entry.navResult)
         assertEquals(entrySavedState, entry.savedState)
-        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
-        assertEquals(parentNC, entry.navControllersStorage.nestedNavControllers[0].parent)
+        assertEquals(1, entry.navControllerStore.navControllers.size)
+        assertEquals(parentNC, entry.navControllerStore.navControllers[0].parent)
         assertFalse(entry.isResolved)
     }
 
@@ -149,8 +148,8 @@ class NavEntryTests {
             "destination" to "some-destination",
         )
         val entry = NavEntry.restoreFromSavedState(null, savedState)
-        assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
-        assertEquals(0, entry.viewModelsStorage.viewModels.size)
+        assertEquals(0, entry.navControllerStore.navControllers.size)
+        assertEquals(0, entry.viewModelStore.keys().size)
     }
 
     @Test
@@ -228,20 +227,20 @@ class NavEntryTests {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         entry.attachToNavController()
-        entry.navControllersStorage.add(NavController.create("tmp", true))
-        entry.viewModelsStorage.get("tmpVM") { object : TiamatViewModel() {} }
+        entry.navControllerStore.add(NavController.create("tmp", true))
+        entry.viewModelStore.put("tmpVM", object : ViewModel() {})
         entry.detachFromUI()
         entry.detachFromNavController()
-        assertEquals(0, entry.viewModelsStorage.viewModels.size)
-        assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(0, entry.viewModelStore.keys().size)
+        assertEquals(0, entry.navControllerStore.navControllers.size)
         entry.attachToUI()
         entry.attachToNavController()
-        entry.navControllersStorage.add(NavController.create("tmp", true))
-        entry.viewModelsStorage.get("tmpVM") { object : TiamatViewModel() {} }
+        entry.navControllerStore.add(NavController.create("tmp", true))
+        entry.viewModelStore.put("tmpVM", object : ViewModel() {})
         entry.detachFromNavController()
         entry.detachFromUI()
-        assertEquals(0, entry.viewModelsStorage.viewModels.size)
-        assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(0, entry.viewModelStore.keys().size)
+        assertEquals(0, entry.navControllerStore.navControllers.size)
     }
 
     @Test
@@ -249,34 +248,38 @@ class NavEntryTests {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         entry.attachToNavController()
-        entry.navControllersStorage.add(NavController.create("tmp", true))
-        entry.viewModelsStorage.get("tmpVM") { object : TiamatViewModel() {} }
+        entry.navControllerStore.add(NavController.create("tmp", true))
+        entry.viewModelStore.put("tmpVM", object : ViewModel() {})
         entry.detachFromUI()
-        assertEquals(1, entry.viewModelsStorage.viewModels.size)
-        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(1, entry.viewModelStore.keys().size)
+        assertEquals(1, entry.navControllerStore.navControllers.size)
         entry.attachToUI()
         entry.detachFromNavController()
-        assertEquals(1, entry.viewModelsStorage.viewModels.size)
-        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(1, entry.viewModelStore.keys().size)
+        assertEquals(1, entry.navControllerStore.navControllers.size)
     }
 
     @Test
-    fun `close # clears viewModelsStorage and navControllersStorage`() {
+    fun `close # clears viewModelStore and navControllersStorage`() {
         val entry = NavEntry(destination = TestDestination)
         val navController = NavController.create("test", true, startEntry = entry)
-        entry.navControllersStorage.add(NavController.create("tmp", true))
-        entry.viewModelsStorage.get("tmpVM") { object : TiamatViewModel() {} }
-        assertEquals(1, entry.viewModelsStorage.viewModels.size)
-        assertEquals(1, entry.navControllersStorage.nestedNavControllers.size)
+        entry.navControllerStore.add(NavController.create("tmp", true))
+        entry.viewModelStore.put("tmpVM", object : ViewModel() {})
+        assertEquals(1, entry.viewModelStore.keys().size)
+        assertEquals(1, entry.navControllerStore.navControllers.size)
         navController.close()
-        assertEquals(0, entry.viewModelsStorage.viewModels.size)
-        assertEquals(0, entry.navControllersStorage.nestedNavControllers.size)
+        assertEquals(0, entry.viewModelStore.keys().size)
+        assertEquals(0, entry.navControllerStore.navControllers.size)
     }
 
     @Test
     fun `contentKey # returns correct key`() {
         val entry = NavEntry(destination = TestDestination)
         assertEquals("test_destination-${entry.uuid}", entry.contentKey())
+    }
+
+    fun NavEntry<*>.resolveDestination(destinations: Array<NavDestination<*>>) {
+        resolveDestination { name -> destinations.firstOrNull { it.name == name } }
     }
 
     // Test helper objects

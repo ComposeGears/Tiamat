@@ -46,11 +46,13 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
-            implementation(libs.compose.ui.backhandler)
+            api(libs.compose.ui.backhandler)
+            // api(libs.compose.lifecycle)
+            api(libs.compose.viewmodel)
         }
         androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.lifecycle.runtime)
+            api(libs.androidx.activity.compose)
+            api(libs.androidx.lifecycle.runtime)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

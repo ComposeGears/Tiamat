@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
 import composegears.tiamat.example.content.App
-import composegears.tiamat.example.extra.A3rdParty
 import composegears.tiamat.example.platform.Platform
 import composegears.tiamat.example.platform.start
 import kotlinx.browser.window
@@ -27,7 +26,6 @@ external fun onLoadFinished()
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     Platform.start()
-    A3rdParty.start()
     ComposeViewport(viewportContainerId = "TiamatTarget") {
         LaunchedEffect(Unit) {
             onLoadFinished()

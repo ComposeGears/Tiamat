@@ -140,27 +140,25 @@ public fun <Args> NavController.popToTop(
  * @param to Optional destination to navigate back to
  * @param result Optional result to pass to the destination
  * @param inclusive Whether to include the destination in the back operation
+ * @param recursive Whether to recursively navigate back if current back operation impossible
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
- * @param orElse Action to perform if back navigation is not possible in this NavController
  * @return True if back navigation was handled, false otherwise
  */
 public fun NavController.back(
     to: NavDestination<*>? = null,
     result: Any? = null,
     inclusive: Boolean = false,
+    recursive: Boolean = true,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null,
-    orElse: NavController.() -> Boolean = {
-        parent?.back() ?: false
-    }
 ): Boolean = back(
     to = to,
     result = result,
     inclusive = inclusive,
+    recursive = recursive,
     transitionData = TransitionData(
         contentTransform = transition,
         transitionController = transitionController
-    ),
-    orElse = orElse
+    )
 )

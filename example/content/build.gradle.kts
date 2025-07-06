@@ -36,7 +36,6 @@ kotlin {
             api(projects.tiamat)
             api(projects.tiamatDestinations.tiamatDestinations)
             api(projects.example.platform)
-            api(projects.example.extra)
             api(projects.example.uiCore)
 
             implementation(compose.components.uiToolingPreview)

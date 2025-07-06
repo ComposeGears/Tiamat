@@ -9,14 +9,18 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.navigation.Saveable
-import com.composegears.tiamat.navigation.SavedState
-import com.composegears.tiamat.navigation.TiamatViewModel
+import com.composegears.tiamat.navigation.MutableSavedState
+import com.composegears.tiamat.navigation.asStateFlow
+import com.composegears.tiamat.navigation.recordOf
 import composegears.tiamat.example.ui.core.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +53,7 @@ val ArchViewModel by navDestination<Unit>(ScreenInfo()) {
 
 private val ArchViewModelScreen1 by navDestination<Unit> {
     // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = rememberSharedViewModel { ArchViewModelSimpleViewModel() }
+    val sharedViewModel = viewModel<ArchViewModelSimpleViewModel>()
 
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -71,14 +75,15 @@ private val ArchViewModelScreen1 by navDestination<Unit> {
 }
 
 private val ArchViewModelScreen2 by navDestination<Unit> {
-    // this is regular view model bound to the screen
-    val viewModel = rememberViewModel { ArchViewModelSimpleViewModel() }
-    // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = rememberSharedViewModel { ArchViewModelSimpleViewModel() }
-    // this is saveable view model, the state will be saved via saveState logic similar to `rememberSaveable`
-    val saveableViewModel = rememberSaveableViewModel { savedState -> ArchViewModelSaveableViewModel(savedState) }
-
     val nc = navController()
+    // this is regular view model bound to the screen
+    val viewModel = viewModel<ArchViewModelSimpleViewModel>()
+    // this is shared (bound to navController instead of screen) view model
+    val sharedViewModel = viewModel<ArchSharedViewModelSimpleViewModel>(nc)
+    // this is saveable view model
+    val viewModelSavedState = rememberSaveable { MutableSavedState() }
+    val saveableViewModel = viewModel { ArchViewModelSaveableViewModel(viewModelSavedState) }
+
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
@@ -119,10 +124,11 @@ private val ArchViewModelScreen2 by navDestination<Unit> {
 }
 
 private val ArchViewModelScreen3 by navDestination<Unit> {
-    // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = rememberSharedViewModel { ArchViewModelSimpleViewModel() }
-
     val nc = navController()
+
+    // this is shared (bound to navController instead of screen) view model
+    val sharedViewModel = viewModel<ArchSharedViewModelSimpleViewModel>(nc)
+
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
@@ -143,7 +149,7 @@ private val ArchViewModelScreen3 by navDestination<Unit> {
 
 // ---------------------- view models ---------------------------
 
-private class ArchViewModelSimpleViewModel : TiamatViewModel() {
+class ArchViewModelSimpleViewModel : ViewModel() {
     private val _counter = MutableStateFlow(0)
     val counter = _counter.asStateFlow()
 
@@ -157,13 +163,11 @@ private class ArchViewModelSimpleViewModel : TiamatViewModel() {
     }
 }
 
-private class ArchViewModelSaveableViewModel(savedState: SavedState?) : TiamatViewModel(), Saveable {
-
+class ArchSharedViewModelSimpleViewModel : ViewModel() {
     private val _counter = MutableStateFlow(0)
     val counter = _counter.asStateFlow()
 
     init {
-        _counter.value = savedState?.get("count") as? Int? ?: 0
         viewModelScope.launch {
             while (isActive) {
                 _counter.value++
@@ -171,6 +175,21 @@ private class ArchViewModelSaveableViewModel(savedState: SavedState?) : TiamatVi
             }
         }
     }
+}
 
-    override fun saveToSaveState() = mapOf("count" to counter.value)
+private class ArchViewModelSaveableViewModel(
+    savedState: MutableSavedState
+) : ViewModel() {
+
+    private var _counter = savedState.recordOf("counter", 0)
+    val counter = _counter.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            while (isActive) {
+                _counter.value++
+                delay(1000)
+            }
+        }
+    }
 }
