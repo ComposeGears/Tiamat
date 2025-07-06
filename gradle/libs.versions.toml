@@ -38,7 +38,7 @@ zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.17.0"
+binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.18.0"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta03" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
