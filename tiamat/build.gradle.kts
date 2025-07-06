@@ -43,11 +43,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(compose.runtime)
-            api(compose.foundation)
-            api(compose.ui)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
             api(libs.compose.ui.backhandler)
-            api(libs.compose.lifecycle)
+            // api(libs.compose.lifecycle)
             api(libs.compose.viewmodel)
         }
         androidMain.dependencies {
@@ -55,7 +55,7 @@ kotlin {
             api(libs.androidx.lifecycle.runtime)
         }
         jvmMain.dependencies {
-            api(compose.desktop.currentOs)
+            implementation(compose.desktop.currentOs)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
