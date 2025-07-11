@@ -66,7 +66,7 @@ private class LifecycleModel : ViewModel(), LifecycleOwner, LifecycleEventObserv
 @Composable
 @Suppress("ViewModelInjection")
 internal fun rememberDestinationLifecycleOwner(): LifecycleOwner {
-    val lifecycleModel = viewModel<LifecycleModel>()
+    val lifecycleModel = viewModel { LifecycleModel() }
     val parentLifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleModel) {
         lifecycleModel.onAttach()
