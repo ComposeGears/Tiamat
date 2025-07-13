@@ -14,9 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.composegears.tiamat.compose.TransitionController.Event.*
-import com.composegears.tiamat.navigation.*
+import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
+import com.composegears.tiamat.navigation.NavEntry
+import com.composegears.tiamat.navigation.SavedState
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
@@ -165,23 +169,26 @@ private fun <Args> NavEntryContent(
     val destination = entry.destination
     if (destination is ComposeNavDestination<Args>) Box {
         val parentRegistry = LocalSaveableStateRegistry.current
+        val parentLifecycle = LocalLifecycleOwner.current
         // gen save state
         val saveRegistry = remember(entry) {
-            val registry = SaveableStateRegistry(
+            SaveableStateRegistry(
                 restoredValues = entry.savedState as? Map<String, List<Any?>>?,
                 canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
             )
-            entry.setSavedStateSaver(registry::performSave)
-            registry
+        }
+        val entryContentLifecycleOwner = remember(entry) {
+            EntryContentLifecycle(parentLifecycle.lifecycle, entry.lifecycle)
         }
         // display content
         CompositionLocalProvider(
             LocalSaveableStateRegistry provides saveRegistry,
+            LocalLifecycleOwner provides entryContentLifecycleOwner,
             LocalNavEntry provides entry,
         ) {
             val scope = remember(entry) { NavDestinationScopeImpl(entry) }
             // entry content
-            scope.PlatformContentWrapper {
+            with(scope) {
                 // extensions before-content
                 destination.extensions.onEach {
                     if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
@@ -203,9 +210,11 @@ private fun <Args> NavEntryContent(
         // save state when `this entry`/`parent entry` goes into backStack
         DisposableEffect(entry) {
             entry.attachToUI()
+            entry.setSavedStateSaver(saveRegistry::performSave)
             // save state handle
             onDispose {
                 entry.setSavedStateSaver(null)
+                entryContentLifecycleOwner.close()
                 if (entry.isAttachedToNavController) entry.savedState = saveRegistry.performSave()
                 entry.detachFromUI()
             }

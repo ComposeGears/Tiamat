@@ -1,8 +1,7 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.*
 import com.composegears.tiamat.ExcludeFromTests
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -24,7 +23,7 @@ public class NavEntry<Args> public constructor(
     navArgs: Args? = null,
     freeArgs: Any? = null,
     navResult: Any? = null
-) : RouteElement, ViewModelStoreOwner {
+) : RouteElement, ViewModelStoreOwner, LifecycleOwner {
 
     public companion object {
 
@@ -88,6 +87,13 @@ public class NavEntry<Args> public constructor(
      */
     public override val viewModelStore: ViewModelStore = ViewModelStore()
 
+    private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+
+    /**
+     * Returns the [Lifecycle] associated with this NavEntry.
+     */
+    public override val lifecycle: Lifecycle = lifecycleRegistry
+
     /**
      * The destination this entry represents.
      */
@@ -111,6 +117,10 @@ public class NavEntry<Args> public constructor(
      */
     public var navResult: Any? = navResult
         internal set
+
+    init {
+        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
+    }
 
     @Suppress("UNCHECKED_CAST")
     internal fun resolveDestination(destinationResolver: (name: String) -> NavDestination<*>?) {
@@ -153,16 +163,19 @@ public class NavEntry<Args> public constructor(
 
     internal fun attachToUI() {
         isAttachedToUI = true
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
 
     internal fun detachFromUI() {
         isAttachedToUI = false
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
         if (!isAttachedToNavController) close()
     }
 
     private fun close() {
         viewModelStore.clear()
         navControllerStore.clear()
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 
     public fun contentKey(): String = "${destination.name}-$uuid"
