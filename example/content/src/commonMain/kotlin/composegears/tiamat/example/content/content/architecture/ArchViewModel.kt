@@ -9,7 +9,6 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -81,8 +80,7 @@ private val ArchViewModelScreen2 by navDestination<Unit> {
     // this is shared (bound to navController instead of screen) view model
     val sharedViewModel = viewModel<ArchSharedViewModelSimpleViewModel>(nc)
     // this is saveable view model
-    val viewModelSavedState = rememberSaveable { MutableSavedState() }
-    val saveableViewModel = viewModel { ArchViewModelSaveableViewModel(viewModelSavedState) }
+    val saveableViewModel = saveableViewModel { ArchViewModelSaveableViewModel(it) }
 
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

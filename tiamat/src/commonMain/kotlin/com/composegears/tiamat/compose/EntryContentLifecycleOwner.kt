@@ -1,11 +1,15 @@
 package com.composegears.tiamat.compose
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.composegears.tiamat.navigation.NavEntry
 
-internal class EntryContentLifecycle(
+internal class EntryContentLifecycleOwner(
     private val parentLifecycle: Lifecycle,
     private val entryLifecycle: Lifecycle,
 ) : LifecycleOwner {
@@ -33,5 +37,15 @@ internal class EntryContentLifecycle(
         parentLifecycle.removeObserver(lifecycleStateObserver)
         entryLifecycle.removeObserver(lifecycleStateObserver)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
+    }
+}
+
+@Composable
+internal fun rememberEntryContentLifecycleOwner(
+    entry: NavEntry<*>
+): EntryContentLifecycleOwner {
+    val parentLifecycle = LocalLifecycleOwner.current
+    return remember(entry) {
+        EntryContentLifecycleOwner(parentLifecycle.lifecycle, entry.lifecycle)
     }
 }

@@ -7,20 +7,21 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
-import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.TransitionController.Event.*
-import com.composegears.tiamat.navigation.NavController
-import com.composegears.tiamat.navigation.NavDestination
+import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
-import com.composegears.tiamat.navigation.NavEntry
-import com.composegears.tiamat.navigation.SavedState
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
 
@@ -168,22 +169,13 @@ private fun <Args> NavEntryContent(
 ) {
     val destination = entry.destination
     if (destination is ComposeNavDestination<Args>) Box {
-        val parentRegistry = LocalSaveableStateRegistry.current
-        val parentLifecycle = LocalLifecycleOwner.current
-        // gen save state
-        val saveRegistry = remember(entry) {
-            SaveableStateRegistry(
-                restoredValues = entry.savedState as? Map<String, List<Any?>>?,
-                canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
-            )
-        }
-        val entryContentLifecycleOwner = remember(entry) {
-            EntryContentLifecycle(parentLifecycle.lifecycle, entry.lifecycle)
-        }
+        val entrySaveableStateRegistry = rememberEntrySaveableStateRegistry(entry)
+        val entryContentLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
         // display content
         CompositionLocalProvider(
-            LocalSaveableStateRegistry provides saveRegistry,
+            LocalSaveableStateRegistry provides entrySaveableStateRegistry,
             LocalLifecycleOwner provides entryContentLifecycleOwner,
+            LocalViewModelStoreOwner provides entry,
             LocalNavEntry provides entry,
         ) {
             val scope = remember(entry) { NavDestinationScopeImpl(entry) }
@@ -210,12 +202,12 @@ private fun <Args> NavEntryContent(
         // save state when `this entry`/`parent entry` goes into backStack
         DisposableEffect(entry) {
             entry.attachToUI()
-            entry.setSavedStateSaver(saveRegistry::performSave)
+            entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
             // save state handle
             onDispose {
                 entry.setSavedStateSaver(null)
                 entryContentLifecycleOwner.close()
-                if (entry.isAttachedToNavController) entry.savedState = saveRegistry.performSave()
+                if (entry.isAttachedToNavController) entry.savedState = entrySaveableStateRegistry.performSave()
                 entry.detachFromUI()
             }
         }
@@ -589,4 +581,23 @@ public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navRe
  */
 public fun NavDestinationScope<*>.clearNavResult() {
     navEntry.freeArgs = null
+}
+
+// ------------- NavDestinationScope viewModels ------------------------------------------------------------------------
+
+@Composable
+public inline fun <reified VM : ViewModel> saveableViewModel(
+    viewModelStoreOwner: ViewModelStoreOwner =
+        checkNotNull(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        },
+    key: String? = null,
+    noinline initializer: CreationExtras.(savedState: MutableSavedState) -> VM
+): VM {
+    val viewModelSavedState = rememberSaveable { MutableSavedState() }
+    return viewModel<VM>(
+        viewModelStoreOwner = viewModelStoreOwner,
+        key = key,
+        initializer = { initializer(viewModelSavedState) }
+    )
 }
