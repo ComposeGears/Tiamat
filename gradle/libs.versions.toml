@@ -40,7 +40,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.18.0"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta03" }
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta04" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
