@@ -73,11 +73,11 @@ class MarkerExtension(val data: String) : NavExtension<Any?>
 
 // having a dedicated object or class allows you cal ext fun to get extension ref
 // eg: nc.current.ext<GlobalExtension>() -> return GlobalExtension or null if not attached
-object GlobalExtension : ContentExtension<Any?> {
+object GlobalExtension : ContentExtension<Any> {
     var activeDestination by mutableStateOf("")
 
     @Composable
-    override fun NavDestinationScope<out Any?>.Content() {
+    override fun NavDestinationScope<out Any>.Content() {
         val entry = navEntry()
         LaunchedEffect(Unit) {
             activeDestination = entry.destination.name
@@ -89,9 +89,9 @@ object GlobalExtension : ContentExtension<Any?> {
     override fun getType() = ContentExtension.Type.Underlay
 }
 
-class LocalExtension(val logMessage: String) : ContentExtension<Any?> {
+class LocalExtension(val logMessage: String) : ContentExtension<Any> {
     @Composable
-    override fun NavDestinationScope<out Any?>.Content() {
+    override fun NavDestinationScope<out Any>.Content() {
         LaunchedEffect(Unit) {
             println(logMessage)
         }

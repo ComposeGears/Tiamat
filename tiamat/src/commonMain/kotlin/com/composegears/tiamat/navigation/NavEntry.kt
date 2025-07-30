@@ -2,9 +2,21 @@ package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.*
+import androidx.savedstate.serialization.decodeFromSavedState
+import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.StructureKind
+import kotlinx.serialization.modules.serializersModuleOf
+import kotlinx.serialization.serializer
+import kotlinx.serialization.serializerOrNull
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import androidx.savedstate.SavedState as SavedStateX
 
 /**
  * Represents a navigation entry in the navigation stack.
@@ -18,11 +30,11 @@ import kotlin.uuid.Uuid
  * @param navResult Optional result value for this entry
  */
 @Stable
-public class NavEntry<Args> public constructor(
+public class NavEntry<Args : Any> public constructor(
     destination: NavDestination<Args>,
-    navArgs: Args? = null,
-    freeArgs: Any? = null,
-    navResult: Any? = null
+    private var navArgs: Args? = null,
+    private var freeArgs: Any? = null,
+    private var navResult: Any? = null
 ) : RouteElement, ViewModelStoreOwner, LifecycleOwner {
 
     public companion object {
@@ -100,27 +112,45 @@ public class NavEntry<Args> public constructor(
     public var destination: NavDestination<Args> = destination
         private set
 
-    /**
-     * Typed arguments passed to the destination.
-     */
-    public var navArgs: Args? = navArgs
-        internal set
-
-    /**
-     * Untyped arguments passed to the destination.
-     */
-    public var freeArgs: Any? = freeArgs
-        internal set
-
-    /**
-     * Result value for this navigation entry.
-     */
-    public var navResult: Any? = navResult
-        internal set
-
     init {
         lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
     }
+
+    // todo add doc
+    public fun getNavArgs(): Args? = tryDecode(navArgs, destination.argsClazz) { navArgs = it }
+
+    // todo add doc
+    public fun clearNavArgs() {
+        navArgs = null
+    }
+
+    // todo add doc
+    public inline fun <reified T : Any> getFreeArgs(): T? = getFreeArgs(T::class)
+
+    // todo add doc
+    public fun clearFreeArgs() {
+        freeArgs = null
+    }
+
+    // todo add doc
+    public inline fun <reified T : Any> getNavResult(): T? = getNavResult(T::class)
+
+    // todo add doc
+    public fun clearNavResult() {
+        navResult = null
+    }
+
+    internal fun setNavResult(result: Any?) {
+        navResult = result
+    }
+
+    @PublishedApi
+    internal fun <T : Any> getFreeArgs(clazz: KClass<T>): T? = tryDecode(freeArgs, clazz) { freeArgs = it }
+
+    @PublishedApi
+    internal fun <T : Any> getNavResult(clazz: KClass<T>): T? = tryDecode(navResult, clazz) { navResult = it }
+
+    public fun contentKey(): String = "${destination.name}-$uuid"
 
     @Suppress("UNCHECKED_CAST")
     internal fun resolveDestination(destinationResolver: (name: String) -> NavDestination<*>?) {
@@ -135,9 +165,9 @@ public class NavEntry<Args> public constructor(
         return SavedState(
             KEY_DESTINATION to destination.name,
             KEY_UUID to uuid,
-            KEY_NAV_ARGS to navArgs,
-            KEY_FREE_ARGS to freeArgs,
-            KEY_NAV_RESULT to navResult,
+            KEY_NAV_ARGS to tryEncode(navArgs),
+            KEY_FREE_ARGS to tryEncode(freeArgs),
+            KEY_NAV_RESULT to tryEncode(navResult),
             KEY_SAVED_STATE to savedState,
             KEY_NAV_CONTROLLERS to navControllerStore.saveToSavedState(),
         )
@@ -178,7 +208,30 @@ public class NavEntry<Args> public constructor(
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 
-    public fun contentKey(): String = "${destination.name}-$uuid"
+    @OptIn(InternalSerializationApi::class)
+    private fun tryEncode(src: Any?): Any? = src
+        // no need to re-save saved state or Unit's
+        ?.takeIf { it !is SavedStateX }
+        ?.let { it::class.serializerOrNull() }
+        ?.let { encodeToSavedState(serializer = it as KSerializer<Any>, value = src) }
+        ?: src
+
+    @Suppress("UNCHECKED_CAST")
+    @OptIn(InternalSerializationApi::class)
+    private fun <T : Any> tryDecode(
+        src: Any?,
+        clazz: KClass<T>,
+        onDecoded: (T) -> Unit = {}
+    ): T? = when {
+        src == null -> null
+        src::class == clazz || clazz == Any::class -> src as T
+        src is SavedStateX -> {
+            runCatching {
+                decodeFromSavedState(clazz.serializer(), src)
+            }.getOrNull()?.also(onDecoded)
+        }
+        else -> null
+    }
 
     @ExcludeFromTests
     override fun toString(): String =

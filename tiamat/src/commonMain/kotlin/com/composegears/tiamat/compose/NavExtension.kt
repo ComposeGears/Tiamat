@@ -20,7 +20,7 @@ public interface NavExtension<in Args>
  *
  * @param Args The type of arguments the destination accepts
  */
-public interface ContentExtension<in Args> : NavExtension<Args> {
+public interface ContentExtension<in Args : Any> : NavExtension<Args> {
 
     /**
      * Provides the content to be rendered for this extension.
@@ -56,7 +56,7 @@ public interface ContentExtension<in Args> : NavExtension<Args> {
 /**
  * Internal simple ContentExtension impl, type = Overlay
  */
-internal open class ContentExtensionImpl<in Args>(
+internal open class ContentExtensionImpl<in Args : Any>(
     private val content: @Composable NavDestinationScope<out Args>.() -> Unit
 ) : ContentExtension<Args> {
 
@@ -72,7 +72,7 @@ internal open class ContentExtensionImpl<in Args>(
  * @param content Extension content builder lambda
  * @return A new content extension
  */
-public fun <Args> extension(
+public fun <Args : Any> extension(
     content: @Composable NavDestinationScope<out Args>.() -> Unit
 ): NavExtension<Args> = ContentExtensionImpl(content)
 

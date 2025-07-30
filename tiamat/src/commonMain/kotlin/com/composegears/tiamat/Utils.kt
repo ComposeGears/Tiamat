@@ -1,5 +1,6 @@
 package com.composegears.tiamat
 
+import androidx.savedstate.read
 import com.composegears.tiamat.navigation.SavedState
 
 /**
@@ -46,7 +47,16 @@ private fun StringBuilder.appendSavedStateDataString(tabChar: String, key: Strin
             }
         }
         else -> {
-            append(prefix).append(key).append(" = ").append(data).append("\n")
+            append(prefix).append(key).append(" = ").also {
+                when (data) {
+                    null -> append("null")
+                    is androidx.savedstate.SavedState -> {
+                        append("Serialized:")
+                        data.read { append(contentDeepToString()) }
+                    }
+                    else -> append(data.toString())
+                }
+            }.append("\n")
         }
     }
 }

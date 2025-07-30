@@ -24,6 +24,8 @@ import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
+import kotlin.jvm.JvmName
+import kotlin.reflect.KClass
 
 // ------------- Local Providers ---------------------------------------------------------------------------------------
 
@@ -164,7 +166,7 @@ public fun rememberNavController(
 
 @Composable
 @Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
-private fun <Args> NavEntryContent(
+private fun <Args : Any> NavEntryContent(
     entry: NavEntry<Args>
 ) {
     val destination = entry.destination
@@ -264,7 +266,15 @@ public fun Navigation(
         destinationResolver = destinationResolver,
         handleSystemBackEvent = handleSystemBackEvent,
     ) {
-        val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
+        val stubEntry = remember {
+            NavEntry(
+                NavDestinationImpl(
+                    name = "Stub",
+                    argsClazz = Unit::class,
+                    extensions = emptyList(),
+                    content = {}
+                ))
+        }
         val state by navController.currentTransitionFlow.collectAsState()
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val targetValue = remember(state) { state?.targetEntry ?: stubEntry }
@@ -528,8 +538,8 @@ public inline fun <reified P : NavExtension<*>> NavDestinationScope<*>.ext(): P?
  * @return The navigation arguments.
  */
 @Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgs(): Args =
-    navEntry.navArgs ?: error("args not provided or null, consider use navArgsOrNull()")
+public fun <Args : Any> NavDestinationScope<Args>.navArgs(): Args =
+    navEntry.getNavArgs() ?: error("args not provided or null, consider use navArgsOrNull()")
 
 /**
  * Gets the navigation arguments from the current [NavEntry], or null if not provided.
@@ -538,13 +548,13 @@ public fun <Args> NavDestinationScope<Args>.navArgs(): Args =
  * @return The navigation arguments, or null if not provided.
  */
 @Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = navEntry.navArgs
+public fun <Args : Any> NavDestinationScope<Args>.navArgsOrNull(): Args? = navEntry.getNavArgs()
 
 /**
  * Clears the navigation arguments from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavArgs() {
-    navEntry.navArgs = null
+    navEntry.clearNavArgs()
 }
 
 // ------------- NavDestinationScope extras : freeArgs -----------------------------------------------------------------
@@ -555,14 +565,38 @@ public fun NavDestinationScope<*>.clearNavArgs() {
  * @param T The type of the free arguments.
  * @return The free arguments, or null if not provided.
  */
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
-public fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
+public inline fun <reified T : Any> NavDestinationScope<*>.freeArgs(): T? = freeArgs(T::class)
+
+//todo
+@JvmName("freeArgs2")
+public inline fun <
+    reified T1 : Any,
+    reified T2 : Any,
+    >
+    NavDestinationScope<*>.freeArgs(): Any? =
+    freeArgs(T1::class)
+        ?: freeArgs(T2::class)
+
+@JvmName("freeArgs3")
+public inline fun <
+    reified T1 : Any,
+    reified T2 : Any,
+    reified T3 : Any,
+    >
+    NavDestinationScope<*>.freeArgs(): Any? =
+    freeArgs(T1::class)
+        ?: freeArgs(T2::class)
+        ?: freeArgs(T3::class)
+
+
+@PublishedApi
+internal fun <T : Any> NavDestinationScope<*>.freeArgs(clazz: KClass<T>): T? = navEntry.getFreeArgs(clazz)
 
 /**
  * Clears the free arguments from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearFreeArgs() {
-    navEntry.freeArgs = null
+    navEntry.clearFreeArgs()
 }
 
 // ------------- NavDestinationScope extras : navResult ----------------------------------------------------------------
@@ -573,14 +607,18 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
  * @param Result The type of the navigation result.
  * @return The navigation result, or null if not provided.
  */
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
-public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
+public inline fun <reified T : Any> NavDestinationScope<*>.navResult(): T? {
+    return navResult(T::class)
+}
+
+@PublishedApi
+internal fun <T : Any> NavDestinationScope<*>.navResult(clazz: KClass<T>): T? = navEntry.getNavResult(clazz)
 
 /**
  * Clears the navigation result from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavResult() {
-    navEntry.freeArgs = null
+    navEntry.clearNavResult()
 }
 
 // ------------- NavDestinationScope viewModels ------------------------------------------------------------------------

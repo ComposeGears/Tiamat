@@ -18,7 +18,7 @@ import com.composegears.tiamat.navigation.NavEntry
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
-public fun <Args> NavController.navigate(
+public fun <Args : Any> NavController.navigate(
     entry: NavDestination<Args>,
     navArgs: Args? = null,
     freeArgs: Any? = null,
@@ -42,7 +42,7 @@ public fun <Args> NavController.navigate(
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
-public fun <Args> NavController.navigate(
+public fun <Args : Any> NavController.navigate(
     entry: NavEntry<Args>,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
@@ -66,7 +66,7 @@ public fun <Args> NavController.navigate(
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
-public fun <Args> NavController.replace(
+public fun <Args : Any> NavController.replace(
     entry: NavDestination<Args>,
     navArgs: Args? = null,
     freeArgs: Any? = null,
@@ -90,7 +90,7 @@ public fun <Args> NavController.replace(
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
-public fun <Args> NavController.replace(
+public fun <Args : Any> NavController.replace(
     entry: NavEntry<Args>,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
@@ -112,7 +112,7 @@ public fun <Args> NavController.replace(
  * @param transitionController Optional controller for managing the transition programmatically
  * @param orElse Action to perform if the destination is not found in the back stack
  */
-public fun <Args> NavController.popToTop(
+public fun <Args : Any> NavController.popToTop(
     dest: NavDestination<Args>,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null,
