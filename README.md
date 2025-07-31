@@ -9,7 +9,7 @@
 [![Telegram][badge:telegram-invite]][url:telegram-invite]
 [![Slack][badge:slack-invite]][url:slack-invite]
 
-[![Slack][badge:wasm-sample]][url:wasm-sample]
+[![Wasm][badge:wasm-sample]][url:wasm-sample]
 
 </div>
 
@@ -23,6 +23,8 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | tiamat-koin                  |                           [![Tiamat koin][badge:maven-tiamat-koin]][url:maven-tiamat-koin]                           |
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
+
+Last stable version: `1.5.1`
 
 #### Multiplatform
 ```kotlin

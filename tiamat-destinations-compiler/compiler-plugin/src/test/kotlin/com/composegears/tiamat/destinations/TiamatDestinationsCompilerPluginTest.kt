@@ -120,12 +120,12 @@ class TiamatDestinationsCompilerPluginTest {
             fun main() {
                 val mgd = MyGraph.destinations()
                 val ogd = OtherGraph.destinations()
-                assertEquals(true, mgd.size == 4)
+                assertEquals(4, mgd.size)
                 assertEquals(true, mgd.contains(Screen1))
                 assertEquals(true, mgd.contains(Screen2))
                 assertEquals(true, mgd.contains(Screen3))
                 assertEquals(true, mgd.contains(Screen4))
-                assertEquals(true, ogd.size == 1)
+                assertEquals(1, ogd.size)
                 assertEquals(true, ogd.contains(Screen4))
             }
         """.trimIndent()
