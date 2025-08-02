@@ -45,6 +45,9 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew detekt
 
+      - name: Test compiler plugin
+        run: ./gradlew tiamat-destinations-compiler:test
+
       - name: Build Android target
         run: ./gradlew example:app:composeApp:assembleDebug
 
