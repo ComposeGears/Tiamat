@@ -91,7 +91,7 @@ public fun <Args : Any> NavDestination(
  *
  * Example usage:
  * ```
- * val Home by navDestination<Unit> {
+ * val Home by navDestination {
  *     // destination content here
  * }
  * ```
@@ -123,6 +123,7 @@ public fun navDestination(
  * }
  * ```
  *
+ * @param Args The type of arguments this destination accepts
  * @param extensions Optional extensions for the NavDestination
  * @param content Composable function defining the content of the NavDestination
  * @return A delegate that creates and caches a ComposeNavDestination

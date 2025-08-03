@@ -93,8 +93,11 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
 
 private val APRFreeArgsScreen2 by navDestination {
     val nc = navController()
-    //var args = freeArgs<Any>()
-    var args = freeArgs<Int, String, SomeFreeArgsDataClass>() //todo
+    var args = freeArgsOfType {
+        type<Int>()
+        type<String>()
+        type<SomeFreeArgsDataClass>()
+    }
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)

@@ -7,13 +7,9 @@ import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.descriptors.StructureKind
-import kotlinx.serialization.modules.serializersModuleOf
 import kotlinx.serialization.serializer
 import kotlinx.serialization.serializerOrNull
 import kotlin.reflect.KClass
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import androidx.savedstate.SavedState as SavedStateX
@@ -116,26 +112,38 @@ public class NavEntry<Args : Any> public constructor(
         lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
     }
 
-    // todo add doc
+    /**
+     * Returns the typed navigation arguments for this entry, or null if not present.
+     */
     public fun getNavArgs(): Args? = tryDecode(navArgs, destination.argsClazz) { navArgs = it }
 
-    // todo add doc
+    /**
+     * Clears the navigation arguments for this entry.
+     */
     public fun clearNavArgs() {
         navArgs = null
     }
 
-    // todo add doc
+    /**
+     * Returns the free (untyped) arguments for this entry as type [T], or null if not present or not of type [T].
+     */
     public inline fun <reified T : Any> getFreeArgs(): T? = getFreeArgs(T::class)
 
-    // todo add doc
+    /**
+     * Clears the free (untyped) arguments for this entry.
+     */
     public fun clearFreeArgs() {
         freeArgs = null
     }
 
-    // todo add doc
+    /**
+     * Returns the navigation result for this entry as type [T], or null if not present or not of type [T].
+     */
     public inline fun <reified T : Any> getNavResult(): T? = getNavResult(T::class)
 
-    // todo add doc
+    /**
+     * Clears the navigation result for this entry.
+     */
     public fun clearNavResult() {
         navResult = null
     }

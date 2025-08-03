@@ -24,7 +24,6 @@ import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
-import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
 // ------------- Local Providers ---------------------------------------------------------------------------------------
@@ -562,32 +561,20 @@ public fun NavDestinationScope<*>.clearNavArgs() {
 /**
  * Gets the free arguments from the current [NavEntry].
  *
- * @param T The type of the free arguments.
- * @return The free arguments, or null if not provided.
+ * @param T The type of the free arguments to retrieve.
+ * @return The free arguments of the specified type,or null if not present or not of type [T].
  */
 public inline fun <reified T : Any> NavDestinationScope<*>.freeArgs(): T? = freeArgs(T::class)
 
-//todo
-@JvmName("freeArgs2")
-public inline fun <
-    reified T1 : Any,
-    reified T2 : Any,
-    >
-    NavDestinationScope<*>.freeArgs(): Any? =
-    freeArgs(T1::class)
-        ?: freeArgs(T2::class)
-
-@JvmName("freeArgs3")
-public inline fun <
-    reified T1 : Any,
-    reified T2 : Any,
-    reified T3 : Any,
-    >
-    NavDestinationScope<*>.freeArgs(): Any? =
-    freeArgs(T1::class)
-        ?: freeArgs(T2::class)
-        ?: freeArgs(T3::class)
-
+/**
+ * Gets the navigation result from the current [NavEntry].
+ *
+ * @param matchers The actions and type validations to be performed with freeArgs untyped value.
+ * @return The navigation result of the matched type, or null if not present or no type matched.
+ */
+public fun NavDestinationScope<*>.freeArgsOfType(matchers: GenericScopeAction.() -> Unit): Any? {
+    return GenericScopeAction { freeArgs(it) }.apply(matchers).result()
+}
 
 @PublishedApi
 internal fun <T : Any> NavDestinationScope<*>.freeArgs(clazz: KClass<T>): T? = navEntry.getFreeArgs(clazz)
@@ -604,11 +591,21 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
 /**
  * Gets the navigation result from the current [NavEntry].
  *
- * @param Result The type of the navigation result.
- * @return The navigation result, or null if not provided.
+ * @param T The type of the navigation result to retrieve.
+ * @return The navigation result of the specified type, or null if not present or not of type [T].
  */
 public inline fun <reified T : Any> NavDestinationScope<*>.navResult(): T? {
     return navResult(T::class)
+}
+
+/**
+ * Gets the navigation result from the current [NavEntry].
+ *
+ * @param matchers The actions and type validations to be performed with navResult untyped value.
+ * @return The navigation result of the matched type, or null if not present or no type matched.
+ */
+public fun NavDestinationScope<*>.navResultOfType(matchers: GenericScopeAction.() -> Unit): Any? {
+    return GenericScopeAction { navResult(it) }.apply(matchers).result()
 }
 
 @PublishedApi
