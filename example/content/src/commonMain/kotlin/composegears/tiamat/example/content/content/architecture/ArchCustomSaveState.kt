@@ -19,6 +19,7 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.example.ui.core.*
+import kotlinx.serialization.Serializable
 
 val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
     Screen("Custom SaveState") {
@@ -33,9 +34,11 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
             if (showNavigation) {
                 val nc = rememberNavController(
                     key = "Arch custom save state nav controller",
-                    startDestination = ArchCustomSaveStateScreen1,
+//                    startDestination = ArchCustomSaveStateScreen1,
                     savedState = ncSavedState,
-                )
+                ){
+                    navigate(ArchCustomSaveStateScreen1,listOf(Foo(1), Foo(2)), freeArgs = 1)
+                }
                 Navigation(
                     navController = nc,
                     destinations = arrayOf(
@@ -73,11 +76,21 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val ArchCustomSaveStateScreen1 by navDestination<Unit> {
+@Serializable
+data class Foo(val t:Int)
+
+private val ArchCustomSaveStateScreen1 by navDestination<List<Foo>> {
     val nc = navController()
+    val t = navArgs()
+    val fs1 = freeArgs<String>()
+    val fs2 = freeArgs<Int>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
+            VSpacer()
+            Text("t = $t")
+            Text("fs1 = $fs1")
+            Text("fs2 = $fs2")
             VSpacer()
             AppButton(
                 "Next",

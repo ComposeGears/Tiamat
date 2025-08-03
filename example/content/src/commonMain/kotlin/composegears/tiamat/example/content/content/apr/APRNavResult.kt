@@ -44,11 +44,7 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
 
 private val APRNavResultScreen1 by navDestination<Unit> {
     val nc = navController()
-    var result = navResultOfType {
-        type<Int>()
-        type<String>()
-        type<SomeNavResultDataClass>()
-    }
+    val result = navResult<Any>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)

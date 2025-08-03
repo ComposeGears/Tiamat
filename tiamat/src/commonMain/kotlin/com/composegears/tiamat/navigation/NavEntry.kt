@@ -2,17 +2,9 @@ package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.*
-import androidx.savedstate.serialization.decodeFromSavedState
-import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.serializer
-import kotlinx.serialization.serializerOrNull
-import kotlin.reflect.KClass
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-import androidx.savedstate.SavedState as SavedStateX
 
 /**
  * Represents a navigation entry in the navigation stack.
@@ -115,7 +107,7 @@ public class NavEntry<Args : Any> public constructor(
     /**
      * Returns the typed navigation arguments for this entry, or null if not present.
      */
-    public fun getNavArgs(): Args? = tryDecode(navArgs, destination.argsClazz) { navArgs = it }
+    public fun getNavArgs(): Args? = navArgs
 
     /**
      * Clears the navigation arguments for this entry.
@@ -124,10 +116,8 @@ public class NavEntry<Args : Any> public constructor(
         navArgs = null
     }
 
-    /**
-     * Returns the free (untyped) arguments for this entry as type [T], or null if not present or not of type [T].
-     */
-    public inline fun <reified T : Any> getFreeArgs(): T? = getFreeArgs(T::class)
+    // todo doc
+    public fun getFreeArgs(): Any? = freeArgs
 
     /**
      * Clears the free (untyped) arguments for this entry.
@@ -136,10 +126,8 @@ public class NavEntry<Args : Any> public constructor(
         freeArgs = null
     }
 
-    /**
-     * Returns the navigation result for this entry as type [T], or null if not present or not of type [T].
-     */
-    public inline fun <reified T : Any> getNavResult(): T? = getNavResult(T::class)
+    // todo doc
+    public fun getNavResult(): Any? = navResult
 
     /**
      * Clears the navigation result for this entry.
@@ -151,12 +139,6 @@ public class NavEntry<Args : Any> public constructor(
     internal fun setNavResult(result: Any?) {
         navResult = result
     }
-
-    @PublishedApi
-    internal fun <T : Any> getFreeArgs(clazz: KClass<T>): T? = tryDecode(freeArgs, clazz) { freeArgs = it }
-
-    @PublishedApi
-    internal fun <T : Any> getNavResult(clazz: KClass<T>): T? = tryDecode(navResult, clazz) { navResult = it }
 
     public fun contentKey(): String = "${destination.name}-$uuid"
 
@@ -173,9 +155,9 @@ public class NavEntry<Args : Any> public constructor(
         return SavedState(
             KEY_DESTINATION to destination.name,
             KEY_UUID to uuid,
-            KEY_NAV_ARGS to tryEncode(navArgs),
-            KEY_FREE_ARGS to tryEncode(freeArgs),
-            KEY_NAV_RESULT to tryEncode(navResult),
+            KEY_NAV_ARGS to navArgs,
+            KEY_FREE_ARGS to freeArgs,
+            KEY_NAV_RESULT to navResult,
             KEY_SAVED_STATE to savedState,
             KEY_NAV_CONTROLLERS to navControllerStore.saveToSavedState(),
         )
@@ -214,31 +196,6 @@ public class NavEntry<Args : Any> public constructor(
         viewModelStore.clear()
         navControllerStore.clear()
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
-    }
-
-    @OptIn(InternalSerializationApi::class)
-    private fun tryEncode(src: Any?): Any? = src
-        // no need to re-save saved state or Unit's
-        ?.takeIf { it !is SavedStateX }
-        ?.let { it::class.serializerOrNull() }
-        ?.let { encodeToSavedState(serializer = it as KSerializer<Any>, value = src) }
-        ?: src
-
-    @Suppress("UNCHECKED_CAST")
-    @OptIn(InternalSerializationApi::class)
-    private fun <T : Any> tryDecode(
-        src: Any?,
-        clazz: KClass<T>,
-        onDecoded: (T) -> Unit = {}
-    ): T? = when {
-        src == null -> null
-        src::class == clazz || clazz == Any::class -> src as T
-        src is SavedStateX -> {
-            runCatching {
-                decodeFromSavedState(clazz.serializer(), src)
-            }.getOrNull()?.also(onDecoded)
-        }
-        else -> null
     }
 
     @ExcludeFromTests

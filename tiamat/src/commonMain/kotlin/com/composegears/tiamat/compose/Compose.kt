@@ -24,7 +24,6 @@ import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
-import kotlin.reflect.KClass
 
 // ------------- Local Providers ---------------------------------------------------------------------------------------
 
@@ -269,7 +268,6 @@ public fun Navigation(
             NavEntry(
                 NavDestinationImpl(
                     name = "Stub",
-                    argsClazz = Unit::class,
                     extensions = emptyList(),
                     content = {}
                 ))
@@ -536,9 +534,9 @@ public inline fun <reified P : NavExtension<*>> NavDestinationScope<*>.ext(): P?
  * @param Args The type of the navigation arguments.
  * @return The navigation arguments.
  */
-@Suppress("CastToNullableType")
+@Composable
 public fun <Args : Any> NavDestinationScope<Args>.navArgs(): Args =
-    navEntry.getNavArgs() ?: error("args not provided or null, consider use navArgsOrNull()")
+    navArgsOrNull() ?: error("args not provided or null, consider use navArgsOrNull()")
 
 /**
  * Gets the navigation arguments from the current [NavEntry], or null if not provided.
@@ -547,7 +545,10 @@ public fun <Args : Any> NavDestinationScope<Args>.navArgs(): Args =
  * @return The navigation arguments, or null if not provided.
  */
 @Suppress("CastToNullableType")
-public fun <Args : Any> NavDestinationScope<Args>.navArgsOrNull(): Args? = navEntry.getNavArgs()
+@Composable
+public fun <Args : Any> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
+    navEntry.getNavArgs()
+}
 
 /**
  * Clears the navigation arguments from the [NavEntry].
@@ -564,20 +565,11 @@ public fun NavDestinationScope<*>.clearNavArgs() {
  * @param T The type of the free arguments to retrieve.
  * @return The free arguments of the specified type,or null if not present or not of type [T].
  */
-public inline fun <reified T : Any> NavDestinationScope<*>.freeArgs(): T? = freeArgs(T::class)
-
-/**
- * Gets the navigation result from the current [NavEntry].
- *
- * @param matchers The actions and type validations to be performed with freeArgs untyped value.
- * @return The navigation result of the matched type, or null if not present or no type matched.
- */
-public fun NavDestinationScope<*>.freeArgsOfType(matchers: GenericScopeAction.() -> Unit): Any? {
-    return GenericScopeAction { freeArgs(it) }.apply(matchers).result()
+@Composable
+public inline fun <reified T> NavDestinationScope<*>.freeArgs(): T? {
+    val entry = navEntry()
+    return remember { entry.getFreeArgs() as? T }
 }
-
-@PublishedApi
-internal fun <T : Any> NavDestinationScope<*>.freeArgs(clazz: KClass<T>): T? = navEntry.getFreeArgs(clazz)
 
 /**
  * Clears the free arguments from the [NavEntry].
@@ -594,22 +586,11 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
  * @param T The type of the navigation result to retrieve.
  * @return The navigation result of the specified type, or null if not present or not of type [T].
  */
-public inline fun <reified T : Any> NavDestinationScope<*>.navResult(): T? {
-    return navResult(T::class)
+@Composable
+public inline fun <reified T> NavDestinationScope<*>.navResult(): T? {
+    val entry = navEntry()
+    return remember { entry.getNavResult() as? T }
 }
-
-/**
- * Gets the navigation result from the current [NavEntry].
- *
- * @param matchers The actions and type validations to be performed with navResult untyped value.
- * @return The navigation result of the matched type, or null if not present or no type matched.
- */
-public fun NavDestinationScope<*>.navResultOfType(matchers: GenericScopeAction.() -> Unit): Any? {
-    return GenericScopeAction { navResult(it) }.apply(matchers).result()
-}
-
-@PublishedApi
-internal fun <T : Any> NavDestinationScope<*>.navResult(clazz: KClass<T>): T? = navEntry.getNavResult(clazz)
 
 /**
  * Clears the navigation result from the [NavEntry].

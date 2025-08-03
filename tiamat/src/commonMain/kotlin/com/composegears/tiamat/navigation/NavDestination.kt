@@ -1,7 +1,5 @@
 package com.composegears.tiamat.navigation
 
-import kotlin.reflect.KClass
-
 /**
  * Interface for a navigation destination.
  *
@@ -36,16 +34,8 @@ public abstract class NavDestination<Args : Any> : RouteElement {
      * The unique name of this destination.
      */
     public abstract val name: String
-
-    /**
-     * Args class
-     */
-    internal abstract val argsClazz: KClass<Args>
-
 }
 
 internal data class UnresolvedDestination(
     override val name: String,
-) : NavDestination<Any>() {
-    override val argsClazz: KClass<Any> = Any::class
-}
+) : NavDestination<Any>()
