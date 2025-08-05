@@ -3,6 +3,8 @@ package com.composegears.tiamat.navigation
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.*
 import com.composegears.tiamat.ExcludeFromTests
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -20,9 +22,6 @@ import kotlin.uuid.Uuid
 @Stable
 public class NavEntry<Args : Any> public constructor(
     destination: NavDestination<Args>,
-    private var navArgs: Args? = null,
-    private var freeArgs: Any? = null,
-    private var navResult: Any? = null
 ) : RouteElement, ViewModelStoreOwner, LifecycleOwner {
 
     public companion object {
@@ -39,7 +38,7 @@ public class NavEntry<Args : Any> public constructor(
         internal fun restoreFromSavedState(
             parent: NavController?,
             savedState: SavedState
-        ): NavEntry<*> {
+        ): NavEntry<Any> {
             val destination = savedState[KEY_DESTINATION] as? String
                 ?: error("Unable to restore NavEntry: destination is null")
             val uuid = savedState[KEY_UUID] as? String
@@ -65,6 +64,10 @@ public class NavEntry<Args : Any> public constructor(
     // used to get current SavedState when attached to UI
     private var savedStateSaver: (() -> SavedState)? = null
     internal var savedState: SavedState? = null
+
+    private var navArgs: EntryData<Args>? = null
+    private var freeArgs: EntryData<out Any>? = null
+    private var navResult: EntryData<out Any>? = null
 
     internal var isAttachedToNavController = false
         private set
@@ -100,6 +103,30 @@ public class NavEntry<Args : Any> public constructor(
     public var destination: NavDestination<Args> = destination
         private set
 
+    public constructor(
+        destination: NavDestination<Args>,
+        navArgs: EntryData<Args>? = null,
+        freeArgs: Any? = null,
+        navResult: Any? = null
+    ) : this(destination) {
+        this.navArgs = navArgs
+        this.freeArgs = EntryData.from(freeArgs)
+        this.navResult = EntryData.from(navResult)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    public constructor(
+        destination: NavDestination<Args>,
+        navArgs: Args? = null,
+        freeArgs: Any? = null,
+        navResult: Any? = null
+    ) : this(
+        destination = destination,
+        navArgs = EntryData.from(navArgs) as EntryData<Args>?,
+        freeArgs = freeArgs,
+        navResult = navResult
+    )
+
     init {
         lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
     }
@@ -107,7 +134,7 @@ public class NavEntry<Args : Any> public constructor(
     /**
      * Returns the typed navigation arguments for this entry, or null if not present.
      */
-    public fun getNavArgs(): Args? = navArgs
+    public fun getNavArgs(): Args? = navArgs?.data
 
     /**
      * Clears the navigation arguments for this entry.
@@ -116,8 +143,10 @@ public class NavEntry<Args : Any> public constructor(
         navArgs = null
     }
 
-    // todo doc
-    public fun getFreeArgs(): Any? = freeArgs
+    /**
+     * Returns the free (untyped) arguments for this entry as type [T], or null if not present or not of type [T].
+     */
+    public inline fun <reified T : Any> getFreeArgs(): T? = getFreeArgs(typeOf<T>()) as? T
 
     /**
      * Clears the free (untyped) arguments for this entry.
@@ -126,8 +155,10 @@ public class NavEntry<Args : Any> public constructor(
         freeArgs = null
     }
 
-    // todo doc
-    public fun getNavResult(): Any? = navResult
+    /**
+     * Returns the navigation result for this entry as type [T], or null if not present or not of type [T].
+     */
+    public inline fun <reified T : Any> getNavResult(): T? = getNavResult(typeOf<T>()) as? T
 
     /**
      * Clears the navigation result for this entry.
@@ -137,7 +168,7 @@ public class NavEntry<Args : Any> public constructor(
     }
 
     internal fun setNavResult(result: Any?) {
-        navResult = result
+        navResult = EntryData.from(result)
     }
 
     public fun contentKey(): String = "${destination.name}-$uuid"
@@ -147,7 +178,28 @@ public class NavEntry<Args : Any> public constructor(
         destination = destinationResolver(destination.name)
             ?.let { it as? NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
+        (navArgs as? SerializedData<Args>)?.let {
+            navArgs = it.tryDecode(destination.argsType)
+                ?: error("NavArgs type mismatch: expected ${destination.argsType}")
+        }
         isResolved = true
+    }
+
+    @PublishedApi
+    internal fun getFreeArgs(type: KType): Any? = getEntryData(freeArgs, type) { freeArgs = it }
+
+    @PublishedApi
+    internal fun getNavResult(type: KType): Any? = getEntryData(navResult, type) { navResult = it }
+
+    private fun getEntryData(
+        value: EntryData<out Any>?,
+        type: KType,
+        onUpdated: (EntryData<out Any>) -> Unit
+    ) = when (value) {
+        null -> null
+        is Value<*> -> value.data
+        is SerializableData<*> -> value.data
+        is SerializedData<*> -> value.tryDecode(type)?.apply(onUpdated)?.data
     }
 
     internal fun saveToSavedState(): SavedState {
@@ -155,9 +207,9 @@ public class NavEntry<Args : Any> public constructor(
         return SavedState(
             KEY_DESTINATION to destination.name,
             KEY_UUID to uuid,
-            KEY_NAV_ARGS to navArgs,
-            KEY_FREE_ARGS to freeArgs,
-            KEY_NAV_RESULT to navResult,
+            KEY_NAV_ARGS to navArgs?.toSavedState(),
+            KEY_FREE_ARGS to freeArgs?.toSavedState(),
+            KEY_NAV_RESULT to navResult?.toSavedState(),
             KEY_SAVED_STATE to savedState,
             KEY_NAV_CONTROLLERS to navControllerStore.saveToSavedState(),
         )

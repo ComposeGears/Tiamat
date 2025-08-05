@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import com.composegears.tiamat.navigation.NavDestination
 import kotlin.jvm.JvmName
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * A navigation destination with Compose UI implementation.
@@ -30,6 +31,7 @@ public abstract class ComposeNavDestination<Args : Any> : NavDestination<Args>()
  */
 internal open class NavDestinationImpl<Args : Any>(
     override val name: String,
+    override val argsType: KType,
     override val extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit
 ) : ComposeNavDestination<Args>() {
@@ -49,6 +51,7 @@ internal open class NavDestinationImpl<Args : Any>(
  * @param content Composable function defining the content of the destination
  */
 public class NavDestinationInstanceDelegate<Args : Any>(
+    private val argsType: KType,
     private val extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit,
 ) : ReadOnlyProperty<Nothing?, ComposeNavDestination<Args>> {
@@ -57,6 +60,7 @@ public class NavDestinationInstanceDelegate<Args : Any>(
     override fun getValue(thisRef: Nothing?, property: KProperty<*>): ComposeNavDestination<Args> {
         if (destination == null) destination = NavDestinationImpl(
             name = property.name,
+            argsType = argsType,
             extensions = extensions,
             content = content
         )
@@ -75,10 +79,10 @@ public class NavDestinationInstanceDelegate<Args : Any>(
 @Suppress("FunctionName")
 public fun <Args : Any> NavDestination(
     name: String,
-    argsClazz: KClass<Args>,
+    argsType: KType,
     extensions: List<NavExtension<Args>> = emptyList(),
     content: @Composable NavDestinationScope<Args>.() -> Unit
-): ComposeNavDestination<Args> = NavDestinationImpl(name, extensions, content)
+): ComposeNavDestination<Args> = NavDestinationImpl(name, argsType, extensions, content)
 
 /**
  * Creates a NavDestinationInstanceDelegate for use with property delegation.
@@ -102,6 +106,7 @@ public fun navDestination(
     vararg extensions: NavExtension<Unit>? = emptyArray(),
     content: @Composable NavDestinationScope<Unit>.() -> Unit
 ): NavDestinationInstanceDelegate<Unit> = NavDestinationInstanceDelegate(
+    argsType = typeOf<Unit>(),
     extensions = listOfNotNull(*extensions),
     content = content
 )
@@ -124,10 +129,11 @@ public fun navDestination(
  * @param content Composable function defining the content of the NavDestination
  * @return A delegate that creates and caches a ComposeNavDestination
  */
-public fun <Args : Any> navDestination(
+public inline fun <reified Args : Any> navDestination(
     vararg extensions: NavExtension<Args>? = emptyArray(),
-    content: @Composable NavDestinationScope<Args>.() -> Unit
+    noinline content: @Composable NavDestinationScope<Args>.() -> Unit
 ): NavDestinationInstanceDelegate<Args> = NavDestinationInstanceDelegate(
+    argsType = typeOf<Args>(),
     extensions = listOfNotNull(*extensions),
     content = content
 )

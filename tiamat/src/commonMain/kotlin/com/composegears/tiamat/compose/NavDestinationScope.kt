@@ -15,6 +15,7 @@ public abstract class NavDestinationScope<Args : Any> internal constructor() {
     /**
      * The current navigation entry.
      */
+    @PublishedApi
     internal abstract val navEntry: NavEntry<Args>
 }
 

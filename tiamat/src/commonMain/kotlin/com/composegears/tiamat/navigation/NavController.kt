@@ -43,7 +43,6 @@ public class NavController internal constructor(
             config = config
         )
 
-        @Suppress("UNCHECKED_CAST")
         public fun create(
             key: String? = null,
             saveable: Boolean = true,

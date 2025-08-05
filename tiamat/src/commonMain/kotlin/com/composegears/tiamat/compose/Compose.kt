@@ -24,6 +24,7 @@ import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 
 // ------------- Local Providers ---------------------------------------------------------------------------------------
 
@@ -268,6 +269,7 @@ public fun Navigation(
             NavEntry(
                 NavDestinationImpl(
                     name = "Stub",
+                    argsType = typeOf<Unit>(),
                     extensions = emptyList(),
                     content = {}
                 ))
@@ -567,8 +569,7 @@ public fun NavDestinationScope<*>.clearNavArgs() {
  */
 @Composable
 public inline fun <reified T> NavDestinationScope<*>.freeArgs(): T? {
-    val entry = navEntry()
-    return remember { entry.getFreeArgs() as? T }
+    return remember { navEntry.getFreeArgs() }
 }
 
 /**
@@ -588,8 +589,7 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
  */
 @Composable
 public inline fun <reified T> NavDestinationScope<*>.navResult(): T? {
-    val entry = navEntry()
-    return remember { entry.getNavResult() as? T }
+    return remember { navEntry.getNavResult() }
 }
 
 /**

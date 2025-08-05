@@ -35,6 +35,7 @@ import composegears.tiamat.example.content.content.apr.APRFreeArgs
 import composegears.tiamat.example.content.content.apr.APRNavArgs
 import composegears.tiamat.example.content.content.apr.APRNavResult
 import composegears.tiamat.example.content.content.architecture.ArchCustomSaveState
+import composegears.tiamat.example.content.content.architecture.ArchSerializableData
 import composegears.tiamat.example.content.content.architecture.ArchViewModel
 import composegears.tiamat.example.content.content.navigation.*
 import composegears.tiamat.example.platform.Platform
@@ -112,6 +113,11 @@ private val HomeItems =
                     name = "Custom SaveState",
                     description = "Custom save and restore state logic case",
                     destination = ArchCustomSaveState
+                ),
+                AppFeature(
+                    name = "Serializable Data & Arguments",
+                    description = "Passing @Serializable data as navArgs / freeArgs / navResult",
+                    destination = ArchSerializableData
                 ),
             ),
         ),
