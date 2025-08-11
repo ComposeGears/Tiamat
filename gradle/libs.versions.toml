@@ -18,7 +18,7 @@ androidx-camera-view = "androidx.camera:camera-view:1.4.2"
 androidx-concurrent-futures = "androidx.concurrent:concurrent-futures-ktx:1.3.0"
 androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.9.2"
 
-detekt-compose = "io.nlopez.compose.rules:detekt:0.4.22"
+detekt-compose = "io.nlopez.compose.rules:detekt:0.4.27"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
@@ -37,9 +37,9 @@ zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.18.0"
+binary-compatibility = "org.jetbrains.kotlinx.binary-compatibility-validator:0.18.1"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta03" }
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta04" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
