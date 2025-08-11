@@ -1,7 +1,6 @@
 package com.composegears.tiamat.compose
 
 import androidx.compose.animation.ContentTransform
-import com.composegears.tiamat.navigation.EntryData
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
@@ -22,32 +21,6 @@ import com.composegears.tiamat.navigation.NavEntry
 public fun <Args : Any> NavController.navigate(
     entry: NavDestination<Args>,
     navArgs: Args? = null,
-    freeArgs: Any? = null,
-    transition: ContentTransform? = null,
-    transitionController: TransitionController? = null
-): Unit = navigate(
-    entry = entry.toNavEntry(
-        navArgs = navArgs,
-        freeArgs = freeArgs,
-        navResult = null
-    ),
-    transition = transition,
-    transitionController = transitionController
-)
-
-/**
- * Navigates to a new destination.
- * The current destination is added to the back stack.
- *
- * @param entry The navigation entry to navigate to
- * @param navArgs Optional typed arguments to pass to the destination
- * @param freeArgs Optional untyped arguments to pass to the destination
- * @param transition Optional content transform animation for the transition
- * @param transitionController Optional controller for managing the transition programmatically
- */
-public fun <Args : Any> NavController.navigate(
-    entry: NavDestination<Args>,
-    navArgs: EntryData<Args>,
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
@@ -96,32 +69,6 @@ public fun <Args : Any> NavController.navigate(
 public fun <Args : Any> NavController.replace(
     entry: NavDestination<Args>,
     navArgs: Args? = null,
-    freeArgs: Any? = null,
-    transition: ContentTransform? = null,
-    transitionController: TransitionController? = null
-): Unit = replace(
-    entry = entry.toNavEntry(
-        navArgs = navArgs,
-        freeArgs = freeArgs,
-        navResult = null
-    ),
-    transition = transition,
-    transitionController = transitionController
-)
-
-/**
- * Replaces the current destination with a new one.
- * The current destination is not added to the back stack.
- *
- * @param entry The navigation entry to replace with
- * @param navArgs Optional typed arguments to pass to the destination
- * @param freeArgs Optional untyped arguments to pass to the destination
- * @param transition Optional content transform animation for the transition
- * @param transitionController Optional controller for managing the transition programmatically
- */
-public fun <Args : Any> NavController.replace(
-    entry: NavDestination<Args>,
-    navArgs: EntryData<Args>,
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null

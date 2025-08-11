@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -16,9 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.SavedState
-import com.composegears.tiamat.navigation.serializable
+import com.composegears.tiamat.navigation.NavData
 import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.example.ui.core.AppButton
+import composegears.tiamat.example.ui.core.HSpacer
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
@@ -31,8 +31,7 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
             VSpacer()
             var ncSavedState by remember { mutableStateOf<SavedState?>(null) }
             var showNavigation by remember { mutableStateOf(true) }
-            var serializableNavArgs by remember { mutableStateOf(true) }
-            var serializableFreeArgs by remember { mutableStateOf(true) }
+            var freeArgsValue by remember { mutableStateOf<Any>(0, neverEqualPolicy()) }
             AnimatedContent(showNavigation, contentAlignment = Alignment.Center) {
                 if (it) AppButton("Save / Serialize", onClick = { showNavigation = false })
                 else AppButton("Restore / Deserialize", onClick = { showNavigation = true })
@@ -40,12 +39,13 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
             if (showNavigation) {
                 VSpacer()
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(serializableNavArgs, onCheckedChange = { serializableNavArgs = it })
-                    Text("Serializable NavArgs")
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(serializableFreeArgs, onCheckedChange = { serializableFreeArgs = it })
-                    Text("Serializable FreeArgs")
+                    AppButton("FreeArgs:Int", { freeArgsValue = 1 })
+                    HSpacer()
+                    AppButton("FreeArgs:String", { freeArgsValue = "string" })
+                    HSpacer()
+                    AppButton("FreeArgs:Data", { freeArgsValue = ArchSimpleDataClass(1) })
+                    HSpacer()
+                    AppButton("FreeArgs:Serializable", { freeArgsValue = ArchSerializableDataClass(1) })
                 }
                 VSpacer()
                 val nc = rememberNavController(
@@ -62,29 +62,13 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
                         .padding(16.dp)
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                 )
-                LaunchedEffect(serializableNavArgs, serializableFreeArgs) {
-                    if (shouldFlush) when {
-                        serializableNavArgs && serializableFreeArgs -> nc.replace(
-                            entry = ArchSerializableDataScreen,
-                            navArgs = serializable(ArchSerializableDataClass(1)),
-                            freeArgs = serializable(ArchSerializableDataClass(2)),
-                        )
-                        serializableNavArgs && !serializableFreeArgs -> nc.replace(
-                            entry = ArchSerializableDataScreen,
-                            navArgs = ArchSerializableDataClass(1).serializable(),
-                            freeArgs = ArchSerializableDataClass(2),
-                        )
-                        !serializableNavArgs && serializableFreeArgs -> nc.replace(
-                            entry = ArchSerializableDataScreen,
-                            navArgs = ArchSerializableDataClass(1),
-                            freeArgs = ArchSerializableDataClass(2).serializable(),
-                        )
-                        !serializableNavArgs && !serializableFreeArgs -> nc.replace(
-                            entry = ArchSerializableDataScreen,
-                            navArgs = ArchSerializableDataClass(1),
-                            freeArgs = ArchSerializableDataClass(2),
-                        )
-                    } else shouldFlush = true
+                LaunchedEffect(freeArgsValue) {
+                    if (shouldFlush) nc.replace(
+                        entry = ArchSerializableDataScreen,
+                        navArgs = ArchSerializableDataClass(1),
+                        freeArgs = freeArgsValue,
+                    )
+                    else shouldFlush = true
                 }
                 DisposableEffect(Unit) {
                     onDispose {
@@ -111,8 +95,10 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
+data class ArchSimpleDataClass(val t: Int)
+
 @Serializable
-data class ArchSerializableDataClass(val t: Int)
+data class ArchSerializableDataClass(val t: Int) : NavData
 
 @OptIn(InternalSerializationApi::class)
 private val ArchSerializableDataScreen by navDestination<ArchSerializableDataClass> {
@@ -140,7 +126,7 @@ private val ArchSerializableDataScreen by navDestination<ArchSerializableDataCla
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Return either data class (if not serialized or not serializable)",
+                text = "Return either data (if not serialized or not serializable)",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
@@ -153,37 +139,41 @@ private val ArchSerializableDataScreen by navDestination<ArchSerializableDataCla
             )
             VSpacer()
             Text(
-                text = "Return null as it will try to cast to Int and fails in both cases (serialized or not)",
+                text = "Attempt to display as Int",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "freeArgs1<Int> = $freeArgs2",
+                text = "freeArgs2<Int> = $freeArgs2",
                 style = MaterialTheme.typography.bodyLarge
             )
             VSpacer()
             Text(
-                text = "Return data class, as it is already this type (if not serializable)",
+                text = "Attempting to deserialize as ArchSerializableDataClass",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "or else (serializable) it was deserialized successfully",
+                text = "It will be either data or null if type not match",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "freeArgs1<ArchSerializableDataClass> = $freeArgs3",
+                text = "freeArgs3<ArchSerializableDataClass> = $freeArgs3",
                 style = MaterialTheme.typography.bodyLarge
             )
             VSpacer()
             Text(
-                text = "Return data class as it present as it is (if not serializable)",
+                text = "Return data (if it was not serialized)",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "or else (serializable) it was deserialized in previous step",
+                text = "or the instance of ArchSerializableDataClass",
                 style = MaterialTheme.typography.labelSmall
             )
             Text(
-                text = "freeArgs1<Any> = $freeArgs4",
+                text = "as it was deserialized at the step before",
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = "freeArgs4<Any> = $freeArgs4",
                 style = MaterialTheme.typography.bodyLarge
             )
         }

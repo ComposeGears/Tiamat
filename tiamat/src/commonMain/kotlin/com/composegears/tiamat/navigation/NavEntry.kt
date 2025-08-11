@@ -2,11 +2,17 @@ package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.*
+import androidx.savedstate.serialization.decodeFromSavedState
+import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.serializer
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import androidx.savedstate.SavedState as SavedStateX
 
 /**
  * Represents a navigation entry in the navigation stack.
@@ -22,6 +28,9 @@ import kotlin.uuid.Uuid
 @Stable
 public class NavEntry<Args : Any> public constructor(
     destination: NavDestination<Args>,
+    private var navArgs: Args? = null,
+    private var freeArgs: Any? = null,
+    private var navResult: Any? = null
 ) : RouteElement, ViewModelStoreOwner, LifecycleOwner {
 
     public companion object {
@@ -65,10 +74,6 @@ public class NavEntry<Args : Any> public constructor(
     private var savedStateSaver: (() -> SavedState)? = null
     internal var savedState: SavedState? = null
 
-    private var navArgs: EntryData<Args>? = null
-    private var freeArgs: EntryData<out Any>? = null
-    private var navResult: EntryData<out Any>? = null
-
     internal var isAttachedToNavController = false
         private set
     internal var isAttachedToUI = false
@@ -103,30 +108,6 @@ public class NavEntry<Args : Any> public constructor(
     public var destination: NavDestination<Args> = destination
         private set
 
-    public constructor(
-        destination: NavDestination<Args>,
-        navArgs: EntryData<Args>? = null,
-        freeArgs: Any? = null,
-        navResult: Any? = null
-    ) : this(destination) {
-        this.navArgs = navArgs
-        this.freeArgs = EntryData.from(freeArgs)
-        this.navResult = EntryData.from(navResult)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    public constructor(
-        destination: NavDestination<Args>,
-        navArgs: Args? = null,
-        freeArgs: Any? = null,
-        navResult: Any? = null
-    ) : this(
-        destination = destination,
-        navArgs = EntryData.from(navArgs) as EntryData<Args>?,
-        freeArgs = freeArgs,
-        navResult = navResult
-    )
-
     init {
         lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
     }
@@ -134,7 +115,7 @@ public class NavEntry<Args : Any> public constructor(
     /**
      * Returns the typed navigation arguments for this entry, or null if not present.
      */
-    public fun getNavArgs(): Args? = navArgs?.data
+    public fun getNavArgs(): Args? = navArgs
 
     /**
      * Clears the navigation arguments for this entry.
@@ -168,7 +149,7 @@ public class NavEntry<Args : Any> public constructor(
     }
 
     internal fun setNavResult(result: Any?) {
-        navResult = EntryData.from(result)
+        navResult = result
     }
 
     public fun contentKey(): String = "${destination.name}-$uuid"
@@ -178,29 +159,17 @@ public class NavEntry<Args : Any> public constructor(
         destination = destinationResolver(destination.name)
             ?.let { it as? NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
-        (navArgs as? SerializedData<Args>)?.let {
-            navArgs = it.tryDecode(destination.argsType)
-                ?: error("NavArgs type mismatch: expected ${destination.argsType}")
-        }
+        if (navArgs != null && navArgs is SavedStateX) navArgs
+            ?.fromSavedState(destination.argsType) { navArgs = it as Args }
+            ?: error("NavArgs type mismatch: expected ${destination.argsType} found: ${navArgs!!::class}")
         isResolved = true
     }
 
     @PublishedApi
-    internal fun getFreeArgs(type: KType): Any? = getEntryData(freeArgs, type) { freeArgs = it }
+    internal fun getFreeArgs(type: KType): Any? = freeArgs?.fromSavedState(type) { freeArgs = it }
 
     @PublishedApi
-    internal fun getNavResult(type: KType): Any? = getEntryData(navResult, type) { navResult = it }
-
-    private fun getEntryData(
-        value: EntryData<out Any>?,
-        type: KType,
-        onUpdated: (EntryData<out Any>) -> Unit
-    ) = when (value) {
-        null -> null
-        is Value<*> -> value.data
-        is SerializableData<*> -> value.data
-        is SerializedData<*> -> value.tryDecode(type)?.apply(onUpdated)?.data
-    }
+    internal fun getNavResult(type: KType): Any? = navResult?.fromSavedState(type) { navResult = it }
 
     internal fun saveToSavedState(): SavedState {
         if (savedStateSaver != null) savedState = savedStateSaver!!()
@@ -243,6 +212,28 @@ public class NavEntry<Args : Any> public constructor(
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
         if (!isAttachedToNavController) close()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun Any.fromSavedState(
+        type: KType,
+        onUpdated: (Any) -> Unit
+    ): Any? =
+        if (this is SavedStateX) runCatching {
+            decodeFromSavedState(
+                deserializer = serializer(type) as KSerializer<Any>,
+                savedState = this
+            )
+        }.getOrNull()?.also(onUpdated)
+        else this
+
+    @Suppress("UNCHECKED_CAST")
+    @OptIn(InternalSerializationApi::class)
+    private fun <T : Any> T.toSavedState(): Any =
+        if (this is NavData) encodeToSavedState(
+            serializer = this::class.serializer() as KSerializer<T>,
+            value = this
+        )
+        else this
 
     private fun close() {
         viewModelStore.clear()
