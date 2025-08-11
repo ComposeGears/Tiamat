@@ -14,14 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.navigation.NavData
+import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.toHumanReadableString
-import composegears.tiamat.example.ui.core.AppButton
-import composegears.tiamat.example.ui.core.HSpacer
-import composegears.tiamat.example.ui.core.Screen
-import composegears.tiamat.example.ui.core.ScreenInfo
-import composegears.tiamat.example.ui.core.VSpacer
+import composegears.tiamat.example.ui.core.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
@@ -31,29 +27,34 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
             VSpacer()
             var ncSavedState by remember { mutableStateOf<SavedState?>(null) }
             var showNavigation by remember { mutableStateOf(true) }
-            var freeArgsValue by remember { mutableStateOf<Any>(0, neverEqualPolicy()) }
             AnimatedContent(showNavigation, contentAlignment = Alignment.Center) {
                 if (it) AppButton("Save / Serialize", onClick = { showNavigation = false })
                 else AppButton("Restore / Deserialize", onClick = { showNavigation = true })
             }
             if (showNavigation) {
-                VSpacer()
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppButton("FreeArgs:Int", { freeArgsValue = 1 })
-                    HSpacer()
-                    AppButton("FreeArgs:String", { freeArgsValue = "string" })
-                    HSpacer()
-                    AppButton("FreeArgs:Data", { freeArgsValue = ArchSimpleDataClass(1) })
-                    HSpacer()
-                    AppButton("FreeArgs:Serializable", { freeArgsValue = ArchSerializableDataClass(1) })
-                }
-                VSpacer()
                 val nc = rememberNavController(
                     //key = "Arch custom save state nav controller",
                     startEntry = null,
                     savedState = ncSavedState,
                 )
-                var shouldFlush by remember { mutableStateOf(nc.getCurrentNavEntry() == null) }
+                VSpacer()
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    fun replace(arg: Any) {
+                        nc.replace(
+                            entry = ArchSerializableDataScreen,
+                            navArgs = ArchSerializableDataClass(1),
+                            freeArgs = arg,
+                        )
+                    }
+                    AppButton("FreeArgs:Int", { replace(1) })
+                    HSpacer()
+                    AppButton("FreeArgs:String", { replace("string") })
+                    HSpacer()
+                    AppButton("FreeArgs:Data", { replace(ArchSimpleDataClass(1)) })
+                    HSpacer()
+                    AppButton("FreeArgs:Serializable", { replace(ArchSerializableDataClass(1)) })
+                }
+                VSpacer()
                 Navigation(
                     navController = nc,
                     destinations = arrayOf(ArchSerializableDataScreen),
@@ -62,14 +63,6 @@ val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
                         .padding(16.dp)
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
                 )
-                LaunchedEffect(freeArgsValue) {
-                    if (shouldFlush) nc.replace(
-                        entry = ArchSerializableDataScreen,
-                        navArgs = ArchSerializableDataClass(1),
-                        freeArgs = freeArgsValue,
-                    )
-                    else shouldFlush = true
-                }
                 DisposableEffect(Unit) {
                     onDispose {
                         ncSavedState = nc.saveToSavedState()
