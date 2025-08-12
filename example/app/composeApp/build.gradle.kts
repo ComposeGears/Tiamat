@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.hot.reload)
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.kotlin.parcelize)
 }
 
 kotlin {

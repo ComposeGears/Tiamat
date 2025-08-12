@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.tiamat.destinations.compiler)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -40,6 +41,7 @@ kotlin {
 
             implementation(compose.components.uiToolingPreview)
             implementation(libs.compose.material3.window.size)
+            implementation(libs.kotlin.serialization.core)
         }
     }
 }

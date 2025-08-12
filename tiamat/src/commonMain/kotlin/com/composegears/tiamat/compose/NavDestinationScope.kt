@@ -11,13 +11,14 @@ import com.composegears.tiamat.navigation.NavEntry
  * @param Args The type of arguments this destination accepts
  */
 @Stable
-public abstract class NavDestinationScope<Args> internal constructor() {
+public abstract class NavDestinationScope<Args : Any> internal constructor() {
     /**
      * The current navigation entry.
      */
+    @PublishedApi
     internal abstract val navEntry: NavEntry<Args>
 }
 
-internal open class NavDestinationScopeImpl<Args>(
+internal open class NavDestinationScopeImpl<Args : Any>(
     override val navEntry: NavEntry<Args>,
 ) : NavDestinationScope<Args>()

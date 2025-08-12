@@ -121,7 +121,7 @@ internal fun AppButtonContent(
 }
 
 @Composable
-fun <T> NavDestinationScope<T>.Screen(
+fun <T : Any> NavDestinationScope<T>.Screen(
     title: String,
     backButton: Boolean = true,
     body: @Composable NavDestinationScope<T>.() -> Unit

@@ -43,7 +43,6 @@ public class NavController internal constructor(
             config = config
         )
 
-        @Suppress("UNCHECKED_CAST")
         public fun create(
             key: String? = null,
             saveable: Boolean = true,
@@ -194,7 +193,7 @@ public class NavController internal constructor(
      * @param entry The navigation entry to navigate to
      * @param transitionData Optional data to customize the transition animation
      */
-    internal fun <Args> navigate(
+    internal fun <Args : Any> navigate(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
     ) {
@@ -216,7 +215,7 @@ public class NavController internal constructor(
      * @param entry The navigation entry to replace with
      * @param transitionData Optional data to customize the transition animation
      */
-    internal fun <Args> replace(
+    internal fun <Args : Any> replace(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
     ) {
@@ -238,7 +237,7 @@ public class NavController internal constructor(
      * @param transitionData Optional data to customize the transition animation
      * @param orElse Action to perform if the destination is not found in the back stack
      */
-    internal fun <Args> popToTop(
+    internal fun <Args : Any> popToTop(
         dest: NavDestination<Args>,
         transitionData: Any? = null,
         orElse: NavController.() -> Unit = {
@@ -288,7 +287,7 @@ public class NavController internal constructor(
             targetIndex >= 0 -> {
                 val currentNavEntry = getCurrentNavEntry()
                 val targetNavEntry = backStack[targetIndex]
-                targetNavEntry.navResult = result
+                targetNavEntry.setNavResult(result)
                 currentNavEntry?.detachFromNavController()
                 editBackStack {
                     while (this.backStack.lastIndex != targetIndex) removeLast()
@@ -443,7 +442,7 @@ public class NavController internal constructor(
          *
          * @param entry The navigation entry to add.
          */
-        public fun <Args> add(
+        public fun <Args : Any> add(
             entry: NavEntry<Args>,
         ) {
             entry.ensureDetachedAndAttach()
@@ -457,7 +456,7 @@ public class NavController internal constructor(
          * @param navArgs The navigation navArgs.
          * @param freeArgs The navigation freeArgs.
          */
-        public fun <Args> add(
+        public fun <Args : Any> add(
             dest: NavDestination<Args>,
             navArgs: Args? = null,
             freeArgs: Any? = null,
@@ -471,7 +470,7 @@ public class NavController internal constructor(
          * @param index The index to add the entry at.
          * @param entry The navigation entry to add.
          */
-        public fun <Args> add(
+        public fun <Args : Any> add(
             index: Int,
             entry: NavEntry<Args>,
         ) {
@@ -487,7 +486,7 @@ public class NavController internal constructor(
          * @param navArgs The navigation navArgs.
          * @param freeArgs The navigation freeArgs.
          */
-        public fun <Args> add(
+        public fun <Args : Any> add(
             index: Int,
             dest: NavDestination<Args>,
             navArgs: Args? = null,
