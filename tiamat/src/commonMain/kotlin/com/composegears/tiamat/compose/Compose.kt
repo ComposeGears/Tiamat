@@ -341,8 +341,7 @@ public fun Navigation(
             ) {
                 Box {
                     EntryContent(it)
-                    // prevent clicks during transition animation
-                    if (transition.isRunning) Box(
+                    if (it != targetValue && transition.isRunning) Box(
                         modifier = Modifier
                             .matchParentSize()
                             .pointerInput(Unit) {
