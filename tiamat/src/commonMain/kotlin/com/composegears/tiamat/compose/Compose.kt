@@ -341,9 +341,7 @@ public fun Navigation(
             ) {
                 Box {
                     EntryContent(it)
-                    // prevent clicks during transition animation
-                    val isCurrent = remember(it, state) { it.contentKey() == state?.targetEntry?.contentKey() }
-                    if (!isCurrent && transition.isRunning) Box(
+                    if (it != targetValue && transition.isRunning) Box(
                         modifier = Modifier
                             .matchParentSize()
                             .pointerInput(Unit) {
