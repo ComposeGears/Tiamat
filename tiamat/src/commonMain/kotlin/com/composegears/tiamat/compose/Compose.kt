@@ -272,7 +272,8 @@ public fun Navigation(
                     argsType = typeOf<Unit>(),
                     extensions = emptyList(),
                     content = {}
-                ))
+                )
+            )
         }
         val state by navController.currentTransitionFlow.collectAsState()
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
@@ -568,8 +569,8 @@ public fun NavDestinationScope<*>.clearNavArgs() {
  * @return The free arguments of the specified type,or null if not present or not of type [T].
  */
 @Composable
-public inline fun <reified T> NavDestinationScope<*>.freeArgs(): T? {
-    return remember { navEntry.getFreeArgs() }
+public inline fun <reified T> NavDestinationScope<*>.freeArgs(): T? = remember {
+    navEntry.getFreeArgs()
 }
 
 /**
@@ -588,8 +589,8 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
  * @return The navigation result of the specified type, or null if not present or not of type [T].
  */
 @Composable
-public inline fun <reified T> NavDestinationScope<*>.navResult(): T? {
-    return remember { navEntry.getNavResult() }
+public inline fun <reified T> NavDestinationScope<*>.navResult(): T? = remember {
+    navEntry.getNavResult()
 }
 
 /**

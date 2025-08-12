@@ -213,10 +213,10 @@ NavController will keep the screens data, view models, and states during navigat
 > The data may be cleared by system (eg: Android may clear memory)
 > 
 > ```kotlin
-> public fun rememberNavController(
->   ...
+> fun rememberNavController(
+>   // ...
 >   saveable: Boolean? = null,
->   ...
+>   // ...
 > )
 > ```
 > `saveable` property of remembered nav controller will indicate if we need to save/restore state or no 
@@ -237,7 +237,7 @@ class AnalyticsExt(private val name: String) : ContentExtension<Any?>() {
     override fun NavDestinationScope<out Any?>.Content() {
         val entry = navEntry()
         LaunchedEffect(Unit) {
-            val service = ... // receive tracker
+            val service = /*...*/ // receive tracker
             service.trackScreen(screenName = name, destination = entry.destination.name)
         }
     }
@@ -343,7 +343,7 @@ val DeeplinkScreen by navDestination<Unit> {
         }
     }
 
-    Navigation(...)
+    Navigation(/*...*/)
 }
 
 //---- idea 2 -----
@@ -442,6 +442,8 @@ Android: `./gradlew example:app:composeApp:assembleDebug`
 
 Desktop: `./gradlew example:app:composeApp:run`
 
+Desktop + Hot-reload: `./gradlew example:app:composeApp:hotRunDesktop`
+
 Web: `./gradlew example:app:composeApp:wasmJsBrowserDevelopmentRun`
 
 iOS: run XCode project or else use [KMP plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform) iOS target
@@ -453,6 +455,8 @@ other commands:
 - check API changes: `./gradlew apiCheck`
 
 - kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
+
+- run detekt checks: `./gradlew detekt`
 
 ## Contributors
 
