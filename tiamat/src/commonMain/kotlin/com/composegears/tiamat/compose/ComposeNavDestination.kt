@@ -13,11 +13,17 @@ import kotlin.reflect.typeOf
  *
  * @param Args The type of arguments this destination accepts
  */
-public abstract class ComposeNavDestination<Args : Any> : NavDestination<Args>() {
+public abstract class ComposeNavDestination<Args : Any> internal constructor(
+    name: String,
+    argsType: KType,
     /**
      * List of extensions attached to this destination.
      */
-    public abstract val extensions: List<NavExtension<Args>>
+    public val extensions: List<NavExtension<Args>>
+) : NavDestination<Args>(
+    name = name,
+    argsType = argsType
+) {
 
     /**
      * The UI content of this destination.
@@ -30,11 +36,15 @@ public abstract class ComposeNavDestination<Args : Any> : NavDestination<Args>()
  * Internal simple ComposeNavDestination impl.
  */
 internal open class NavDestinationImpl<Args : Any>(
-    override val name: String,
-    override val argsType: KType,
-    override val extensions: List<NavExtension<Args>>,
+    name: String,
+    argsType: KType,
+    extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit
-) : ComposeNavDestination<Args>() {
+) : ComposeNavDestination<Args>(
+    name = name,
+    argsType = argsType,
+    extensions = extensions
+) {
 
     @Composable
     override fun NavDestinationScope<Args>.Content() {

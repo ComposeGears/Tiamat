@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
+// todo update tests
 class TiamatDestinationsCompilerPluginTest {
 
     // Rest of the test setup is the same as the previous test...
@@ -95,7 +96,7 @@ class TiamatDestinationsCompilerPluginTest {
             object OtherGraph : TiamatGraph
             
             @InstallIn(MyGraph::class)
-            val Screen1 by navDestination { }
+            val Screen1 by navDestination<Unit> { }
             
             @InstallIn(MyGraph::class)
             val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
@@ -163,7 +164,7 @@ class TiamatDestinationsCompilerPluginTest {
             object OtherGraph : TiamatGraph
             
             @InstallIn(MyGraph::class)
-            val Screen1 by navDestination { }
+            val Screen1 by navDestination<Unit> { }
             
             @InstallIn(MyGraph::class)
             val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}

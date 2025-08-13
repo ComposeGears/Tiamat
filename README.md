@@ -78,34 +78,12 @@ Why Tiamat?
 Setup
 -----
 
-1) Define your screens in one of 3 available ways:
-
-   - chaotic good (screen name eq to value name)
-
-       ```kotlin
+1) Define your screens:
+    ```kotlin
        val Screen by navDestination<Args> {
            // content
        }
-       ```
-   - chaotic neutral
-       ```kotlin
-    
-       val Screen = NavDestination<Args>("ScreenName") {
-           // content
-       }
-       ```
-   - chaotic evil
-       ```kotlin
-       object Screen : NavDestination<Args> {
-           override val name: String = "ScreenName"
-    
-           @Composable
-           override fun NavDestinationScope<Unit>.Content() {
-               // content
-           }
-    
-       }
-       ```
+    ```
 2) Create navController
     ```kotlin
      val navController = rememberNavController(

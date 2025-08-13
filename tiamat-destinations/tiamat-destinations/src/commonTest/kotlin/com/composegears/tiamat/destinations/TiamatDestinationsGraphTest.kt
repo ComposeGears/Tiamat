@@ -2,6 +2,8 @@ package com.composegears.tiamat.destinations
 
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.NavDestination
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -12,9 +14,7 @@ class TiamatDestinationsGraphTest {
 
     @OptIn(TiamatExperimentalApi::class)
     private fun createMockDestination(name: String): NavDestination<Any> {
-        return object : NavDestination<Any> {
-            override val name: String = name
-        }
+        return object : NavDestination<Any>(name, typeOf<Any>()) {}
     }
 
     @Test
