@@ -42,7 +42,6 @@ public abstract class NavDestination<Args : Any> : RouteElement {
      * Args class
      */
     internal abstract val argsType: KType
-
 }
 
 internal data class UnresolvedDestination(

@@ -23,7 +23,7 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 
-Last stable version: `1.5.0`
+Last stable version: `1.5.1`
 
 [Tiamat Destinations README](doc/tiamat-destinations.md)
 
@@ -213,7 +213,7 @@ NavController will keep the screens data, view models, and states during navigat
 > The data may be cleared by system (eg: Android may clear memory)
 > 
 > ```kotlin
-> public fun rememberNavController(
+> fun rememberNavController(
 >   // ...
 >   saveable: Boolean? = null,
 >   // ...
@@ -442,6 +442,8 @@ Android: `./gradlew example:app:composeApp:assembleDebug`
 
 Desktop: `./gradlew example:app:composeApp:run`
 
+Desktop + Hot-reload: `./gradlew example:app:composeApp:hotRunDesktop`
+
 Web: `./gradlew example:app:composeApp:wasmJsBrowserDevelopmentRun`
 
 iOS: run XCode project or else use [KMP plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform) iOS target
@@ -453,6 +455,8 @@ other commands:
 - check API changes: `./gradlew apiCheck`
 
 - kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
+
+- run detekt checks: `./gradlew detekt`
 
 ## Contributors
 

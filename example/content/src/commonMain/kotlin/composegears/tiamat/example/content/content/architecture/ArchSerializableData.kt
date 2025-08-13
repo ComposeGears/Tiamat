@@ -33,7 +33,6 @@ val ArchSerializableData by navDestination(ScreenInfo()) {
             }
             if (showNavigation) {
                 val nc = rememberNavController(
-                    //key = "Arch custom save state nav controller",
                     startEntry = null,
                     savedState = ncSavedState,
                 )
