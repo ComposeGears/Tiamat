@@ -83,20 +83,20 @@ Setup
    - chaotic good (screen name eq to value name)
 
        ```kotlin
-       val Screen by navDestination<Unit> {
+       val Screen by navDestination<Args> {
            // content
        }
        ```
    - chaotic neutral
        ```kotlin
     
-       val Screen = NavDestination<Unit>("ScreenName") {
+       val Screen = NavDestination<Args>("ScreenName") {
            // content
        }
        ```
    - chaotic evil
        ```kotlin
-       object Screen : NavDestination<Unit> {
+       object Screen : NavDestination<Args> {
            override val name: String = "ScreenName"
     
            @Composable
@@ -128,7 +128,7 @@ Setup
     ```
 4) Navigate
     ```kotlin
-    val Screen by navDestination<Unit> {
+    val Screen by navDestination<Args> {
         val navController = navController()
         Column {
             Text("Screen")
@@ -150,7 +150,7 @@ The screens in `Tiamat` should be an entities (similar to composable functions)
 the `Args` generic define the type of data, acceptable by screen as `input parameters` in the `NavController:navigate` fun
 
 ```kotlin
-val RootScreen by navDestination<Unit> {
+val RootScreen by navDestination<Args> {
     // ...
     val nc = navController()
     // ...
@@ -214,9 +214,9 @@ NavController will keep the screens data, view models, and states during navigat
 > 
 > ```kotlin
 > public fun rememberNavController(
->   ...
+>   // ...
 >   saveable: Boolean? = null,
->   ...
+>   // ...
 > )
 > ```
 > `saveable` property of remembered nav controller will indicate if we need to save/restore state or no 
@@ -237,14 +237,14 @@ class AnalyticsExt(private val name: String) : ContentExtension<Any?>() {
     override fun NavDestinationScope<out Any?>.Content() {
         val entry = navEntry()
         LaunchedEffect(Unit) {
-            val service = ... // receive tracker
+            val service = /*...*/ // receive tracker
             service.trackScreen(screenName = name, destination = entry.destination.name)
         }
     }
 }
 
 // apply ext to screen
-val SomeScreen by navDestination<Unit>(
+val SomeScreen by navDestination<Args>(
     AnalyticsExt("SomeScreen")
 ) {
     // screen content
@@ -266,7 +266,7 @@ val SomeScreen by navDestination<Unit>(
 > 
 > 
 > ```kotlin
-> val SomeScreen1 by navDestination<Unit> {
+> val SomeScreen1 by navDestination<Args> {
 >   val navController = navController()
 >   Button(
 >       onClick = { navController.navigate(SomeScreen2) }, // << error here
@@ -274,7 +274,7 @@ val SomeScreen by navDestination<Unit>(
 >   )
 > }
 > 
-> val SomeScreen2 by navDestination<Unit> {
+> val SomeScreen2 by navDestination<Args> {
 > val navController = navController()
 >   Button(
 >       onClick = { navController.navigate(SomeScreen1) }, // << or here
@@ -319,7 +319,7 @@ I want to navigate through multiple nav steps in 1 call (e.g. handle deeplink)
 // create some data/param that will be passed via free args 
 // each screen handle this arg and opens `next` screen
 
-val DeeplinkScreen by navDestination<Unit> {
+val DeeplinkScreen by navDestination<Args> {
     val deeplink = freeArgs<DeeplinkData>() // take free args 
 
     val deeplinkNavController = rememberNavController(
@@ -343,7 +343,7 @@ val DeeplinkScreen by navDestination<Unit> {
         }
     }
 
-    Navigation(...)
+    Navigation(/*...*/)
 }
 
 //---- idea 2 -----

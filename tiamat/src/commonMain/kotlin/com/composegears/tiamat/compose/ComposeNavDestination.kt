@@ -119,7 +119,7 @@ public fun navDestination(
  *
  * Example usage:
  * ```
- * val Home by navDestination<Unit> {
+ * val Home by navDestination<Args> {
  *     // destination content here
  * }
  * ```

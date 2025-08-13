@@ -29,7 +29,7 @@ import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
 
 // the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
-val APRNavArgs by navDestination<Unit>(ScreenInfo("NavArgs")) {
+val APRNavArgs by navDestination(ScreenInfo("NavArgs")) {
     Screen("NavArgs") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -96,7 +96,6 @@ private val APRNavArgsScreen1: NavDestination<Unit> by navDestination(ScreenInfo
 }
 
 // we can remove `<Int>` but it's here to show the type
-@Suppress("RemoveExplicitTypeArguments")
 private val APRNavArgsScreen2 by navDestination<Int>(
     ScreenInfo(
         name = "ArgsValue",

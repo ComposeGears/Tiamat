@@ -46,10 +46,10 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             |object MyGraph : TiamatGraph
             |
             |@InstallIn(MyGraph::class)
-            |val Screen1 by navDestination<Unit> { }
+            |val Screen1 by navDestination<Args> { }
             |
             |@InstallIn(MyGraph::class)
-            |val Screen2 = NavDestination<Unit>(name = "Screen2") {}
+            |val Screen2 = NavDestination<Args>(name = "Screen2") {}
             |
             |@InstallIn(MyGraph::class)
             |object Screen3 : NavDestination<Int> {}

@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-val ArchViewModel by navDestination<Unit>(ScreenInfo()) {
+val ArchViewModel by navDestination(ScreenInfo()) {
     Screen("ViewModel") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -50,7 +50,7 @@ val ArchViewModel by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val ArchViewModelScreen1 by navDestination<Unit> {
+private val ArchViewModelScreen1 by navDestination {
     // this is shared (bound to navController instead of screen) view model
     val sharedViewModel = viewModel<ArchViewModelSimpleViewModel>()
 
@@ -73,7 +73,7 @@ private val ArchViewModelScreen1 by navDestination<Unit> {
     }
 }
 
-private val ArchViewModelScreen2 by navDestination<Unit> {
+private val ArchViewModelScreen2 by navDestination {
     val nc = navController()
     // this is regular view model bound to the screen
     val viewModel = viewModel<ArchViewModelSimpleViewModel>()
@@ -121,7 +121,7 @@ private val ArchViewModelScreen2 by navDestination<Unit> {
     }
 }
 
-private val ArchViewModelScreen3 by navDestination<Unit> {
+private val ArchViewModelScreen3 by navDestination {
     val nc = navController()
 
     // this is shared (bound to navController instead of screen) view model

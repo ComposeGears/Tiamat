@@ -28,7 +28,7 @@ import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.HSpacer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
-val AdvAdaptiveListDetails by navDestination<Unit> {
+val AdvAdaptiveListDetails by navDestination {
     BoxWithConstraints {
         val sizeClass by remember(maxWidth) {
             mutableStateOf(
@@ -146,7 +146,7 @@ val AdvAdaptiveListDetails by navDestination<Unit> {
     }
 }
 
-private val AdvAdaptiveListDetailsList by navDestination<Unit> {
+private val AdvAdaptiveListDetailsList by navDestination {
     val nc = navController()
     val items = remember {
         (0..10).map { "Item $it" }

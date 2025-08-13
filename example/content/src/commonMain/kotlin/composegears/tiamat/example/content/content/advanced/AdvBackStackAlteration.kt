@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
+val AdvBackStackAlteration by navDestination(ScreenInfo()) {
     Screen("Back stack alteration") {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -110,7 +110,7 @@ val AdvBackStackAlteration by navDestination<Unit>(ScreenInfo()) {
 
 // We are using nc.hasBackEntriesAsState().value instead nc.hasBackEntries() due to changes in backStack
 
-private val AdvBackStackAlterationScreenA by navDestination<Unit> {
+private val AdvBackStackAlterationScreenA by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -126,7 +126,7 @@ private val AdvBackStackAlterationScreenA by navDestination<Unit> {
     }
 }
 
-private val AdvBackStackAlterationScreenB by navDestination<Unit> {
+private val AdvBackStackAlterationScreenB by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -142,7 +142,7 @@ private val AdvBackStackAlterationScreenB by navDestination<Unit> {
     }
 }
 
-private val AdvBackStackAlterationScreenC by navDestination<Unit> {
+private val AdvBackStackAlterationScreenC by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

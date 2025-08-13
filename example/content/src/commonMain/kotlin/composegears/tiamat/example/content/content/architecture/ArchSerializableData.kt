@@ -21,7 +21,7 @@ import composegears.tiamat.example.ui.core.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
-val ArchSerializableData by navDestination<Unit>(ScreenInfo()) {
+val ArchSerializableData by navDestination(ScreenInfo()) {
     Screen("Serializable Data") {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             VSpacer()

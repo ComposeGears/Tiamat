@@ -23,7 +23,7 @@ import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
 
-val NavCustomAnimation by navDestination<Unit>(ScreenInfo()) {
+val NavCustomAnimation by navDestination(ScreenInfo()) {
     Screen("Custom animation") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -103,7 +103,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
     }
 }
 
-private val NavCustomAnimationScreen2 by navDestination<Unit> {
+private val NavCustomAnimationScreen2 by navDestination {
     val nc = navController()
     Surface {
         Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {

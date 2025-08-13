@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-val NavReplace by navDestination<Unit>(ScreenInfo()) {
+val NavReplace by navDestination(ScreenInfo()) {
     Screen("Replace") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -38,7 +38,7 @@ val NavReplace by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val NavReplaceScreen1 by navDestination<Unit> {
+private val NavReplaceScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -53,7 +53,7 @@ private val NavReplaceScreen1 by navDestination<Unit> {
     }
 }
 
-private val NavReplaceScreen2 by navDestination<Unit> {
+private val NavReplaceScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -84,7 +84,7 @@ private val NavReplaceScreen2 by navDestination<Unit> {
     }
 }
 
-private val NavReplaceScreen3 by navDestination<Unit> {
+private val NavReplaceScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
