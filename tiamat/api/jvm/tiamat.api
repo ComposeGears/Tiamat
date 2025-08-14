@@ -50,14 +50,13 @@ public final class com/composegears/tiamat/compose/ComposeNavActionsKt {
 
 public abstract class com/composegears/tiamat/compose/ComposeNavDestination : com/composegears/tiamat/navigation/NavDestination {
 	public static final field $stable I
-	public fun <init> ()V
 	public abstract fun Content (Lcom/composegears/tiamat/compose/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun getExtensions ()Ljava/util/List;
+	public final fun getExtensions ()Ljava/util/List;
 }
 
 public final class com/composegears/tiamat/compose/ComposeNavDestinationKt {
-	public static final fun NavDestination (Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
-	public static synthetic fun NavDestination$default (Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
+	public static final fun buildNavDestination (Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
+	public static synthetic fun buildNavDestination$default (Ljava/lang/String;Lkotlin/reflect/KType;Ljava/util/List;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
 	public static final fun unitNavDestination ([Lcom/composegears/tiamat/compose/NavExtension;Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/compose/NavDestinationInstanceDelegate;
 	public static synthetic fun unitNavDestination$default ([Lcom/composegears/tiamat/compose/NavExtension;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lcom/composegears/tiamat/compose/NavDestinationInstanceDelegate;
 }
@@ -94,8 +93,8 @@ public final class com/composegears/tiamat/compose/NavContentTransform_jvmKt {
 public final class com/composegears/tiamat/compose/NavDestinationInstanceDelegate : kotlin/properties/ReadOnlyProperty {
 	public static final field $stable I
 	public fun <init> (Lkotlin/reflect/KType;Ljava/util/List;Lkotlin/jvm/functions/Function3;)V
+	public fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
 	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
-	public fun getValue (Ljava/lang/Void;Lkotlin/reflect/KProperty;)Lcom/composegears/tiamat/compose/ComposeNavDestination;
 }
 
 public abstract class com/composegears/tiamat/compose/NavDestinationScope {
@@ -225,8 +224,8 @@ public abstract interface class com/composegears/tiamat/navigation/NavData {
 public abstract class com/composegears/tiamat/navigation/NavDestination : com/composegears/tiamat/navigation/RouteElement {
 	public static final field $stable I
 	public static final field Companion Lcom/composegears/tiamat/navigation/NavDestination$Companion;
-	public fun <init> ()V
-	public abstract fun getName ()Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Lkotlin/reflect/KType;)V
+	public final fun getName ()Ljava/lang/String;
 }
 
 public final class com/composegears/tiamat/navigation/NavDestination$Companion {

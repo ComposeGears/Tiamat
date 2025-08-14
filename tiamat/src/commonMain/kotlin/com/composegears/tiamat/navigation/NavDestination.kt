@@ -11,7 +11,16 @@ import kotlin.reflect.typeOf
  *
  * @param Args The type of arguments this destination accepts
  */
-public abstract class NavDestination<Args : Any> : RouteElement {
+public abstract class NavDestination<Args : Any>(
+    /**
+     * The unique name of this destination.
+     */
+    public val name: String,
+    /**
+     * Args class
+     */
+    internal val argsType: KType,
+) : RouteElement {
     public companion object {
         /**
          * Creates a NavEntry from this destination.
@@ -32,20 +41,11 @@ public abstract class NavDestination<Args : Any> : RouteElement {
             navResult = navResult
         )
     }
-
-    /**
-     * The unique name of this destination.
-     */
-    public abstract val name: String
-
-    /**
-     * Args class
-     */
-    internal abstract val argsType: KType
 }
 
-internal data class UnresolvedDestination(
-    override val name: String,
-) : NavDestination<Any>() {
-    override val argsType: KType = typeOf<Any>()
-}
+internal class UnresolvedDestination(
+    name: String
+) : NavDestination<Any>(
+    name = name,
+    argsType = typeOf<Any>()
+)

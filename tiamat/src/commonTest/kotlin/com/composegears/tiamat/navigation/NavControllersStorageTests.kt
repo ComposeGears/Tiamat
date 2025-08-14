@@ -1,8 +1,14 @@
 package com.composegears.tiamat.navigation
 
+import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.createTestNavController
 import kotlin.test.*
 
 class NavControllersStorageTests {
+
+    companion object {
+        val TestNavDestination by navDestination {}
+    }
 
     @Test
     fun `init # initializes with empty list`() {
@@ -13,7 +19,7 @@ class NavControllersStorageTests {
     @Test
     fun `add # stores nav controller in internal list`() {
         val storage = NavControllerStore()
-        val navController = createTestNavController("test")
+        val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
         assertEquals(1, storage.navControllers.size)
         assertEquals(navController, storage.navControllers[0])
@@ -23,8 +29,8 @@ class NavControllersStorageTests {
     fun `add # throws error when adding controller with duplicate key`() {
         val storage = NavControllerStore()
         val key = "duplicate"
-        val navController1 = createTestNavController(key)
-        val navController2 = createTestNavController(key)
+        val navController1 = createTestNavController(key, startDestination = TestNavDestination)
+        val navController2 = createTestNavController(key, startDestination = TestNavDestination)
         storage.add(navController1)
         assertFails { storage.add(navController2) }
     }
@@ -39,7 +45,7 @@ class NavControllersStorageTests {
     fun `get # returns controller when key exists`() {
         val storage = NavControllerStore()
         val key = "test"
-        val navController = createTestNavController(key)
+        val navController = createTestNavController(key, startDestination = TestNavDestination)
         storage.add(navController)
         assertEquals(navController, storage.get(key))
     }
@@ -47,7 +53,7 @@ class NavControllersStorageTests {
     @Test
     fun `remove # removes controller from storage`() {
         val storage = NavControllerStore()
-        val navController = createTestNavController("test")
+        val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
         assertEquals(1, storage.navControllers.size)
         storage.remove(navController)
@@ -57,8 +63,8 @@ class NavControllersStorageTests {
     @Test
     fun `saveToSavedState # only saves controllers that are saveable`() {
         val storage = NavControllerStore()
-        val saveable = createTestNavController("save", true)
-        val notSaveable = createTestNavController("no-save", false)
+        val saveable = createTestNavController("save", true, startDestination = TestNavDestination)
+        val notSaveable = createTestNavController("no-save", false, startDestination = TestNavDestination)
         storage.add(saveable)
         storage.add(notSaveable)
         val savedState = storage.saveToSavedState()
@@ -71,8 +77,8 @@ class NavControllersStorageTests {
     @Test
     fun `loadFromSavedState # loads controllers from saved state`() {
         val storage = NavControllerStore()
-        val controller1 = createTestNavController("test1")
-        val controller2 = createTestNavController("test2")
+        val controller1 = createTestNavController("test1", startDestination = TestNavDestination)
+        val controller2 = createTestNavController("test2", startDestination = TestNavDestination)
         val savedState = NavControllerStore()
             .apply {
                 add(controller1)
@@ -87,9 +93,9 @@ class NavControllersStorageTests {
 
     @Test
     fun `loadFromSavedState # attaches parent to restored controllers`() {
-        val parent = createTestNavController("parent")
+        val parent = createTestNavController("parent", startDestination = TestNavDestination)
         val storage = NavControllerStore()
-        val controller1 = createTestNavController("test1")
+        val controller1 = createTestNavController("test1", startDestination = TestNavDestination)
         val savedState = NavControllerStore()
             .apply { add(controller1) }
             .saveToSavedState()
@@ -102,9 +108,9 @@ class NavControllersStorageTests {
     @Test
     fun `loadFromSavedState # clears existing controllers before loading new ones`() {
         val storage = NavControllerStore()
-        val existingController = createTestNavController("existing")
+        val existingController = createTestNavController("existing", startDestination = TestNavDestination)
         storage.add(existingController)
-        val newController = createTestNavController("new")
+        val newController = createTestNavController("new", startDestination = TestNavDestination)
         val savedState = NavControllerStore()
             .apply { add(newController) }
             .saveToSavedState()
@@ -117,7 +123,7 @@ class NavControllersStorageTests {
     @Test
     fun `loadFromSavedState # does nothing when saved state is null`() {
         val storage = NavControllerStore()
-        val navController = createTestNavController("test")
+        val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
         storage.loadFromSavedState(null, null)
         assertTrue(storage.navControllers.isEmpty())
@@ -126,8 +132,8 @@ class NavControllersStorageTests {
     @Test
     fun `clear # closes and removes all controllers`() {
         val storage = NavControllerStore()
-        val navController1 = createTestNavController("test1")
-        val navController2 = createTestNavController("test2")
+        val navController1 = createTestNavController("test1", startDestination = TestNavDestination)
+        val navController2 = createTestNavController("test2", startDestination = TestNavDestination)
         storage.add(navController1)
         storage.add(navController2)
         assertEquals(2, storage.navControllers.size)
@@ -136,12 +142,4 @@ class NavControllersStorageTests {
         assertNull(navController1.getCurrentNavEntry())
         assertNull(navController2.getCurrentNavEntry())
     }
-
-    private class TestNavDestination : NavDestination<Unit> {
-        override val name: String = "tnd"
-    }
-
-    // Helper functions
-    private fun createTestNavController(key: String, saveable: Boolean = true): NavController =
-        NavController.create(key = key, saveable = saveable, startDestination = TestNavDestination())
 }

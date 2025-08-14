@@ -2,9 +2,15 @@ package com.composegears.tiamat.navigation
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
+import com.composegears.tiamat.compose.navDestination
 import kotlin.test.*
 
 class NavEntryTests {
+
+    companion object {
+        val TestDestination by navDestination<String> { }
+        val AnotherTestDestination by navDestination<Unit> { }
+    }
 
     @Test
     fun `init # initializes with provided values`() {
@@ -21,9 +27,9 @@ class NavEntryTests {
         )
 
         assertEquals(destination, entry.destination)
-        assertEquals(navArgs, entry.navArgs)
-        assertEquals(freeArgs, entry.freeArgs)
-        assertEquals(navResult, entry.navResult)
+        assertEquals(navArgs, entry.getNavArgs())
+        assertEquals(freeArgs, entry.getFreeArgs())
+        assertEquals(navResult, entry.getNavResult())
     }
 
     @Test
@@ -99,7 +105,7 @@ class NavEntryTests {
     fun `restoreFromSavedState # creates entry with saved values`() {
         val parentNC = NavController.create("parent", saveable = true)
         val childNC = NavController.create("child", saveable = true)
-        val destinationName = "test_destination"
+        val destinationName = "TestDestination"
         val navArgs = "test-args"
         val freeArgs = "free-args"
         val navResult = "result"
@@ -117,9 +123,9 @@ class NavEntryTests {
         val entry = NavEntry.restoreFromSavedState(parentNC, savedState)
         assertEquals(destinationName, entry.destination.name)
         assertEquals(savedEntry.uuid, entry.uuid)
-        assertEquals(navArgs, entry.navArgs)
-        assertEquals(freeArgs, entry.freeArgs)
-        assertEquals(navResult, entry.navResult)
+        assertEquals(navArgs, entry.getNavArgs())
+        assertEquals(freeArgs, entry.getFreeArgs())
+        assertEquals(navResult, entry.getNavResult())
         assertEquals(entrySavedState, entry.savedState)
         assertEquals(1, entry.navControllerStore.navControllers.size)
         assertEquals(parentNC, entry.navControllerStore.navControllers[0].parent)
@@ -155,18 +161,16 @@ class NavEntryTests {
 
     @Test
     fun `navArgs # nav args updates when set`() {
-        val entry = NavEntry(destination = TestDestination)
         val newNavArgs = "new-args"
-        entry.navArgs = newNavArgs
-        assertEquals(newNavArgs, entry.navArgs)
+        val entry = NavEntry(destination = TestDestination, navArgs = newNavArgs)
+        assertEquals(newNavArgs, entry.getNavArgs())
     }
 
     @Test
     fun `freeArgs # free args updates when set`() {
-        val entry = NavEntry(destination = TestDestination)
         val newFreeArgs = "new-free-args"
-        entry.freeArgs = newFreeArgs
-        assertEquals(newFreeArgs, entry.freeArgs)
+        val entry = NavEntry(destination = TestDestination, freeArgs = newFreeArgs)
+        assertEquals(newFreeArgs, entry.getFreeArgs())
     }
 
     @Test
@@ -289,19 +293,10 @@ class NavEntryTests {
     @Test
     fun `contentKey # returns correct key`() {
         val entry = NavEntry(destination = TestDestination)
-        assertEquals("test_destination-${entry.uuid}", entry.contentKey())
+        assertEquals("TestDestination-${entry.uuid}", entry.contentKey())
     }
 
     fun NavEntry<*>.resolveDestination(destinations: Array<NavDestination<*>>) {
         resolveDestination { name -> destinations.firstOrNull { it.name == name } }
-    }
-
-    // Test helper objects
-    private object TestDestination : NavDestination<String> {
-        override val name: String = "test_destination"
-    }
-
-    private object AnotherTestDestination : NavDestination<Int> {
-        override val name: String = "another_test_destination"
     }
 }

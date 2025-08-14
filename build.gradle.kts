@@ -15,7 +15,7 @@ plugins {
 }
 
 apiValidation {
-    val apiValidationProjects = listOf("tiamat", "tiamat-koin", "tiamat-destinations")
+    val apiValidationProjects = listOf("tiamat", "tiamat-destinations")
     ignoredProjects += allprojects.map { it.name } - apiValidationProjects
 }
 
