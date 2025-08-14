@@ -17,7 +17,7 @@ import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
 @OptIn(TiamatExperimentalApi::class)
-val NavRoute by navDestination<Unit>(ScreenInfo()) {
+val NavRoute by navDestination(ScreenInfo()) {
     Screen("Routing") {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -86,7 +86,7 @@ val NavRoute by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val NavRouteStub by navDestination<Unit> {
+private val NavRouteStub by navDestination {
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Stub", style = MaterialTheme.typography.headlineMedium)
@@ -94,7 +94,7 @@ private val NavRouteStub by navDestination<Unit> {
     }
 }
 
-private val NavRouteScreen1 by navDestination<Unit> {
+private val NavRouteScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -109,7 +109,7 @@ private val NavRouteScreen1 by navDestination<Unit> {
     }
 }
 
-private val NavRouteScreen2 by navDestination<Int> {
+private val NavRouteScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

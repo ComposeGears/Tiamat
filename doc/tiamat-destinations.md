@@ -40,7 +40,7 @@ Annotate `navDestination` with `InstallIn` annotation (multiple installations al
 ```kotlin
 // Using delegate
 @InstallIn(Graph::class)
-val Screen1 by navDestination<Unit> { }
+val Screen1 by navDestination<Args> { }
 
 // Using constructor
 @InstallIn(Graph::class)

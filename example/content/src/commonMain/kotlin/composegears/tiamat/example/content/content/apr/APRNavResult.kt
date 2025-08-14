@@ -18,8 +18,9 @@ import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
+import kotlinx.serialization.Serializable
 
-val APRNavResult by navDestination<Unit>(ScreenInfo()) {
+val APRNavResult by navDestination(ScreenInfo()) {
     Screen("NavResult") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -41,9 +42,9 @@ val APRNavResult by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val APRNavResultScreen1 by navDestination<Unit> {
+private val APRNavResultScreen1 by navDestination {
     val nc = navController()
-    var result = navResult<Any?>()
+    val result = navResult<Any>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
@@ -111,4 +112,5 @@ private val APRNavResultScreen2 by navDestination<Int> {
     }
 }
 
+@Serializable
 private data class SomeNavResultDataClass(val t: Int)

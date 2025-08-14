@@ -7,18 +7,24 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
-import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.TransitionController.Event.*
 import com.composegears.tiamat.navigation.*
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 
 // ------------- Local Providers ---------------------------------------------------------------------------------------
 
@@ -159,29 +165,23 @@ public fun rememberNavController(
 
 @Composable
 @Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
-private fun <Args> NavEntryContent(
+private fun <Args : Any> NavEntryContent(
     entry: NavEntry<Args>
 ) {
     val destination = entry.destination
     if (destination is ComposeNavDestination<Args>) Box {
-        val parentRegistry = LocalSaveableStateRegistry.current
-        // gen save state
-        val saveRegistry = remember(entry) {
-            val registry = SaveableStateRegistry(
-                restoredValues = entry.savedState as? Map<String, List<Any?>>?,
-                canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
-            )
-            entry.setSavedStateSaver(registry::performSave)
-            registry
-        }
+        val entrySaveableStateRegistry = rememberEntrySaveableStateRegistry(entry)
+        val entryContentLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
         // display content
         CompositionLocalProvider(
-            LocalSaveableStateRegistry provides saveRegistry,
+            LocalSaveableStateRegistry provides entrySaveableStateRegistry,
+            LocalLifecycleOwner provides entryContentLifecycleOwner,
+            LocalViewModelStoreOwner provides entry,
             LocalNavEntry provides entry,
         ) {
             val scope = remember(entry) { NavDestinationScopeImpl(entry) }
             // entry content
-            scope.PlatformContentWrapper {
+            with(scope) {
                 // extensions before-content
                 destination.extensions.onEach {
                     if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
@@ -203,10 +203,12 @@ private fun <Args> NavEntryContent(
         // save state when `this entry`/`parent entry` goes into backStack
         DisposableEffect(entry) {
             entry.attachToUI()
+            entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
             // save state handle
             onDispose {
                 entry.setSavedStateSaver(null)
-                if (entry.isAttachedToNavController) entry.savedState = saveRegistry.performSave()
+                entryContentLifecycleOwner.close()
+                if (entry.isAttachedToNavController) entry.savedState = entrySaveableStateRegistry.performSave()
                 entry.detachFromUI()
             }
         }
@@ -263,7 +265,16 @@ public fun Navigation(
         destinationResolver = destinationResolver,
         handleSystemBackEvent = handleSystemBackEvent,
     ) {
-        val stubEntry = remember { NavEntry(NavDestinationImpl<Unit>("Stub", emptyList()) {}) }
+        val stubEntry = remember {
+            NavEntry(
+                NavDestinationImpl(
+                    name = "Stub",
+                    argsType = typeOf<Unit>(),
+                    extensions = emptyList(),
+                    content = {}
+                )
+            )
+        }
         val state by navController.currentTransitionFlow.collectAsState()
         // seekable transition has a bug when one of props is `null`, so we will use stub destination instead of `null`
         val targetValue = remember(state) { state?.targetEntry ?: stubEntry }
@@ -330,8 +341,7 @@ public fun Navigation(
             ) {
                 Box {
                     EntryContent(it)
-                    // prevent clicks during transition animation
-                    if (transition.isRunning) Box(
+                    if (it != targetValue && transition.isRunning) Box(
                         modifier = Modifier
                             .matchParentSize()
                             .pointerInput(Unit) {
@@ -526,9 +536,9 @@ public inline fun <reified P : NavExtension<*>> NavDestinationScope<*>.ext(): P?
  * @param Args The type of the navigation arguments.
  * @return The navigation arguments.
  */
-@Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgs(): Args =
-    navEntry.navArgs ?: error("args not provided or null, consider use navArgsOrNull()")
+@Composable
+public fun <Args : Any> NavDestinationScope<Args>.navArgs(): Args =
+    navArgsOrNull() ?: error("args not provided or null, consider use navArgsOrNull()")
 
 /**
  * Gets the navigation arguments from the current [NavEntry], or null if not provided.
@@ -537,13 +547,16 @@ public fun <Args> NavDestinationScope<Args>.navArgs(): Args =
  * @return The navigation arguments, or null if not provided.
  */
 @Suppress("CastToNullableType")
-public fun <Args> NavDestinationScope<Args>.navArgsOrNull(): Args? = navEntry.navArgs
+@Composable
+public fun <Args : Any> NavDestinationScope<Args>.navArgsOrNull(): Args? = remember {
+    navEntry.getNavArgs()
+}
 
 /**
  * Clears the navigation arguments from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavArgs() {
-    navEntry.navArgs = null
+    navEntry.clearNavArgs()
 }
 
 // ------------- NavDestinationScope extras : freeArgs -----------------------------------------------------------------
@@ -551,17 +564,19 @@ public fun NavDestinationScope<*>.clearNavArgs() {
 /**
  * Gets the free arguments from the current [NavEntry].
  *
- * @param T The type of the free arguments.
- * @return The free arguments, or null if not provided.
+ * @param T The type of the free arguments to retrieve.
+ * @return The free arguments of the specified type,or null if not present or not of type [T].
  */
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
-public fun <T> NavDestinationScope<*>.freeArgs(): T? = navEntry.freeArgs as T?
+@Composable
+public inline fun <reified T> NavDestinationScope<*>.freeArgs(): T? = remember {
+    navEntry.getFreeArgs()
+}
 
 /**
  * Clears the free arguments from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearFreeArgs() {
-    navEntry.freeArgs = null
+    navEntry.clearFreeArgs()
 }
 
 // ------------- NavDestinationScope extras : navResult ----------------------------------------------------------------
@@ -569,15 +584,36 @@ public fun NavDestinationScope<*>.clearFreeArgs() {
 /**
  * Gets the navigation result from the current [NavEntry].
  *
- * @param Result The type of the navigation result.
- * @return The navigation result, or null if not provided.
+ * @param T The type of the navigation result to retrieve.
+ * @return The navigation result of the specified type, or null if not present or not of type [T].
  */
-@Suppress("UNCHECKED_CAST", "CastToNullableType")
-public fun <Result> NavDestinationScope<*>.navResult(): Result? = navEntry.navResult as Result?
+@Composable
+public inline fun <reified T> NavDestinationScope<*>.navResult(): T? = remember {
+    navEntry.getNavResult()
+}
 
 /**
  * Clears the navigation result from the [NavEntry].
  */
 public fun NavDestinationScope<*>.clearNavResult() {
-    navEntry.freeArgs = null
+    navEntry.clearNavResult()
+}
+
+// ------------- NavDestinationScope viewModels ------------------------------------------------------------------------
+
+@Composable
+public inline fun <reified VM : ViewModel> saveableViewModel(
+    viewModelStoreOwner: ViewModelStoreOwner =
+        checkNotNull(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        },
+    key: String? = null,
+    noinline initializer: CreationExtras.(savedState: MutableSavedState) -> VM
+): VM {
+    val viewModelSavedState = rememberSaveable { MutableSavedState() }
+    return viewModel<VM>(
+        viewModelStoreOwner = viewModelStoreOwner,
+        key = key,
+        initializer = { initializer(viewModelSavedState) }
+    )
 }

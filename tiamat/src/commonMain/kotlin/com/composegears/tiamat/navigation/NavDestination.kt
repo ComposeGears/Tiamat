@@ -1,5 +1,8 @@
 package com.composegears.tiamat.navigation
 
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
+
 /**
  * Interface for a navigation destination.
  *
@@ -8,7 +11,7 @@ package com.composegears.tiamat.navigation
  *
  * @param Args The type of arguments this destination accepts
  */
-public interface NavDestination<Args> : RouteElement {
+public abstract class NavDestination<Args : Any> : RouteElement {
     public companion object {
         /**
          * Creates a NavEntry from this destination.
@@ -18,7 +21,7 @@ public interface NavDestination<Args> : RouteElement {
          * @param navResult Optional result value for this entry
          * @return A NavEntry representing this destination
          */
-        public fun <Args> NavDestination<Args>.toNavEntry(
+        public fun <Args : Any> NavDestination<Args>.toNavEntry(
             navArgs: Args? = null,
             freeArgs: Any? = null,
             navResult: Any? = null
@@ -33,9 +36,16 @@ public interface NavDestination<Args> : RouteElement {
     /**
      * The unique name of this destination.
      */
-    public val name: String
+    public abstract val name: String
+
+    /**
+     * Args class
+     */
+    internal abstract val argsType: KType
 }
 
 internal data class UnresolvedDestination(
-    override val name: String
-) : NavDestination<Any?>
+    override val name: String,
+) : NavDestination<Any>() {
+    override val argsType: KType = typeOf<Any>()
+}

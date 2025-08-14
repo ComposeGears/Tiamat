@@ -33,7 +33,7 @@ import composegears.tiamat.example.ui.core.*
 import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(TiamatExperimentalApi::class)
-val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
+val PredictiveBack by navDestination(ScreenInfo()) {
     Screen("PredictiveBack") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -67,7 +67,7 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val PredictiveBackScreen1 by navDestination<Unit> {
+private val PredictiveBackScreen1 by navDestination {
     val nc = navController()
     Box(
         Modifier
@@ -91,7 +91,7 @@ private val PredictiveBackScreen1 by navDestination<Unit> {
     }
 }
 
-private val PredictiveBackScreen2 by navDestination<Unit> {
+private val PredictiveBackScreen2 by navDestination {
     val nc = navController()
     Box(
         Modifier
@@ -123,7 +123,7 @@ private val PredictiveBackScreen2 by navDestination<Unit> {
     }
 }
 
-private val PredictiveBackScreen3 by navDestination<Unit> {
+private val PredictiveBackScreen3 by navDestination {
     val nc = navController()
     Box(
         Modifier

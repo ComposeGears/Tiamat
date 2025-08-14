@@ -30,7 +30,7 @@ import composegears.tiamat.example.ui.core.ScreenInfo
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-val AdvTwoPane by navDestination<Unit>(ScreenInfo()) {
+val AdvTwoPane by navDestination(ScreenInfo()) {
     Screen("SharedElementTransition") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -84,7 +84,7 @@ val AdvTwoPane by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val AdvTwoPaneList by navDestination<Unit> {
+private val AdvTwoPaneList by navDestination {
     val nc = navController()
     val items = remember {
         (0..10).map { "Item $it" }

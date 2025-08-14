@@ -40,7 +40,7 @@ import com.composegears.tiamat.compose.navDestination
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 
-val AndroidViewLifecycleScreen by navDestination<Unit> {
+val AndroidViewLifecycleScreen by navDestination {
     val context = LocalContext.current
 
     var isPermissionGranted by remember { mutableStateOf(false) }

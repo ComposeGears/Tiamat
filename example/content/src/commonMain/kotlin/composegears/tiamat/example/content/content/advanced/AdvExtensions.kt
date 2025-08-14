@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-val AdvExtensions by navDestination<Unit>(ScreenInfo()) {
+val AdvExtensions by navDestination(ScreenInfo()) {
     Screen("Extensions") {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -73,11 +73,11 @@ class MarkerExtension(val data: String) : NavExtension<Any?>
 
 // having a dedicated object or class allows you cal ext fun to get extension ref
 // eg: nc.current.ext<GlobalExtension>() -> return GlobalExtension or null if not attached
-object GlobalExtension : ContentExtension<Any?> {
+object GlobalExtension : ContentExtension<Any> {
     var activeDestination by mutableStateOf("")
 
     @Composable
-    override fun NavDestinationScope<out Any?>.Content() {
+    override fun NavDestinationScope<out Any>.Content() {
         val entry = navEntry()
         LaunchedEffect(Unit) {
             activeDestination = entry.destination.name
@@ -89,9 +89,9 @@ object GlobalExtension : ContentExtension<Any?> {
     override fun getType() = ContentExtension.Type.Underlay
 }
 
-class LocalExtension(val logMessage: String) : ContentExtension<Any?> {
+class LocalExtension(val logMessage: String) : ContentExtension<Any> {
     @Composable
-    override fun NavDestinationScope<out Any?>.Content() {
+    override fun NavDestinationScope<out Any>.Content() {
         LaunchedEffect(Unit) {
             println(logMessage)
         }
@@ -117,7 +117,7 @@ fun mySimpleExtensionBuilder(showOverlay: Boolean) = extension<Any> {
 
 // --------------- screens -------------------
 
-private val AdvExtensionsScreen1 by navDestination<Unit>(
+private val AdvExtensionsScreen1 by navDestination(
     GlobalExtension,
     LocalExtension("Screen1"),
     SimpleGlobalExtension
@@ -136,7 +136,7 @@ private val AdvExtensionsScreen1 by navDestination<Unit>(
     }
 }
 
-private val AdvExtensionsScreen2 by navDestination<Unit>(
+private val AdvExtensionsScreen2 by navDestination(
     GlobalExtension,
     LocalExtension("Screen2"),
     mySimpleExtensionBuilder(showOverlay = true),
@@ -163,7 +163,7 @@ private val AdvExtensionsScreen2 by navDestination<Unit>(
     }
 }
 
-private val AdvExtensionsScreen3 by navDestination<Unit>(
+private val AdvExtensionsScreen3 by navDestination(
     GlobalExtension,
     LocalExtension("Screen3"),
     MarkerExtension("Some data")

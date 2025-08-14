@@ -1,11 +1,18 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.*
+import androidx.savedstate.serialization.decodeFromSavedState
+import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.serializer
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import androidx.savedstate.SavedState as SavedStateX
 
 /**
  * Represents a navigation entry in the navigation stack.
@@ -19,12 +26,12 @@ import kotlin.uuid.Uuid
  * @param navResult Optional result value for this entry
  */
 @Stable
-public class NavEntry<Args> public constructor(
+public class NavEntry<Args : Any> public constructor(
     destination: NavDestination<Args>,
-    navArgs: Args? = null,
-    freeArgs: Any? = null,
-    navResult: Any? = null
-) : RouteElement, ViewModelStoreOwner {
+    private var navArgs: Args? = null,
+    private var freeArgs: Any? = null,
+    private var navResult: Any? = null
+) : RouteElement, ViewModelStoreOwner, LifecycleOwner {
 
     public companion object {
 
@@ -40,7 +47,7 @@ public class NavEntry<Args> public constructor(
         internal fun restoreFromSavedState(
             parent: NavController?,
             savedState: SavedState
-        ): NavEntry<*> {
+        ): NavEntry<Any> {
             val destination = savedState[KEY_DESTINATION] as? String
                 ?: error("Unable to restore NavEntry: destination is null")
             val uuid = savedState[KEY_UUID] as? String
@@ -88,46 +95,90 @@ public class NavEntry<Args> public constructor(
      */
     public override val viewModelStore: ViewModelStore = ViewModelStore()
 
+    private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
+
+    /**
+     * Returns the [Lifecycle] associated with this NavEntry.
+     */
+    public override val lifecycle: Lifecycle = lifecycleRegistry
+
     /**
      * The destination this entry represents.
      */
     public var destination: NavDestination<Args> = destination
         private set
 
-    /**
-     * Typed arguments passed to the destination.
-     */
-    public var navArgs: Args? = navArgs
-        internal set
+    init {
+        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
+    }
 
     /**
-     * Untyped arguments passed to the destination.
+     * Returns the typed navigation arguments for this entry, or null if not present.
      */
-    public var freeArgs: Any? = freeArgs
-        internal set
+    public fun getNavArgs(): Args? = navArgs
 
     /**
-     * Result value for this navigation entry.
+     * Clears the navigation arguments for this entry.
      */
-    public var navResult: Any? = navResult
-        internal set
+    public fun clearNavArgs() {
+        navArgs = null
+    }
+
+    /**
+     * Returns the free (untyped) arguments for this entry as type [T], or null if not present or not of type [T].
+     */
+    public inline fun <reified T : Any> getFreeArgs(): T? = getFreeArgs(typeOf<T>()) as? T
+
+    /**
+     * Clears the free (untyped) arguments for this entry.
+     */
+    public fun clearFreeArgs() {
+        freeArgs = null
+    }
+
+    /**
+     * Returns the navigation result for this entry as type [T], or null if not present or not of type [T].
+     */
+    public inline fun <reified T : Any> getNavResult(): T? = getNavResult(typeOf<T>()) as? T
+
+    /**
+     * Clears the navigation result for this entry.
+     */
+    public fun clearNavResult() {
+        navResult = null
+    }
+
+    internal fun setNavResult(result: Any?) {
+        navResult = result
+    }
+
+    public fun contentKey(): String = "${destination.name}-$uuid"
 
     @Suppress("UNCHECKED_CAST")
     internal fun resolveDestination(destinationResolver: (name: String) -> NavDestination<*>?) {
         destination = destinationResolver(destination.name)
             ?.let { it as? NavDestination<Args> }
             ?: error("Unable to resolve destination: ${destination.name}")
+        if (navArgs != null && navArgs is SavedStateX) navArgs
+            ?.fromSavedState(destination.argsType) { navArgs = it as Args }
+            ?: error("NavArgs type mismatch: expected ${destination.argsType} found: ${navArgs!!::class}")
         isResolved = true
     }
+
+    @PublishedApi
+    internal fun getFreeArgs(type: KType): Any? = freeArgs?.fromSavedState(type) { freeArgs = it }
+
+    @PublishedApi
+    internal fun getNavResult(type: KType): Any? = navResult?.fromSavedState(type) { navResult = it }
 
     internal fun saveToSavedState(): SavedState {
         if (savedStateSaver != null) savedState = savedStateSaver!!()
         return SavedState(
             KEY_DESTINATION to destination.name,
             KEY_UUID to uuid,
-            KEY_NAV_ARGS to navArgs,
-            KEY_FREE_ARGS to freeArgs,
-            KEY_NAV_RESULT to navResult,
+            KEY_NAV_ARGS to navArgs?.toSavedState(),
+            KEY_FREE_ARGS to freeArgs?.toSavedState(),
+            KEY_NAV_RESULT to navResult?.toSavedState(),
             KEY_SAVED_STATE to savedState,
             KEY_NAV_CONTROLLERS to navControllerStore.saveToSavedState(),
         )
@@ -153,19 +204,42 @@ public class NavEntry<Args> public constructor(
 
     internal fun attachToUI() {
         isAttachedToUI = true
+        lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
 
     internal fun detachFromUI() {
         isAttachedToUI = false
+        lifecycleRegistry.currentState = Lifecycle.State.STARTED
         if (!isAttachedToNavController) close()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun Any.fromSavedState(
+        type: KType,
+        onUpdated: (Any) -> Unit
+    ): Any? =
+        if (this is SavedStateX) runCatching {
+            decodeFromSavedState(
+                deserializer = serializer(type) as KSerializer<Any>,
+                savedState = this
+            )
+        }.getOrNull()?.also(onUpdated)
+        else this
+
+    @Suppress("UNCHECKED_CAST")
+    @OptIn(InternalSerializationApi::class)
+    private fun <T : Any> T.toSavedState(): Any =
+        if (this is NavData) encodeToSavedState(
+            serializer = this::class.serializer() as KSerializer<T>,
+            value = this
+        )
+        else this
 
     private fun close() {
         viewModelStore.clear()
         navControllerStore.clear()
+        lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
-
-    public fun contentKey(): String = "${destination.name}-$uuid"
 
     @ExcludeFromTests
     override fun toString(): String =

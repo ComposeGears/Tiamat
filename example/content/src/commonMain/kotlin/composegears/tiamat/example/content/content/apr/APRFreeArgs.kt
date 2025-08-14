@@ -18,8 +18,9 @@ import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 import composegears.tiamat.example.ui.core.VSpacer
+import kotlinx.serialization.Serializable
 
-val APRFreeArgs by navDestination<Unit>(ScreenInfo()) {
+val APRFreeArgs by navDestination(ScreenInfo()) {
     Screen("FreeArgs") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -41,7 +42,7 @@ val APRFreeArgs by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val APRFreeArgsScreen1 by navDestination<Unit> {
+private val APRFreeArgsScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -90,9 +91,9 @@ private val APRFreeArgsScreen1 by navDestination<Unit> {
     }
 }
 
-private val APRFreeArgsScreen2 by navDestination<Unit> {
+private val APRFreeArgsScreen2 by navDestination {
     val nc = navController()
-    var args = freeArgs<Any?>()
+    var args = freeArgs<Any>()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
@@ -119,4 +120,5 @@ private val APRFreeArgsScreen2 by navDestination<Unit> {
     }
 }
 
+@Serializable
 private data class SomeFreeArgsDataClass(val t: Int)

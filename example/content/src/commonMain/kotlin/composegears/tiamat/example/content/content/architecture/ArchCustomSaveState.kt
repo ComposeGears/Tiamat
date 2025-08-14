@@ -20,7 +20,7 @@ import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.example.ui.core.*
 
-val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
+val ArchCustomSaveState by navDestination(ScreenInfo()) {
     Screen("Custom SaveState") {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             var ncSavedState by remember { mutableStateOf<SavedState?>(null) }
@@ -73,7 +73,7 @@ val ArchCustomSaveState by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val ArchCustomSaveStateScreen1 by navDestination<Unit> {
+private val ArchCustomSaveStateScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -88,7 +88,7 @@ private val ArchCustomSaveStateScreen1 by navDestination<Unit> {
     }
 }
 
-private val ArchCustomSaveStateScreen2 by navDestination<Unit> {
+private val ArchCustomSaveStateScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -111,7 +111,7 @@ private val ArchCustomSaveStateScreen2 by navDestination<Unit> {
     }
 }
 
-private val ArchCustomSaveStateScreen3 by navDestination<Unit> {
+private val ArchCustomSaveStateScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

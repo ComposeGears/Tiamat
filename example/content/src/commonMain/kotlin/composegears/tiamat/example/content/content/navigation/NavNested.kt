@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.example.ui.core.*
 
-val NavNested by navDestination<Unit>(ScreenInfo()) {
+val NavNested by navDestination(ScreenInfo()) {
     Screen("Nested navigation") {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -79,7 +79,7 @@ private fun ItemContent(
     }
 }
 
-private val NavNestedScreen1 by navDestination<Unit> {
+private val NavNestedScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -94,7 +94,7 @@ private val NavNestedScreen1 by navDestination<Unit> {
     }
 }
 
-private val NavNestedScreen2 by navDestination<Unit> {
+private val NavNestedScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -117,7 +117,7 @@ private val NavNestedScreen2 by navDestination<Unit> {
     }
 }
 
-private val NavNestedScreen3 by navDestination<Unit> {
+private val NavNestedScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

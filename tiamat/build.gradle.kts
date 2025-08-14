@@ -47,7 +47,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.ui)
             api(libs.compose.ui.backhandler)
-            // api(libs.compose.lifecycle)
+            api(libs.compose.lifecycle)
             api(libs.compose.viewmodel)
         }
         androidMain.dependencies {

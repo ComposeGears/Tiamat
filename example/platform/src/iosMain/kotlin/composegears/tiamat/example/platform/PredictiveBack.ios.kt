@@ -32,7 +32,7 @@ import kotlin.coroutines.cancellation.CancellationException
 // fixme after being predictive-back-ed once... it stop working
 //  enable `show device bazels to enable pb for simulator`
 @OptIn(TiamatExperimentalApi::class)
-val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
+val PredictiveBack by navDestination(ScreenInfo()) {
     Screen("PredictiveBack") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -66,7 +66,7 @@ val PredictiveBack by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val PredictiveBackScreen1 by navDestination<Unit> {
+private val PredictiveBackScreen1 by navDestination {
     val nc = navController()
     Box(
         Modifier
@@ -90,7 +90,7 @@ private val PredictiveBackScreen1 by navDestination<Unit> {
     }
 }
 
-private val PredictiveBackScreen2 by navDestination<Unit> {
+private val PredictiveBackScreen2 by navDestination {
     val nc = navController()
     Box(
         Modifier
@@ -122,7 +122,7 @@ private val PredictiveBackScreen2 by navDestination<Unit> {
     }
 }
 
-private val PredictiveBackScreen3 by navDestination<Unit> {
+private val PredictiveBackScreen3 by navDestination {
     val nc = navController()
     Box(
         Modifier

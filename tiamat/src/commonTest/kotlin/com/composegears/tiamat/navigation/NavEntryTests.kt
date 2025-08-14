@@ -1,5 +1,6 @@
 package com.composegears.tiamat.navigation
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import kotlin.test.*
 
@@ -176,6 +177,19 @@ class NavEntryTests {
         entry.savedState = customSavedState
         val savedState = entry.saveToSavedState()
         assertEquals(customSavedState, savedState["savedState"])
+    }
+
+    @Test
+    fun `lifecycle # provides appropriate state base on conditions`() {
+        val entry = NavEntry(TestDestination)
+        assertEquals(Lifecycle.State.INITIALIZED, entry.lifecycle.currentState)
+        entry.attachToNavController()
+        entry.attachToUI()
+        assertEquals(Lifecycle.State.RESUMED, entry.lifecycle.currentState)
+        entry.detachFromUI()
+        assertEquals(Lifecycle.State.STARTED, entry.lifecycle.currentState)
+        entry.detachFromNavController()
+        assertEquals(Lifecycle.State.CREATED, entry.lifecycle.currentState)
     }
 
     @Test

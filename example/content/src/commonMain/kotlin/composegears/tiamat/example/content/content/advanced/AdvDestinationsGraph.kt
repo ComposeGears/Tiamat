@@ -21,7 +21,7 @@ import composegears.tiamat.example.ui.core.*
 
 private object Graph : TiamatGraph
 
-val AdvDestinationsGraph by navDestination<Unit>(ScreenInfo()) {
+val AdvDestinationsGraph by navDestination(ScreenInfo()) {
     Screen("Auto destinations graph") {
         val nc = rememberNavController(
             key = "Auto-destinations nav controller",
@@ -39,7 +39,7 @@ val AdvDestinationsGraph by navDestination<Unit>(ScreenInfo()) {
 }
 
 @InstallIn(Graph::class)
-private val AdvDestinationsGraphScreen1 by navDestination<Unit> {
+private val AdvDestinationsGraphScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -55,7 +55,7 @@ private val AdvDestinationsGraphScreen1 by navDestination<Unit> {
 }
 
 @InstallIn(Graph::class)
-private val AdvDestinationsGraphScreen2 by navDestination<Unit> {
+private val AdvDestinationsGraphScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -79,7 +79,7 @@ private val AdvDestinationsGraphScreen2 by navDestination<Unit> {
 }
 
 @InstallIn(Graph::class)
-private val AdvDestinationsGraphScreen3 by navDestination<Unit> {
+private val AdvDestinationsGraphScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

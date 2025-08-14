@@ -25,7 +25,7 @@ import composegears.tiamat.example.ui.core.*
 private val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("No scope provided") }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
+val AdvSharedElementTransition by navDestination(ScreenInfo()) {
     Screen("SharedElementTransition") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -57,7 +57,7 @@ val AdvSharedElementTransition by navDestination<Unit>(ScreenInfo()) {
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-private val AdvSharedElementTransitionScreen1 by navDestination<Unit> {
+private val AdvSharedElementTransitionScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -91,7 +91,7 @@ private val AdvSharedElementTransitionScreen1 by navDestination<Unit> {
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-private val AdvSharedElementTransitionScreen2 by navDestination<Unit> {
+private val AdvSharedElementTransitionScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -133,7 +133,7 @@ private val AdvSharedElementTransitionScreen2 by navDestination<Unit> {
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-private val AdvSharedElementTransitionScreen3 by navDestination<Unit> {
+private val AdvSharedElementTransitionScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

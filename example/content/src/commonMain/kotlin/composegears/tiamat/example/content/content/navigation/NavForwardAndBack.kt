@@ -15,7 +15,7 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
-val NavForwardAndBack by navDestination<Unit>(ScreenInfo()) {
+val NavForwardAndBack by navDestination(ScreenInfo()) {
     Screen("Forward & back") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
@@ -54,7 +54,7 @@ private val NavForwardAndBackScreen1: NavDestination<Unit> by navDestination {
     }
 }
 
-private val NavForwardAndBackScreen2 by navDestination<Unit> {
+private val NavForwardAndBackScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -77,7 +77,7 @@ private val NavForwardAndBackScreen2 by navDestination<Unit> {
     }
 }
 
-private val NavForwardAndBackScreen3 by navDestination<Unit> {
+private val NavForwardAndBackScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

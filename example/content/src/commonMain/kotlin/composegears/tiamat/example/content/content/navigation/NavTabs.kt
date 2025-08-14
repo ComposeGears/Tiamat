@@ -19,7 +19,7 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.example.ui.core.*
 
-val NavTabs by navDestination<Unit>(ScreenInfo()) {
+val NavTabs by navDestination(ScreenInfo()) {
     Screen("Tabs navigation") {
         Column(Modifier.fillMaxSize()) {
             val tabs = remember {
@@ -66,15 +66,15 @@ val NavTabs by navDestination<Unit>(ScreenInfo()) {
     }
 }
 
-private val NavTab1 by navDestination<Unit> {
+private val NavTab1 by navDestination {
     TabContent("NavTab1")
 }
 
-private val NavTab2 by navDestination<Unit> {
+private val NavTab2 by navDestination {
     TabContent("NavTab2")
 }
 
-private val NavTab3 by navDestination<Unit> {
+private val NavTab3 by navDestination {
     TabContent("NavTab3")
 }
 
@@ -101,7 +101,7 @@ fun TabContent(tabName: String) {
     }
 }
 
-private val NavTabsSubTabScreen1 by navDestination<Unit> {
+private val NavTabsSubTabScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -116,7 +116,7 @@ private val NavTabsSubTabScreen1 by navDestination<Unit> {
     }
 }
 
-private val NavTabsSubTabScreen2 by navDestination<Unit> {
+private val NavTabsSubTabScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -139,7 +139,7 @@ private val NavTabsSubTabScreen2 by navDestination<Unit> {
     }
 }
 
-private val NavTabsSubTabScreen3 by navDestination<Unit> {
+private val NavTabsSubTabScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
