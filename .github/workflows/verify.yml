@@ -70,14 +70,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Build iOS App
-        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
-
-
 #      - name: Set up Xcode
 #        uses: maxim-lobanov/setup-xcode@v1
 #        with:
 #          xcode-version: 16.2.0
 
-#      - name: Build app
-#        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator build
+      - name: Build iOS App
+        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15' build
