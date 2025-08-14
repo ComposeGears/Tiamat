@@ -9,7 +9,7 @@ class NavDestinationTests {
 
     @Test
     fun `companion # toNavEntry # convert to NavEntry`() {
-        val intNavEntry by navDestination<Int>{}
+        val intNavEntry by navDestination<Int> {}
         val intEntry = intNavEntry.toNavEntry(
             navArgs = 2,
             freeArgs = true,
@@ -19,7 +19,7 @@ class NavDestinationTests {
         assertEquals(true, intEntry.getFreeArgs())
         assertEquals("1", intEntry.getNavResult())
 
-        val stringNavEntry by navDestination<String>{}
+        val stringNavEntry by navDestination<String> {}
         val stringEntry = stringNavEntry.toNavEntry(
             navArgs = "hello",
             freeArgs = false,
@@ -29,7 +29,7 @@ class NavDestinationTests {
         assertEquals(false, stringEntry.getFreeArgs())
         assertEquals(42, stringEntry.getNavResult())
 
-        val booleanNavEntry by navDestination<Boolean>{}
+        val booleanNavEntry by navDestination<Boolean> {}
         val booleanEntry = booleanNavEntry.toNavEntry(
             navArgs = true,
             freeArgs = "extra data",
