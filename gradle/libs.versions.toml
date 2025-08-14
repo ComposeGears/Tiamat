@@ -7,7 +7,7 @@ android-targetSdk = "36"
 
 detekt = "1.23.8"
 jetbrains-compose = "1.8.2"
-lifecycle = "2.9.1"
+lifecycle = "2.9.2"
 kotlin = "2.2.10"
 
 [libraries]
