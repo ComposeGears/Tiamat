@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-// todo update tests
 class TiamatDestinationsCompilerPluginTest {
 
     // Rest of the test setup is the same as the previous test...
