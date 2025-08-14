@@ -11,8 +11,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     // Rest of the test setup is the same as the previous test...
     val annotationSource = SourceFile.kotlin(
-        "Annotations.kt",
-        """
+        "Annotations.kt", """
             package com.composegears.tiamat.destinations
             
             import kotlin.reflect.KClass
