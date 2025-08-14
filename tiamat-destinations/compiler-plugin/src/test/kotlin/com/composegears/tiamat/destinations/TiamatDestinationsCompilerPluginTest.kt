@@ -11,7 +11,8 @@ class TiamatDestinationsCompilerPluginTest {
 
     // Rest of the test setup is the same as the previous test...
     val annotationSource = SourceFile.kotlin(
-        "Annotations.kt", """
+        "Annotations.kt",
+        """
             package com.composegears.tiamat.destinations
             
             import kotlin.reflect.KClass
@@ -22,6 +23,7 @@ class TiamatDestinationsCompilerPluginTest {
             @Retention(AnnotationRetention.RUNTIME)
             annotation class InstallIn(val target: KClass<*>)
             
+            // graph prototype  
             interface TiamatGraph {
                 fun destinations(): Array<NavDestination<*>> = emptyArray()
             }
@@ -34,52 +36,38 @@ class TiamatDestinationsCompilerPluginTest {
             
             import kotlin.properties.ReadOnlyProperty
             import kotlin.reflect.KProperty
+            import kotlin.jvm.JvmName
             
-            interface NavDestination<T> {
-                val name: String
-                val extensions: List<Extension<T>>             
-                fun NavDestinationScope<T>.Content()
-            }
+            // destination prototype
+            abstract class NavDestination<Args>()
             
-            interface NavDestinationScope<T>
+            // destination impl prototype
+            class NavDestinationImpl<T>() : NavDestination<T>()
             
-            interface Extension<T>
-            
-            class NavDestinationImpl<T>(
-                override val name: String,
-                override val extensions: List<Extension<T>>,
-                private val content: NavDestinationScope<T>.() -> Unit
-            ) : NavDestination<T> {
-                override fun NavDestinationScope<T>.Content() { 
-                    content() 
-                }
-            }
-            
-            class NavDestinationInstanceDelegate<Args>(
-                private val extensions: List<Extension<Args>>,
-                private val content: NavDestinationScope<Args>.() -> Unit,
-            ) : ReadOnlyProperty<Nothing?, NavDestination<Args>> {
+            // nav-destination delegate prototype
+            class NavDestinationInstanceDelegate<Args>() : ReadOnlyProperty<Nothing?, NavDestination<Args>> {
                 private var destination: NavDestination<Args>? = null
             
                 override fun getValue(thisRef: Nothing?, property: KProperty<*>): NavDestination<Args> {
-                    if (destination == null) destination = NavDestinationImpl(property.name, extensions, content)
+                    if (destination == null) destination = NavDestinationImpl()
                     return destination!!
                 }
             }
             
-            fun <Args> NavDestination(
-                name: String,
-                extensions: List<Extension<Args>> = emptyList(),
-                content: NavDestinationScope<Args>.() -> Unit
-            ): NavDestination<Args> = NavDestinationImpl(name, extensions, content)
+            // destination builder / direct    
+            fun <Args> buildNavDestination(): NavDestination<Args> = 
+                NavDestinationImpl()
             
-            fun <Args> navDestination(
-                vararg extensions: Extension<Args>? = emptyArray(),
-                content: NavDestinationScope<Args>.() -> Unit
-            ): NavDestinationInstanceDelegate<Args> = NavDestinationInstanceDelegate(listOfNotNull(*extensions), content)
+            // simple nav destination delegate prototype
+            @JvmName("unitNavDestination")
+            fun navDestination(): NavDestinationInstanceDelegate<Unit> = 
+                NavDestinationInstanceDelegate<Unit>()
+            
+            // typed nav destination delegate prototype
+            inline fun <reified Args : Any> navDestination(): NavDestinationInstanceDelegate<Args> = 
+                NavDestinationInstanceDelegate()
         """.trimIndent()
     )
-
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
@@ -96,23 +84,15 @@ class TiamatDestinationsCompilerPluginTest {
             object OtherGraph : TiamatGraph
             
             @InstallIn(MyGraph::class)
-            val Screen1 by navDestination<Unit> { }
+            val Screen1 by navDestination<Unit>()
             
             @InstallIn(MyGraph::class)
-            val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
+            val Screen2 = buildNavDestination<Unit>()
             
             @InstallIn(MyGraph::class)
-            object Screen3 : NavDestination<Int> {
-                override val name: String = "Screen3"
-                override val extensions: List<Extension<Int>> = emptyList()
-                override fun NavDestinationScope<Int>.Content() {}
-            }
+            object Screen3 : NavDestination<Int>()
             
-            class Screen4Class : NavDestination<Int> {
-                override val name: String = "Screen4"
-                override val extensions: List<Extension<Int>> = emptyList()
-                override fun NavDestinationScope<Int>.Content() {}
-            }
+            class Screen4Class : NavDestination<Int>()
             
             @InstallIn(MyGraph::class)
             @InstallIn(OtherGraph::class)
@@ -146,7 +126,65 @@ class TiamatDestinationsCompilerPluginTest {
 
         // Execute main function to verify our generated items() function works
         print("\n\n---------- BEGIN OF INVOCATION ----------\n\n")
-        main?.invoke(null, null)
+        val params = Array<Any?>(main?.parameterCount ?: 0) { null }
+        main?.invoke(null, *params)
+        print("\n\n----------- END OF INVOCATION -----------\n\n")
+    }
+
+    @Test
+    @OptIn(ExperimentalCompilerApi::class)
+    fun `compiler # plugin handles nested objects`() {
+        val source = SourceFile.kotlin(
+            "Test.kt", """
+            package com.test
+            
+            import com.composegears.tiamat.navigation.*
+            import com.composegears.tiamat.destinations.*
+            import org.junit.Assert.assertEquals
+            
+            object MyGraph : TiamatGraph
+            
+            @InstallIn(MyGraph::class)
+            val Screen1 by navDestination<Unit>()
+            
+            class Foo{
+                companion object{
+                    @InstallIn(MyGraph::class)
+                    val Screen2 = buildNavDestination<Unit>()
+                }
+            }
+            
+            object Boo{
+                @InstallIn(MyGraph::class)
+                val Screen3 = buildNavDestination<Unit>()
+            }
+            
+            fun main() {
+                val mgd = MyGraph.destinations()
+                assertEquals(true, mgd.size == 3)
+                assertEquals(true, mgd.contains(Screen1))
+                assertEquals(true, mgd.contains(Foo.Screen2))
+                assertEquals(true, mgd.contains(Boo.Screen3))
+            }
+        """.trimIndent()
+        )
+
+        val result = KotlinCompilation().apply {
+            sources = listOf(source, annotationSource, navDestinationSource)
+            compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
+            inheritClassPath = true
+            messageOutputStream = System.out
+        }.compile()
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+
+        val kClazz = result.classLoader.loadClass("com.test.TestKt")
+        val main = kClazz.declaredMethods.find { it.name == "main" }
+
+        // Execute main function to verify our generated items() function works
+        print("\n\n---------- BEGIN OF INVOCATION ----------\n\n")
+        val params = Array<Any?>(main?.parameterCount ?: 0) { null }
+        main?.invoke(null, *params)
         print("\n\n----------- END OF INVOCATION -----------\n\n")
     }
 
@@ -164,24 +202,16 @@ class TiamatDestinationsCompilerPluginTest {
             object OtherGraph : TiamatGraph
             
             @InstallIn(MyGraph::class)
-            val Screen1 by navDestination<Unit> { }
+            val Screen1 by navDestination<Unit>()
             
             @InstallIn(MyGraph::class)
-            val Screen2 = NavDestination<Unit>(name = "Screen2", extensions = emptyList()) {}
+            val Screen2 = buildNavDestination<Unit>()
             
             @InstallIn(MyGraph::class)
-            object Screen3 : NavDestination<Int> {
-                override val name: String = "Screen3"
-                override val extensions: List<Extension<Int>> = emptyList()
-                override fun NavDestinationScope<Int>.Content() {}
-            }
+            object Screen3 : NavDestination<Int>()
             
             @InstallIn(OtherGraph::class)
-            class Screen4Class : NavDestination<Int> {
-                override val name: String = "Screen4"
-                override val extensions: List<Extension<Int>> = emptyList()
-                override fun NavDestinationScope<Int>.Content() {}
-            }
+            class Screen4Class : NavDestination<Int>()
             
             @InstallIn(OtherGraph::class)
             class Foo
@@ -198,7 +228,7 @@ class TiamatDestinationsCompilerPluginTest {
             val a = 1
             
             fun main() {
-                println(MyGraph.destinations().joinToString("\n") { it.name })
+                println(MyGraph.destinations().joinToString("\n") { it::class.simpleName ?: "Unknown" })
             }
         """.trimIndent()
         )

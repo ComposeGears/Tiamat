@@ -64,10 +64,10 @@ public class NavDestinationInstanceDelegate<Args : Any>(
     private val argsType: KType,
     private val extensions: List<NavExtension<Args>>,
     private val content: @Composable NavDestinationScope<Args>.() -> Unit,
-) : ReadOnlyProperty<Nothing?, ComposeNavDestination<Args>> {
+) : ReadOnlyProperty<Any?, ComposeNavDestination<Args>> {
     private var destination: ComposeNavDestination<Args>? = null
 
-    override fun getValue(thisRef: Nothing?, property: KProperty<*>): ComposeNavDestination<Args> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): ComposeNavDestination<Args> {
         if (destination == null) destination = NavDestinationImpl(
             name = property.name,
             argsType = argsType,
@@ -86,8 +86,7 @@ public class NavDestinationInstanceDelegate<Args : Any>(
  * @param content The content of the NavDestination
  * @return A ComposeNavDestination instance
  */
-@Suppress("FunctionName")
-public fun <Args : Any> NavDestination(
+public fun <Args : Any> buildNavDestination(
     name: String,
     argsType: KType,
     extensions: List<NavExtension<Args>> = emptyList(),
