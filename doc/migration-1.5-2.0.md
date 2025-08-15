@@ -4,19 +4,14 @@
 To better separate navigation state management from Compose components e.g., state objects, several classes have been reorganized into dedicated packages.
 
 ## Package Reorganization
-Moved to `com.composegears.tiamat.navigation` package:
-- `TiamatViewModel` class
-- `SavedState` class
-- `NavController` class
-- Other navigation-related classes & functions
 
-Moved to `com.composegears.tiamat.compose` package:
-- `rememberNavController(...)` function
-- `Navigation(...)` function
-- `navController(...)` function
-- Other Compose-related classes and functions
+Classes and functions split onto 2 main packages:
+- Core nav items -> `com.composegears.tiamat.navigation`
+- Compose elements -> `com.composegears.tiamat.compose`
 
 Removed:
+- `tiamat-koin` - use DI's official compose libraries
+- `TiamatViewModel` - use official `androidx.lifecycle.ViewModel` instead
 - `com.composegears.tiamat.NavBackHandler` - use `androidx.compose.ui.backhandler.BackHandler` instead
 - `com.composegears.tiamat.navigation.TiamatViewModel` - use `androidx.lifecycle.ViewModel` instead
 
@@ -62,17 +57,36 @@ Key Changes:
    When saving state, only the destination `name` can be persisted. During rendering, the system needs to convert the `name` back to a `destination` object. The destinations list enables this lookup functionality.
 
 ### 3. Navigation Functions Behavior Change
-   The `navArgs`, `freeArgs`, and `navResult` functions now provide actual values rather than `state` objects. Manual updates are required when needed.
-   Important: Calling `clearNavResult()` will not trigger recomposition if you have an existing `val nr = navResult()` call.
+   The `getNavArgs()`, `getFreeArgs()`, and `getNavResult()` functions now provide actual values rather than `state` objects. Manual updates are required when needed.
+   Important: Calling `clearNavResult()` will not trigger recomposition.
 
    The `back` function no longer provides `orElse` parameter, `recursive` option was added instead to navigate back recursively. New option is safer.
 
-### 4. Animation Scope Changes
+
+### 4. Serialization
+   `NavArgs`, `FreeArgs` and `NavResult` are serializable when implements `NavData` interface
+   ```kotlin
+   @Serializable
+   data class ArchSerializableDataClass(val t: Int) : NavData
+
+   @OptIn(InternalSerializationApi::class)
+   private val ArchSerializableDataScreen by navDestination<ArchSerializableDataClass> {
+       val navArgs = navArgs()
+       // when used with freeArgs & navResult - you need to pass it into generic in order to deserialize
+       val freeArgs1 = freeArgs<Any>() // null, not yet deserialized
+       val freeArgs2 = freeArgs<Int>() // null, not an Int
+       val freeArgs3 = freeArgs<ArchSerializableDataClass>() // data, deserialized
+       val freeArgs4 = freeArgs<Any>() // data / freeArgs4 == freeArgs3 as it was deserialized and cached
+       /*..*/
+   }
+   ```
+
+### 5. Animation Scope Changes
    With the introduction of the `scene API`, content is not guaranteed to be within an animated scope:
    `NavDestinationScope` no longer inherits from `AnimatedVisibilityScope`
    Use `LocalNavAnimatedVisibilityScope` to access the current `AnimatedVisibilityScope` when destinations are displayed within the `Navigation(...)` composable
 
-### 5. Observable Properties Migration
+### 6. Observable Properties Migration
    Several observable properties have migrated from `State` to `Flow`. New composable functions are available for manual observation:
 
 ```kotlin
@@ -87,7 +101,7 @@ fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?>
 
 ```
 
-### 6. Migration from custom ViewModel to `androidx.lifecycle.ViewModel`
+### 7. Migration from custom ViewModel to `androidx.lifecycle.ViewModel`
 
 We decided to support official ViewModel's instead of custom solution
 
@@ -120,16 +134,13 @@ In order to save ViewModel's state use:
 private class ArchViewModelSaveableViewModel(
     savedState: MutableSavedState
 ) : ViewModel() {
-
     private var _counter = savedState.recordOf("counter", 0)
     val counter = _counter.asStateFlow()
-
-    /*...*/
+    /*..*/
 }
 
 // Compose
-val viewModelSavedState = rememberSaveable { MutableSavedState() }
-val saveableViewModel = viewModel { ArchViewModelSaveableViewModel(viewModelSavedState) }
+val saveableViewModel = saveableViewModel { ArchViewModelSaveableViewModel(it) }
 ```
 > [!IMPORTANT]
 > Solution/syntax may be changed depending on feedback
