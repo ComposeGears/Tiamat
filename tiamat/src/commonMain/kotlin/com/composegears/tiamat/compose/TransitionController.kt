@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
  * @param start The start value of the transition.
  * @param end The end value of the transition.
  */
-public class TransitionController(
+public open class TransitionController(
     private val start: Float = 0f,
     private val end: Float = 1f
 ) {

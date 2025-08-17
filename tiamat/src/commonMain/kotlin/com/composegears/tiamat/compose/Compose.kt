@@ -439,6 +439,11 @@ public fun NavigationScene(
     handleSystemBackEvent: Boolean = true,
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
+    // resolv current destination & backstack in advance
+    LaunchedEffect(navController) {
+        navController.resolveNavDestinations(destinationResolver)
+    }
+    // back handler
     if (handleSystemBackEvent) {
         val hasBackEntries by navController.hasBackEntriesAsState()
         BackHandler(hasBackEntries, navController::back)
