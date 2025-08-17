@@ -365,6 +365,16 @@ public class NavController internal constructor(
 
     // ----------- internal helpers methods ------------------------------------------------------------------------------------
 
+    internal fun resolveNavDestinations(
+        destinationResolver: (name: String) -> NavDestination<*>?,
+    ) {
+        val current = getCurrentNavEntry()
+        if (current != null && !current.isResolved) current.resolveDestination(destinationResolver)
+        getBackStack().onEach {
+            if (!it.isResolved) it.resolveDestination(destinationResolver)
+        }
+    }
+
     private fun updateCurrentNavEntryInternal(
         from: NavEntry<*>?,
         to: NavEntry<*>?,
