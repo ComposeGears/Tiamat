@@ -17,8 +17,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
     versionCatalogs {
-        create("libConfig") {
-            from(files("libConfig.toml"))
+        create("tiamat") {
+            from(files("gradle/tiamat.toml"))
         }
     }
 }
