@@ -1092,6 +1092,7 @@ formatting:
         maxLineLength: 120
 
 # https://mrmans0n.github.io/compose-rules/detekt/
+# https://github.com/mrmans0n/compose-rules/blob/main/rules/detekt/src/main/resources/config/config.yml
 Compose:
     ComposableAnnotationNaming:
         active: true
@@ -1106,15 +1107,19 @@ Compose:
         active: true
     ContentEmitterReturningValues:
         active: true
+    ContentSlotReused:
+        active: true
+    ContentTrailingLambda:
+        active: true
     DefaultsVisibility:
+        active: true
+    LambdaParameterEventTrailing:
         active: true
     LambdaParameterInRestartableEffect:
         active: true
     Material2:
-        active: true
+        active: false
     ModifierClickableOrder:
-        active: true
-    ModifierComposable:
         active: true
     ModifierComposed:
         active: true
@@ -1133,19 +1138,21 @@ Compose:
         active: true
     MutableParams:
         active: true
-    ParameterNaming:
-        active: true
     MutableStateAutoboxing:
         active: true
     MutableStateParam:
         active: true
+    ParameterNaming:
+        active: true
     PreviewAnnotationNaming:
+        active: true
+    PreviewNaming:
         active: true
     PreviewPublic:
         active: true
-    RememberMissing:
-        active: true
     RememberContentMissing:
+        active: true
+    RememberMissing:
         active: true
     UnstableCollections:
         active: true
