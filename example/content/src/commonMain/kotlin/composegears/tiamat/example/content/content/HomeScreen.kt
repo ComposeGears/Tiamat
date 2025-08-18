@@ -135,6 +135,11 @@ private val HomeItems =
                     destination = AdvExtensions
                 ),
                 AppFeature(
+                    name = "Overlay Destinations",
+                    description = "Example shows how to navigate from and to overlays",
+                    destination = AdvOverlayDestinations
+                ),
+                AppFeature(
                     name = "Shared element transition",
                     description = "Example shows how to use shared element transition",
                     destination = AdvSharedElementTransition
