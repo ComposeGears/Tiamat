@@ -46,25 +46,14 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
         val state by navController.currentTransitionFlow.collectAsStateWithLifecycle()
 
         val sceneGroup: SceneGroup = remember(current, backstack) {
-            var sceneRoot = current
-            val overlays: List<NavEntry<*>> = buildList {
-                if (sceneRoot?.destination?.ext<OverlayDestinationExtension<*>>() != null) {
-                    add(sceneRoot)
-                    for (entry in backstack.reversed()) {
-                        sceneRoot = entry
-                        if (entry.destination.ext<OverlayDestinationExtension<*>>() != null) {
-                            add(entry)
-                        } else {
-                            break
-                        }
-                    }
-                }
-            }.reversed()
+            val fullStack = listOfNotNull(current) + backstack.reversed()
+            // find first screen, that is not an overlay
+            val rootIndex = fullStack.indexOfFirst { it.destination.ext<OverlayDestinationExtension<*>>() == null }
+                .let { if (it == -1) 0 else it }
 
-            SceneGroup(
-                root = sceneRoot,
-                overlays = overlays,
-            )
+            val root = fullStack.getOrNull(rootIndex)
+            val overlays = fullStack.subList(0, rootIndex).reversed()
+            SceneGroup(root = root, overlays = overlays)
         }
 
         NavigationScene(
@@ -91,9 +80,7 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
 
             Box {
                 for (entry in sceneGroup.overlays) {
-                    if (entry != sceneGroup.root) {
-                        EntryContent(entry)
-                    }
+                    EntryContent(entry)
                 }
             }
         }
@@ -106,7 +93,7 @@ private val Screen by navDestination<Unit> {
     val current by navController.currentNavEntryAsState()
     val backstack by navController.currentBackStackFlow.collectAsStateWithLifecycle()
     val entries = remember(current, backstack) {
-        (listOf(current) + backstack).filterNotNull()
+        listOfNotNull(current) + backstack
     }
 
     LazyColumn(
@@ -184,8 +171,8 @@ private val OverlayDialog by navDestination<Unit>(
 
 @Composable
 private fun Buttons(
-    modifier: Modifier = Modifier,
     nc: NavController,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(16.dp),
