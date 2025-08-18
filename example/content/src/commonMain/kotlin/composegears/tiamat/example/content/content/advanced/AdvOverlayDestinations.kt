@@ -100,7 +100,6 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private val Screen by navDestination<Unit> {
     val navController = navController()
 
@@ -150,7 +149,6 @@ private val OverlayBottomSheet by navDestination<Unit>(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 private val OverlayDialog by navDestination<Unit>(
     OverlayDestinationExtension(),
 ) {
