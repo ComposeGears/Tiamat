@@ -19,8 +19,8 @@ dependencyResolutionManagement {
         create("libs") {
             from(files("../../gradle/libs.versions.toml"))
         }
-        create("libConfig") {
-            from(files("../../libConfig.toml"))
+        create("tiamat") {
+            from(files("../../gradle/tiamat.toml"))
         }
     }
 }
