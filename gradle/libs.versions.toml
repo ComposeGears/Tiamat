@@ -7,7 +7,8 @@ android-targetSdk = "36"
 
 detekt = "1.23.8"
 jetbrains-compose = "1.8.2"
-lifecycle = "2.9.2"
+# https://youtrack.jetbrains.com/issue/CMP-8765/CMP-WASM-WebAssembly.instantiate-Import-4426-.-skiko.mjs-after-lifecycle-2.9.2
+lifecycle = "2.9.1"
 kotlin = "2.2.10"
 
 [libraries]
@@ -15,7 +16,9 @@ androidx-activity-compose = "androidx.activity:activity-compose:1.10.1"
 androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.2"
 androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
 androidx-camera-view = "androidx.camera:camera-view:1.4.2"
-androidx-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-ktx:2.9.2"
+
+compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
+compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
 
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.27"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -26,10 +29,8 @@ kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-em
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0"
 
-compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
-compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
-compose-lifecycle = {module ="org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
-compose-viewmodel = {module ="org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle"}
+lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.8.0"
 
@@ -43,7 +44,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.1" }
 m2p = { id = "io.github.composegears.m2p" }
