@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew :example:app:composeApp:wasmJsBrowserDistribution
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: 'example/app/composeApp/build/dist/wasmJs/productionExecutable'
 
