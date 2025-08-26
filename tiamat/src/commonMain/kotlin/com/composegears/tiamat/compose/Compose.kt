@@ -124,7 +124,6 @@ public fun rememberNavController(
 
     val navController =
         if (isSaveable && navControllersStorage == null) rememberSaveable(
-            key = key,
             saver = Saver(
                 save = { it.saveToSavedState() },
                 restore = { NavController.restoreFromSavedState(parent, it) }
