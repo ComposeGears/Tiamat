@@ -1,6 +1,6 @@
 [versions]
-tiamat-core = "2.0.0-alpha02"
-tiamat-destinations = "2.0.0-alpha02"
+tiamat-core = "2.0.0-alpha03"
+tiamat-destinations = "2.0.0-alpha03"
 
 # [metadata]
 # metadata = "some metadata"
