@@ -124,7 +124,6 @@ public fun rememberNavController(
 
     val navController =
         if (isSaveable && navControllersStorage == null) rememberSaveable(
-            key = key,
             saver = Saver(
                 save = { it.saveToSavedState() },
                 restore = { NavController.restoreFromSavedState(parent, it) }
@@ -439,6 +438,11 @@ public fun NavigationScene(
     handleSystemBackEvent: Boolean = true,
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
+    // resolve current destination & backstack in advance
+    LaunchedEffect(navController) {
+        navController.resolveNavDestinations(destinationResolver)
+    }
+    // back handler
     if (handleSystemBackEvent) {
         val hasBackEntries by navController.hasBackEntriesAsState()
         BackHandler(hasBackEntries, navController::back)

@@ -115,7 +115,7 @@ public final class com/composegears/tiamat/compose/NavigationSceneScope {
 	public final fun EntryContent (Lcom/composegears/tiamat/navigation/NavEntry;Landroidx/compose/runtime/Composer;I)V
 }
 
-public final class com/composegears/tiamat/compose/TransitionController {
+public class com/composegears/tiamat/compose/TransitionController {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (FF)V
