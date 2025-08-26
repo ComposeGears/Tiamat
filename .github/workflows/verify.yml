@@ -71,4 +71,4 @@ jobs:
           java-version: 17
 
       - name: Build iOS App
-        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator' build
+        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
