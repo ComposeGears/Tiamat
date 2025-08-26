@@ -29,14 +29,6 @@ import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 
-class OverlayDestinationExtension<T : Any> : NavExtension<T> {
-    companion object {
-        fun NavEntry<*>.isOverlay(): Boolean {
-            return destination.ext<OverlayDestinationExtension<*>>() != null
-        }
-    }
-}
-
 val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     Screen("Overlay Destinations") {
         val navController =
@@ -82,6 +74,13 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
                 }
             }
         }
+    }
+}
+
+class OverlayDestinationExtension<T : Any> : NavExtension<T> {
+    companion object {
+        fun NavEntry<*>.isOverlay(): Boolean =
+            destination.ext<OverlayDestinationExtension<*>>() != null
     }
 }
 
