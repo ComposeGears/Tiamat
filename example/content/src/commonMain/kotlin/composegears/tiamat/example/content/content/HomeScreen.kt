@@ -136,7 +136,7 @@ private val HomeItems =
                 ),
                 AppFeature(
                     name = "Overlay Destinations",
-                    description = "Example shows how to navigate from and to overlays",
+                    description = "Example shows how to navigate from and to overlays (dialogs, bottom sheets, etc)",
                     destination = AdvOverlayDestinations
                 ),
                 AppFeature(

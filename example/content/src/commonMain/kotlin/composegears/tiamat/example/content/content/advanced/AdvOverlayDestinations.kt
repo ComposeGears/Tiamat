@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,29 +17,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavEntry
+import composegears.tiamat.example.content.content.advanced.OverlayDestinationExtension.Companion.isOverlay
 import composegears.tiamat.example.ui.core.AppButton
 import composegears.tiamat.example.ui.core.Screen
 import composegears.tiamat.example.ui.core.ScreenInfo
 
-data class SceneGroup(
-    val root: NavEntry<*>?,
-    val overlays: List<NavEntry<*>>,
-)
-
-class OverlayDestinationExtension<T : Any> : NavExtension<T>
+class OverlayDestinationExtension<T : Any> : NavExtension<T> {
+    companion object {
+        fun NavEntry<*>.isOverlay(): Boolean {
+            return destination.ext<OverlayDestinationExtension<*>>() != null
+        }
+    }
+}
 
 val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     Screen("Overlay Destinations") {
         val navController =
             rememberNavController(
                 key = "Overlay Destinations nav controller",
-                startDestination = Screen,
+                startDestination = AdvOverlayScreen,
                 saveable = true,
             )
 
@@ -45,31 +50,24 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
         val backstack by navController.currentBackStackFlow.collectAsStateWithLifecycle()
         val state by navController.currentTransitionFlow.collectAsStateWithLifecycle()
 
-        val sceneGroup: SceneGroup = remember(current, backstack) {
-            val fullStack = listOfNotNull(current) + backstack.reversed()
-            // find first screen, that is not an overlay
-            val rootIndex = fullStack.indexOfFirst { it.destination.ext<OverlayDestinationExtension<*>>() == null }
-                .let { if (it == -1) 0 else it }
-
-            val root = fullStack.getOrNull(rootIndex)
-            val overlays = fullStack.subList(0, rootIndex).reversed()
-            SceneGroup(root = root, overlays = overlays)
-        }
+        // remap entries to content + overlay
+        val stack = remember(current, backstack) { backstack.toMutableList() + listOfNotNull(current) }
+        val content = remember(stack) { stack.lastOrNull { !it.isOverlay() } }
+        val overlays = remember(stack) { stack.takeLastWhile { it.isOverlay() } }
 
         NavigationScene(
             navController = navController,
             destinations = arrayOf(
-                Screen,
-                OverlayBottomSheet,
-                OverlayDialog,
+                AdvOverlayScreen,
+                AdvOverlayBottomSheet,
+                AdvOverlayDialog,
             ),
         ) {
+            // animate main content
             AnimatedContent(
-                targetState = sceneGroup.root,
+                targetState = content,
                 contentKey = { it?.contentKey() },
-                transitionSpec = {
-                    navigationPlatformDefault(state?.isForward ?: true)
-                },
+                transitionSpec = { navigationSlideInOut(state?.isForward ?: true) },
             ) {
                 CompositionLocalProvider(
                     LocalNavAnimatedVisibilityScope provides this,
@@ -77,9 +75,9 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
                     EntryContent(it)
                 }
             }
-
+            // draw overlays on top of content
             Box {
-                for (entry in sceneGroup.overlays) {
+                for (entry in overlays) {
                     EntryContent(entry)
                 }
             }
@@ -87,112 +85,97 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     }
 }
 
-private val Screen by navDestination<Unit> {
+private val AdvOverlayScreen by navDestination<Unit> {
     val navController = navController()
 
     val current by navController.currentNavEntryAsState()
     val backstack by navController.currentBackStackFlow.collectAsStateWithLifecycle()
-    val entries = remember(current, backstack) {
-        listOfNotNull(current) + backstack
-    }
+    val canGoBack = remember { backstack.isNotEmpty() }
+    val stack = remember(current, backstack) { backstack.toMutableList() + listOfNotNull(current) }
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            Buttons(nc = navController)
+        item { AdvOverlayContentButtons(nc = navController) }
+        if (canGoBack) {
+            item {
+                AppButton(
+                    "Back",
+                    endIcon = Icons.Default.Close,
+                    onClick = { navController.back() }
+                )
+            }
         }
-
-        item {
-            Text("Backstack")
-        }
-
-        items(entries) { entry ->
-            ListItem(
-                headlineContent = {
-                    Text(entry.destination.name)
-                }
-            )
+        item { Text("Stack") }
+        items(stack) { entry ->
+            Text(entry.destination.name)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private val OverlayBottomSheet by navDestination<Unit>(
-    OverlayDestinationExtension(),
-) {
+private val AdvOverlayBottomSheet by navDestination<Unit>(OverlayDestinationExtension()) {
     val navController = navController()
-
-    ModalBottomSheet(
-        onDismissRequest = navController::back,
-    ) {
-        Buttons(nc = navController)
-
-        AppButton(
-            "Close",
-            endIcon = Icons.Default.Close,
-            onClick = { navController.back() }
-        )
+    ModalBottomSheet(onDismissRequest = navController::back) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AdvOverlayContentButtons(nc = navController)
+            AppButton(
+                "Close",
+                endIcon = Icons.Default.Close,
+                onClick = { navController.back() }
+            )
+        }
     }
 }
 
-private val OverlayDialog by navDestination<Unit>(
-    OverlayDestinationExtension(),
-) {
+private val AdvOverlayDialog by navDestination<Unit>(OverlayDestinationExtension()) {
     val navController = navController()
-
     AlertDialog(
-        onDismissRequest = {
-            navController.back()
-        },
-        text = {
-            Text("Dialog")
-        },
+        onDismissRequest = { navController.back() },
+        text = { Text("Dialog") },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    navController.navigate(Screen)
-                },
-            ) {
-                Text("To Screen")
-            }
+            AppButton(
+                "Open Screen",
+                onClick = { navController.navigate(AdvOverlayScreen) }
+            )
         },
         dismissButton = {
-            TextButton(
-                onClick = {
-                    navController.back()
-                },
-            ) {
-                Text("Back")
-            }
+            AppButton(
+                "Back",
+                onClick = { navController.back() }
+            )
         },
     )
 }
 
 @Composable
-private fun Buttons(
+private fun AdvOverlayContentButtons(
     nc: NavController,
-    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppButton(
-            "To Bottom sheet",
+            "Open Bottom sheet",
             endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
-            onClick = { nc.navigate(OverlayBottomSheet) }
+            onClick = { nc.navigate(AdvOverlayBottomSheet) }
         )
-
         AppButton(
-            "To Dialog",
+            "Open Dialog",
             endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
-            onClick = { nc.navigate(OverlayDialog) }
+            onClick = { nc.navigate(AdvOverlayDialog) }
         )
-
         AppButton(
-            "To Screen",
+            "Open Screen",
             endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
-            onClick = { nc.navigate(Screen) }
+            onClick = { nc.navigate(AdvOverlayScreen) }
         )
     }
 }
