@@ -438,7 +438,7 @@ public fun NavigationScene(
     handleSystemBackEvent: Boolean = true,
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
-    // resolv current destination & backstack in advance
+    // resolve current destination & backstack in advance
     LaunchedEffect(navController) {
         navController.resolveNavDestinations(destinationResolver)
     }
