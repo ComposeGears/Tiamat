@@ -51,6 +51,7 @@ fun App(
                     ArchCustomSaveState,
                     ArchSerializableData,
                     AdvExtensions,
+                    AdvOverlayDestinations,
                     AdvBackStackAlteration,
                     AdvSharedElementTransition,
                     AdvDestinationsGraph,
