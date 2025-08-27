@@ -1,0 +1,29 @@
+# Release template for GitHub Releases
+
+changelog:
+  categories:
+    - title: ✨ Features
+      labels:
+        - enhancement
+    - title: 🐛 Bugfixes
+      labels:
+        - bugfix
+    - title: 🧩 Sample
+      labels:
+        - sample
+    - title: 🧹 Housekeeping
+      labels:
+        - housekeeping
+    - title: ⬆️ Dependencies
+      labels:
+        - dependencies
+    - title: ✏️ Others
+      labels:
+        - '*'
+      exclude:
+        labels:
+          - enhancement
+          - bugfix
+          - housekeeping
+          - dependencies
+          - sample
