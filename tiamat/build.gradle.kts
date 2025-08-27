@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = tiamat.versions.tiamat.core.get()
+version = tiamat.versions.tiamat.get()
 group = "io.github.composegears"
 
 kotlin {
