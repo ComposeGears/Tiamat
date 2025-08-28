@@ -192,6 +192,22 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
                     }
                 }
             }
+
+            // save state when `this entry`/`parent entry` goes into backStack
+            DisposableEffect(entry) {
+                // invalidate navController routing state
+                navController.invalidateRoute()
+                // save state handle
+                onDispose {
+                    entry.savedStateSaver = null
+                    // entry goes into backstack, save active subNavController
+                    if (entry in navController.getBackStack() || entry == navController.currentNavEntry) {
+                        entry.saveState(saveRegistry.performSave())
+                    } else {
+                        entry.close()
+                    }
+                }
+            }
         }
         // prevent clicks during transition animation
         if (transition.isRunning) Box(
@@ -208,21 +224,6 @@ private fun <Args> AnimatedVisibilityScope.EntryContent(
                     }
                 }
         )
-        // save state when `this entry`/`parent entry` goes into backStack
-        DisposableEffect(entry) {
-            // invalidate navController routing state
-            navController.invalidateRoute()
-            // save state handle
-            onDispose {
-                entry.savedStateSaver = null
-                // entry goes into backstack, save active subNavController
-                if (entry in navController.getBackStack() || entry == navController.currentNavEntry) {
-                    entry.saveState(saveRegistry.performSave())
-                } else {
-                    entry.close()
-                }
-            }
-        }
     }
 }
 
