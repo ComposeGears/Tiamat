@@ -32,7 +32,7 @@ sourceSets {
 Create graph `object` extends from `TiamatGraph`
 
 ```kotlin
-private object Graph : TiamatGraph
+object Graph : TiamatGraph
 ```
 
 Annotate `navDestination` with `InstallIn` annotation (multiple installations allowed), here is some valid options:
@@ -87,8 +87,8 @@ Multiple graphs usage also allowed
 
 ```kotlin
 ///...
-private object Graph1 : TiamatGraph
-private object Graph2 : TiamatGraph
+object Graph1 : TiamatGraph
+object Graph2 : TiamatGraph
 
 //...
 Navigation(
@@ -103,7 +103,7 @@ In case the plugin problems, there is backport solution: override graph `destina
 compiler plugin
 
 ```kotlin
-private object Graph : TiamatGraph {
+object Graph : TiamatGraph {
     override fun destinations(): Array<NavDestination<*>> = arrayOf(
         Screen1, Screen2, Screen3
     )
@@ -114,5 +114,5 @@ private object Graph : TiamatGraph {
 
 | Plugin Version | Kotlin Version |
 |----------------|:--------------:|
-| 1.5.0          |     2.1.20     |
+| 1.5.2          |     2.2.0      |
 | 2.0.0-alpha01  |     2.2.0      |
