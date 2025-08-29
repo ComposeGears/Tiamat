@@ -2,9 +2,9 @@ name: Verify
 
 on:
   push:
-    branches: [ "main", "release/1.5.1" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "release/1.5.1" ]
+    branches: [ "main" ]
 
   workflow_dispatch:
 

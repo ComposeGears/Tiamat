@@ -115,4 +115,4 @@ private object Graph : TiamatGraph {
 
 | Plugin Version | Kotlin Version |
 |----------------|:--------------:|
-| 1.5.0          |     2.1.20     |
+| 1.5.2          |     2.2.0      |
