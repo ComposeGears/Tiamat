@@ -10,7 +10,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.composegears.tiamat.navigation.NavEntry
 
 internal class EntryContentLifecycleOwner(
-    private val parentLifecycle: Lifecycle,
+    private val parentLifecycle: Lifecycle?,
     private val entryLifecycle: Lifecycle,
 ) : LifecycleOwner {
     private val lifecycleRegistry = LifecycleRegistry(this)
@@ -20,12 +20,12 @@ internal class EntryContentLifecycleOwner(
 
     init {
         lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        parentLifecycle.addObserver(lifecycleStateObserver)
+        parentLifecycle?.addObserver(lifecycleStateObserver)
         entryLifecycle.addObserver(lifecycleStateObserver)
     }
 
     fun updateState() {
-        val parentState = parentLifecycle.currentState
+        val parentState = parentLifecycle?.currentState ?: Lifecycle.State.RESUMED
         val entryState = entryLifecycle.currentState
         val targetState = if (parentState.ordinal < entryState.ordinal) parentState else entryState
         if (lifecycle.currentState != targetState) {
@@ -34,7 +34,7 @@ internal class EntryContentLifecycleOwner(
     }
 
     fun close() {
-        parentLifecycle.removeObserver(lifecycleStateObserver)
+        parentLifecycle?.removeObserver(lifecycleStateObserver)
         entryLifecycle.removeObserver(lifecycleStateObserver)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     }
@@ -44,8 +44,8 @@ internal class EntryContentLifecycleOwner(
 internal fun rememberEntryContentLifecycleOwner(
     entry: NavEntry<*>
 ): EntryContentLifecycleOwner {
-    val parentLifecycle = LocalLifecycleOwner.current
+    val parentLifecycle = runCatching { LocalLifecycleOwner.current }.getOrNull()
     return remember(entry) {
-        EntryContentLifecycleOwner(parentLifecycle.lifecycle, entry.lifecycle)
+        EntryContentLifecycleOwner(parentLifecycle?.lifecycle, entry.lifecycle)
     }
 }
