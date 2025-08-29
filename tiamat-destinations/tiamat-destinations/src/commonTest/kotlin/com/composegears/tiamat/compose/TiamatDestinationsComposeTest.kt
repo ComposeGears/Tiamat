@@ -29,30 +29,17 @@ class TiamatDestinationsComposeTest {
         override fun destinations(): Array<NavDestination<*>> = arrayOf(Screen)
     }
 
-    class TestLifecycleOwner : LifecycleOwner {
-        override val lifecycle = LifecycleRegistry(this)
-
-        init {
-            lifecycle.currentState = Lifecycle.State.STARTED
-        }
-    }
-
     @Test
     @OptIn(ExperimentalTestApi::class)
     fun `Navigation # displays content when used with TiamatGraph`() = runComposeUiTest {
-        val testLifecycle = TestLifecycleOwner()
         setContent {
-            CompositionLocalProvider(
-                LocalLifecycleOwner provides testLifecycle
-            ) {
-                val nc = rememberNavController(
-                    startDestination = Screen,
-                )
-                Navigation(
-                    navController = nc,
-                    graph = Graph
-                )
-            }
+            val nc = rememberNavController(
+                startDestination = Screen,
+            )
+            Navigation(
+                navController = nc,
+                graph = Graph
+            )
         }
         onNodeWithTag("ScreenContent").assertExists()
     }
