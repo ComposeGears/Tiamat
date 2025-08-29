@@ -1,4 +1,4 @@
-name: Generate m2 packages
+name: Publish (m2 + draft)
 on:
   workflow_dispatch:
 jobs:
