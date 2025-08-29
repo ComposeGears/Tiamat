@@ -23,6 +23,9 @@ jobs:
 
           echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME"
           echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME" >> $GITHUB_ENV
+          
+          echo "TIAMAT_VERSION=$TIAMAT_VERSION"
+          echo "TIAMAT_VERSION=$TIAMAT_VERSION" >> $GITHUB_ENV
 
       - name: Execute Gradle build
         run: ./gradlew createLocalM2 -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
@@ -40,4 +43,7 @@ jobs:
 
       - name: Create draft release
         run: |
-          gh release create ${{ env.RELEASE_TAG_NAME }} build/m2.zip --generate-notes --draft
+          gh release create "${{ env.RELEASE_TAG_NAME }}" build/m2.zip \
+            --title "Tiamat ${{ env.TIAMAT_VERSION }}" \
+            --generate-notes \
+            --draft
