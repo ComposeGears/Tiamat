@@ -4,17 +4,40 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Prepare release name
+        run: |
+          TIAMAT_VERSION=$(grep "tiamat =" gradle/tiamat.toml | cut -d '"' -f 2)
+          RELEASE_TAG_NAME="release/v$TIAMAT_VERSION"
+
+          echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME"
+          echo "RELEASE_TAG_NAME=$RELEASE_TAG_NAME" >> $GITHUB_ENV
+
       - name: Execute Gradle build
         run: ./gradlew createLocalM2 -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
+
       - uses: actions/upload-artifact@v4
         with:
           name: m2
           path: build/m2
           if-no-files-found: error
+
+      - name: Create zip file for release
+        run: |
+          cd build
+          zip -r m2.zip m2/
+
+      - name: Create draft release
+        run: |
+          gh release create ${{ env.RELEASE_TAG_NAME }} build/m2.zip --generate-notes --draft

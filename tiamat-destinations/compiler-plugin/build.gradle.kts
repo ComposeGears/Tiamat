@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = tiamat.versions.tiamat.destinations.get()
+version = tiamat.versions.tiamat.get()
 group = "io.github.composegears"
 
 dependencies {

@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.m2p)
 }
 
-version = tiamat.versions.tiamat.destinations.get()
+version = tiamat.versions.tiamat.get()
 group = "io.github.composegears"
 
 dependencies {
@@ -23,7 +23,7 @@ gradlePlugin {
 
 buildConfig {
     packageName("com.composegears.tiamat.destinations")
-    buildConfigField<String>("COMPILER_PLUGIN_VERSION", tiamat.versions.tiamat.destinations.get())
+    buildConfigField<String>("COMPILER_PLUGIN_VERSION", tiamat.versions.tiamat.get())
 
     useKotlinOutput()
 }
