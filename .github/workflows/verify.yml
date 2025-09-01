@@ -49,13 +49,13 @@ jobs:
         run: ./gradlew tiamat-destinations-compiler:test
 
       - name: Build Android target
-        run: ./gradlew example:app:composeApp:assembleDebug
+        run: ./gradlew sample:composeApp:assembleDebug
 
-      - name: Build Desktop target
-        run: ./gradlew example:app:composeApp:package
+      - name: Build Jvm target
+        run: ./gradlew sample:composeApp:package
 
       - name: Build Web target
-        run: ./gradlew example:app:composeApp:wasmJsBrowserDistribution
+        run: ./gradlew sample:composeApp:wasmJsBrowserDistribution
 
   verify-ios:
     runs-on: macos-latest
@@ -76,4 +76,4 @@ jobs:
           xcode-version: 16.4.0
 
       - name: Build iOS App
-        run: xcodebuild -project example/app/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
+        run: xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
