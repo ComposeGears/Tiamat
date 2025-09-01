@@ -1,16 +1,11 @@
 package com.composegears.tiamat.compose
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.runComposeUiTest
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.destinations.TiamatGraph
 import com.composegears.tiamat.navigation.NavDestination
