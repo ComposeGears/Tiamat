@@ -198,17 +198,17 @@ private fun <Args : Any> NavEntryContent(
                     }
                 }
             }
-        }
-        // save state when `this entry`/`parent entry` goes into backStack
-        DisposableEffect(entry) {
-            entry.attachToUI()
-            entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
-            // save state handle
-            onDispose {
-                entry.setSavedStateSaver(null)
-                entryContentLifecycleOwner.close()
-                if (entry.isAttachedToNavController) entry.savedState = entrySaveableStateRegistry.performSave()
-                entry.detachFromUI()
+            // save state when `this entry`/`parent entry` goes into backStack
+            DisposableEffect(entry) {
+                entry.attachToUI()
+                entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
+                // save state handle
+                onDispose {
+                    entry.setSavedStateSaver(null)
+                    entryContentLifecycleOwner.close()
+                    if (entry.isAttachedToNavController) entry.savedState = entrySaveableStateRegistry.performSave()
+                    entry.detachFromUI()
+                }
             }
         }
     }
