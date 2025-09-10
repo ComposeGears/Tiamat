@@ -11,7 +11,7 @@ lifecycle = "2.9.3"
 kotlin = "2.2.20"
 
 [libraries]
-androidx-activity-compose = "androidx.activity:activity-compose:1.10.1"
+androidx-activity-compose = "androidx.activity:activity-compose:1.11.0"
 androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.2"
 androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
 androidx-camera-view = "androidx.camera:camera-view:1.4.2"
