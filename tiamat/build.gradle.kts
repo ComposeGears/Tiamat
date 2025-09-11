@@ -24,7 +24,8 @@ kotlin {
     jvm()
     androidLibrary {
         namespace = "com.composegears.tiamat"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        compileSdk = tiamat.versions.compileSdk.get().toInt()
+        minSdk = tiamat.versions.minSdk.get().toInt()
 
         compilations.configureEach {
             compilerOptions.configure {
