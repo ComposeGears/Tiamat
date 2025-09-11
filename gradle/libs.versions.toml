@@ -5,6 +5,7 @@ sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"
 
+camerax = "1.5.0"
 detekt = "1.23.8"
 jetbrains-compose = "1.8.2"
 lifecycle = "2.9.3"
@@ -12,9 +13,10 @@ kotlin = "2.2.20"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.11.0"
-androidx-camera-camera2 = "androidx.camera:camera-camera2:1.4.2"
-androidx-camera-lifecycle = "androidx.camera:camera-lifecycle:1.4.2"
-androidx-camera-view = "androidx.camera:camera-view:1.4.2"
+
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "jetbrains-compose" }
 compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
