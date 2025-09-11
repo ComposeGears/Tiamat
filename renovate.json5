@@ -5,5 +5,15 @@
     ],
     "extends": [
         "config:recommended"
-    ]
+    ],
+    "packageRules": [
+    {
+      "groupName": "CameraX",
+      "matchPackageNames": [
+        "androidx.camera:camera-view",
+        "androidx.camera:camera-lifecycle",
+        "androidx.camera:camera-camera2"
+      ]
+    }
+  ]
 }
