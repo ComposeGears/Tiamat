@@ -75,12 +75,12 @@ kotlin {
 
 android {
     namespace = "composegears.tiamat.sample"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = libs.versions.sample.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "composegears.tiamat.sample"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = libs.versions.sample.minSdk.get().toInt()
+        targetSdk = libs.versions.sample.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
     }
