@@ -8,8 +8,8 @@ actual fun Platform.name(): String = "Android"
 actual fun Platform.platformFeatures(): List<AppFeature> = listOf(
     AppFeature(
         name = "CameraX",
-        description = "AndroidView + lifecycle handling",
-        destination = AndroidViewLifecycleScreen
+        description = "CameraX + Lifecycle",
+        destination = CameraXLifecycleScreen
     ),
     AppFeature(
         name = "Predictive back",
