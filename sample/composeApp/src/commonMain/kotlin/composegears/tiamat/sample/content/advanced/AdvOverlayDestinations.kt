@@ -24,8 +24,10 @@ import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavEntry
 import composegears.tiamat.sample.content.advanced.OverlayDestinationExtension.Companion.isOverlay
 import composegears.tiamat.sample.ui.AppButton
+import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     Screen("Overlay Destinations") {
@@ -175,4 +177,10 @@ private fun AdvOverlayContentButtons(
             onClick = { nc.navigate(AdvOverlayScreen) }
         )
     }
+}
+
+@Preview
+@Composable
+private fun AdvOverlayDestinationsPreview() = AppTheme {
+    TiamatDestinationPreview(destination = AdvOverlayDestinations)
 }

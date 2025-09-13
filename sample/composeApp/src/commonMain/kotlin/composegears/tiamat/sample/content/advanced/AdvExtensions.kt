@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val AdvExtensions by navDestination(ScreenInfo()) {
     Screen("Extensions") {
@@ -180,4 +181,10 @@ private val AdvExtensionsScreen3 by navDestination(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun AdvExtensionsPreview() = AppTheme {
+    TiamatDestinationPreview(destination = AdvExtensions)
 }
