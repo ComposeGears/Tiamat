@@ -8,12 +8,14 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val NavForwardAndBack by navDestination(ScreenInfo()) {
     Screen("Forward & back") {
@@ -95,4 +97,10 @@ private val NavForwardAndBackScreen3 by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun NavForwardAndBackPreview() = AppTheme {
+    TiamatDestinationPreview(destination = NavForwardAndBack)
 }

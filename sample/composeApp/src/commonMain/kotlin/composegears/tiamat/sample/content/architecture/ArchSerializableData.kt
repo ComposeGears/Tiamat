@@ -20,6 +20,7 @@ import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.sample.ui.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val ArchSerializableData by navDestination(ScreenInfo()) {
     Screen("Serializable Data") {
@@ -170,4 +171,10 @@ private val ArchSerializableDataScreen by navDestination<ArchSerializableDataCla
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ArchSerializableDataPreview() = AppTheme {
+    TiamatDestinationPreview(destination = ArchSerializableData)
 }

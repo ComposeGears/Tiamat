@@ -10,6 +10,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.destinations.InstallIn
 import com.composegears.tiamat.destinations.TiamatGraph
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private object Graph : TiamatGraph
 
@@ -92,4 +94,10 @@ private val AdvDestinationsGraphScreen3 by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun AdvDestinationsGraphPreview() = AppTheme {
+    TiamatDestinationPreview(destination = AdvDestinationsGraph)
 }

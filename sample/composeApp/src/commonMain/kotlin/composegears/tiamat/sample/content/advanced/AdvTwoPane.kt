@@ -13,21 +13,16 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
-import composegears.tiamat.sample.ui.AppButton
-import composegears.tiamat.sample.ui.HSpacer
-import composegears.tiamat.sample.ui.Screen
-import composegears.tiamat.sample.ui.ScreenInfo
+import composegears.tiamat.sample.ui.*
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 val AdvTwoPane by navDestination(ScreenInfo()) {
@@ -183,4 +178,10 @@ private val AdvTwoPaneDetails2 by navDestination<String> {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun AdvTwoPanePreview() = AppTheme {
+    TiamatDestinationPreview(destination = AdvTwoPane)
 }

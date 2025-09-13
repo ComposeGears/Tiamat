@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.AppButton
+import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.HSpacer
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 val AdvAdaptiveListDetails by navDestination {
@@ -227,3 +229,9 @@ private val AdvAdaptiveListDetailsDetails2 by navDestination<String> {
 }
 
 private data class MenuItem(val icon: ImageVector, val title: String)
+
+@Preview
+@Composable
+private fun AdvAdaptiveListDetailsPreview() = AppTheme {
+    TiamatDestinationPreview(destination = AdvAdaptiveListDetails)
+}
