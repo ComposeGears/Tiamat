@@ -288,7 +288,7 @@ Hint
 
 ### Multiplatform
 
-I want to navigate through multiple nav steps in 1 call (e.g. handle deeplink)
+#### I want to navigate through multiple nav steps in 1 call (e.g. handle deeplink)
 
 ```kotlin
 // there is 2 common ideas behind handle complex navigation
@@ -339,8 +339,7 @@ if (deeplink != null) {
 
 ---
 
-I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame
-of animation
+#### I use `startDestination = null` + `LaunchEffect` \ `DisposableEffect` to make start destination dynamic and see 1 frame of animation
 
 ```kotlin
     // LaunchEffect & DisposableEffect are executed on `next` frame, so you may see 1 frame of animation
@@ -369,7 +368,7 @@ of animation
 ```
 ---
 
-How about 2-pane & custom layout?
+#### How about 2-pane & custom layout?
 
 ```kotlin
     // Yep, there is 2-pane layout example. You can also create fully custom layout by using `scene` api
@@ -398,6 +397,51 @@ How about 2-pane & custom layout?
         }
     }
 
+```
+
+#### Compose Preview for NavDestination
+
+Library provides a utility
+function [TiamatDestinationPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/TiamatDestinationPreview.kt)
+for previewing individual navigation destinations in Compose Preview.
+
+**Usage:**
+
+```kotlin
+// Define your destination
+val DemoScreen by navDestination<Unit> {
+    Text("Demo Screen")
+}
+
+// Create preview
+@Preview
+@Composable
+private fun DemoScreenPreview() {
+    TiamatDestinationPreview(destination = DemoScreen)
+}
+```
+
+**For screens with arguments:**
+
+```kotlin
+data class UserProfileArgs(val userId: String, val userName: String)
+
+val UserProfileScreen by navDestination<UserProfileArgs> {
+    val args = navArgs()
+    Column {
+        Text("User: ${args.userName}")
+        Text("ID: ${args.userId}")
+    }
+}
+
+@Preview
+@Composable
+private fun UserProfileScreenPreview() {
+    TiamatDestinationPreview(
+        destination = UserProfileScreen,
+        navArgs = UserProfileArgs(userId = "123", userName = "John")
+    )
+}
 ```
 
 ### Desktop
