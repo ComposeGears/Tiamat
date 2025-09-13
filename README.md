@@ -405,6 +405,9 @@ Library provides a utility
 function [TiamatDestinationPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/TiamatDestinationPreview.kt)
 for previewing individual navigation destinations in Compose Preview.
 
+> [!NOTE]
+> Preview works best for pure Compose UI code. If your destination contains ViewModels, dependency injection, or complex app logic, consider creating separate preview functions for specific UI components instead of the entire destination.
+
 **Usage:**
 
 ```kotlin
@@ -440,6 +443,35 @@ private fun UserProfileScreenPreview() {
     TiamatDestinationPreview(
         destination = UserProfileScreen,
         navArgs = UserProfileArgs(userId = "123", userName = "John")
+    )
+}
+```
+
+**For complex destinations with ViewModels or app logic:**
+
+```kotlin
+// Instead of previewing the entire destination
+val ComplexScreen by navDestination<Unit> {
+    val viewModel = viewModel<MyViewModel>()
+    val data by viewModel.data.collectAsState()
+    
+    ComplexScreenContent(data = data)
+}
+
+// Create preview for the UI component
+@Composable
+private fun ComplexScreenContent(data: MyData) {
+    Column {
+        Text("Title: ${data.title}")
+        // ... rest of UI
+    }
+}
+
+@Preview
+@Composable
+private fun ComplexScreenContentPreview() {
+    ComplexScreenContent(
+        data = MyData(title = "Preview Title")
     )
 }
 ```
