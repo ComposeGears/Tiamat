@@ -408,7 +408,7 @@ Nothing specific (yet)
 
 `Tiamat` overrides `LocalLifecycleOwner` for each destination (android only) and compatible with lifecycle-aware components
 
-See an example of camera usage: [AndroidViewLifecycleScreen.kt](sample/composeApp/src/androidMain/kotlin/composegears/tiamat/sample/platform/AndroidViewLifecycleScreen.kt)
+See an example of CameraX usage: [CameraXLifecycleScreen.kt](sample/composeApp/src/androidMain/kotlin/composegears/tiamat/sample/platform/CameraXLifecycleScreen.kt)
 
 ### iOS
 
