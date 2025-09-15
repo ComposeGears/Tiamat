@@ -402,7 +402,7 @@ if (deeplink != null) {
 #### Compose Preview for NavDestination
 
 Library provides a utility
-function [TiamatDestinationPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/TiamatDestinationPreview.kt)
+function [TiamatPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/TiamatPreview.kt)
 for previewing individual navigation destinations in Compose Preview.
 
 > [!NOTE]
@@ -420,7 +420,7 @@ val DemoScreen by navDestination<Unit> {
 @Preview
 @Composable
 private fun DemoScreenPreview() {
-    TiamatDestinationPreview(destination = DemoScreen)
+    TiamatPreview(destination = DemoScreen)
 }
 ```
 
@@ -440,7 +440,7 @@ val UserProfileScreen by navDestination<UserProfileArgs> {
 @Preview
 @Composable
 private fun UserProfileScreenPreview() {
-    TiamatDestinationPreview(
+    TiamatPreview(
         destination = UserProfileScreen,
         navArgs = UserProfileArgs(userId = "123", userName = "John")
     )

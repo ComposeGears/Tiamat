@@ -136,5 +136,5 @@ private val NavNestedScreen3 by navDestination {
 @Preview
 @Composable
 private fun NavNestedPreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavNested)
+    TiamatPreview(destination = NavNested)
 }

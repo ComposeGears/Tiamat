@@ -163,5 +163,5 @@ private val AdvBackStackAlterationScreenC by navDestination {
 @Preview
 @Composable
 private fun AdvBackStackAlterationPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvBackStackAlteration)
+    TiamatPreview(destination = AdvBackStackAlteration)
 }

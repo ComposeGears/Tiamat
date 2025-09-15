@@ -26,7 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.compose.TiamatDestinationPreview
+import com.composegears.tiamat.compose.TiamatPreview
 import com.composegears.tiamat.compose.navController
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.compose.navigate
@@ -281,5 +281,5 @@ private data class HomeItem(
 @Preview
 @Composable
 private fun HomeScreenPreview() = AppTheme {
-    TiamatDestinationPreview(destination = HomeScreen)
+    TiamatPreview(destination = HomeScreen)
 }

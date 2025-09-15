@@ -171,5 +171,5 @@ private val AdvSharedElementTransitionScreen3 by navDestination {
 @Preview
 @Composable
 private fun AdvSharedElementTransitionPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvSharedElementTransition)
+    TiamatPreview(destination = AdvSharedElementTransition)
 }

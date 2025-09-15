@@ -102,5 +102,5 @@ private val NavForwardAndBackScreen3 by navDestination {
 @Preview
 @Composable
 private fun NavForwardAndBackPreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavForwardAndBack)
+    TiamatPreview(destination = NavForwardAndBack)
 }

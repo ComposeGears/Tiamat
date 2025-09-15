@@ -176,5 +176,5 @@ private val ArchSerializableDataScreen by navDestination<ArchSerializableDataCla
 @Preview
 @Composable
 private fun ArchSerializableDataPreview() = AppTheme {
-    TiamatDestinationPreview(destination = ArchSerializableData)
+    TiamatPreview(destination = ArchSerializableData)
 }

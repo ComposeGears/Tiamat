@@ -183,5 +183,5 @@ private val AdvTwoPaneDetails2 by navDestination<String> {
 @Preview
 @Composable
 private fun AdvTwoPanePreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvTwoPane)
+    TiamatPreview(destination = AdvTwoPane)
 }

@@ -139,5 +139,5 @@ private val NavCustomAnimationScreen2 by navDestination {
 @Preview
 @Composable
 private fun NavCustomAnimationPreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavCustomAnimation)
+    TiamatPreview(destination = NavCustomAnimation)
 }

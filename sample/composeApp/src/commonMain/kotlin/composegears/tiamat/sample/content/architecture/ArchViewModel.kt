@@ -197,5 +197,5 @@ private class ArchViewModelSaveableViewModel(
 @Preview
 @Composable
 private fun ArchViewModelPreview() = AppTheme {
-    TiamatDestinationPreview(destination = ArchViewModel)
+    TiamatPreview(destination = ArchViewModel)
 }

@@ -129,5 +129,5 @@ private data class SomeFreeArgsDataClass(val t: Int)
 @Preview
 @Composable
 private fun APRFreeArgsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = APRFreeArgs)
+    TiamatPreview(destination = APRFreeArgs)
 }

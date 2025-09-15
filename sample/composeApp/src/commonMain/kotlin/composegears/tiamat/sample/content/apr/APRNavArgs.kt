@@ -132,5 +132,5 @@ private val APRNavArgsScreen2 by navDestination<Int>(
 @Preview
 @Composable
 private fun APRNavArgsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = APRNavArgs)
+    TiamatPreview(destination = APRNavArgs)
 }

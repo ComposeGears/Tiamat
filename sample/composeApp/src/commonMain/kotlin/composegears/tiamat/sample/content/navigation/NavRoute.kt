@@ -152,5 +152,5 @@ private val NavRouteScreen3 by navDestination<String> {
 @Preview
 @Composable
 private fun NavRoutePreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavRoute)
+    TiamatPreview(destination = NavRoute)
 }

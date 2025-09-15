@@ -130,5 +130,5 @@ private val ArchCustomSaveStateScreen3 by navDestination {
 @Preview
 @Composable
 private fun ArchCustomSaveStatePreview() = AppTheme {
-    TiamatDestinationPreview(destination = ArchCustomSaveState)
+    TiamatPreview(destination = ArchCustomSaveState)
 }

@@ -186,5 +186,5 @@ private val AdvExtensionsScreen3 by navDestination(
 @Preview
 @Composable
 private fun AdvExtensionsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvExtensions)
+    TiamatPreview(destination = AdvExtensions)
 }

@@ -99,5 +99,5 @@ private val AdvDestinationsGraphScreen3 by navDestination {
 @Preview
 @Composable
 private fun AdvDestinationsGraphPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvDestinationsGraph)
+    TiamatPreview(destination = AdvDestinationsGraph)
 }

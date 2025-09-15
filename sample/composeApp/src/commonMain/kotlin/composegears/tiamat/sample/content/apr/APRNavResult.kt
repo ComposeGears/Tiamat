@@ -121,5 +121,5 @@ private data class SomeNavResultDataClass(val t: Int)
 @Preview
 @Composable
 private fun APRNavResultPreview() = AppTheme {
-    TiamatDestinationPreview(destination = APRNavResult)
+    TiamatPreview(destination = APRNavResult)
 }

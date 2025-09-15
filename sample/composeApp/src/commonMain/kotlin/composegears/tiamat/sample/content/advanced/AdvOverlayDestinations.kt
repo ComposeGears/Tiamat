@@ -182,5 +182,5 @@ private fun AdvOverlayContentButtons(
 @Preview
 @Composable
 private fun AdvOverlayDestinationsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvOverlayDestinations)
+    TiamatPreview(destination = AdvOverlayDestinations)
 }

@@ -23,7 +23,7 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @Preview
  * @Composable
  * private fun DemoScreenPreview() {
- *     TiamatDestinationPreview(destination = DemoScreen)
+ *     TiamatPreview(destination = DemoScreen)
  * }
  * ```
  *
@@ -41,7 +41,7 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @Preview
  * @Composable
  * private fun DemoScreenWithArgsPreview() {
- *     TiamatDestinationPreview(
+ *     TiamatPreview(
  *         destination = DemoScreenWithArgs,
  *         navArgs = SomeArgs(id = 123),
  *     )
@@ -51,7 +51,7 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @see NavDestination
  */
 @Composable
-public fun <T : Any> TiamatDestinationPreview(
+public fun <T : Any> TiamatPreview(
     destination: NavDestination<T>,
     navArgs: T? = null,
     freeArgs: Any? = null,

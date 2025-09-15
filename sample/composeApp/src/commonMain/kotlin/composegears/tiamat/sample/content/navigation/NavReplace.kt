@@ -108,5 +108,5 @@ private val NavReplaceScreen3 by navDestination {
 @Preview
 @Composable
 private fun NavReplacePreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavReplace)
+    TiamatPreview(destination = NavReplace)
 }

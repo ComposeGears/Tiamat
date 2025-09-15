@@ -233,5 +233,5 @@ private data class MenuItem(val icon: ImageVector, val title: String)
 @Preview
 @Composable
 private fun AdvAdaptiveListDetailsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = AdvAdaptiveListDetails)
+    TiamatPreview(destination = AdvAdaptiveListDetails)
 }

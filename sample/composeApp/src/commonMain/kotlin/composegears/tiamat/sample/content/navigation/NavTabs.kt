@@ -158,5 +158,5 @@ private val NavTabsSubTabScreen3 by navDestination {
 @Preview
 @Composable
 private fun NavTabsPreview() = AppTheme {
-    TiamatDestinationPreview(destination = NavTabs)
+    TiamatPreview(destination = NavTabs)
 }
