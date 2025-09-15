@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val ArchViewModel by navDestination(ScreenInfo()) {
     Screen("ViewModel") {
@@ -190,4 +192,10 @@ private class ArchViewModelSaveableViewModel(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun ArchViewModelPreview() = AppTheme {
+    TiamatPreview(destination = ArchViewModel)
 }

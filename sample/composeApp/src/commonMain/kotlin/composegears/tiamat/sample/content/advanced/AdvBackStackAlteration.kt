@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val AdvBackStackAlteration by navDestination(ScreenInfo()) {
     Screen("Back stack alteration") {
@@ -156,4 +158,10 @@ private val AdvBackStackAlterationScreenC by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun AdvBackStackAlterationPreview() = AppTheme {
+    TiamatPreview(destination = AdvBackStackAlteration)
 }

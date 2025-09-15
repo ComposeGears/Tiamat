@@ -9,28 +9,18 @@ import com.composegears.tiamat.compose.navigationPlatformDefault
 import com.composegears.tiamat.compose.rememberNavController
 import com.composegears.tiamat.navigation.NavController
 import composegears.tiamat.sample.content.HomeScreen
-import composegears.tiamat.sample.content.advanced.AdvAdaptiveListDetails
-import composegears.tiamat.sample.content.advanced.AdvBackStackAlteration
-import composegears.tiamat.sample.content.advanced.AdvDestinationsGraph
-import composegears.tiamat.sample.content.advanced.AdvExtensions
-import composegears.tiamat.sample.content.advanced.AdvOverlayDestinations
-import composegears.tiamat.sample.content.advanced.AdvSharedElementTransition
-import composegears.tiamat.sample.content.advanced.AdvTwoPane
+import composegears.tiamat.sample.content.advanced.*
 import composegears.tiamat.sample.content.apr.APRFreeArgs
 import composegears.tiamat.sample.content.apr.APRNavArgs
 import composegears.tiamat.sample.content.apr.APRNavResult
 import composegears.tiamat.sample.content.architecture.ArchCustomSaveState
 import composegears.tiamat.sample.content.architecture.ArchSerializableData
 import composegears.tiamat.sample.content.architecture.ArchViewModel
-import composegears.tiamat.sample.content.navigation.NavCustomAnimation
-import composegears.tiamat.sample.content.navigation.NavForwardAndBack
-import composegears.tiamat.sample.content.navigation.NavNested
-import composegears.tiamat.sample.content.navigation.NavReplace
-import composegears.tiamat.sample.content.navigation.NavRoute
-import composegears.tiamat.sample.content.navigation.NavTabs
+import composegears.tiamat.sample.content.navigation.*
 import composegears.tiamat.sample.platform.Platform
 import composegears.tiamat.sample.platform.features
 import composegears.tiamat.sample.ui.AppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Suppress("SpreadOperator")
@@ -78,4 +68,10 @@ fun App(
             overlay(rootNavController)
         }
     }
+}
+
+@Preview
+@Composable
+private fun AppPreview() {
+    App()
 }

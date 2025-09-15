@@ -19,6 +19,7 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.toHumanReadableString
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val ArchCustomSaveState by navDestination(ScreenInfo()) {
     Screen("Custom SaveState") {
@@ -124,4 +125,10 @@ private val ArchCustomSaveStateScreen3 by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ArchCustomSaveStatePreview() = AppTheme {
+    TiamatPreview(destination = ArchCustomSaveState)
 }

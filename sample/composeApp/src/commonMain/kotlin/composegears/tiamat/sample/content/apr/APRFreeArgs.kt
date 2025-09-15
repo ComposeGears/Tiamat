@@ -9,16 +9,19 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.AppButton
+import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
 import composegears.tiamat.sample.ui.VSpacer
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val APRFreeArgs by navDestination(ScreenInfo()) {
     Screen("FreeArgs") {
@@ -122,3 +125,9 @@ private val APRFreeArgsScreen2 by navDestination {
 
 @Serializable
 private data class SomeFreeArgsDataClass(val t: Int)
+
+@Preview
+@Composable
+private fun APRFreeArgsPreview() = AppTheme {
+    TiamatPreview(destination = APRFreeArgs)
+}

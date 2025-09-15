@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val NavTabs by navDestination(ScreenInfo()) {
     Screen("Tabs navigation") {
@@ -152,4 +153,10 @@ private val NavTabsSubTabScreen3 by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun NavTabsPreview() = AppTheme {
+    TiamatPreview(destination = NavTabs)
 }

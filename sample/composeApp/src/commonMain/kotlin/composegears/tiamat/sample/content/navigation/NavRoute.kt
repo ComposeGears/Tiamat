@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(TiamatExperimentalApi::class)
 val NavRoute by navDestination(ScreenInfo()) {
@@ -145,4 +147,10 @@ private val NavRouteScreen3 by navDestination<String> {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun NavRoutePreview() = AppTheme {
+    TiamatPreview(destination = NavRoute)
 }

@@ -52,6 +52,7 @@ kotlin {
             implementation(projects.tiamat)
             implementation(projects.tiamatDestinations.tiamatDestinations)
 
+            implementation(compose.components.uiToolingPreview)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
@@ -61,6 +62,8 @@ kotlin {
             implementation(libs.kotlin.serialization.core)
         }
         androidMain.dependencies {
+            implementation(compose.preview)
+
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.androidx.camera.camera2)
@@ -71,6 +74,10 @@ kotlin {
             implementation(compose.desktop.currentOs)
         }
     }
+}
+
+dependencies {
+    debugImplementation(compose.uiTooling)
 }
 
 android {

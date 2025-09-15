@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val NavNested by navDestination(ScreenInfo()) {
     Screen("Nested navigation") {
@@ -130,4 +131,10 @@ private val NavNestedScreen3 by navDestination {
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun NavNestedPreview() = AppTheme {
+    TiamatPreview(destination = NavNested)
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.compose.TiamatPreview
 import com.composegears.tiamat.compose.navController
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.compose.navigate
@@ -42,6 +43,7 @@ import composegears.tiamat.sample.platform.Platform
 import composegears.tiamat.sample.platform.features
 import composegears.tiamat.sample.platform.name
 import composegears.tiamat.sample.ui.*
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val HomeItems =
     listOf(
@@ -275,3 +277,9 @@ private data class HomeItem(
     val title: String,
     val items: List<AppFeature>
 )
+
+@Preview
+@Composable
+private fun HomeScreenPreview() = AppTheme {
+    TiamatPreview(destination = HomeScreen)
+}

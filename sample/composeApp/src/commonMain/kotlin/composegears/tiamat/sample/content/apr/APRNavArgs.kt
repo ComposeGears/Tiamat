@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
 import composegears.tiamat.sample.ui.AppButton
+import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
 import composegears.tiamat.sample.ui.VSpacer
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
 val APRNavArgs by navDestination(ScreenInfo("NavArgs")) {
@@ -124,4 +127,10 @@ private val APRNavArgsScreen2 by navDestination<Int>(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun APRNavArgsPreview() = AppTheme {
+    TiamatPreview(destination = APRNavArgs)
 }
