@@ -1,0 +1,21 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.composegears:tiamat-destinations>
+open annotation class com.composegears.tiamat.destinations/InstallIn : kotlin/Annotation { // com.composegears.tiamat.destinations/InstallIn|null[0]
+    constructor <init>(kotlin.reflect/KClass<out com.composegears.tiamat.destinations/TiamatGraph>) // com.composegears.tiamat.destinations/InstallIn.<init>|<init>(kotlin.reflect.KClass<out|com.composegears.tiamat.destinations.TiamatGraph>){}[0]
+
+    final val obj // com.composegears.tiamat.destinations/InstallIn.obj|{}obj[0]
+        final fun <get-obj>(): kotlin.reflect/KClass<out com.composegears.tiamat.destinations/TiamatGraph> // com.composegears.tiamat.destinations/InstallIn.obj.<get-obj>|<get-obj>(){}[0]
+}
+
+abstract interface com.composegears.tiamat.destinations/TiamatGraph { // com.composegears.tiamat.destinations/TiamatGraph|null[0]
+    open fun destinations(): kotlin/Array<com.composegears.tiamat.navigation/NavDestination<*>> // com.composegears.tiamat.destinations/TiamatGraph.destinations|destinations(){}[0]
+    open fun plus(com.composegears.tiamat.destinations/TiamatGraph): com.composegears.tiamat.destinations/TiamatGraph // com.composegears.tiamat.destinations/TiamatGraph.plus|plus(com.composegears.tiamat.destinations.TiamatGraph){}[0]
+}
+
+final fun com.composegears.tiamat.compose/Navigation(com.composegears.tiamat.navigation/NavController, com.composegears.tiamat.destinations/TiamatGraph, androidx.compose.ui/Modifier?, kotlin/Boolean, kotlin/Function1<kotlin/Boolean, androidx.compose.animation/ContentTransform>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // com.composegears.tiamat.compose/Navigation|Navigation(com.composegears.tiamat.navigation.NavController;com.composegears.tiamat.destinations.TiamatGraph;androidx.compose.ui.Modifier?;kotlin.Boolean;kotlin.Function1<kotlin.Boolean,androidx.compose.animation.ContentTransform>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]

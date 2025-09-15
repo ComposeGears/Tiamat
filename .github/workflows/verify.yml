@@ -40,7 +40,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Check public API changes
-        run: ./gradlew apiCheck
+        run: ./gradlew checkLegacyAbi :tiamat-destinations-gradle-plugin:checkLegacyAbi :tiamat-destinations-compiler:checkLegacyAbi
 
       - name: Execute Gradle build
         run: ./gradlew detekt

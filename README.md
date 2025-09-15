@@ -504,9 +504,9 @@ iOS: run XCode project or else use [KMP plugin](https://plugins.jetbrains.com/pl
 
 other commands:
 
-- dumps public API: `./gradlew apiDump`
+- dump public API: `./gradlew updateLegacyAbi :tiamat-destinations-gradle-plugin:updateLegacyAbi :tiamat-destinations-compiler:updateLegacyAbi`
 
-- check API changes: `./gradlew apiCheck`
+- check API changes: `./gradlew checkLegacyAbi :tiamat-destinations-gradle-plugin:checkLegacyAbi :tiamat-destinations-compiler:checkLegacyAbi`
 
 - kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
 

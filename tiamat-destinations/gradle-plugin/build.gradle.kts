@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+
 plugins {
     id("java-gradle-plugin")
     alias(libs.plugins.kotlin.jvm)
@@ -7,6 +9,13 @@ plugins {
 
 version = tiamat.versions.tiamat.get()
 group = "io.github.composegears"
+
+kotlin {
+    @OptIn(ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+}
 
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin.api)
