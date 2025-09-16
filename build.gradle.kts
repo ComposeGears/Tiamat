@@ -46,6 +46,20 @@ allprojects {
     }
 }
 
+// check ABI
+tasks.register("checkAbi") {
+    dependsOn(":tiamat:checkLegacyAbi")
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":checkLegacyAbi"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":checkLegacyAbi"))
+}
+
+// update ABI
+tasks.register("updateAbi") {
+    dependsOn(":tiamat:updateLegacyAbi")
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
+}
+
 // root `clean` task not include subprojects by default, so add them directly
 rootProject.tasks["clean"].apply {
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":clean"))
