@@ -52,7 +52,7 @@ jobs:
         run: ./gradlew sample:composeApp:assembleDebug
 
       - name: Build Jvm target
-        run: ./gradlew sample:composeApp:package
+        run: ./gradlew sample:composeApp:packageDistributionForCurrentOS
 
       - name: Build Web target
         run: ./gradlew sample:composeApp:wasmJsBrowserDistribution
