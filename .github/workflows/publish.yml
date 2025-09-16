@@ -33,17 +33,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: m2
-          path: build/m2/io
+          path: build/m2
           if-no-files-found: error
 
       - name: Create zip file for release
         run: |
-          cd build
-          zip -r m2.zip m2/
+          cd build/m2
+          zip -r m2.zip .
 
       - name: Create draft release
         run: |
-          gh release create "${{ env.RELEASE_TAG_NAME }}" build/m2.zip \
+          gh release create "${{ env.RELEASE_TAG_NAME }}" build/m2/m2.zip \
             --title "Tiamat ${{ env.TIAMAT_VERSION }}" \
             --generate-notes \
             --draft
