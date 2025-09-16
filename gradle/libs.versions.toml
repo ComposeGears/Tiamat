@@ -8,7 +8,7 @@ sample-targetSdk = "36"
 camerax = "1.5.0"
 detekt = "1.23.8"
 jetbrains-compose = "1.8.2"
-lifecycle = "2.9.3"
+lifecycle = "2.9.4"
 kotlin = "2.2.20"
 
 [libraries]
