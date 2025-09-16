@@ -26,7 +26,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 val AdvTwoPane by navDestination(ScreenInfo()) {
-    Screen("SharedElementTransition") {
+    Screen("Two pane") {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             val nc = rememberNavController(
                 key = "TwoPane nav controller",

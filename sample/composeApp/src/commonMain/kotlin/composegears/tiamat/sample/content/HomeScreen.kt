@@ -152,7 +152,7 @@ private val HomeItems =
                     destination = AdvDestinationsGraph
                 ),
                 AppFeature(
-                    name = "Two pane example",
+                    name = "Two pane",
                     description = "Example shows how to display two pane UI (list + details)",
                     destination = AdvTwoPane
                 ),
