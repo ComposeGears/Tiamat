@@ -4,7 +4,6 @@ plugins {
     base // expose `clear` task, so we can modify it
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
-    alias(libs.plugins.binary.compatibility)
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.compose.hot.reload) apply false
     alias(libs.plugins.jetbrains.compose) apply false
@@ -12,11 +11,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.m2p) apply false
-}
-
-apiValidation {
-    val apiValidationProjects = listOf("tiamat", "tiamat-destinations")
-    ignoredProjects += allprojects.map { it.name } - apiValidationProjects
 }
 
 detekt {
@@ -50,6 +44,20 @@ allprojects {
         detektPlugins(rootProject.project.libs.detekt.compose)
         detektPlugins(rootProject.project.libs.detekt.formatting)
     }
+}
+
+// check ABI
+tasks.register("checkAbi") {
+    dependsOn(":tiamat:checkLegacyAbi")
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":checkLegacyAbi"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":checkLegacyAbi"))
+}
+
+// update ABI
+tasks.register("updateAbi") {
+    dependsOn(":tiamat:updateLegacyAbi")
+    dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
+    dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
 }
 
 // root `clean` task not include subprojects by default, so add them directly

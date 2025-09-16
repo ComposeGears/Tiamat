@@ -25,6 +25,13 @@ jobs:
           fail_on_error: true
           filter_mode: nofilter
           fail_level: any
+  verify-abi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Check ABI
+        run: ./gradlew checkAbi
 
   verify-android-jvm-wasm:
     runs-on: ubuntu-latest
@@ -38,9 +45,6 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v4
-
-      - name: Check public API changes
-        run: ./gradlew apiCheck
 
       - name: Execute Gradle build
         run: ./gradlew detekt

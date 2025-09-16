@@ -504,10 +504,10 @@ iOS: run XCode project or else use [KMP plugin](https://plugins.jetbrains.com/pl
 
 other commands:
 
-- dumps public API: `./gradlew apiDump`
+- check ABI: `./gradlew checkAbi`
 
-- check API changes: `./gradlew apiCheck`
-
+- update ABI: `./gradlew updateAbi`
+- 
 - kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
 
 - run detekt checks: `./gradlew detekt`
