@@ -508,7 +508,9 @@ other commands:
 
 - update ABI: `./gradlew updateAbi`
 - 
-- kover html report: `./gradlew :tiamat:koverHtmlReportJvm`
+- kover html report: `./gradlew :tiamat:koverHtmlReport`
+- 
+- print test coverage: `./gradlew :tiamat:koverLog`
 
 - run detekt checks: `./gradlew detekt`
 
