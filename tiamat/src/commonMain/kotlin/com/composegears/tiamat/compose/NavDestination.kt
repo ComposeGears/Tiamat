@@ -1,53 +1,55 @@
 package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import com.composegears.tiamat.navigation.NavDestination
+import com.composegears.tiamat.navigation.NavEntry
 import kotlin.jvm.JvmName
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+
 /**
- * A navigation destination with Compose UI implementation.
+ * Scope for composable content within a navigation destination.
+ *
+ * Provides access to the current navigation entry.
  *
  * @param Args The type of arguments this destination accepts
  */
-public abstract class ComposeNavDestination<Args : Any> internal constructor(
+@Stable
+public class NavDestinationScope<Args : Any> internal constructor(
+    /**
+     * The current navigation entry.
+     */
+    @PublishedApi
+    internal val navEntry: NavEntry<Args>,
+)
+
+/**
+ * A navigation destination with Compose UI implementation.
+ */
+public class ComposeNavDestination<Args : Any> internal constructor(
     name: String,
     argsType: KType,
     /**
      * List of extensions attached to this destination.
      */
-    public val extensions: List<NavExtension<Args>>
+    public val extensions: List<NavExtension<Args>>,
+    /**
+     * Composable function defining the content of this destination.
+     */
+    private val content: @Composable NavDestinationScope<Args>.() -> Unit
 ) : NavDestination<Args>(
     name = name,
     argsType = argsType
 ) {
-
     /**
      * The UI content of this destination.
      */
     @Composable
-    public abstract fun NavDestinationScope<Args>.Content()
-}
-
-/**
- * Internal simple ComposeNavDestination impl.
- */
-internal open class NavDestinationImpl<Args : Any>(
-    name: String,
-    argsType: KType,
-    extensions: List<NavExtension<Args>>,
-    private val content: @Composable NavDestinationScope<Args>.() -> Unit
-) : ComposeNavDestination<Args>(
-    name = name,
-    argsType = argsType,
-    extensions = extensions
-) {
-
-    @Composable
-    override fun NavDestinationScope<Args>.Content() {
+    internal fun NavDestinationScope<Args>.Content() {
         content()
     }
 }
@@ -68,7 +70,7 @@ public class NavDestinationInstanceDelegate<Args : Any>(
     private var destination: ComposeNavDestination<Args>? = null
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): ComposeNavDestination<Args> {
-        if (destination == null) destination = NavDestinationImpl(
+        if (destination == null) destination = ComposeNavDestination(
             name = property.name,
             argsType = argsType,
             extensions = extensions,
@@ -77,21 +79,6 @@ public class NavDestinationInstanceDelegate<Args : Any>(
         return destination!!
     }
 }
-
-/**
- * Creates a ComposeNavDestination instance.
- *
- * @param name The name of the NavDestination
- * @param extensions Optional extensions for the NavDestination
- * @param content The content of the NavDestination
- * @return A ComposeNavDestination instance
- */
-public fun <Args : Any> buildNavDestination(
-    name: String,
-    argsType: KType,
-    extensions: List<NavExtension<Args>> = emptyList(),
-    content: @Composable NavDestinationScope<Args>.() -> Unit
-): ComposeNavDestination<Args> = NavDestinationImpl(name, argsType, extensions, content)
 
 /**
  * Creates a NavDestinationInstanceDelegate for use with property delegation.

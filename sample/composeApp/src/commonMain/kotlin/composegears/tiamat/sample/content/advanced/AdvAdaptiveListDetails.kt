@@ -89,10 +89,17 @@ val AdvAdaptiveListDetails by navDestination {
                                     EntryContent(it)
                                 }
                             } else Row(Modifier.fillMaxSize()) {
-                                // as for Medium & Expanded - draw in 2 panes
-                                val backstack by nc.currentBackStackFlow.collectAsState()
-                                val listEntry = remember(current) { backstack.firstOrNull() ?: current }
-                                val itemEntry = remember(current) { current?.takeIf { backstack.isNotEmpty() } }
+                                val navStack by nc.navStackAsState()
+                                val listEntry by remember(navStack) {
+                                    derivedStateOf {
+                                        navStack.firstOrNull()
+                                    }
+                                }
+                                val itemEntry by remember(navStack) {
+                                    derivedStateOf {
+                                        navStack.lastOrNull().takeIf { it != listEntry }
+                                    }
+                                }
                                 // draw list
                                 Box(Modifier.width(300.dp).fillMaxHeight()) {
                                     EntryContent(listEntry)

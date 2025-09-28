@@ -11,14 +11,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavEntry
@@ -38,14 +34,19 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
                 saveable = true,
             )
 
-        val current by navController.currentNavEntryAsState()
-        val backstack by navController.currentBackStackFlow.collectAsStateWithLifecycle()
-        val state by navController.currentTransitionFlow.collectAsStateWithLifecycle()
+        val stack by navController.navStackAsState()
 
         // remap entries to content + overlay
-        val stack = remember(current, backstack) { backstack.toMutableList() + listOfNotNull(current) }
-        val content = remember(stack) { stack.lastOrNull { !it.isOverlay() } }
-        val overlays = remember(stack) { stack.takeLastWhile { it.isOverlay() } }
+        val content by remember(stack) {
+            derivedStateOf {
+                stack.lastOrNull { !it.isOverlay() }
+            }
+        }
+        val overlays by remember(stack) {
+            derivedStateOf {
+                stack.takeLastWhile { it.isOverlay() }
+            }
+        }
 
         NavigationScene(
             navController = navController,
@@ -59,7 +60,9 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
             AnimatedContent(
                 targetState = content,
                 contentKey = { it?.contentKey() },
-                transitionSpec = { navigationSlideInOut(state?.isForward ?: true) },
+                transitionSpec = {
+                    navigationSlideInOut(navController.navStateFlow.value.transitionType == NavController.TransitionType.Forward)
+                },
             ) {
                 CompositionLocalProvider(
                     LocalNavAnimatedVisibilityScope provides this,
@@ -87,10 +90,8 @@ class OverlayDestinationExtension<T : Any> : NavExtension<T> {
 private val AdvOverlayScreen by navDestination<Unit> {
     val navController = navController()
 
-    val current by navController.currentNavEntryAsState()
-    val backstack by navController.currentBackStackFlow.collectAsStateWithLifecycle()
-    val canGoBack = remember { backstack.isNotEmpty() }
-    val stack = remember(current, backstack) { backstack.toMutableList() + listOfNotNull(current) }
+    val stack by navController.navStackAsState()
+    val canGoBack = stack.size > 1
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

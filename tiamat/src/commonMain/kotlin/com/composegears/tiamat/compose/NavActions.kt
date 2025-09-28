@@ -2,9 +2,11 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.animation.ContentTransform
 import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavController.TransitionType
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import com.composegears.tiamat.navigation.NavEntry
+
 
 // ------------ Navigate -----------------------------------------------------------------------------------------------
 
@@ -162,3 +164,29 @@ public fun NavController.back(
         transitionController = transitionController
     )
 )
+
+// ------------ Edit nav stack -----------------------------------------------------------------------------------------
+
+/**
+ * Edits the navigation stack using the provided editor.
+ *
+ * @param transition Optional content transform animation for the transition
+ * @param transitionController Optional controller for managing the transition programmatically
+ * @param transitionType The type of transition
+ * @param editor A function that takes the current nav stack and returns a new nav stack
+ */
+public fun NavController.editNavStack(
+    transition: ContentTransform? = null,
+    transitionController: TransitionController? = null,
+    transitionType: TransitionType = TransitionType.Forward,
+    editor: (List<NavEntry<*>>) -> List<NavEntry<*>>
+) {
+    editNavStack(
+        transitionData = TransitionData(
+            contentTransform = transition,
+            transitionController = transitionController
+        ),
+        transitionType = transitionType,
+        editor = editor
+    )
+}

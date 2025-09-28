@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * Controls navigation between screens in an application.
  *
- * The NavController manages a back stack of destinations that represent the
+ * The NavController manages a nav stack of destinations that represent the
  * navigation history. It provides methods to navigate between destinations,
- * handle back navigation, and manage the back stack.
+ * handle back navigation, and manage the nav stack.
  *
  * @property key An optional identifier for this NavController
  * @property saveable Whether this NavController's state should be saved and restored
@@ -26,8 +26,7 @@ public class NavController internal constructor(
 
         private const val KEY_KEY = "key"
         private const val KEY_SAVEABLE = "saveable"
-        private const val KEY_CURRENT = "current"
-        private const val KEY_BACK_STACK = "backStack"
+        private const val KEY_NAV_STACK = "navStack"
 
         public fun create(
             key: String? = null,
@@ -66,17 +65,12 @@ public class NavController internal constructor(
                 key = savedState[KEY_KEY] as? String,
                 saveable = savedState[KEY_SAVEABLE] as Boolean
             )
-            val current = (savedState[KEY_CURRENT] as? SavedState)
-                ?.let { NavEntry.restoreFromSavedState(navController, it) }
-            val backStackItems = savedState[KEY_BACK_STACK] as? List<SavedState>
-            val backStack = backStackItems?.map { item ->
+            val navStackItems = savedState[KEY_NAV_STACK] as? List<SavedState>
+            val navStack = navStackItems?.map { item ->
                 NavEntry.restoreFromSavedState(navController, item)
             }
-            if (backStack != null && backStack.isNotEmpty()) {
-                navController.editBackStack { backStack.onEach { add(it) } }
-            }
-            if (current != null) {
-                navController.navigate(current)
+            if (navStack != null && navStack.isNotEmpty()) {
+                navController.editNavStack(null, TransitionType.Instant) { _ -> navStack }
             }
             navController.parent = parent
             return navController
@@ -85,8 +79,13 @@ public class NavController internal constructor(
 
     // ----------- internal properties ---------------------------------------------------------------------------------
 
-    private var internalCurrentTransitionFlow: MutableStateFlow<Transition?> = MutableStateFlow(null)
-    private var internalCurrentBackStackFlow: MutableStateFlow<List<NavEntry<*>>> = MutableStateFlow(emptyList())
+    private var internalNavStateFlow: MutableStateFlow<NavState> = MutableStateFlow(
+        NavState(
+            transitionData = null,
+            transitionType = TransitionType.Instant,
+            stack = emptyList()
+        )
+    )
     private var onNavigationListener: OnNavigationListener? = null
 
     // ----------- public properties -----------------------------------------------------------------------------------
@@ -103,16 +102,10 @@ public class NavController internal constructor(
         private set
 
     /**
-     * Flow of the current navigation transition.
-     * Emits a new value when navigation occurs.
+     * Flow of the current navigation state.
+     * Emits a new value when navigation occurs or the stack is changed.
      */
-    public val currentTransitionFlow: StateFlow<Transition?> = internalCurrentTransitionFlow
-
-    /**
-     * Flow of the current back stack.
-     * Emits a new value when the back stack changes.
-     */
-    public val currentBackStackFlow: StateFlow<List<NavEntry<*>>> = internalCurrentBackStackFlow
+    public val navStateFlow: StateFlow<NavState> = internalNavStateFlow
 
     // ----------- public methods --------------------------------------------------------------------------------------
 
@@ -124,8 +117,7 @@ public class NavController internal constructor(
     public fun saveToSavedState(): SavedState = SavedState(
         KEY_KEY to key,
         KEY_SAVEABLE to saveable,
-        KEY_CURRENT to getCurrentNavEntry()?.saveToSavedState(),
-        KEY_BACK_STACK to getBackStack().map { it.saveToSavedState() }
+        KEY_NAV_STACK to getNavStack().map { it.saveToSavedState() }
     )
 
     /**
@@ -153,42 +145,62 @@ public class NavController internal constructor(
     }
 
     /**
-     * Gets the current navigation entry.
+     * Gets the current(last) navigation entry.
      *
      * @return The current navigation entry, or null if there is none
      */
-    public fun getCurrentNavEntry(): NavEntry<*>? = currentTransitionFlow.value?.targetEntry
+    public fun getCurrentNavEntry(): NavEntry<*>? = internalNavStateFlow.value.stack.lastOrNull()
 
     /**
-     * Gets the current back stack.
+     * Gets the entire navigation stack.
      *
-     * @return A list of the navigation entries in the back stack
+     * @return A list of the navigation entries in the stack
      */
-    public fun getBackStack(): List<NavEntry<*>> = internalCurrentBackStackFlow.value
+    public fun getNavStack(): List<NavEntry<*>> = internalNavStateFlow.value.stack
 
     /**
-     * Checks if the NavController can navigate back.
+     * Checks if it is possible to navigate back.
      *
-     * @return True if the back stack is not empty, false otherwise
+     * @return `true` if the nav stack contains an entry to back to, `false` otherwise.
      */
-    public fun hasBackEntries(): Boolean = getBackStack().isNotEmpty()
+    // todo Naming: isBackPossible, hasBackStack, hasBackEntries ...
+    public fun canGoBack(): Boolean = getNavStack().size > 1
 
-    /**
-     * Edits the back stack using the provided actions.
-     *
-     * @param actions The actions to perform on the back stack
-     */
-    public fun editBackStack(actions: BackStackEditScope.() -> Unit) {
-        BackStackEditScope(getBackStack())
-            .apply(actions)
-            .let { updateBackStackInternal(it.backStack) }
-    }
 
     // ----------- navigation methods ----------------------------------------------------------------------------------
 
     /**
+     * Edits the navigation stack using the provided editor.
+     *
+     * @param transitionData Optional data to customize the transition data
+     * @param transitionType The type of transition
+     * @param editor A function that takes the current nav stack and returns a new nav stack
+     */
+    internal fun editNavStack(
+        transitionData: Any?,
+        transitionType: TransitionType,
+        editor: (List<NavEntry<*>>) -> List<NavEntry<*>>
+    ) {
+        val oldStack = getNavStack().toMutableList()
+        val newStack = editor(oldStack)
+        if (newStack != oldStack) {
+            newStack.onEach { entry ->
+                val index = oldStack.indexOf(entry)
+                if (index >= 0) oldStack.removeAt(index) // old item - do nothing
+                else entry.ensureDetachedAndAttach() // new item - attach
+            }
+            oldStack.onEach { it.detachFromNavController() } // removed items - detach
+            updateNavState(
+                transitionData = transitionData,
+                transitionType = transitionType,
+                stack = newStack
+            )
+        }
+    }
+
+    /**
      * Navigates to a new destination.
-     * The current destination is added to the back stack.
+     * The current destination is added to the nav stack.
      *
      * @param entry The navigation entry to navigate to
      * @param transitionData Optional data to customize the transition animation
@@ -198,19 +210,16 @@ public class NavController internal constructor(
         transitionData: Any? = null,
     ) {
         entry.ensureDetachedAndAttach()
-        val currentNavEntry = getCurrentNavEntry()
-        currentNavEntry?.let { editBackStack { addWithoutAttach(it) } }
-        updateCurrentNavEntryInternal(
-            from = currentNavEntry,
-            to = entry,
-            isForward = true,
-            transitionData = transitionData
+        updateNavState(
+            transitionData = transitionData,
+            transitionType = TransitionType.Forward,
+            stack = getNavStack() + entry
         )
     }
 
     /**
      * Replaces the current destination with a new one.
-     * The current destination is not added to the back stack.
+     * The current destination is not added to the nav stack.
      *
      * @param entry The navigation entry to replace with
      * @param transitionData Optional data to customize the transition animation
@@ -219,23 +228,25 @@ public class NavController internal constructor(
         entry: NavEntry<Args>,
         transitionData: Any? = null,
     ) {
+        val navStack = getNavStack()
+        navStack.lastOrNull()?.detachFromNavController()
         entry.ensureDetachedAndAttach()
-        val currentNavEntry = getCurrentNavEntry()
-        currentNavEntry?.detachFromNavController()
-        updateCurrentNavEntryInternal(
-            from = currentNavEntry,
-            to = entry,
-            isForward = true,
-            transitionData = transitionData
+        updateNavState(
+            transitionData = transitionData,
+            transitionType = TransitionType.Forward,
+            stack = navStack.toMutableList().apply {
+                removeLastOrNull()
+                add(entry)
+            }
         )
     }
 
     /**
-     * Pops the back stack to an existing destination, or navigates to it if not in the back stack.
+     * Pops the nav stack to an existing destination.
      *
      * @param dest The destination to pop to
      * @param transitionData Optional data to customize the transition animation
-     * @param orElse Action to perform if the destination is not found in the back stack
+     * @param orElse Action to perform if the destination is not found in the nav stack, defaults to navigating to it
      */
     internal fun <Args : Any> popToTop(
         dest: NavDestination<Args>,
@@ -244,20 +255,15 @@ public class NavController internal constructor(
             navigate(dest.toNavEntry(), transitionData)
         }
     ) {
-        val existingEntry = getBackStack().firstOrNull { it.destination == dest }
-        if (existingEntry != null) {
-            val currentNavEntry = getCurrentNavEntry()
-            editBackStack {
-                removeWithoutDetach(existingEntry)
-                currentNavEntry?.let { addWithoutAttach(it) }
+        val navStack = getNavStack()
+        val entryIndex = navStack.indexOfLast { it.destination == dest }
+        if (entryIndex >= 0) updateNavState(
+            transitionData = transitionData,
+            transitionType = TransitionType.Forward,
+            stack = navStack.toMutableList().apply {
+                add(removeAt(entryIndex))
             }
-            updateCurrentNavEntryInternal(
-                from = currentNavEntry,
-                to = existingEntry,
-                isForward = true,
-                transitionData = transitionData
-            )
-        } else orElse()
+        ) else orElse()
     }
 
     /**
@@ -267,7 +273,7 @@ public class NavController internal constructor(
      * @param result Optional result to pass to the destination
      * @param inclusive Whether to include the destination in the back operation
      * @param recursive Whether to recursively navigate back if current back operation impossible
-     * @param transitionData Optional data to customize the transition animation
+     * @param transitionData Optional data to customize the transition
      * @return True if back navigation was handled, false otherwise
      */
     internal fun back(
@@ -277,23 +283,24 @@ public class NavController internal constructor(
         recursive: Boolean = true,
         transitionData: Any? = null,
     ): Boolean {
-        val backStack = getBackStack()
+        val navStack = getNavStack()
         val targetIndex =
-            if (to != null) backStack
+            if (to != null) navStack
+                .dropLast(1)
                 .indexOfLast { it.destination == to }
                 .let { if (inclusive) it - 1 else it }
-            else backStack.size - 1
+            else navStack.lastIndex - 1
         return when {
             targetIndex >= 0 -> {
-                val currentNavEntry = getCurrentNavEntry()
-                val targetNavEntry = backStack[targetIndex]
-                targetNavEntry.setNavResult(result)
-                currentNavEntry?.detachFromNavController()
-                editBackStack {
-                    while (this.backStack.lastIndex != targetIndex) removeLast()
-                    removeWithoutDetach(targetNavEntry)
+                navStack[targetIndex].setNavResult(result)
+                for (i in targetIndex + 1..navStack.lastIndex) {
+                    navStack[i].detachFromNavController()
                 }
-                updateCurrentNavEntryInternal(currentNavEntry, targetNavEntry, false, transitionData)
+                updateNavState(
+                    transitionData = transitionData,
+                    transitionType = TransitionType.Backward,
+                    stack = navStack.subList(0, targetIndex + 1)
+                )
                 true
             }
             recursive ->
@@ -336,7 +343,7 @@ public class NavController internal constructor(
             when (element) {
                 is NavEntry<*> -> element
                 is NavDestination<*> -> element.toNavEntry()
-                is Route.Destination -> UnresolvedDestination(element.name).toNavEntry()
+                is Route.Destination -> NavDestination.Unresolved(element.name).toNavEntry()
                 is Route.NavController -> null
             }?.also { entry: NavEntry<*> ->
                 elements.removeAt(0)
@@ -345,22 +352,17 @@ public class NavController internal constructor(
         } while (elements.isNotEmpty())
 
         if (pendingStack.isEmpty()) error("Route: no start entry for NavController:$key")
-        val pendingCurrentEntry = pendingStack.removeAt(pendingStack.lastIndex)
         // run route for nested NavController
         if (elements.isNotEmpty()) elements
             .removeAt(0)
             .let {
                 val ncData = it as Route.NavController
                 val nc = create(ncData.key, ncData.saveable ?: saveable, this)
-                pendingCurrentEntry.navControllerStore.add(nc)
+                pendingStack.last().navControllerStore.add(nc)
                 nc.route(Route(elements))
             }
         // apply pending stack
-        editBackStack {
-            clear()
-            pendingStack.forEach { add(it) }
-        }
-        replace(pendingCurrentEntry)
+        editNavStack(null, TransitionType.Forward) { _ -> pendingStack }
     }
 
     // ----------- internal helpers methods ------------------------------------------------------------------------------------
@@ -368,38 +370,37 @@ public class NavController internal constructor(
     internal fun resolveNavDestinations(
         destinationResolver: (name: String) -> NavDestination<*>?,
     ) {
-        val current = getCurrentNavEntry()
-        if (current != null && !current.isResolved) current.resolveDestination(destinationResolver)
-        getBackStack().onEach {
-            if (!it.isResolved) it.resolveDestination(destinationResolver)
+        getNavStack().onEach {
+            if (!it.isResolved)
+                it.resolveDestination(destinationResolver)
         }
     }
 
-    private fun updateCurrentNavEntryInternal(
-        from: NavEntry<*>?,
-        to: NavEntry<*>?,
-        isForward: Boolean,
-        transitionData: Any?
+    private fun updateNavState(
+        transitionData: Any?,
+        transitionType: TransitionType,
+        stack: List<NavEntry<*>>
     ) {
-        internalCurrentTransitionFlow.tryEmit(
-            Transition(
-                targetEntry = to,
+        val currentNavEntry = getCurrentNavEntry()
+        internalNavStateFlow.tryEmit(
+            NavState(
                 transitionData = transitionData,
-                isForward = isForward
+                transitionType = transitionType,
+                stack = stack
             )
         )
-        onNavigationListener?.onNavigate(from, to, isForward)
-    }
-
-    private fun updateBackStackInternal(newBackStack: List<NavEntry<*>>) {
-        internalCurrentBackStackFlow.tryEmit(newBackStack)
+        onNavigationListener?.onNavigate(currentNavEntry, stack.lastOrNull(), transitionType)
     }
 
     internal fun close() {
-        getCurrentNavEntry()?.detachFromNavController()
-        internalCurrentTransitionFlow.tryEmit(null)
-        getBackStack().onEach { it.detachFromNavController() }
-        updateBackStackInternal(emptyList())
+        getNavStack().onEach { it.detachFromNavController() }
+        internalNavStateFlow.tryEmit(
+            NavState(
+                transitionData = null,
+                transitionType = TransitionType.Instant,
+                stack = emptyList()
+            )
+        )
     }
 
     // ----------- other -----------------------------------------------------------------------------------------------
@@ -410,198 +411,23 @@ public class NavController internal constructor(
 
     // ----------- support classes -------------------------------------------------------------------------------------
 
-    /**
-     * Represents a transition between navigation entries.
-     *
-     * @property targetEntry The navigation entry being navigated to
-     * @property transitionData Optional data to customize the transition
-     * @property isForward Whether the transition is moving forward (true) or backward (false) in the navigation stack
-     */
-    public data class Transition(
-        val targetEntry: NavEntry<*>?,
-        val transitionData: Any?,
-        val isForward: Boolean,
-    )
-
-    /**
-     * Scope for editing the back stack.
-     */
-    public class BackStackEditScope internal constructor(
-        initialBackStack: List<NavEntry<*>>
-    ) {
-
-        private val internalEditableBackStack = initialBackStack.toMutableList()
-
-        /**
-         * The current back stack.
-         */
-        public val backStack: List<NavEntry<*>> = internalEditableBackStack
-
-        // used internally to add current entry into backstack
-        internal fun addWithoutAttach(entry: NavEntry<*>) {
-            internalEditableBackStack.add(entry)
-        }
-
-        // used internally to remove entry from backstack in order to make it current
-        internal fun removeWithoutDetach(entry: NavEntry<*>) {
-            internalEditableBackStack.remove(entry)
-        }
-
-        /**
-         * Adds a navigation entry to the back stack.
-         *
-         * @param entry The navigation entry to add.
-         */
-        public fun <Args : Any> add(
-            entry: NavEntry<Args>,
-        ) {
-            entry.ensureDetachedAndAttach()
-            internalEditableBackStack.add(entry)
-        }
-
-        /**
-         * Adds a destination to the back stack.
-         *
-         * @param dest The destination to add.
-         * @param navArgs The navigation navArgs.
-         * @param freeArgs The navigation freeArgs.
-         */
-        public fun <Args : Any> add(
-            dest: NavDestination<Args>,
-            navArgs: Args? = null,
-            freeArgs: Any? = null,
-        ) {
-            add(dest.toNavEntry(navArgs = navArgs, freeArgs = freeArgs))
-        }
-
-        /**
-         * Adds a navigation entry to the back stack at the specified index.
-         *
-         * @param index The index to add the entry at.
-         * @param entry The navigation entry to add.
-         */
-        public fun <Args : Any> add(
-            index: Int,
-            entry: NavEntry<Args>,
-        ) {
-            entry.ensureDetachedAndAttach()
-            internalEditableBackStack.add(index, entry)
-        }
-
-        /**
-         * Adds a destination to the back stack at the specified index.
-         *
-         * @param index The index to add the destination at.
-         * @param dest The destination to add.
-         * @param navArgs The navigation navArgs.
-         * @param freeArgs The navigation freeArgs.
-         */
-        public fun <Args : Any> add(
-            index: Int,
-            dest: NavDestination<Args>,
-            navArgs: Args? = null,
-            freeArgs: Any? = null,
-        ) {
-            add(index, dest.toNavEntry(navArgs = navArgs, freeArgs = freeArgs))
-        }
-
-        /**
-         * Removes the navigation entry at the specified index.
-         *
-         * @param index The index of the entry to remove.
-         */
-        public fun removeAt(index: Int) {
-            internalEditableBackStack.removeAt(index).detachFromNavController()
-        }
-
-        /**
-         * Removes the last navigation entry from the back stack.
-         *
-         * @return `true` if the entry was successfully removed, `false` otherwise.
-         */
-        public fun removeLast(): Boolean {
-            return if (backStack.isNotEmpty()) {
-                internalEditableBackStack.removeAt(backStack.lastIndex).detachFromNavController()
-                true
-            } else false
-        }
-
-        /**
-         * Removes the last navigation entry for the specified destination.
-         *
-         * @param dest The destination to remove the last entry for.
-         * @return `true` if the entry was successfully removed, `false` otherwise.
-         */
-        public fun removeLast(dest: NavDestination<*>): Boolean {
-            val ind = backStack.indexOfLast { it.destination.name == dest.name }
-            if (ind >= 0) internalEditableBackStack.removeAt(ind).detachFromNavController()
-            return ind >= 0
-        }
-
-        /**
-         * Removes the last navigation entry that matches the specified predicate.
-         *
-         * @param predicate The predicate to match entries against.
-         * @return `true` if the entry was successfully removed, `false` otherwise.
-         */
-        public fun removeLast(predicate: (NavEntry<*>) -> Boolean): Boolean {
-            val ind = backStack.indexOfLast(predicate)
-            if (ind >= 0) internalEditableBackStack.removeAt(ind).detachFromNavController()
-            return ind >= 0
-        }
-
-        /**
-         * Removes all navigation entries that match the specified predicate.
-         *
-         * @param predicate The predicate to match entries against.
-         */
-        public fun removeAll(predicate: (NavEntry<*>) -> Boolean) {
-            var i = 0
-            while (i < backStack.size) {
-                if (predicate(backStack[i])) {
-                    internalEditableBackStack.removeAt(i).detachFromNavController()
-                } else i++
-            }
-        }
-
-        /**
-         * Sets the back stack to the specified destinations.
-         * This clears the current back stack before adding the new destinations.
-         *
-         * @param destinations The destinations to set.
-         */
-        public fun set(vararg destinations: NavDestination<*>) {
-            clear()
-            destinations.onEach { add(it) }
-        }
-
-        /**
-         * Sets the back stack to the specified entries.
-         * This clears the current back stack before adding the new entries.
-         *
-         * @param entries The entries to set.
-         */
-        public fun set(vararg entries: NavEntry<*>) {
-            clear()
-            entries.onEach { add(it) }
-        }
-
-        /**
-         * Clears the back stack.
-         */
-        public fun clear() {
-            while (backStack.isNotEmpty()) {
-                internalEditableBackStack.removeAt(backStack.lastIndex).detachFromNavController()
-            }
-        }
-
-        /**
-         * Gets the size of the back stack.
-         *
-         * @return The size of the back stack.
-         */
-        public fun size(): Int = backStack.size
+    public enum class TransitionType {
+        Forward,
+        Backward,
+        Instant
     }
+
+    /**
+     * Represents the state of the NavController navigation (stack and last/current transition info).
+     *
+     * @property transitionData Optional data associated with the last/current transition
+     * @property stack The list of navigation entries in the stack
+     */
+    public data class NavState(
+        val transitionData: Any?,
+        val transitionType: TransitionType,
+        val stack: List<NavEntry<*>> = emptyList(),
+    )
 
     /**
      * Interface for listening to navigation transitions between screens.
@@ -612,8 +438,8 @@ public class NavController internal constructor(
          *
          * @param from The [NavEntry] being navigated from
          * @param to The [NavEntry] being navigated to
-         * @param isForward True if navigating forward, false if navigating backward
+         * @param type The type of transition
          */
-        public fun onNavigate(from: NavEntry<*>?, to: NavEntry<*>?, isForward: Boolean)
+        public fun onNavigate(from: NavEntry<*>?, to: NavEntry<*>?, type: TransitionType)
     }
 }
