@@ -250,9 +250,7 @@ public class NavController internal constructor(
     internal fun <Args : Any> popToTop(
         dest: NavDestination<Args>,
         transitionData: Any? = null,
-        orElse: NavController.() -> Unit = {
-            navigate(dest.toNavEntry(), transitionData)
-        }
+        orElse: NavController.() -> Unit
     ) {
         val navStack = getNavStack()
         val entryIndex = navStack.indexOfLast { it.destination == dest }
