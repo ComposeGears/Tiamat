@@ -375,7 +375,7 @@ if (deeplink != null) {
             contentKey = { it?.contentKey() },
             transitionSpec = { navigationFadeInOut() }
         ) {
-            // you can also draw an entries from backstack if you need (but be careful)
+            // you can also draw an entries from the whole nav stack if you need (but be careful)
             EntryContent(it)
         }
     }

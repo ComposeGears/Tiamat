@@ -127,9 +127,9 @@ private val HomeItems =
             "Advanced examples",
             listOf(
                 AppFeature(
-                    name = "Back stack alteration",
-                    description = "Editing back stack on the fly example",
-                    destination = AdvBackStackAlteration
+                    name = "Nav stack alteration",
+                    description = "Editing nav stack on the fly example",
+                    destination = AdvNavStackAlteration
                 ),
                 AppFeature(
                     name = "Extensions",

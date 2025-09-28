@@ -53,7 +53,7 @@ val NavTabs by navDestination(ScreenInfo()) {
             ) {
                 tabs.onEach {
                     // tabs will pop (or open new) the tabs content and place
-                    // current tab in backstack
+                    // current tab in nav stack
                     AppButton(
                         text = it.name,
                         enabled = activeTab != it,
