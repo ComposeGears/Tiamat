@@ -1,27 +1,17 @@
 package composegears.tiamat.sample.content.advanced
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.composegears.tiamat.compose.*
-import composegears.tiamat.sample.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import com.composegears.tiamat.compose.navDestination
+import composegears.tiamat.sample.ui.Screen
+import composegears.tiamat.sample.ui.ScreenInfo
 
 val AdvBackStackAlteration by navDestination(ScreenInfo()) {
     Screen("Back stack alteration") {
         // todo migrate into edit-nav-state
         //  add an example of edit current entry
         //  with a diff nev types (back, forward, instant)
-        /*Column(
+
+        /*
+        Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -113,6 +103,7 @@ val AdvBackStackAlteration by navDestination(ScreenInfo()) {
 
 // We are using nc.hasBackEntriesAsState().value instead nc.hasBackEntries() due to changes in backStack
 
+/*
 private val AdvBackStackAlterationScreenA by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -166,3 +157,4 @@ private val AdvBackStackAlterationScreenC by navDestination {
 private fun AdvBackStackAlterationPreview() = AppTheme {
     TiamatPreview(destination = AdvBackStackAlteration)
 }
+*/

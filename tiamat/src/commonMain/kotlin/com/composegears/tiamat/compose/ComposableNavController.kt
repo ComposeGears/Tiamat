@@ -1,21 +1,13 @@
 package com.composegears.tiamat.compose
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.staticCompositionLocalOf
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import com.composegears.tiamat.navigation.NavEntry
 import com.composegears.tiamat.navigation.SavedState
-
 
 /**
  * CompositionLocal that provides access to the current NavController.
@@ -146,10 +138,8 @@ public fun rememberNavController(
  * @return A State containing the current NavState
  */
 @Composable
-public fun NavController.navStateAsState(): State<NavController.NavState> {
-    return navStateFlow.collectAsState()
-}
-
+public fun NavController.navStateAsState(): State<NavController.NavState> =
+    navStateFlow.collectAsState()
 
 /**
  * Collects values from this [NavController.navStateFlow] and represents its latest value via State.
@@ -168,7 +158,7 @@ public fun NavController.navStackAsState(): State<List<NavEntry<*>>> {
  * @return A State containing a boolean value that is true when back navigation is possible
  */
 @Composable
-public fun NavController.hasBackEntriesAsState(): State<Boolean> {
+public fun NavController.canNavigateBackAsState(): State<Boolean> {
     val navState by navStateFlow.collectAsState()
     return remember { derivedStateOf { navState.stack.size > 1 } }
 }

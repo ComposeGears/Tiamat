@@ -10,7 +10,6 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-
 /**
  * Scope for composable content within a navigation destination.
  *
@@ -19,6 +18,7 @@ import kotlin.reflect.typeOf
  * @param Args The type of arguments this destination accepts
  */
 @Stable
+@Suppress("UseDataClass")
 public class NavDestinationScope<Args : Any> internal constructor(
     /**
      * The current navigation entry.

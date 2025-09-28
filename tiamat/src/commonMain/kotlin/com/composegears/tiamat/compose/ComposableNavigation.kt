@@ -133,9 +133,9 @@ public fun Navigation(
             modifier = modifier,
             transitionSpec = {
                 val transitionType = navState.transitionType
-                val isNoAnimation = transition.targetState == stubEntry
-                    || transition.currentState == stubEntry
-                    || transitionType == NavController.TransitionType.Instant
+                val isNoAnimation = transition.targetState == stubEntry ||
+                    transition.currentState == stubEntry ||
+                    transitionType == NavController.TransitionType.Instant
                 val transform = when {
                     isNoAnimation -> navigationNone()
                     transitionData?.contentTransform != null -> transitionData.contentTransform
@@ -259,8 +259,8 @@ public fun NavigationScene(
     }
     // back handler
     if (handleSystemBackEvent) {
-        val hasBackEntries by navController.hasBackEntriesAsState()
-        BackHandler(hasBackEntries, navController::back)
+        val canNavigateBack by navController.canNavigateBackAsState()
+        BackHandler(canNavigateBack, navController::back)
     }
     val visibleEntries = remember { mutableSetOf<NavEntry<*>>() }
     // display current entry + animate enter/exit

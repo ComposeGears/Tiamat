@@ -12,7 +12,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.composegears.tiamat.navigation.NavEntry
 
-
 /**
  * CompositionLocal that provides access to the current NavEntry.
  */

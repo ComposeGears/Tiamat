@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * The NavController manages a nav stack of destinations that represent the
  * navigation history. It provides methods to navigate between destinations,
- * handle back navigation, and manage the nav stack.
+ * handle back navigation, and manage the navigation stack.
  *
  * @property key An optional identifier for this NavController
  * @property saveable Whether this NavController's state should be saved and restored
@@ -163,9 +163,7 @@ public class NavController internal constructor(
      *
      * @return `true` if the nav stack contains an entry to back to, `false` otherwise.
      */
-    // todo Naming: isBackPossible, hasBackStack, hasBackEntries ...
-    public fun canGoBack(): Boolean = getNavStack().size > 1
-
+    public fun canNavigateBack(): Boolean = getNavStack().size > 1
 
     // ----------- navigation methods ----------------------------------------------------------------------------------
 
@@ -186,8 +184,9 @@ public class NavController internal constructor(
         if (newStack != oldStack) {
             newStack.onEach { entry ->
                 val index = oldStack.indexOf(entry)
-                if (index >= 0) oldStack.removeAt(index) // old item - do nothing
-                else entry.ensureDetachedAndAttach() // new item - attach
+                // old item - do nothing, new item - attach
+                if (index >= 0) oldStack.removeAt(index)
+                else entry.ensureDetachedAndAttach()
             }
             oldStack.onEach { it.detachFromNavController() } // removed items - detach
             updateNavState(

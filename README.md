@@ -305,18 +305,14 @@ val DeeplinkScreen by navDestination<Args> {
         startDestination = ShopScreen
     ) {
         // handle deeplink and open next screen
-        // passing eitthe same data or appropriate parts of it
-        if (deeplink != null) {  
-            editBackStack {
-                clear()
-                add(ShopScreen)
-                add(CategoryScreen, deeplink.categoryId)
+        if (deeplink != null) {
+            editNavStack{ _->
+                listOf(
+                    ShopScreen.toNavEntry(),
+                    CategoryScreen.toNavEntry(navArgs = deeplink.categoryId),
+                    DetailScreen.toNavEntry(navArgs = DetailParams(deeplink.productName, deeplink.productId))
+                )
             }
-            replace(
-                dest = DetailScreen,
-                navArgs = DetailParams(deeplink.productName, deeplink.productId),
-                transition = navigationNone()
-            )
             clearFreeArgs()
         }
     }
@@ -349,20 +345,7 @@ if (deeplink != null) {
         key = "deeplinkNavController",
         startDestination = ShopScreen,
     ) { // executed right after being created or restored
-        // we can do nav actions before 1st screen bing draw without seeing 1st frame
-        if (deeplink != null) {
-            editBackStack {
-                clear()
-                add(ShopScreen)
-                add(CategoryScreen, deeplink.categoryId)
-            }
-            replace(
-                dest = DetailScreen,
-                navArgs = DetailParams(deeplink.productName, deeplink.productId),
-                transition = navigationNone()
-            )
-            clearFreeArgs() // clear args not to process them again when back to this destination
-        }
+        // so you can handle initial navigation here without any animations
     }
 
 ```
@@ -482,7 +465,7 @@ Nothing specific (yet)
 
 ### Android
 
-`Tiamat` overrides `LocalLifecycleOwner` for each destination (android only) and compatible with lifecycle-aware components
+`Tiamat` overrides `LocalLifecycleOwner` for each destination. This makes it compatible with lifecycle-aware components
 
 See an example of CameraX usage: [CameraXLifecycleScreen.kt](sample/composeApp/src/androidMain/kotlin/composegears/tiamat/sample/platform/CameraXLifecycleScreen.kt)
 

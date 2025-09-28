@@ -61,7 +61,9 @@ val AdvOverlayDestinations by navDestination(ScreenInfo()) {
                 targetState = content,
                 contentKey = { it?.contentKey() },
                 transitionSpec = {
-                    navigationSlideInOut(navController.navStateFlow.value.transitionType == NavController.TransitionType.Forward)
+                    navigationSlideInOut(
+                        navController.navStateFlow.value.transitionType == NavController.TransitionType.Forward
+                    )
                 },
             ) {
                 CompositionLocalProvider(

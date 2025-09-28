@@ -32,18 +32,6 @@ abstract interface com.composegears.tiamat.navigation/NavData // com.composegear
 
 sealed interface com.composegears.tiamat.navigation/RouteElement // com.composegears.tiamat.navigation/RouteElement|null[0]
 
-abstract class <#A: kotlin/Any> com.composegears.tiamat.compose/ComposeNavDestination : com.composegears.tiamat.navigation/NavDestination<#A> { // com.composegears.tiamat.compose/ComposeNavDestination|null[0]
-    final val extensions // com.composegears.tiamat.compose/ComposeNavDestination.extensions|{}extensions[0]
-        final fun <get-extensions>(): kotlin.collections/List<com.composegears.tiamat.compose/NavExtension<#A>> // com.composegears.tiamat.compose/ComposeNavDestination.extensions.<get-extensions>|<get-extensions>(){}[0]
-
-    abstract fun (com.composegears.tiamat.compose/NavDestinationScope<#A>).Content(androidx.compose.runtime/Composer?, kotlin/Int) // com.composegears.tiamat.compose/ComposeNavDestination.Content|Content@com.composegears.tiamat.compose.NavDestinationScope<1:0>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
-}
-
-abstract class <#A: kotlin/Any> com.composegears.tiamat.compose/NavDestinationScope { // com.composegears.tiamat.compose/NavDestinationScope|null[0]
-    abstract val navEntry // com.composegears.tiamat.compose/NavDestinationScope.navEntry|{}navEntry[0]
-        abstract fun <get-navEntry>(): com.composegears.tiamat.navigation/NavEntry<#A> // com.composegears.tiamat.compose/NavDestinationScope.navEntry.<get-navEntry>|<get-navEntry>(){}[0]
-}
-
 abstract class <#A: kotlin/Any> com.composegears.tiamat.navigation/NavDestination : com.composegears.tiamat.navigation/RouteElement { // com.composegears.tiamat.navigation/NavDestination|null[0]
     constructor <init>(kotlin/String, kotlin.reflect/KType) // com.composegears.tiamat.navigation/NavDestination.<init>|<init>(kotlin.String;kotlin.reflect.KType){}[0]
 
@@ -55,10 +43,20 @@ abstract class <#A: kotlin/Any> com.composegears.tiamat.navigation/NavDestinatio
     }
 }
 
+final class <#A: kotlin/Any> com.composegears.tiamat.compose/ComposeNavDestination : com.composegears.tiamat.navigation/NavDestination<#A> { // com.composegears.tiamat.compose/ComposeNavDestination|null[0]
+    final val extensions // com.composegears.tiamat.compose/ComposeNavDestination.extensions|{}extensions[0]
+        final fun <get-extensions>(): kotlin.collections/List<com.composegears.tiamat.compose/NavExtension<#A>> // com.composegears.tiamat.compose/ComposeNavDestination.extensions.<get-extensions>|<get-extensions>(){}[0]
+}
+
 final class <#A: kotlin/Any> com.composegears.tiamat.compose/NavDestinationInstanceDelegate : kotlin.properties/ReadOnlyProperty<kotlin/Any?, com.composegears.tiamat.compose/ComposeNavDestination<#A>> { // com.composegears.tiamat.compose/NavDestinationInstanceDelegate|null[0]
     constructor <init>(kotlin.reflect/KType, kotlin.collections/List<com.composegears.tiamat.compose/NavExtension<#A>>, kotlin/Function3<com.composegears.tiamat.compose/NavDestinationScope<#A>, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>) // com.composegears.tiamat.compose/NavDestinationInstanceDelegate.<init>|<init>(kotlin.reflect.KType;kotlin.collections.List<com.composegears.tiamat.compose.NavExtension<1:0>>;kotlin.Function3<com.composegears.tiamat.compose.NavDestinationScope<1:0>,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>){}[0]
 
     final fun getValue(kotlin/Any?, kotlin.reflect/KProperty<*>): com.composegears.tiamat.compose/ComposeNavDestination<#A> // com.composegears.tiamat.compose/NavDestinationInstanceDelegate.getValue|getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}[0]
+}
+
+final class <#A: kotlin/Any> com.composegears.tiamat.compose/NavDestinationScope { // com.composegears.tiamat.compose/NavDestinationScope|null[0]
+    final val navEntry // com.composegears.tiamat.compose/NavDestinationScope.navEntry|{}navEntry[0]
+        final fun <get-navEntry>(): com.composegears.tiamat.navigation/NavEntry<#A> // com.composegears.tiamat.compose/NavDestinationScope.navEntry.<get-navEntry>|<get-navEntry>(){}[0]
 }
 
 final class <#A: kotlin/Any> com.composegears.tiamat.navigation/NavEntry : androidx.lifecycle/LifecycleOwner, androidx.lifecycle/ViewModelStoreOwner, com.composegears.tiamat.navigation/RouteElement { // com.composegears.tiamat.navigation/NavEntry|null[0]
@@ -115,12 +113,10 @@ final class com.composegears.tiamat.compose/TransitionData { // com.composegears
 }
 
 final class com.composegears.tiamat.navigation/NavController : androidx.lifecycle/ViewModelStoreOwner { // com.composegears.tiamat.navigation/NavController|null[0]
-    final val currentBackStackFlow // com.composegears.tiamat.navigation/NavController.currentBackStackFlow|{}currentBackStackFlow[0]
-        final fun <get-currentBackStackFlow>(): kotlinx.coroutines.flow/StateFlow<kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>>> // com.composegears.tiamat.navigation/NavController.currentBackStackFlow.<get-currentBackStackFlow>|<get-currentBackStackFlow>(){}[0]
-    final val currentTransitionFlow // com.composegears.tiamat.navigation/NavController.currentTransitionFlow|{}currentTransitionFlow[0]
-        final fun <get-currentTransitionFlow>(): kotlinx.coroutines.flow/StateFlow<com.composegears.tiamat.navigation/NavController.Transition?> // com.composegears.tiamat.navigation/NavController.currentTransitionFlow.<get-currentTransitionFlow>|<get-currentTransitionFlow>(){}[0]
     final val key // com.composegears.tiamat.navigation/NavController.key|{}key[0]
         final fun <get-key>(): kotlin/String? // com.composegears.tiamat.navigation/NavController.key.<get-key>|<get-key>(){}[0]
+    final val navStateFlow // com.composegears.tiamat.navigation/NavController.navStateFlow|{}navStateFlow[0]
+        final fun <get-navStateFlow>(): kotlinx.coroutines.flow/StateFlow<com.composegears.tiamat.navigation/NavController.NavState> // com.composegears.tiamat.navigation/NavController.navStateFlow.<get-navStateFlow>|<get-navStateFlow>(){}[0]
     final val saveable // com.composegears.tiamat.navigation/NavController.saveable|{}saveable[0]
         final fun <get-saveable>(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.saveable.<get-saveable>|<get-saveable>(){}[0]
     final val viewModelStore // com.composegears.tiamat.navigation/NavController.viewModelStore|{}viewModelStore[0]
@@ -129,57 +125,49 @@ final class com.composegears.tiamat.navigation/NavController : androidx.lifecycl
     final var parent // com.composegears.tiamat.navigation/NavController.parent|{}parent[0]
         final fun <get-parent>(): com.composegears.tiamat.navigation/NavController? // com.composegears.tiamat.navigation/NavController.parent.<get-parent>|<get-parent>(){}[0]
 
-    final fun editBackStack(kotlin/Function1<com.composegears.tiamat.navigation/NavController.BackStackEditScope, kotlin/Unit>) // com.composegears.tiamat.navigation/NavController.editBackStack|editBackStack(kotlin.Function1<com.composegears.tiamat.navigation.NavController.BackStackEditScope,kotlin.Unit>){}[0]
+    final fun canNavigateBack(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.canNavigateBack|canNavigateBack(){}[0]
     final fun findParentNavController(kotlin/String): com.composegears.tiamat.navigation/NavController? // com.composegears.tiamat.navigation/NavController.findParentNavController|findParentNavController(kotlin.String){}[0]
-    final fun getBackStack(): kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> // com.composegears.tiamat.navigation/NavController.getBackStack|getBackStack(){}[0]
     final fun getCurrentNavEntry(): com.composegears.tiamat.navigation/NavEntry<*>? // com.composegears.tiamat.navigation/NavController.getCurrentNavEntry|getCurrentNavEntry(){}[0]
-    final fun hasBackEntries(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.hasBackEntries|hasBackEntries(){}[0]
+    final fun getNavStack(): kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> // com.composegears.tiamat.navigation/NavController.getNavStack|getNavStack(){}[0]
     final fun route(com.composegears.tiamat.navigation/Route) // com.composegears.tiamat.navigation/NavController.route|route(com.composegears.tiamat.navigation.Route){}[0]
     final fun route(kotlin/Function1<com.composegears.tiamat.navigation/Route, kotlin/Unit>) // com.composegears.tiamat.navigation/NavController.route|route(kotlin.Function1<com.composegears.tiamat.navigation.Route,kotlin.Unit>){}[0]
     final fun saveToSavedState(): kotlin.collections/Map<kotlin/String, kotlin/Any?> // com.composegears.tiamat.navigation/NavController.saveToSavedState|saveToSavedState(){}[0]
     final fun setOnNavigationListener(com.composegears.tiamat.navigation/NavController.OnNavigationListener?) // com.composegears.tiamat.navigation/NavController.setOnNavigationListener|setOnNavigationListener(com.composegears.tiamat.navigation.NavController.OnNavigationListener?){}[0]
     final fun toString(): kotlin/String // com.composegears.tiamat.navigation/NavController.toString|toString(){}[0]
 
+    final enum class TransitionType : kotlin/Enum<com.composegears.tiamat.navigation/NavController.TransitionType> { // com.composegears.tiamat.navigation/NavController.TransitionType|null[0]
+        enum entry Backward // com.composegears.tiamat.navigation/NavController.TransitionType.Backward|null[0]
+        enum entry Forward // com.composegears.tiamat.navigation/NavController.TransitionType.Forward|null[0]
+        enum entry Instant // com.composegears.tiamat.navigation/NavController.TransitionType.Instant|null[0]
+
+        final val entries // com.composegears.tiamat.navigation/NavController.TransitionType.entries|#static{}entries[0]
+            final fun <get-entries>(): kotlin.enums/EnumEntries<com.composegears.tiamat.navigation/NavController.TransitionType> // com.composegears.tiamat.navigation/NavController.TransitionType.entries.<get-entries>|<get-entries>#static(){}[0]
+
+        final fun valueOf(kotlin/String): com.composegears.tiamat.navigation/NavController.TransitionType // com.composegears.tiamat.navigation/NavController.TransitionType.valueOf|valueOf#static(kotlin.String){}[0]
+        final fun values(): kotlin/Array<com.composegears.tiamat.navigation/NavController.TransitionType> // com.composegears.tiamat.navigation/NavController.TransitionType.values|values#static(){}[0]
+    }
+
     abstract fun interface OnNavigationListener { // com.composegears.tiamat.navigation/NavController.OnNavigationListener|null[0]
-        abstract fun onNavigate(com.composegears.tiamat.navigation/NavEntry<*>?, com.composegears.tiamat.navigation/NavEntry<*>?, kotlin/Boolean) // com.composegears.tiamat.navigation/NavController.OnNavigationListener.onNavigate|onNavigate(com.composegears.tiamat.navigation.NavEntry<*>?;com.composegears.tiamat.navigation.NavEntry<*>?;kotlin.Boolean){}[0]
+        abstract fun onNavigate(com.composegears.tiamat.navigation/NavEntry<*>?, com.composegears.tiamat.navigation/NavEntry<*>?, com.composegears.tiamat.navigation/NavController.TransitionType) // com.composegears.tiamat.navigation/NavController.OnNavigationListener.onNavigate|onNavigate(com.composegears.tiamat.navigation.NavEntry<*>?;com.composegears.tiamat.navigation.NavEntry<*>?;com.composegears.tiamat.navigation.NavController.TransitionType){}[0]
     }
 
-    final class BackStackEditScope { // com.composegears.tiamat.navigation/NavController.BackStackEditScope|null[0]
-        final val backStack // com.composegears.tiamat.navigation/NavController.BackStackEditScope.backStack|{}backStack[0]
-            final fun <get-backStack>(): kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> // com.composegears.tiamat.navigation/NavController.BackStackEditScope.backStack.<get-backStack>|<get-backStack>(){}[0]
+    final class NavState { // com.composegears.tiamat.navigation/NavController.NavState|null[0]
+        constructor <init>(kotlin/Any?, com.composegears.tiamat.navigation/NavController.TransitionType, kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> = ...) // com.composegears.tiamat.navigation/NavController.NavState.<init>|<init>(kotlin.Any?;com.composegears.tiamat.navigation.NavController.TransitionType;kotlin.collections.List<com.composegears.tiamat.navigation.NavEntry<*>>){}[0]
 
-        final fun <#A2: kotlin/Any> add(com.composegears.tiamat.navigation/NavDestination<#A2>, #A2? = ..., kotlin/Any? = ...) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.add|add(com.composegears.tiamat.navigation.NavDestination<0:0>;0:0?;kotlin.Any?){0§<kotlin.Any>}[0]
-        final fun <#A2: kotlin/Any> add(com.composegears.tiamat.navigation/NavEntry<#A2>) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.add|add(com.composegears.tiamat.navigation.NavEntry<0:0>){0§<kotlin.Any>}[0]
-        final fun <#A2: kotlin/Any> add(kotlin/Int, com.composegears.tiamat.navigation/NavDestination<#A2>, #A2? = ..., kotlin/Any? = ...) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.add|add(kotlin.Int;com.composegears.tiamat.navigation.NavDestination<0:0>;0:0?;kotlin.Any?){0§<kotlin.Any>}[0]
-        final fun <#A2: kotlin/Any> add(kotlin/Int, com.composegears.tiamat.navigation/NavEntry<#A2>) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.add|add(kotlin.Int;com.composegears.tiamat.navigation.NavEntry<0:0>){0§<kotlin.Any>}[0]
-        final fun clear() // com.composegears.tiamat.navigation/NavController.BackStackEditScope.clear|clear(){}[0]
-        final fun removeAll(kotlin/Function1<com.composegears.tiamat.navigation/NavEntry<*>, kotlin/Boolean>) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.removeAll|removeAll(kotlin.Function1<com.composegears.tiamat.navigation.NavEntry<*>,kotlin.Boolean>){}[0]
-        final fun removeAt(kotlin/Int) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.removeAt|removeAt(kotlin.Int){}[0]
-        final fun removeLast(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.BackStackEditScope.removeLast|removeLast(){}[0]
-        final fun removeLast(com.composegears.tiamat.navigation/NavDestination<*>): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.BackStackEditScope.removeLast|removeLast(com.composegears.tiamat.navigation.NavDestination<*>){}[0]
-        final fun removeLast(kotlin/Function1<com.composegears.tiamat.navigation/NavEntry<*>, kotlin/Boolean>): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.BackStackEditScope.removeLast|removeLast(kotlin.Function1<com.composegears.tiamat.navigation.NavEntry<*>,kotlin.Boolean>){}[0]
-        final fun set(kotlin/Array<out com.composegears.tiamat.navigation/NavDestination<*>>...) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.set|set(kotlin.Array<out|com.composegears.tiamat.navigation.NavDestination<*>>...){}[0]
-        final fun set(kotlin/Array<out com.composegears.tiamat.navigation/NavEntry<*>>...) // com.composegears.tiamat.navigation/NavController.BackStackEditScope.set|set(kotlin.Array<out|com.composegears.tiamat.navigation.NavEntry<*>>...){}[0]
-        final fun size(): kotlin/Int // com.composegears.tiamat.navigation/NavController.BackStackEditScope.size|size(){}[0]
-    }
+        final val stack // com.composegears.tiamat.navigation/NavController.NavState.stack|{}stack[0]
+            final fun <get-stack>(): kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> // com.composegears.tiamat.navigation/NavController.NavState.stack.<get-stack>|<get-stack>(){}[0]
+        final val transitionData // com.composegears.tiamat.navigation/NavController.NavState.transitionData|{}transitionData[0]
+            final fun <get-transitionData>(): kotlin/Any? // com.composegears.tiamat.navigation/NavController.NavState.transitionData.<get-transitionData>|<get-transitionData>(){}[0]
+        final val transitionType // com.composegears.tiamat.navigation/NavController.NavState.transitionType|{}transitionType[0]
+            final fun <get-transitionType>(): com.composegears.tiamat.navigation/NavController.TransitionType // com.composegears.tiamat.navigation/NavController.NavState.transitionType.<get-transitionType>|<get-transitionType>(){}[0]
 
-    final class Transition { // com.composegears.tiamat.navigation/NavController.Transition|null[0]
-        constructor <init>(com.composegears.tiamat.navigation/NavEntry<*>?, kotlin/Any?, kotlin/Boolean) // com.composegears.tiamat.navigation/NavController.Transition.<init>|<init>(com.composegears.tiamat.navigation.NavEntry<*>?;kotlin.Any?;kotlin.Boolean){}[0]
-
-        final val isForward // com.composegears.tiamat.navigation/NavController.Transition.isForward|{}isForward[0]
-            final fun <get-isForward>(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.Transition.isForward.<get-isForward>|<get-isForward>(){}[0]
-        final val targetEntry // com.composegears.tiamat.navigation/NavController.Transition.targetEntry|{}targetEntry[0]
-            final fun <get-targetEntry>(): com.composegears.tiamat.navigation/NavEntry<*>? // com.composegears.tiamat.navigation/NavController.Transition.targetEntry.<get-targetEntry>|<get-targetEntry>(){}[0]
-        final val transitionData // com.composegears.tiamat.navigation/NavController.Transition.transitionData|{}transitionData[0]
-            final fun <get-transitionData>(): kotlin/Any? // com.composegears.tiamat.navigation/NavController.Transition.transitionData.<get-transitionData>|<get-transitionData>(){}[0]
-
-        final fun component1(): com.composegears.tiamat.navigation/NavEntry<*>? // com.composegears.tiamat.navigation/NavController.Transition.component1|component1(){}[0]
-        final fun component2(): kotlin/Any? // com.composegears.tiamat.navigation/NavController.Transition.component2|component2(){}[0]
-        final fun component3(): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.Transition.component3|component3(){}[0]
-        final fun copy(com.composegears.tiamat.navigation/NavEntry<*>? = ..., kotlin/Any? = ..., kotlin/Boolean = ...): com.composegears.tiamat.navigation/NavController.Transition // com.composegears.tiamat.navigation/NavController.Transition.copy|copy(com.composegears.tiamat.navigation.NavEntry<*>?;kotlin.Any?;kotlin.Boolean){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.Transition.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.composegears.tiamat.navigation/NavController.Transition.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.composegears.tiamat.navigation/NavController.Transition.toString|toString(){}[0]
+        final fun component1(): kotlin/Any? // com.composegears.tiamat.navigation/NavController.NavState.component1|component1(){}[0]
+        final fun component2(): com.composegears.tiamat.navigation/NavController.TransitionType // com.composegears.tiamat.navigation/NavController.NavState.component2|component2(){}[0]
+        final fun component3(): kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> // com.composegears.tiamat.navigation/NavController.NavState.component3|component3(){}[0]
+        final fun copy(kotlin/Any? = ..., com.composegears.tiamat.navigation/NavController.TransitionType = ..., kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>> = ...): com.composegears.tiamat.navigation/NavController.NavState // com.composegears.tiamat.navigation/NavController.NavState.copy|copy(kotlin.Any?;com.composegears.tiamat.navigation.NavController.TransitionType;kotlin.collections.List<com.composegears.tiamat.navigation.NavEntry<*>>){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.composegears.tiamat.navigation/NavController.NavState.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.composegears.tiamat.navigation/NavController.NavState.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.composegears.tiamat.navigation/NavController.NavState.toString|toString(){}[0]
     }
 
     final object Companion { // com.composegears.tiamat.navigation/NavController.Companion|null[0]
@@ -228,8 +216,7 @@ final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_Transi
 final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionData$stableprop // com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionData$stableprop|#static{}com_composegears_tiamat_compose_TransitionData$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop|#static{}com_composegears_tiamat_navigation_NavController$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop|#static{}com_composegears_tiamat_navigation_NavControllerStore$stableprop[0]
-final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop|#static{}com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop[0]
-final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_Transition$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_Transition$stableprop|#static{}com_composegears_tiamat_navigation_NavController_Transition$stableprop[0]
+final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop|#static{}com_composegears_tiamat_navigation_NavController_NavState$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavDestination$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavDestination$stableprop|#static{}com_composegears_tiamat_navigation_NavDestination$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavEntry$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavEntry$stableprop|#static{}com_composegears_tiamat_navigation_NavEntry$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_Route$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_Route$stableprop|#static{}com_composegears_tiamat_navigation_Route$stableprop[0]
@@ -241,9 +228,12 @@ final fun (com.composegears.tiamat.compose/NavDestinationScope<*>).com.composege
 final fun (com.composegears.tiamat.compose/NavDestinationScope<*>).com.composegears.tiamat.compose/navController(androidx.compose.runtime/Composer?, kotlin/Int): com.composegears.tiamat.navigation/NavController // com.composegears.tiamat.compose/navController|navController@com.composegears.tiamat.compose.NavDestinationScope<*>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun (com.composegears.tiamat.compose/NavDestinationScope<*>).com.composegears.tiamat.compose/navEntry(androidx.compose.runtime/Composer?, kotlin/Int): com.composegears.tiamat.navigation/NavEntry<*> // com.composegears.tiamat.compose/navEntry|navEntry@com.composegears.tiamat.compose.NavDestinationScope<*>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/back(com.composegears.tiamat.navigation/NavDestination<*>? = ..., kotlin/Any? = ..., kotlin/Boolean = ..., kotlin/Boolean = ..., androidx.compose.animation/ContentTransform? = ..., com.composegears.tiamat.compose/TransitionController? = ...): kotlin/Boolean // com.composegears.tiamat.compose/back|back@com.composegears.tiamat.navigation.NavController(com.composegears.tiamat.navigation.NavDestination<*>?;kotlin.Any?;kotlin.Boolean;kotlin.Boolean;androidx.compose.animation.ContentTransform?;com.composegears.tiamat.compose.TransitionController?){}[0]
+final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/canNavigateBackAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<kotlin/Boolean> // com.composegears.tiamat.compose/canNavigateBackAsState|canNavigateBackAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/currentNavDestinationAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<com.composegears.tiamat.navigation/NavDestination<*>?> // com.composegears.tiamat.compose/currentNavDestinationAsState|currentNavDestinationAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/currentNavEntryAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<com.composegears.tiamat.navigation/NavEntry<*>?> // com.composegears.tiamat.compose/currentNavEntryAsState|currentNavEntryAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
-final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/hasBackEntriesAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<kotlin/Boolean> // com.composegears.tiamat.compose/hasBackEntriesAsState|hasBackEntriesAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/editNavStack(androidx.compose.animation/ContentTransform? = ..., com.composegears.tiamat.compose/TransitionController? = ..., com.composegears.tiamat.navigation/NavController.TransitionType = ..., kotlin/Function1<kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>>, kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>>>) // com.composegears.tiamat.compose/editNavStack|editNavStack@com.composegears.tiamat.navigation.NavController(androidx.compose.animation.ContentTransform?;com.composegears.tiamat.compose.TransitionController?;com.composegears.tiamat.navigation.NavController.TransitionType;kotlin.Function1<kotlin.collections.List<com.composegears.tiamat.navigation.NavEntry<*>>,kotlin.collections.List<com.composegears.tiamat.navigation.NavEntry<*>>>){}[0]
+final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/navStackAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<kotlin.collections/List<com.composegears.tiamat.navigation/NavEntry<*>>> // com.composegears.tiamat.compose/navStackAsState|navStackAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/navStateAsState(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<com.composegears.tiamat.navigation/NavController.NavState> // com.composegears.tiamat.compose/navStateAsState|navStateAsState@com.composegears.tiamat.navigation.NavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun (com.composegears.tiamat.navigation/NavDestination<*>).com.composegears.tiamat.compose/extensions(): kotlin.collections/List<com.composegears.tiamat.compose/NavExtension<*>>? // com.composegears.tiamat.compose/extensions|extensions@com.composegears.tiamat.navigation.NavDestination<*>(){}[0]
 final fun (kotlin.collections/Map<kotlin/String, kotlin/Any?>).com.composegears.tiamat/toHumanReadableString(kotlin/String = ..., kotlin/Int = ...): kotlin/String // com.composegears.tiamat/toHumanReadableString|toHumanReadableString@kotlin.collections.Map<kotlin.String,kotlin.Any?>(kotlin.String;kotlin.Int){}[0]
 final fun <#A: kotlin/Any> (com.composegears.tiamat.compose/NavDestinationScope<#A>).com.composegears.tiamat.compose/navArgs(androidx.compose.runtime/Composer?, kotlin/Int): #A // com.composegears.tiamat.compose/navArgs|navArgs@com.composegears.tiamat.compose.NavDestinationScope<0:0>(androidx.compose.runtime.Composer?;kotlin.Int){0§<kotlin.Any>}[0]
@@ -254,7 +244,6 @@ final fun <#A: kotlin/Any> (com.composegears.tiamat.navigation/NavController).co
 final fun <#A: kotlin/Any> (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/replace(com.composegears.tiamat.navigation/NavDestination<#A>, #A? = ..., kotlin/Any? = ..., androidx.compose.animation/ContentTransform? = ..., com.composegears.tiamat.compose/TransitionController? = ...) // com.composegears.tiamat.compose/replace|replace@com.composegears.tiamat.navigation.NavController(com.composegears.tiamat.navigation.NavDestination<0:0>;0:0?;kotlin.Any?;androidx.compose.animation.ContentTransform?;com.composegears.tiamat.compose.TransitionController?){0§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any> (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.compose/replace(com.composegears.tiamat.navigation/NavEntry<#A>, androidx.compose.animation/ContentTransform? = ..., com.composegears.tiamat.compose/TransitionController? = ...) // com.composegears.tiamat.compose/replace|replace@com.composegears.tiamat.navigation.NavController(com.composegears.tiamat.navigation.NavEntry<0:0>;androidx.compose.animation.ContentTransform?;com.composegears.tiamat.compose.TransitionController?){0§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any> com.composegears.tiamat.compose/TiamatPreview(com.composegears.tiamat.navigation/NavDestination<#A>, #A?, kotlin/Any?, kotlin/Any?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // com.composegears.tiamat.compose/TiamatPreview|TiamatPreview(com.composegears.tiamat.navigation.NavDestination<0:0>;0:0?;kotlin.Any?;kotlin.Any?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){0§<kotlin.Any>}[0]
-final fun <#A: kotlin/Any> com.composegears.tiamat.compose/buildNavDestination(kotlin/String, kotlin.reflect/KType, kotlin.collections/List<com.composegears.tiamat.compose/NavExtension<#A>> = ..., kotlin/Function3<com.composegears.tiamat.compose/NavDestinationScope<#A>, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>): com.composegears.tiamat.compose/ComposeNavDestination<#A> // com.composegears.tiamat.compose/buildNavDestination|buildNavDestination(kotlin.String;kotlin.reflect.KType;kotlin.collections.List<com.composegears.tiamat.compose.NavExtension<0:0>>;kotlin.Function3<com.composegears.tiamat.compose.NavDestinationScope<0:0>,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>){0§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any> com.composegears.tiamat.compose/extension(kotlin/Function3<com.composegears.tiamat.compose/NavDestinationScope<out #A>, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>): com.composegears.tiamat.compose/NavExtension<#A> // com.composegears.tiamat.compose/extension|extension(kotlin.Function3<com.composegears.tiamat.compose.NavDestinationScope<out|0:0>,androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>){0§<kotlin.Any>}[0]
 final fun <#A: kotlin/Any?> (com.composegears.tiamat.navigation/SavedStateRecord<#A>).com.composegears.tiamat.navigation/asStateFlow(): kotlinx.coroutines.flow/StateFlow<#A> // com.composegears.tiamat.navigation/asStateFlow|asStateFlow@com.composegears.tiamat.navigation.SavedStateRecord<0:0>(){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> (kotlin.collections/MutableMap<kotlin/String, kotlin/Any?>).com.composegears.tiamat.navigation/recordOf(kotlin/String, #A): com.composegears.tiamat.navigation/SavedStateRecord<#A> // com.composegears.tiamat.navigation/recordOf|recordOf@kotlin.collections.MutableMap<kotlin.String,kotlin.Any?>(kotlin.String;0:0){0§<kotlin.Any?>}[0]
@@ -285,8 +274,7 @@ final fun com.composegears.tiamat.navigation/MutableSavedState(kotlin/Array<out 
 final fun com.composegears.tiamat.navigation/SavedState(kotlin/Array<out kotlin/Pair<kotlin/String, kotlin/Any?>>...): kotlin.collections/Map<kotlin/String, kotlin/Any?> // com.composegears.tiamat.navigation/SavedState|SavedState(kotlin.Array<out|kotlin.Pair<kotlin.String,kotlin.Any?>>...){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop_getter|com_composegears_tiamat_navigation_NavController$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter|com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter(){}[0]
-final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop_getter|com_composegears_tiamat_navigation_NavController_BackStackEditScope$stableprop_getter(){}[0]
-final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_Transition$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_Transition$stableprop_getter|com_composegears_tiamat_navigation_NavController_Transition$stableprop_getter(){}[0]
+final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter|com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavDestination$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavDestination$stableprop_getter|com_composegears_tiamat_navigation_NavDestination$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavEntry$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavEntry$stableprop_getter|com_composegears_tiamat_navigation_NavEntry$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_Route$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_Route$stableprop_getter|com_composegears_tiamat_navigation_Route$stableprop_getter(){}[0]
