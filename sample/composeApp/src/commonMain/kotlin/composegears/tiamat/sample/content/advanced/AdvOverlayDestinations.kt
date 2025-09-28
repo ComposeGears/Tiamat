@@ -93,7 +93,7 @@ private val AdvOverlayScreen by navDestination<Unit> {
     val navController = navController()
 
     val stack by navController.navStackAsState()
-    val canGoBack = stack.size > 1
+    val canGoBack by navController.canNavigateBackAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

@@ -30,6 +30,7 @@ val AdvNavStackAlteration by navDestination(ScreenInfo()) {
                 startDestination = AdvNavStackAlterationScreenA,
             )
             val navStack by nc.navStackAsState()
+            val canNavigateBack by nc.canNavigateBackAsState()
             VSpacer()
             Text(
                 text = "Here some simple examples of nav-stack editing",
@@ -81,13 +82,13 @@ val AdvNavStackAlteration by navDestination(ScreenInfo()) {
                     AppButton(
                         "Clear",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = navStack.size > 1,
+                        enabled = canNavigateBack,
                         onClick = { nc.editNavStack { old -> old.takeLast(1) } }
                     )
                     AppButton(
                         "Remove Last (nav back)",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = navStack.size > 1,
+                        enabled = canNavigateBack,
                         onClick = {
                             // remove last means we intend to go back
                             // so we use transition type backward
@@ -101,7 +102,7 @@ val AdvNavStackAlteration by navDestination(ScreenInfo()) {
                     AppButton(
                         "Remove Pre-last",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = navStack.size > 1,
+                        enabled = canNavigateBack,
                         onClick = {
                             nc.editNavStack { old ->
                                 val current = old.last()
