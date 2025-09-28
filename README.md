@@ -385,7 +385,7 @@ if (deeplink != null) {
 #### Compose Preview for NavDestination
 
 Library provides a utility
-function [TiamatPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/TiamatPreview.kt)
+function [TiamatPreview](tiamat/src/commonMain/kotlin/com/composegears/tiamat/compose/ComposablePreview.kt)
 for previewing individual navigation destinations in Compose Preview.
 
 > [!NOTE]
