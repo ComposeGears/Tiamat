@@ -93,8 +93,8 @@ class NavEntryTests {
 
     @Test
     fun `freeArgs # cleared`() {
-        val navResult = "free-args"
-        val entry = NavEntry(destination = TestDestination, navResult = navResult)
+        val freeArgs = "free-args"
+        val entry = NavEntry(destination = TestDestination, freeArgs = freeArgs)
         entry.clearFreeArgs()
         assertEquals(null, entry.getFreeArgs<Any>())
     }

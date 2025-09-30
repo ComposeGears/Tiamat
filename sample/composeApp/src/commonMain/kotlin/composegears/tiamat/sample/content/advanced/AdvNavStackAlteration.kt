@@ -93,9 +93,7 @@ val AdvNavStackAlteration by navDestination(ScreenInfo()) {
                             // remove last means we intend to go back
                             // so we use transition type backward
                             nc.editNavStack(transitionType = NavController.TransitionType.Backward) { old ->
-                                old.dropLast(
-                                    1
-                                )
+                                old.dropLast(1)
                             }
                         }
                     )

@@ -50,7 +50,7 @@ val AdvTwoPane by navDestination(ScreenInfo()) {
                         }
                         val extraEntry by remember(navStack) {
                             derivedStateOf {
-                                navStack.last().takeIf { navStack.size > 1 }
+                                navStack.lastOrNull()?.takeIf { navStack.size > 1 }
                             }
                         }
                         if (commonEntry != null) Box(

@@ -55,6 +55,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.ui)
 
+            api(libs.kotlin.serialization.core)
             api(libs.compose.ui.backhandler)
             api(libs.lifecycle.runtime.compose)
             api(libs.lifecycle.viewmodel.compose)
