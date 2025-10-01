@@ -1,6 +1,6 @@
 [versions]
-#agp = "8.13.0"
-agp = "8.12.0"
+agp = "8.13.0"
+#agp = "8.12.0"
 sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"

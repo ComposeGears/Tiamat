@@ -306,7 +306,7 @@ val DeeplinkScreen by navDestination<Args> {
     ) {
         // handle deeplink and open next screen
         if (deeplink != null) {
-            editNavStack{ _->
+            editNavStack { _->
                 listOf(
                     ShopScreen.toNavEntry(),
                     CategoryScreen.toNavEntry(navArgs = deeplink.categoryId),
