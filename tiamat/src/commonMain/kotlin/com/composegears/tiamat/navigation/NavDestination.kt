@@ -41,11 +41,11 @@ public abstract class NavDestination<Args : Any>(
             navResult = navResult
         )
     }
-}
 
-internal class UnresolvedDestination(
-    name: String
-) : NavDestination<Any>(
-    name = name,
-    argsType = typeOf<Any>()
-)
+    internal class Unresolved(
+        name: String
+    ) : NavDestination<Any>(
+        name = name,
+        argsType = typeOf<Any>()
+    )
+}

@@ -91,13 +91,19 @@ Key Changes:
 
 ```kotlin
 @Composable
-fun NavController.hasBackEntriesAsState(): State<Boolean> 
+fun NavController.navStateAsState(): State<NavController.NavState>
+
+@Composable
+fun NavController.navStackAsState(): State<List<NavEntry<*>>> 
+
+@Composable
+fun NavController.canNavigateBackAsState(): State<Boolean> 
 
 @Composable
 fun NavController.currentNavEntryAsState(): State<NavEntry<*>?> 
 
 @Composable
-fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?>
+fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?> 
 
 ```
 
@@ -144,3 +150,14 @@ val saveableViewModel = saveableViewModel { ArchViewModelSaveableViewModel(it) }
 ```
 > [!IMPORTANT]
 > Solution/syntax may be changed depending on feedback
+
+### 8. Editing back stack
+
+The `editBackStack` function has been removed. Use `editNavStack` instead:
+```kotlin
+navController.editNavStack { old ->
+    // modify old list and provide a new one
+    // the last destination will be displayed (became the current one)
+    listOf(/*...*/)
+}
+```

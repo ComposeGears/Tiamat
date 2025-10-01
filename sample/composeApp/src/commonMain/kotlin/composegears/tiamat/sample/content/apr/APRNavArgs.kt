@@ -13,7 +13,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,11 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
-import composegears.tiamat.sample.ui.AppButton
-import composegears.tiamat.sample.ui.AppTheme
-import composegears.tiamat.sample.ui.Screen
-import composegears.tiamat.sample.ui.ScreenInfo
-import composegears.tiamat.sample.ui.VSpacer
+import composegears.tiamat.sample.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
@@ -108,12 +103,6 @@ private val APRNavArgsScreen2 by navDestination<Int>(
 ) {
     val nc = navController()
     val args = navArgsOrNull() // you can use `navArgs()` as unsafe option
-    LaunchedEffect(Unit) {
-        // in case we are open this screen from deeplink/url - ensure we have previous screen in backstack
-        if (nc.getBackStack().find { it.destination == APRNavArgsScreen1 } == null) nc.editBackStack {
-            add(APRNavArgsScreen1)
-        }
-    }
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 2", style = MaterialTheme.typography.headlineMedium)

@@ -42,13 +42,16 @@ val AdvTwoPane by navDestination(ScreenInfo()) {
             ) {
                 LookaheadScope {
                     Row {
-                        val current by nc.currentNavEntryAsState()
-                        val backstack by nc.currentBackStackFlow.collectAsState()
-                        val commonEntry = remember(current, backstack) {
-                            if (backstack.isEmpty()) current else backstack.first()
+                        val navStack by nc.navStackAsState()
+                        val commonEntry by remember(navStack) {
+                            derivedStateOf {
+                                navStack.firstOrNull()
+                            }
                         }
-                        val extraEntry = remember(current, backstack) {
-                            if (backstack.isEmpty()) null else current
+                        val extraEntry by remember(navStack) {
+                            derivedStateOf {
+                                navStack.lastOrNull()?.takeIf { navStack.size > 1 }
+                            }
                         }
                         if (commonEntry != null) Box(
                             Modifier

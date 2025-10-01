@@ -52,8 +52,7 @@ val NavTabs by navDestination(ScreenInfo()) {
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 tabs.onEach {
-                    // tabs will pop (or open new) the tabs content and place
-                    // current tab in backstack
+                    // pop (or open) tab
                     AppButton(
                         text = it.name,
                         enabled = activeTab != it,

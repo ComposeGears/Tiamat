@@ -2,6 +2,7 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.animation.ContentTransform
 import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavController.TransitionType
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import com.composegears.tiamat.navigation.NavEntry
@@ -10,7 +11,7 @@ import com.composegears.tiamat.navigation.NavEntry
 
 /**
  * Navigates to a new destination.
- * The current destination is added to the back stack.
+ * The current destination is added to the nav stack.
  *
  * @param entry The navigation entry to navigate to
  * @param navArgs Optional typed arguments to pass to the destination
@@ -36,7 +37,7 @@ public fun <Args : Any> NavController.navigate(
 
 /**
  * Navigates to a new destination.
- * The current destination is added to the back stack.
+ * The current destination is added to the nav stack.
  *
  * @param entry The navigation entry to navigate to
  * @param transition Optional content transform animation for the transition
@@ -58,7 +59,7 @@ public fun <Args : Any> NavController.navigate(
 
 /**
  * Replaces the current destination with a new one.
- * The current destination is not added to the back stack.
+ * The current destination is not added to the nav stack.
  *
  * @param entry The navigation entry to replace with
  * @param navArgs Optional typed arguments to pass to the destination
@@ -84,7 +85,7 @@ public fun <Args : Any> NavController.replace(
 
 /**
  * Replaces the current destination with a new one.
- * The current destination is not added to the back stack.
+ * The current destination is not added to the nav stack.
  *
  * @param entry The navigation entry to replace with
  * @param transition Optional content transform animation for the transition
@@ -105,12 +106,12 @@ public fun <Args : Any> NavController.replace(
 // ------------ popToTop -----------------------------------------------------------------------------------------------
 
 /**
- * Pops the back stack to an existing destination, or navigates to it if not in the back stack.
+ * Pops the nav stack to an existing destination, or navigates to it if not in the nav stack.
  *
  * @param dest The destination to pop to
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
- * @param orElse Action to perform if the destination is not found in the back stack
+ * @param orElse Action to perform if the destination is not found in the nav stack
  */
 public fun <Args : Any> NavController.popToTop(
     dest: NavDestination<Args>,
@@ -162,3 +163,29 @@ public fun NavController.back(
         transitionController = transitionController
     )
 )
+
+// ------------ Edit nav stack -----------------------------------------------------------------------------------------
+
+/**
+ * Edits the navigation stack using the provided editor.
+ *
+ * @param transition Optional content transform animation for the transition
+ * @param transitionController Optional controller for managing the transition programmatically
+ * @param transitionType The type of transition
+ * @param editor A function that takes the current nav stack and returns a new nav stack
+ */
+public fun NavController.editNavStack(
+    transition: ContentTransform? = null,
+    transitionController: TransitionController? = null,
+    transitionType: TransitionType = TransitionType.Forward,
+    editor: (List<NavEntry<*>>) -> List<NavEntry<*>>
+) {
+    editNavStack(
+        transitionData = TransitionData(
+            contentTransform = transition,
+            transitionController = transitionController
+        ),
+        transitionType = transitionType,
+        editor = editor
+    )
+}

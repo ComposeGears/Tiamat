@@ -58,7 +58,7 @@ public class NavEntry<Args : Any> public constructor(
             val entrySavedState = savedState[KEY_SAVED_STATE] as? SavedState
             val navControllers = savedState[KEY_NAV_CONTROLLERS] as? SavedState
             return NavEntry(
-                destination = UnresolvedDestination(destination),
+                destination = NavDestination.Unresolved(destination),
                 navArgs = navArgs,
                 freeArgs = freeArgs,
                 navResult = navResult,
@@ -78,7 +78,7 @@ public class NavEntry<Args : Any> public constructor(
         private set
     internal var isAttachedToUI = false
         private set
-    internal var isResolved = destination !is UnresolvedDestination
+    internal var isResolved = destination !is NavDestination.Unresolved
         private set
 
     @OptIn(ExperimentalUuidApi::class)

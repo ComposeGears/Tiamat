@@ -58,8 +58,6 @@ kotlin {
             implementation(compose.materialIconsExtended)
 
             implementation(libs.compose.material3.window.size)
-            implementation(libs.compose.ui.backhandler)
-            implementation(libs.kotlin.serialization.core)
         }
         androidMain.dependencies {
             implementation(compose.preview)

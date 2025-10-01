@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.NavDestinationScope
 import com.composegears.tiamat.compose.back
-import com.composegears.tiamat.compose.hasBackEntriesAsState
+import com.composegears.tiamat.compose.canNavigateBackAsState
 import com.composegears.tiamat.compose.navController
 
 @Composable
@@ -144,7 +144,7 @@ fun <T : Any> NavDestinationScope<T>.Screen(
             ) {
                 if (backButton)
                     IconButton(
-                        enabled = nc.hasBackEntriesAsState().value,
+                        enabled = nc.canNavigateBackAsState().value,
                         onClick = { nc.back() }
                     ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "")

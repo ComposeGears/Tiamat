@@ -1,6 +1,7 @@
 package com.composegears.tiamat.navigation
 
 import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.compose.editNavStack
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.createTestNavController
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
@@ -19,7 +20,7 @@ class NavControllerTests {
     fun `create # initialized empty with default values`() {
         val nc = createTestNavController()
         assertNull(nc.getCurrentNavEntry())
-        assertTrue(nc.getBackStack().isEmpty())
+        assertTrue(nc.getNavStack().isEmpty())
         val nc2 = NavController.create(startDestination = Destination1)
         assertNull(nc2.key)
         assertTrue(nc2.saveable)
@@ -48,17 +49,17 @@ class NavControllerTests {
         originalNc.navigate(Destination3.toNavEntry())
         val savedState = originalNc.saveToSavedState()
         val restoredNc = NavController.restoreFromSavedState(savedState = savedState)
-        assertEquals("testKey", restoredNc.key)
+        val restoredNavStack = restoredNc.getNavStack()
         assertTrue(restoredNc.saveable)
-        assertEquals("Destination3", restoredNc.getCurrentNavEntry()?.destination?.name)
-        val backStack = restoredNc.getBackStack()
-        assertEquals(2, backStack.size)
-        assertEquals("Destination1", backStack[0].destination.name)
-        assertEquals("Destination2", backStack[1].destination.name)
+        assertEquals("testKey", restoredNc.key)
+        assertEquals(3, restoredNavStack.size)
+        assertEquals("Destination1", restoredNavStack[0].destination.name)
+        assertEquals("Destination2", restoredNavStack[1].destination.name)
+        assertEquals("Destination3", restoredNavStack[2].destination.name)
     }
 
     @Test
-    fun `restoreFromSavedState # restores backstack from empty states`() {
+    fun `restoreFromSavedState # restores navStack from empty states`() {
         val restoredNc1 = NavController.restoreFromSavedState(
             savedState = SavedState(
                 "saveable" to true,
@@ -67,18 +68,18 @@ class NavControllerTests {
         val restoredNc2 = NavController.restoreFromSavedState(
             savedState = SavedState(
                 "saveable" to true,
-                "backStack" to null
+                "navStack" to null
             )
         )
         val restoredNc3 = NavController.restoreFromSavedState(
             savedState = SavedState(
                 "saveable" to true,
-                "backStack" to listOf<SavedState>()
+                "navStack" to listOf<SavedState>()
             )
         )
-        assertEquals(0, restoredNc1.getBackStack().size)
-        assertEquals(0, restoredNc2.getBackStack().size)
-        assertEquals(0, restoredNc3.getBackStack().size)
+        assertEquals(0, restoredNc1.getNavStack().size)
+        assertEquals(0, restoredNc2.getNavStack().size)
+        assertEquals(0, restoredNc3.getNavStack().size)
     }
 
     @Test
@@ -94,10 +95,11 @@ class NavControllerTests {
         assertEquals("testKey", savedState["key"])
         assertTrue(savedState["saveable"] as Boolean)
         @Suppress("UNCHECKED_CAST")
-        val currentSavedState = savedState["current"] as SavedState
-        assertEquals("Destination3", currentSavedState["destination"])
-        val backStackList = savedState["backStack"] as List<*>
-        assertEquals(2, backStackList.size)
+        val navStackList = savedState["navStack"] as List<*>
+        assertEquals(3, navStackList.size)
+        assertEquals("Destination1", navStackList[0].let { it as Map<*, *> }["destination"])
+        assertEquals("Destination2", navStackList[1].let { it as Map<*, *> }["destination"])
+        assertEquals("Destination3", navStackList[2].let { it as Map<*, *> }["destination"])
     }
 
     @Test
@@ -105,24 +107,26 @@ class NavControllerTests {
         val nc = createTestNavController()
         var fromDestination: NavDestination<*>? = null
         var toDestination: NavDestination<*>? = null
-        var isForward = false
-        nc.setOnNavigationListener { from, to, forward ->
+        var navType: NavController.TransitionType? = null
+        nc.setOnNavigationListener { from, to, type ->
             fromDestination = from?.destination
             toDestination = to?.destination
-            isForward = forward
+            navType = type
         }
+        assertEquals(0, nc.navStateFlow.value.stack.size)
+        assertEquals(NavController.TransitionType.Instant, nc.navStateFlow.value.transitionType)
         nc.navigate(Destination1.toNavEntry())
         assertEquals(null, fromDestination)
         assertEquals(Destination1, toDestination)
-        assertTrue(isForward)
+        assertEquals(NavController.TransitionType.Forward, navType)
         nc.navigate(Destination2.toNavEntry())
         assertEquals(Destination1, fromDestination)
         assertEquals(Destination2, toDestination)
-        assertTrue(isForward)
+        assertEquals(NavController.TransitionType.Forward, navType)
         nc.back()
         assertEquals(Destination2, fromDestination)
         assertEquals(Destination1, toDestination)
-        assertFalse(isForward)
+        assertEquals(NavController.TransitionType.Backward, navType)
     }
 
     @Test
@@ -136,281 +140,163 @@ class NavControllerTests {
     }
 
     @Test
-    fun `hasBackEntries # returns true when backstack is not empty`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        assertTrue(nc.getBackStack().isNotEmpty())
-        assertTrue(nc.hasBackEntries())
-    }
-
-    @Test
-    fun `hasBackEntries # returns false when backstack is empty`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        assertTrue(nc.getBackStack().isEmpty())
-        assertFalse(nc.hasBackEntries())
-    }
-
-    @Test
-    fun `editBackStack # add entry adds entry to backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.editBackStack { add(Destination2.toNavEntry()) }
-        val backStack = nc.getBackStack()
-        assertEquals(1, backStack.size)
-        assertEquals(Destination2, backStack[0].destination)
-        assertTrue(backStack[0].isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # fail to add entry if already attached`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val attachedEntry = Destination2.toNavEntry().apply { attachToNavController() }
-        assertFails { nc.editBackStack { add(attachedEntry) } }
-    }
-
-    @Test
-    fun `editBackStack # add destination adds destination to backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.editBackStack { add(Destination2) }
-        val backStack = nc.getBackStack()
-        assertEquals(1, backStack.size)
-        assertEquals(Destination2, backStack[0].destination)
-        assertTrue(backStack[0].isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # add with index adds entry at specific position`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
-        nc.navigate(Destination4.toNavEntry())
-        nc.editBackStack { add(1, Destination4.toNavEntry()) }
-        val backStack = nc.getBackStack()
-        assertEquals(4, backStack.size)
-        assertEquals(Destination4, backStack[1].destination)
-        assertTrue(backStack[1].isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # fail to add entry at index if already attached`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val attachedEntry = Destination2.toNavEntry().apply { attachToNavController() }
-        assertFails { nc.editBackStack { add(0, attachedEntry) } }
-    }
-
-    @Test
-    fun `editBackStack # add with index and destination adds destination at specific position`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
-        nc.navigate(Destination4.toNavEntry())
-        nc.editBackStack { add(1, Destination4) }
-        val backStack = nc.getBackStack()
-        assertEquals(4, backStack.size)
-        assertEquals(Destination4, backStack[1].destination)
-    }
-
-    @Test
-    fun `editBackStack # removeAt removes entry at specific index`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val entry2 = Destination2.toNavEntry()
-        nc.navigate(entry2)
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack { removeAt(1) }
-        val backStack = nc.getBackStack()
-        assertEquals(1, backStack.size)
-        assertEquals(Destination1, backStack[0].destination)
-        assertFalse(entry2.isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # removeAt fails index is out of bounds`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
-        assertFails {
-            nc.editBackStack { removeAt(148) }
-        }
-    }
-
-    @Test
-    fun `editBackStack # removeLast removes last entry in backstack till it's not empty`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val entry2 = Destination2.toNavEntry()
-        nc.navigate(entry2)
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack {
-            assertTrue(removeLast())
-        }
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-        assertFalse(entry2.isAttachedToNavController)
-        nc.editBackStack {
-            assertTrue(removeLast())
-            assertFalse(removeLast())
-        }
-        assertEquals(0, nc.getBackStack().size)
-    }
-
-    @Test
-    fun `editBackStack # removeLast with destination removes last matching destination`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        val entry1 = Destination1.toNavEntry()
-        nc.navigate(entry1)
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack {
-            assertTrue(removeLast(Destination1))
-        }
-        assertEquals(2, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-        assertEquals(Destination2, nc.getBackStack()[1].destination)
-        assertFalse(entry1.isAttachedToNavController)
-        nc.editBackStack {
-            assertTrue(removeLast(Destination1))
-            assertFalse(removeLast(Destination1))
-        }
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination2, nc.getBackStack()[0].destination)
-    }
-
-    @Test
-    fun `editBackStack # removeLast with predicate removes last matching entry`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val entry21 = Destination2.toNavEntry()
-        val entry22 = Destination2.toNavEntry()
-        nc.navigate(entry21)
-        nc.navigate(entry22)
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack {
-            assertTrue(removeLast { it.destination == Destination2 })
-        }
-        val backStack = nc.getBackStack()
-        assertEquals(2, backStack.size)
-        assertEquals(Destination1, backStack[0].destination)
-        assertEquals(Destination2, backStack[1].destination) // First occurrence remains
-        assertTrue(entry21.isAttachedToNavController)
-        assertFalse(entry22.isAttachedToNavController)
-        nc.editBackStack {
-            assertTrue(removeLast { it.destination == Destination2 })
-            assertFalse(removeLast { it.destination == Destination2 })
-        }
-    }
-
-    @Test
-    fun `editBackStack # removeAll removes all entries matching predicate`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        val entry21 = Destination2.toNavEntry()
-        val entry22 = Destination2.toNavEntry()
-        nc.navigate(entry21)
-        nc.navigate(entry22)
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack { removeAll { it.destination == Destination2 } }
-        val backStack = nc.getBackStack()
-        assertEquals(1, backStack.size)
-        assertEquals(Destination1, backStack[0].destination)
-        assertFalse(entry21.isAttachedToNavController)
-        assertFalse(entry22.isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # set with destinations replaces backstack with provided destinations`() {
-        val entry1 = Destination1.toNavEntry()
-        val entry2 = Destination2.toNavEntry()
-        val entry3 = Destination3.toNavEntry()
+    fun `getCurrentNavEntry # returns current entry or null`() {
         val nc = createTestNavController()
-        nc.navigate(entry1)
-        nc.navigate(entry2)
-        nc.navigate(entry3)
-        assertTrue(entry1.isAttachedToNavController)
-        assertTrue(entry2.isAttachedToNavController)
-        assertTrue(entry3.isAttachedToNavController)
-        nc.editBackStack { set(Destination3, Destination4) }
-        val backStack = nc.getBackStack()
-        assertEquals(2, backStack.size)
-        assertEquals(Destination3, backStack[0].destination)
-        assertEquals(Destination4, backStack[1].destination)
-        assertFalse(entry1.isAttachedToNavController)
-        assertFalse(entry2.isAttachedToNavController)
-        assertTrue(entry3.isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # set with entries replaces backstack with provided entries`() {
-        val entry1 = Destination1.toNavEntry()
-        val entry2 = Destination2.toNavEntry()
-        val entry3 = Destination3.toNavEntry()
-        val nc = createTestNavController()
-        nc.navigate(entry1)
-        nc.navigate(entry2)
-        nc.navigate(entry3)
-        assertTrue(entry1.isAttachedToNavController)
-        assertTrue(entry2.isAttachedToNavController)
-        assertTrue(entry3.isAttachedToNavController)
-        nc.editBackStack { set(Destination3.toNavEntry(), Destination4.toNavEntry()) }
-        val backStack = nc.getBackStack()
-        assertEquals(2, backStack.size)
-        assertEquals(Destination3, backStack[0].destination)
-        assertEquals(Destination4, backStack[1].destination)
-        assertFalse(entry1.isAttachedToNavController)
-        assertFalse(entry2.isAttachedToNavController)
-        assertTrue(entry3.isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # clear removes all entries from backstack`() {
-        val entry1 = Destination1.toNavEntry()
-        val entry2 = Destination2.toNavEntry()
-        val entry3 = Destination3.toNavEntry()
-        val nc = createTestNavController()
-        nc.navigate(entry1)
-        nc.navigate(entry2)
-        nc.navigate(entry3)
-        nc.editBackStack { clear() }
-        assertTrue(nc.getBackStack().isEmpty())
-        assertFalse(entry1.isAttachedToNavController)
-        assertFalse(entry2.isAttachedToNavController)
-        assertTrue(entry3.isAttachedToNavController)
-    }
-
-    @Test
-    fun `editBackStack # size returns number of entries in backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
-        nc.editBackStack { assertEquals(2, size()) }
-    }
-
-    @Test
-    fun `navigate # updates current entry and adds previous entry to backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-    }
-
-    @Test
-    fun `replace # updates current entry without adding to backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
-        assertEquals(1, nc.getBackStack().size)
-        nc.replace(Destination3.toNavEntry())
-        assertEquals(Destination3, nc.getCurrentNavEntry()?.destination)
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-    }
-
-    @Test
-    fun `popToTop # navigates to existing entry in backstack`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
-        nc.popToTop(Destination1)
+        assertNull(nc.getCurrentNavEntry())
+        nc.navigate(Destination1.toNavEntry())
         assertEquals(Destination1, nc.getCurrentNavEntry()?.destination)
-        assertEquals(2, nc.getBackStack().size)
-        assertEquals(Destination2, nc.getBackStack()[0].destination)
-        assertEquals(Destination3, nc.getBackStack()[1].destination)
+        nc.navigate(Destination2.toNavEntry())
+        assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
+        nc.back()
+        assertEquals(Destination1, nc.getCurrentNavEntry()?.destination)
+    }
+
+    @Test
+    fun `getNavStack # returns full navigation stack`() {
+        val nc = createTestNavController()
+        assertTrue(nc.getNavStack().isEmpty())
+        nc.navigate(Destination1.toNavEntry())
+        val stack1 = nc.getNavStack()
+        assertEquals(1, stack1.size)
+        assertEquals(Destination1, stack1[0].destination)
+        nc.navigate(Destination2.toNavEntry())
+        val stack2 = nc.getNavStack()
+        assertEquals(2, stack2.size)
+        assertEquals(Destination1, stack2[0].destination)
+        assertEquals(Destination2, stack2[1].destination)
+        nc.back()
+        val stack3 = nc.getNavStack()
+        assertEquals(1, stack3.size)
+        assertEquals(Destination1, stack3[0].destination)
+    }
+
+    @Test
+    fun `canNavigateBack # returns true when there is entries to back to`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        assertTrue(nc.getNavStack().size > 1)
+        assertTrue(nc.canNavigateBack())
+    }
+
+    @Test
+    fun `canNavigateBack # returns false when no entries to go back to`() {
+        val nc1 = createTestNavController()
+        assertTrue(nc1.getNavStack().size <= 1)
+        assertFalse(nc1.canNavigateBack())
+        val nc2 = createTestNavController(startDestination = Destination1)
+        assertTrue(nc2.getNavStack().size <= 1)
+        assertFalse(nc2.canNavigateBack())
+    }
+
+    @Test
+    fun `editNavStack # attaches new entries`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        nc.editNavStack(null, NavController.TransitionType.Forward) { old ->
+            old + listOf(Destination3.toNavEntry(), Destination4.toNavEntry())
+        }
+        val stack = nc.getNavStack()
+        assertEquals(4, stack.size)
+        assertEquals(Destination1, stack[0].destination)
+        assertEquals(Destination2, stack[1].destination)
+        assertEquals(Destination3, stack[2].destination)
+        assertTrue(stack[2].isAttachedToNavController)
+        assertEquals(Destination4, stack[3].destination)
+        assertTrue(stack[3].isAttachedToNavController)
+    }
+
+    @Test
+    fun `editNavStack # detaches removed entries`() {
+        val removedEntry = Destination1.toNavEntry()
+        val nc = createTestNavController()
+        nc.navigate(removedEntry)
+        nc.navigate(Destination2.toNavEntry())
+        nc.editNavStack(null, NavController.TransitionType.Forward) { old ->
+            old - removedEntry + listOf(Destination3.toNavEntry(), Destination4.toNavEntry())
+        }
+        val stack = nc.getNavStack()
+        assertEquals(3, stack.size)
+        assertEquals(Destination2, stack[0].destination)
+        assertEquals(Destination3, stack[1].destination)
+        assertEquals(Destination4, stack[2].destination)
+        assertFalse(removedEntry.isAttachedToNavController)
+    }
+
+    @Test
+    fun `editNavStack # do nothing with existed entries`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        nc.editNavStack(null, NavController.TransitionType.Forward) { old ->
+            old + listOf(Destination3.toNavEntry(), Destination4.toNavEntry())
+        }
+        val stack = nc.getNavStack()
+        assertEquals(4, stack.size)
+        assertEquals(Destination1, stack[0].destination)
+        assertTrue(stack[0].isAttachedToNavController)
+        assertEquals(Destination2, stack[1].destination)
+        assertTrue(stack[1].isAttachedToNavController)
+        assertEquals(Destination3, stack[2].destination)
+        assertEquals(Destination4, stack[3].destination)
+    }
+
+    @Test
+    fun `editNavStack # apply transition data & type`() {
+        val transitionData = "testData"
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.editNavStack(transitionData, NavController.TransitionType.Backward) { _ ->
+            listOf(Destination2.toNavEntry())
+        }
+        assertEquals(transitionData, nc.navStateFlow.value.transitionData)
+        assertEquals(NavController.TransitionType.Backward, nc.navStateFlow.value.transitionType)
+        assertEquals(1, nc.getNavStack().size)
+        assertEquals(Destination2, nc.getNavStack()[0].destination)
+    }
+
+    @Test
+    fun `editNavStack # nothing happen if same stack provided`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        val stack = nc.navStateFlow.value.stack
+        nc.editNavStack { old -> old }
+        assertSame(nc.navStateFlow.value.stack, stack)
+    }
+
+    @Test
+    fun `navigate # updates current entry and adds previous entry to stack`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        assertEquals(2, nc.getNavStack().size)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
+        assertEquals(Destination2, nc.getNavStack()[1].destination)
+        assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
+    }
+
+    @Test
+    fun `replace # updates current entry without adding to stack`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
+        assertEquals(2, nc.getNavStack().size)
+        val toBeReplaced = nc.getCurrentNavEntry()
+        nc.replace(Destination3.toNavEntry())
+        assertEquals(false, toBeReplaced?.isAttachedToNavController)
+        assertEquals(Destination3, nc.getCurrentNavEntry()?.destination)
+        assertEquals(2, nc.getNavStack().size)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
+        assertEquals(Destination3, nc.getNavStack()[1].destination)
+    }
+
+    @Test
+    fun `popToTop # navigates to existing entry from stack`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        nc.navigate(Destination3.toNavEntry())
+        nc.popToTop(Destination1) {}
+        assertEquals(3, nc.getNavStack().size)
+        assertEquals(Destination2, nc.getNavStack()[0].destination)
+        assertEquals(Destination3, nc.getNavStack()[1].destination)
+        assertEquals(Destination1, nc.getNavStack()[2].destination)
+        assertEquals(Destination1, nc.getCurrentNavEntry()?.destination)
     }
 
     @Test
@@ -425,29 +311,16 @@ class NavControllerTests {
     }
 
     @Test
-    fun `popToTop # do not put anything on backstack if current is null`() {
+    fun `popToTop # do nothing if pop-ing last element`() {
         val nc = createTestNavController()
-        nc.editBackStack {
-            add(Destination1)
-            add(Destination2)
-        }
-        nc.popToTop(Destination2)
-        assertEquals(1, nc.getBackStack().size)
-    }
-
-    @Test
-    fun `popToTop # navigates to destination if nothing to pop`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.editBackStack {
-            add(Destination2)
-            add(Destination3)
-        }
-        nc.popToTop(Destination4)
-        assertEquals(Destination4, nc.getCurrentNavEntry()?.destination)
-        assertEquals(3, nc.getBackStack().size)
-        assertEquals(Destination2, nc.getBackStack()[0].destination)
-        assertEquals(Destination3, nc.getBackStack()[1].destination)
-        assertEquals(Destination1, nc.getBackStack()[2].destination)
+        val lastEntry = Destination2.toNavEntry()
+        nc.navigate(Destination1.toNavEntry())
+        nc.navigate(lastEntry)
+        nc.popToTop(Destination2) {}
+        assertEquals(2, nc.getNavStack().size)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
+        assertEquals(Destination2, nc.getNavStack()[1].destination)
+        assertEquals(lastEntry, nc.getNavStack()[1])
     }
 
     @Test
@@ -457,8 +330,8 @@ class NavControllerTests {
         nc.route {
             element(Destination2)
         }
+        assertEquals(1, nc.getNavStack().size)
         assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
-        assertEquals(0, nc.getBackStack().size)
     }
 
     @Test
@@ -474,17 +347,19 @@ class NavControllerTests {
             destination("Destination1")
         }
 
-        assertEquals(2, nc.getBackStack().size)
-        assertEquals("Destination1", nc.getBackStack()[0].destination.name)
-        assertEquals("Destination2", nc.getBackStack()[1].destination.name)
+        assertEquals(3, nc.getNavStack().size)
+        assertEquals("Destination1", nc.getNavStack()[0].destination.name)
+        assertEquals("Destination2", nc.getNavStack()[1].destination.name)
+        assertEquals("Destination3", nc.getNavStack()[2].destination.name)
         val currentNavEntry = nc.getCurrentNavEntry()
         assertEquals("Destination3", currentNavEntry?.destination?.name)
         assertEquals(1, currentNavEntry?.navControllerStore?.navControllers?.size)
         val nestedNc = currentNavEntry?.navControllerStore?.get("controller")
         assertNotNull(nestedNc)
+        assertEquals(2, nestedNc.getNavStack().size)
+        assertEquals("Destination4", nestedNc.getNavStack()[0].destination.name)
+        assertEquals("Destination1", nestedNc.getNavStack()[1].destination.name)
         assertEquals("Destination1", nestedNc.getCurrentNavEntry()?.destination?.name)
-        assertEquals(1, nestedNc.getBackStack().size)
-        assertEquals("Destination4", nestedNc.getBackStack().first().destination.name)
     }
 
     @Test
@@ -549,19 +424,20 @@ class NavControllerTests {
     }
 
     @Test
-    fun `back # navigates to previous entry in backstack`() {
+    fun `back # navigates to previous entry in stack`() {
         val nc = createTestNavController(startDestination = Destination1)
         nc.navigate(Destination2.toNavEntry())
         nc.navigate(Destination3.toNavEntry())
         val result = nc.back()
         assertTrue(result)
         assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
+        assertEquals(2, nc.getNavStack().size)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
+        assertEquals(Destination2, nc.getNavStack()[1].destination)
     }
 
     @Test
-    fun `back # returns false when backstack is empty`() {
+    fun `back # returns false when nothing to back to`() {
         val nc = createTestNavController(startDestination = Destination1)
         val result = nc.back()
         assertFalse(result)
@@ -583,27 +459,15 @@ class NavControllerTests {
         nc.navigate(Destination2.toNavEntry())
         nc.navigate(Destination3.toNavEntry())
         nc.navigate(Destination4.toNavEntry())
+        val stack = nc.getNavStack()
         val result = nc.back(to = Destination2)
         assertTrue(result)
+        assertEquals(2, nc.getNavStack().size)
+        assertEquals(false, stack[2].isAttachedToNavController)
+        assertEquals(false, stack[3].isAttachedToNavController)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
+        assertEquals(Destination2, nc.getNavStack()[1].destination)
         assertEquals(Destination2, nc.getCurrentNavEntry()?.destination)
-        assertEquals(1, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-    }
-
-    @Test
-    fun `back # works when "current" is null`() {
-        val nc = createTestNavController()
-        nc.editBackStack {
-            add(Destination1)
-            add(Destination2)
-            add(Destination3)
-        }
-        val result = nc.back()
-        assertTrue(result)
-        assertEquals(Destination3, nc.getCurrentNavEntry()?.destination)
-        assertEquals(2, nc.getBackStack().size)
-        assertEquals(Destination1, nc.getBackStack()[0].destination)
-        assertEquals(Destination2, nc.getBackStack()[1].destination)
     }
 
     @Test
@@ -613,8 +477,9 @@ class NavControllerTests {
         nc.navigate(Destination3.toNavEntry())
         val result = nc.back(to = Destination2, inclusive = true)
         assertTrue(result)
+        assertEquals(1, nc.getNavStack().size)
+        assertEquals(Destination1, nc.getNavStack()[0].destination)
         assertEquals(Destination1, nc.getCurrentNavEntry()?.destination)
-        assertTrue(nc.getBackStack().isEmpty())
     }
 
     @Test
@@ -631,6 +496,20 @@ class NavControllerTests {
     }
 
     @Test
+    fun `back # return false when "to" is not found and it is not recursive`() {
+        val parentNC = createTestNavController(startDestination = Destination1)
+        parentNC.navigate(Destination2.toNavEntry())
+        parentNC.navigate(Destination3.toNavEntry())
+        parentNC.navigate(Destination4.toNavEntry())
+        val childNC = createTestNavController(parent = parentNC, startDestination = Destination1)
+        childNC.navigate(Destination3.toNavEntry())
+        val result = childNC.back(to = Destination2, recursive = false)
+        assertFalse(result)
+        assertEquals(Destination4, parentNC.getCurrentNavEntry()?.destination)
+        assertEquals(Destination3, childNC.getCurrentNavEntry()?.destination)
+    }
+
+    @Test
     fun `back # redirect called to parent when "to" is not found`() {
         val parentNC = createTestNavController(startDestination = Destination1)
         parentNC.navigate(Destination2.toNavEntry())
@@ -643,13 +522,35 @@ class NavControllerTests {
     }
 
     @Test
+    fun `resolveNavDestinations # resolve known destinations`() {
+        val destinations = listOf(Destination1, Destination2, Destination3)
+        val nc = createTestNavController()
+        nc.navigate(NavDestination.Unresolved(Destination1.name).toNavEntry())
+        nc.navigate(NavDestination.Unresolved(Destination2.name).toNavEntry())
+        nc.resolveNavDestinations { name -> destinations.find { it.name == name } }
+        assertTrue(nc.getNavStack()[0].isResolved)
+        assertTrue(nc.getNavStack()[1].isResolved)
+        nc.navigate(NavDestination.Unresolved("KeptUnresolved").toNavEntry())
+        assertFails {
+            nc.resolveNavDestinations { name -> destinations.find { it.name == name } }
+        }
+        assertFalse(nc.getNavStack()[2].isResolved)
+    }
+
+    @Test
     fun `close # clears all navigation state`() {
-        val nc = createTestNavController(startDestination = Destination1)
-        nc.navigate(Destination2.toNavEntry())
-        nc.navigate(Destination3.toNavEntry())
+        val items = listOf(
+            Destination1.toNavEntry(),
+            Destination2.toNavEntry(),
+            Destination3.toNavEntry(),
+        )
+        val nc = createTestNavController()
+        items.onEach { nc.navigate(it) }
         nc.close()
         assertNull(nc.getCurrentNavEntry())
-        assertTrue(nc.getBackStack().isEmpty())
-        assertNull(nc.currentTransitionFlow.value)
+        assertTrue(nc.getNavStack().isEmpty())
+        items.onEach {
+            assertFalse(it.isAttachedToNavController)
+        }
     }
 }

@@ -8,63 +8,72 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import composegears.tiamat.sample.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-val AdvBackStackAlteration by navDestination(ScreenInfo()) {
-    Screen("Back stack alteration") {
+val AdvNavStackAlteration by navDestination(ScreenInfo()) {
+    Screen("Nav stack alteration") {
         Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val nc = rememberNavController(
-                key = "BS alteration nav controller",
-                startDestination = AdvBackStackAlterationScreenA,
+                key = "NS alteration nav controller",
+                startDestination = AdvNavStackAlterationScreenA,
             )
-            val currentDestination by nc.currentNavDestinationAsState()
-            val backStack by nc.currentBackStackFlow.collectAsState()
+            val navStack by nc.navStackAsState()
+            val canNavigateBack by nc.canNavigateBackAsState()
             VSpacer()
             Text(
-                text = "Here some simple examples of backStack editing",
+                text = "Here some simple examples of nav-stack editing",
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "Current stack is: " +
-                    backStack.joinToString(postfix = if (backStack.isEmpty()) "" else " -> ") {
+                    navStack.joinToString {
                         it.destination.name.substringAfter("Screen")
-                    } +
-                    "${currentDestination?.name?.substringAfter("Screen")} (current)",
+                    },
                 textAlign = TextAlign.Center
             )
             VSpacer()
             Row {
                 Column(Modifier.weight(1f, false).widthIn(200.dp).width(IntrinsicSize.Min)) {
                     AppButton(
-                        "Append ScreenA",
+                        "Add A pre-last",
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            nc.editBackStack { add(AdvBackStackAlterationScreenA) }
+                            nc.editNavStack { old ->
+                                val current = old.last()
+                                old - current + AdvNavStackAlterationScreenA.toNavEntry() + current
+                            }
                         }
                     )
                     AppButton(
-                        "Append ScreenB",
+                        "Add B pre-last",
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            nc.editBackStack { add(AdvBackStackAlterationScreenB) }
+                            nc.editNavStack { old ->
+                                val current = old.last()
+                                old - current + AdvNavStackAlterationScreenB.toNavEntry() + current
+                            }
                         }
                     )
                     AppButton(
-                        "Append ScreenC",
+                        "Add C pre-last",
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            nc.editBackStack { add(AdvBackStackAlterationScreenC) }
+                            nc.editNavStack { old ->
+                                val current = old.last()
+                                old - current + AdvNavStackAlterationScreenC.toNavEntry() + current
+                            }
                         }
                     )
                 }
@@ -73,20 +82,31 @@ val AdvBackStackAlteration by navDestination(ScreenInfo()) {
                     AppButton(
                         "Clear",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = backStack.isNotEmpty(),
-                        onClick = { nc.editBackStack { clear() } }
+                        enabled = canNavigateBack,
+                        onClick = { nc.editNavStack { old -> old.takeLast(1) } }
                     )
                     AppButton(
-                        "Remove Last",
+                        "Remove Last (nav back)",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = backStack.isNotEmpty(),
-                        onClick = { nc.editBackStack { removeLast() } }
+                        enabled = canNavigateBack,
+                        onClick = {
+                            // remove last means we intend to go back
+                            // so we use transition type backward
+                            nc.editNavStack(transitionType = NavController.TransitionType.Backward) { old ->
+                                old.dropLast(1)
+                            }
+                        }
                     )
                     AppButton(
-                        "Remove First",
+                        "Remove Pre-last",
                         modifier = Modifier.fillMaxWidth(),
-                        enabled = backStack.isNotEmpty(),
-                        onClick = { nc.editBackStack { removeAt(0) } }
+                        enabled = canNavigateBack,
+                        onClick = {
+                            nc.editNavStack { old ->
+                                val current = old.last()
+                                old.dropLast(2) + current
+                            }
+                        }
                     )
                 }
             }
@@ -94,9 +114,9 @@ val AdvBackStackAlteration by navDestination(ScreenInfo()) {
             Navigation(
                 navController = nc,
                 destinations = arrayOf(
-                    AdvBackStackAlterationScreenA,
-                    AdvBackStackAlterationScreenB,
-                    AdvBackStackAlterationScreenC,
+                    AdvNavStackAlterationScreenA,
+                    AdvNavStackAlterationScreenB,
+                    AdvNavStackAlterationScreenC,
                 ),
                 modifier = Modifier
                     .fillMaxSize()
@@ -110,9 +130,7 @@ val AdvBackStackAlteration by navDestination(ScreenInfo()) {
     }
 }
 
-// We are using nc.hasBackEntriesAsState().value instead nc.hasBackEntries() due to changes in backStack
-
-private val AdvBackStackAlterationScreenA by navDestination {
+private val AdvNavStackAlterationScreenA by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -120,7 +138,7 @@ private val AdvBackStackAlterationScreenA by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.hasBackEntriesAsState().value,
+                enabled = nc.canNavigateBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -128,7 +146,7 @@ private val AdvBackStackAlterationScreenA by navDestination {
     }
 }
 
-private val AdvBackStackAlterationScreenB by navDestination {
+private val AdvNavStackAlterationScreenB by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -136,7 +154,7 @@ private val AdvBackStackAlterationScreenB by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.hasBackEntriesAsState().value,
+                enabled = nc.canNavigateBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -144,7 +162,7 @@ private val AdvBackStackAlterationScreenB by navDestination {
     }
 }
 
-private val AdvBackStackAlterationScreenC by navDestination {
+private val AdvNavStackAlterationScreenC by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -152,7 +170,7 @@ private val AdvBackStackAlterationScreenC by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                enabled = nc.hasBackEntriesAsState().value,
+                enabled = nc.canNavigateBackAsState().value,
                 startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
@@ -162,6 +180,6 @@ private val AdvBackStackAlterationScreenC by navDestination {
 
 @Preview
 @Composable
-private fun AdvBackStackAlterationPreview() = AppTheme {
-    TiamatPreview(destination = AdvBackStackAlteration)
+private fun AdvNavStackAlterationPreview() = AppTheme {
+    TiamatPreview(destination = AdvNavStackAlteration)
 }

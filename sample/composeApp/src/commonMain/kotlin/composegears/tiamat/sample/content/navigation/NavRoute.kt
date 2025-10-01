@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import composegears.tiamat.sample.ui.*
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -66,8 +67,7 @@ val NavRoute by navDestination(ScreenInfo()) {
                 "Reset to stub",
                 modifier = Modifier.widthIn(min = 400.dp),
                 onClick = {
-                    nc.navigate(NavRouteStub)
-                    nc.editBackStack { clear() }
+                    nc.editNavStack { _ -> listOf(NavRouteStub.toNavEntry()) }
                 }
             )
 

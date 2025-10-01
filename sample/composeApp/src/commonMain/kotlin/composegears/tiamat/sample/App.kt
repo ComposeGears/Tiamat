@@ -53,7 +53,7 @@ fun App(
                     ArchSerializableData,
                     AdvExtensions,
                     AdvOverlayDestinations,
-                    AdvBackStackAlteration,
+                    AdvNavStackAlteration,
                     AdvSharedElementTransition,
                     AdvDestinationsGraph,
                     AdvTwoPane,
