@@ -490,9 +490,9 @@ other commands:
 - check ABI: `./gradlew checkAbi`
 
 - update ABI: `./gradlew updateAbi`
-- 
+  
 - kover html report: `./gradlew :tiamat:koverHtmlReport`
-- 
+  
 - print test coverage: `./gradlew :tiamat:koverLog`
 
 - run detekt checks: `./gradlew detekt`
