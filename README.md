@@ -23,8 +23,6 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 
-Latest stable version: `1.5.2`
-
 [Tiamat Destinations README](doc/tiamat-destinations.md)
 
 [Migration Tiamat 1.* -> Tiamat 2.*](doc/migration-1.5-2.0.md)
