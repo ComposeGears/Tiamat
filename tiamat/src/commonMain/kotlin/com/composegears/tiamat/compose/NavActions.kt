@@ -13,20 +13,20 @@ import com.composegears.tiamat.navigation.NavEntry
  * Navigates to a new destination.
  * The current destination is added to the nav stack.
  *
- * @param entry The navigation entry to navigate to
+ * @param dest The destination to navigate to
  * @param navArgs Optional typed arguments to pass to the destination
  * @param freeArgs Optional untyped arguments to pass to the destination
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
 public fun <Args : Any> NavController.navigate(
-    entry: NavDestination<Args>,
+    dest: NavDestination<Args>,
     navArgs: Args? = null,
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
 ): Unit = navigate(
-    entry = entry.toNavEntry(
+    entry = dest.toNavEntry(
         navArgs = navArgs,
         freeArgs = freeArgs,
         navResult = null
@@ -61,20 +61,20 @@ public fun <Args : Any> NavController.navigate(
  * Replaces the current destination with a new one.
  * The current destination is not added to the nav stack.
  *
- * @param entry The navigation entry to replace with
+ * @param dest The destination to replace with
  * @param navArgs Optional typed arguments to pass to the destination
  * @param freeArgs Optional untyped arguments to pass to the destination
  * @param transition Optional content transform animation for the transition
  * @param transitionController Optional controller for managing the transition programmatically
  */
 public fun <Args : Any> NavController.replace(
-    entry: NavDestination<Args>,
+    dest: NavDestination<Args>,
     navArgs: Args? = null,
     freeArgs: Any? = null,
     transition: ContentTransform? = null,
     transitionController: TransitionController? = null
 ): Unit = replace(
-    entry = entry.toNavEntry(
+    entry = dest.toNavEntry(
         navArgs = navArgs,
         freeArgs = freeArgs,
         navResult = null
