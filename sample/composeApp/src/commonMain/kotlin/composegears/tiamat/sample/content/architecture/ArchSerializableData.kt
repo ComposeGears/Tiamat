@@ -41,7 +41,7 @@ val ArchSerializableData by navDestination(ScreenInfo()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     fun replace(arg: Any) {
                         nc.replace(
-                            entry = ArchSerializableDataScreen,
+                            dest = ArchSerializableDataScreen,
                             navArgs = ArchSerializableDataClass(1),
                             freeArgs = arg,
                         )
