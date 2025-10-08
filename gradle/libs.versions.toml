@@ -38,7 +38,7 @@ zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.10.0"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.6.8" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.7.0" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version = "1.0.0-beta09" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
