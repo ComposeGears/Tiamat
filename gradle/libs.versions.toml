@@ -9,7 +9,7 @@ camerax = "1.5.1"
 detekt = "1.23.8"
 jetbrains-compose = "1.9.0"
 lifecycle = "2.9.4"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 window-size = "1.9.0-beta06"
 
 [libraries]
