@@ -30,7 +30,7 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew createLocalM2 -PPGP_KEY="${{secrets.PGP_KEY}}" -PPGP_PAS="${{secrets.PGP_PAS}}"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: m2
           path: build/m2
