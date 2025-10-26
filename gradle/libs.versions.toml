@@ -7,7 +7,7 @@ sample-targetSdk = "36"
 
 camerax = "1.5.1"
 detekt = "1.23.8"
-jetbrains-compose = "1.9.0"
+jetbrains-compose = "1.10.0-alpha03"
 lifecycle = "2.9.4"
 kotlin = "2.2.20"
 window-size = "1.9.0-beta06"
@@ -20,7 +20,7 @@ androidx-camera-compose = { module = "androidx.camera:camera-compose", version.r
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "window-size" }
-compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "jetbrains-compose" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-alpha02" }
 
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.27"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }

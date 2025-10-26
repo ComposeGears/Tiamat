@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.TiamatPreview
 import com.composegears.tiamat.compose.navController
@@ -43,7 +44,6 @@ import composegears.tiamat.sample.platform.Platform
 import composegears.tiamat.sample.platform.features
 import composegears.tiamat.sample.platform.name
 import composegears.tiamat.sample.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val HomeItems =
     listOf(
@@ -160,6 +160,11 @@ private val HomeItems =
                     name = "Adaptive list + details",
                     description = "Example shows how to display list + details UI based on screen size",
                     destination = AdvAdaptiveListDetails
+                ),
+                AppFeature(
+                    name = "Retain API",
+                    description = "Example shows how to use new Compose retain API inside Tiamat destination",
+                    destination = AdvRetain
                 ),
             ),
         ),

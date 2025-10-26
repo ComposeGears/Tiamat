@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.composegears.tiamat.compose.TransitionController.Event.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
@@ -260,7 +262,13 @@ public fun NavigationScene(
     // back handler
     if (handleSystemBackEvent) {
         val canNavigateBack by navController.canNavigateBackAsState()
-        BackHandler(canNavigateBack, navController::back)
+        val navEventState = rememberNavigationEventState(NavigationEventInfo.None)
+        NavigationBackHandler(
+            state = navEventState,
+            isBackEnabled = canNavigateBack,
+            onBackCancelled = {},
+            onBackCompleted = navController::back
+        )
     }
     val visibleEntries = remember { mutableSetOf<NavEntry<*>>() }
     // display current entry + animate enter/exit

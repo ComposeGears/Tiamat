@@ -2,6 +2,7 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.runtime.retain.LocalRetainScope
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
 import androidx.lifecycle.Lifecycle
@@ -30,6 +31,7 @@ internal fun <Args : Any> NavEntryContent(
         CompositionLocalProvider(
             LocalSaveableStateRegistry provides entrySaveableStateRegistry,
             LocalLifecycleOwner provides entryContentLifecycleOwner,
+            LocalRetainScope provides entry.retainedValuesStore,
             LocalViewModelStoreOwner provides entry,
             LocalNavEntry provides entry,
         ) {

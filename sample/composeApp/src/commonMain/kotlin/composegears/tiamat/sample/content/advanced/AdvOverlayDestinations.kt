@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
@@ -23,7 +24,6 @@ import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     Screen("Overlay Destinations") {

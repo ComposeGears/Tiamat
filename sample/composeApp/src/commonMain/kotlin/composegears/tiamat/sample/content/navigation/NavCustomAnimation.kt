@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
@@ -24,7 +25,6 @@ import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
 import composegears.tiamat.sample.ui.VSpacer
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val NavCustomAnimation by navDestination(ScreenInfo()) {
     Screen("Custom animation") {

@@ -52,7 +52,7 @@ kotlin {
             implementation(projects.tiamat)
             implementation(projects.tiamatDestinations.tiamatDestinations)
 
-            implementation(compose.components.uiToolingPreview)
+            implementation(compose.preview)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
@@ -60,8 +60,6 @@ kotlin {
             implementation(libs.compose.material3.window.size)
         }
         androidMain.dependencies {
-            implementation(compose.preview)
-
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.androidx.camera.camera2)
