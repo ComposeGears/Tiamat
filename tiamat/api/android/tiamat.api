@@ -6,6 +6,11 @@ public final class com/composegears/tiamat/UtilsKt {
 	public static synthetic fun toHumanReadableString$default (Ljava/util/Map;Ljava/lang/String;IILjava/lang/Object;)Ljava/lang/String;
 }
 
+public final class com/composegears/tiamat/compose/ComposableAddonsKt {
+	public static final fun produceRetainedState (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+	public static final fun produceRetainedState (Ljava/lang/Object;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+}
+
 public final class com/composegears/tiamat/compose/ComposableNavControllerKt {
 	public static final fun canNavigateBackAsState (Lcom/composegears/tiamat/navigation/NavController;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
 	public static final fun currentNavDestinationAsState (Lcom/composegears/tiamat/navigation/NavController;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;

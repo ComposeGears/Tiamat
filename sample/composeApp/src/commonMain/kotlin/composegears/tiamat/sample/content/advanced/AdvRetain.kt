@@ -12,6 +12,8 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Alignment
@@ -19,8 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.*
 import composegears.tiamat.sample.ui.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.random.Random
 
 val AdvRetain by navDestination(ScreenInfo()) {
@@ -45,10 +50,25 @@ val AdvRetain by navDestination(ScreenInfo()) {
     }
 }
 
+@OptIn(TiamatExperimentalApi::class)
 private val AdvRetainScreen1 by navDestination {
     val nc = navController()
     val retainedData = retain { RTData() }
     val rememberedData = remember { RTData() }
+
+    val producedState by produceState(0) {
+        while (isActive) {
+            delay(1000)
+            value++
+        }
+    }
+    val retainedState by produceRetainedState(0) {
+        while (isActive) {
+            delay(1000)
+            value++
+        }
+    }
+
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
@@ -61,6 +81,8 @@ private val AdvRetainScreen1 by navDestination {
                 text = "Remembered value: $rememberedData",
                 textAlign = TextAlign.Center
             )
+            Text("Produced State: $producedState", textAlign = TextAlign.Center)
+            Text("Retained State: $retainedState", textAlign = TextAlign.Center)
             VSpacer()
             AppButton(
                 "Next",
