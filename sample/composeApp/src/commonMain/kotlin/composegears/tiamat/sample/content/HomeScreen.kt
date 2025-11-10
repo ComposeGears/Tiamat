@@ -48,7 +48,7 @@ import composegears.tiamat.sample.ui.*
 private val HomeItems =
     listOf(
         HomeItem(
-            "Navigation",
+            "Getting Started",
             listOf(
                 AppFeature(
                     name = "Forward & back",
@@ -56,25 +56,34 @@ private val HomeItems =
                     destination = NavForwardAndBack
                 ),
                 AppFeature(
+                    name = "NavArgs",
+                    description = "Passing navigation-arguments to next screen example",
+                    destination = APRNavArgs
+                ),
+                AppFeature(
+                    name = "NavResult",
+                    description = "Returning result to previous screen",
+                    destination = APRNavResult
+                ),
+            ),
+        ),
+        HomeItem(
+            "Navigation Patterns",
+            listOf(
+                AppFeature(
                     name = "Replace",
                     description = "Replace (navigate without adding current destination to back stack) case",
                     destination = NavReplace
                 ),
                 AppFeature(
+                    name = "Tabs navigation",
+                    description = "Simple tab's navigation with a separate nav controllers for each tab. Sample use `popToTop` nav action to bring to from previously opened screen",
+                    destination = NavTabs
+                ),
+                AppFeature(
                     name = "Nested navigation",
                     description = "Multiple nested nav controllers case",
                     destination = NavNested
-                ),
-                AppFeature(
-                    name = "Custom animation",
-                    description = "On fly customizable navigation animation",
-                    destination = NavCustomAnimation
-                ),
-                AppFeature(
-                    name = "Tabs navigation",
-                    description = "Simple tab's navigation with a separate nav controllers for each tab." +
-                        "Sample use `popToTop` nav action to bring to from previously opened screen",
-                    destination = NavTabs
                 ),
                 AppFeature(
                     name = "Routing (experimental)",
@@ -84,27 +93,22 @@ private val HomeItems =
             ),
         ),
         HomeItem(
-            "Args / Params / Result",
+            "Data Passing",
             listOf(
-                AppFeature(
-                    name = "NavArgs",
-                    description = "Passing navigation-arguments to next screen example",
-                    destination = APRNavArgs
-                ),
                 AppFeature(
                     name = "FreeArgs",
                     description = "Passing free-type-arguments to next screen example",
                     destination = APRFreeArgs
                 ),
                 AppFeature(
-                    name = "NavResult",
-                    description = "Returning result tp previous screen",
-                    destination = APRNavResult
+                    name = "Serializable Data & Arguments",
+                    description = "Passing @Serializable data as navArgs / freeArgs / navResult",
+                    destination = ArchSerializableData
                 ),
             ),
         ),
         HomeItem(
-            "Architecture",
+            "State Management",
             listOf(
                 AppFeature(
                     name = "ViewModel",
@@ -117,14 +121,49 @@ private val HomeItems =
                     destination = ArchCustomSaveState
                 ),
                 AppFeature(
-                    name = "Serializable Data & Arguments",
-                    description = "Passing @Serializable data as navArgs / freeArgs / navResult",
-                    destination = ArchSerializableData
+                    name = "Retain API",
+                    description = "Example shows how to use new Compose retain API inside Tiamat destination",
+                    destination = AdvRetain
                 ),
             ),
         ),
         HomeItem(
-            "Advanced examples",
+            "UI & Animation",
+            listOf(
+                AppFeature(
+                    name = "Custom animation",
+                    description = "On fly customizable navigation animation",
+                    destination = NavCustomAnimation
+                ),
+                AppFeature(
+                    name = "Shared element transition",
+                    description = "Example shows how to use shared element transition",
+                    destination = AdvSharedElementTransition
+                ),
+                AppFeature(
+                    name = "Overlay Destinations",
+                    description = "Example shows how to navigate from and to overlays (dialogs, bottom sheets, etc)",
+                    destination = AdvOverlayDestinations
+                ),
+            ),
+        ),
+        HomeItem(
+            "Adaptive Layouts",
+            listOf(
+                AppFeature(
+                    name = "Two pane",
+                    description = "Example shows how to display two pane UI (list + details)",
+                    destination = AdvTwoPane
+                ),
+                AppFeature(
+                    name = "Adaptive list + details",
+                    description = "Example shows how to display list + details UI based on screen size",
+                    destination = AdvAdaptiveListDetails
+                ),
+            ),
+        ),
+        HomeItem(
+            "Advanced",
             listOf(
                 AppFeature(
                     name = "Nav stack alteration",
@@ -137,34 +176,9 @@ private val HomeItems =
                     destination = AdvExtensions
                 ),
                 AppFeature(
-                    name = "Overlay Destinations",
-                    description = "Example shows how to navigate from and to overlays (dialogs, bottom sheets, etc)",
-                    destination = AdvOverlayDestinations
-                ),
-                AppFeature(
-                    name = "Shared element transition",
-                    description = "Example shows how to use shared element transition",
-                    destination = AdvSharedElementTransition
-                ),
-                AppFeature(
                     name = "Auto destinations graph",
                     description = "Example shows how to use `InstallIn` annotation and generate destinations graph",
                     destination = AdvDestinationsGraph
-                ),
-                AppFeature(
-                    name = "Two pane",
-                    description = "Example shows how to display two pane UI (list + details)",
-                    destination = AdvTwoPane
-                ),
-                AppFeature(
-                    name = "Adaptive list + details",
-                    description = "Example shows how to display list + details UI based on screen size",
-                    destination = AdvAdaptiveListDetails
-                ),
-                AppFeature(
-                    name = "Retain API",
-                    description = "Example shows how to use new Compose retain API inside Tiamat destination",
-                    destination = AdvRetain
                 ),
             ),
         ),

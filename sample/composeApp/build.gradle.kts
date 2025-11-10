@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.compose.hot.reload)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.tiamat.destinations.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -37,10 +38,7 @@ kotlin {
             commonWebpackConfig {
                 outputFileName = "tiamatApp.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.projectDir.path)
-                    }
+                    static(project.projectDir.path)
                 }
             }
         }
@@ -52,11 +50,9 @@ kotlin {
             implementation(projects.tiamat)
             implementation(projects.tiamatDestinations.tiamatDestinations)
 
-            implementation(compose.preview)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
             implementation(libs.compose.material3.window.size)
         }
         androidMain.dependencies {
@@ -73,7 +69,7 @@ kotlin {
 }
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+    debugImplementation(libs.compose.ui.tooling.preview)
 }
 
 android {

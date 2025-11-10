@@ -30,7 +30,7 @@ public fun <T> produceRetainedState(
 ): State<T> {
     val state = retain { mutableStateOf(initialValue) }
     RetainedEffect(Unit) {
-        val context = SupervisorJob() + EmptyCoroutineContext
+        val context = Job() + EmptyCoroutineContext
         val scope = CoroutineScope(context)
         scope.launch {
             ProduceRetainedStateScopeImpl(state, context).producer()
