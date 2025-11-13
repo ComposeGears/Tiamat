@@ -77,7 +77,8 @@ private val HomeItems =
                 ),
                 AppFeature(
                     name = "Tabs navigation",
-                    description = "Simple tab's navigation with a separate nav controllers for each tab. Sample use `popToTop` nav action to bring to from previously opened screen",
+                    description = "Simple tab's navigation with a separate nav controllers for each tab. " +
+                        "Sample use `popToTop` nav action to bring to from previously opened screen",
                     destination = NavTabs
                 ),
                 AppFeature(
