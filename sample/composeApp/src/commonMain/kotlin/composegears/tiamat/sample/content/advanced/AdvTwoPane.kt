@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -21,6 +18,9 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
 import kotlinx.coroutines.delay
 
@@ -108,7 +108,7 @@ private val AdvTwoPaneList by navDestination {
                 AppButton(
                     item,
                     modifier = Modifier.widthIn(min = 200.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(AdvTwoPaneDetails1, item) }
                 )
             }
@@ -140,13 +140,13 @@ private val AdvTwoPaneDetails1 by navDestination<String> {
             Row {
                 AppButton(
                     "Back",
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back() }
                 )
                 HSpacer()
                 AppButton(
                     "Next",
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(AdvTwoPaneDetails2, args) }
                 )
             }
@@ -176,7 +176,7 @@ private val AdvTwoPaneDetails2 by navDestination<String> {
             Text("Timer: $timer", style = MaterialTheme.typography.bodyMedium)
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

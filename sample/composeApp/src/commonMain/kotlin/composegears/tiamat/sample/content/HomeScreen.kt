@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +36,10 @@ import composegears.tiamat.sample.content.architecture.ArchCustomSaveState
 import composegears.tiamat.sample.content.architecture.ArchSerializableData
 import composegears.tiamat.sample.content.architecture.ArchViewModel
 import composegears.tiamat.sample.content.navigation.*
+import composegears.tiamat.sample.icons.DarkMode
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.icons.KeyboardArrowUp
 import composegears.tiamat.sample.platform.Platform
 import composegears.tiamat.sample.platform.features
 import composegears.tiamat.sample.platform.name
@@ -220,7 +220,7 @@ val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
             modifier = Modifier.align(Alignment.TopEnd),
             onClick = { themeConfig.isDarkMode = !themeConfig.isDarkMode }
         ) {
-            Icon(Icons.Default.DarkMode, "")
+            Icon(Icons.DarkMode, "")
         }
     }
 }
@@ -256,7 +256,7 @@ private fun HomeGroupItem(
             ) {
                 Text(item.title, Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
                 FillSpace()
-                Icon(Icons.Default.KeyboardArrowUp, "", Modifier.rotate(iconRotation))
+                Icon(Icons.KeyboardArrowUp, "", Modifier.rotate(iconRotation))
             }
             // items
             if (isExpanded) item.items.onEach {
@@ -280,7 +280,7 @@ private fun HomeGroupItem(
                         }
                     }
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        imageVector = Icons.KeyboardArrowRight,
                         contentDescription = "",
                         modifier = Modifier.alpha(0.5f)
                     )

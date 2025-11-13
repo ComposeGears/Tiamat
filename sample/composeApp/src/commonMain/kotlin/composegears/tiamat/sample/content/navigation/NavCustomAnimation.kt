@@ -6,9 +6,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,11 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
-import composegears.tiamat.sample.ui.AppButton
-import composegears.tiamat.sample.ui.AppTheme
-import composegears.tiamat.sample.ui.Screen
-import composegears.tiamat.sample.ui.ScreenInfo
-import composegears.tiamat.sample.ui.VSpacer
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.ui.*
 
 val NavCustomAnimation by navDestination(ScreenInfo()) {
     Screen("Custom animation") {
@@ -60,7 +56,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
                 AppButton(
                     "Next (scale in + out)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = {
                         nc.navigate(
                             NavCustomAnimationScreen2,
@@ -71,7 +67,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
                 AppButton(
                     "Next (slide)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = {
                         nc.navigate(
                             NavCustomAnimationScreen2,
@@ -82,7 +78,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
                 AppButton(
                     "Next (slide from bottom)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = {
                         nc.navigate(
                             NavCustomAnimationScreen2,
@@ -93,7 +89,7 @@ private val NavCustomAnimationScreen1: NavDestination<Unit> by navDestination {
                 AppButton(
                     "Next (fade)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = {
                         nc.navigate(
                             NavCustomAnimationScreen2,
@@ -116,19 +112,19 @@ private val NavCustomAnimationScreen2 by navDestination {
                 AppButton(
                     "Back (scale in + out)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back(transition = scaleIn() togetherWith scaleOut()) }
                 )
                 AppButton(
                     "Back (slide)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back(transition = navigationSlideInOut(false)) }
                 )
                 AppButton(
                     "Back (slide down)",
                     modifier = Modifier.widthIn(min = 400.dp),
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back(transition = navigationSlideOutToBottom()) }
                 )
             }
