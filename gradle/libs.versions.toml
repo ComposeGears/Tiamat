@@ -10,7 +10,7 @@ detekt = "1.23.8"
 jetbrains-compose = "1.10.0-beta01"
 lifecycle = "2.9.6"
 kotlin = "2.2.21"
-window-size = "1.9.0"
+material3 = "1.9.0"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.11.0"
@@ -19,8 +19,9 @@ androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.r
 androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 
-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version = "1.9.0" }
-compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "window-size" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
+compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
+
 compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-beta01" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
