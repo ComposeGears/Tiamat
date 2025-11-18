@@ -3,8 +3,6 @@ package composegears.tiamat.sample.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +15,8 @@ import com.composegears.tiamat.compose.NavDestinationScope
 import com.composegears.tiamat.compose.back
 import com.composegears.tiamat.compose.canNavigateBackAsState
 import com.composegears.tiamat.compose.navController
+import composegears.tiamat.sample.icons.ArrowBack
+import composegears.tiamat.sample.icons.Icons
 
 @Composable
 fun VSpacer(height: Dp = 16.dp) {
@@ -147,7 +147,7 @@ fun <T : Any> NavDestinationScope<T>.Screen(
                         enabled = nc.canNavigateBackAsState().value,
                         onClick = { nc.back() }
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                        Icon(Icons.ArrowBack, "")
                     }
                 else
                     HSpacer(16.dp)

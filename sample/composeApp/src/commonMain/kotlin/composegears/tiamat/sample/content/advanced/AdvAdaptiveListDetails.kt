@@ -6,13 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Tab
-import androidx.compose.material.icons.filled.Web
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -21,13 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
+import composegears.tiamat.sample.icons.*
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.HSpacer
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 val AdvAdaptiveListDetails by navDestination {
@@ -39,9 +33,9 @@ val AdvAdaptiveListDetails by navDestination {
         }
         val menuItems = remember {
             listOf(
-                MenuItem(Icons.Filled.Home, "Home"),
-                MenuItem(Icons.Filled.Tab, "Tab"),
-                MenuItem(Icons.Filled.Web, "Web"),
+                MenuItem(Icons.Home, "Home"),
+                MenuItem(Icons.Tab, "Tab"),
+                MenuItem(Icons.Web, "Web"),
             )
         }
         var activeMenuItem by remember { mutableStateOf(menuItems.first()) }
@@ -62,7 +56,7 @@ val AdvAdaptiveListDetails by navDestination {
                     navigationIcon = {
                         val parentNavController = navController()
                         IconButton(onClick = parentNavController::back) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            Icon(Icons.ArrowBack, contentDescription = "Back")
                         }
                     }
                 )
@@ -174,7 +168,7 @@ private val AdvAdaptiveListDetailsList by navDestination {
                 AppButton(
                     item,
                     modifier = Modifier.widthIn(min = 200.dp),
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(AdvAdaptiveListDetailsDetails1, item) }
                 )
             }
@@ -199,13 +193,13 @@ private val AdvAdaptiveListDetailsDetails1 by navDestination<String> {
             Row {
                 AppButton(
                     "Back",
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back() }
                 )
                 HSpacer()
                 AppButton(
                     "Next",
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(AdvAdaptiveListDetailsDetails2, args) }
                 )
             }
@@ -228,7 +222,7 @@ private val AdvAdaptiveListDetailsDetails2 by navDestination<String> {
             Text("Selected item: ${navArgs()}", style = MaterialTheme.typography.bodyMedium)
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

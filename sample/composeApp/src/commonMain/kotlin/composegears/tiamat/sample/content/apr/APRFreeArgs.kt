@@ -4,24 +4,20 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
-import composegears.tiamat.sample.ui.AppButton
-import composegears.tiamat.sample.ui.AppTheme
-import composegears.tiamat.sample.ui.Screen
-import composegears.tiamat.sample.ui.ScreenInfo
-import composegears.tiamat.sample.ui.VSpacer
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.ui.*
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val APRFreeArgs by navDestination(ScreenInfo()) {
     Screen("FreeArgs") {
@@ -69,25 +65,25 @@ private val APRFreeArgsScreen1 by navDestination {
             AppButton(
                 "Next (Pass `String`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRFreeArgsScreen2, freeArgs = "Some String") }
             )
             AppButton(
                 "Next (Pass `Int`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRFreeArgsScreen2, freeArgs = 1) }
             )
             AppButton(
                 "Next (Pass `Class`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRFreeArgsScreen2, freeArgs = SomeFreeArgsDataClass(1)) }
             )
             AppButton(
                 "Next (Pass nothing)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRFreeArgsScreen2) }
             )
         }
@@ -116,7 +112,7 @@ private val APRFreeArgsScreen2 by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

@@ -1,4 +1,3 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
@@ -51,12 +50,12 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
 
             api(libs.kotlin.serialization.core)
-            api(libs.compose.ui.backhandler)
+            api(libs.compose.navigationevent)
             api(libs.lifecycle.runtime.compose)
             api(libs.lifecycle.viewmodel.compose)
         }
@@ -67,9 +66,8 @@ kotlin {
             implementation(compose.desktop.currentOs)
         }
         commonTest.dependencies {
-            @OptIn(ExperimentalComposeLibrary::class)
-            implementation(compose.uiTest)
-            implementation(compose.material3)
+            implementation(libs.compose.ui.test)
+            implementation(libs.compose.material3)
             implementation(libs.kotlin.test)
         }
     }

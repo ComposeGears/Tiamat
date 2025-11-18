@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.composegears.tiamat.compose.Navigation
 import com.composegears.tiamat.compose.navigationPlatformDefault
 import com.composegears.tiamat.compose.rememberNavController
@@ -20,7 +21,6 @@ import composegears.tiamat.sample.content.navigation.*
 import composegears.tiamat.sample.platform.Platform
 import composegears.tiamat.sample.platform.features
 import composegears.tiamat.sample.ui.AppTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Suppress("SpreadOperator")
@@ -58,6 +58,7 @@ fun App(
                     AdvDestinationsGraph,
                     AdvTwoPane,
                     AdvAdaptiveListDetails,
+                    AdvRetain,
                     *Platform.features()
                         .map { it.destination }
                         .toTypedArray()

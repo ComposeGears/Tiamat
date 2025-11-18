@@ -4,9 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -14,16 +11,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavEntry
 import composegears.tiamat.sample.content.advanced.OverlayDestinationExtension.Companion.isOverlay
+import composegears.tiamat.sample.icons.Close
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.Screen
 import composegears.tiamat.sample.ui.ScreenInfo
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val AdvOverlayDestinations by navDestination(ScreenInfo()) {
     Screen("Overlay Destinations") {
@@ -106,7 +106,7 @@ private val AdvOverlayScreen by navDestination<Unit> {
             item {
                 AppButton(
                     "Back",
-                    endIcon = Icons.Default.Close,
+                    endIcon = Icons.Close,
                     onClick = { navController.back() }
                 )
             }
@@ -129,7 +129,7 @@ private val AdvOverlayBottomSheet by navDestination<Unit>(OverlayDestinationExte
             AdvOverlayContentButtons(nc = navController)
             AppButton(
                 "Close",
-                endIcon = Icons.Default.Close,
+                endIcon = Icons.Close,
                 onClick = { navController.back() }
             )
         }
@@ -166,17 +166,17 @@ private fun AdvOverlayContentButtons(
     ) {
         AppButton(
             "Open Bottom sheet",
-            endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+            endIcon = Icons.KeyboardArrowRight,
             onClick = { nc.navigate(AdvOverlayBottomSheet) }
         )
         AppButton(
             "Open Dialog",
-            endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+            endIcon = Icons.KeyboardArrowRight,
             onClick = { nc.navigate(AdvOverlayDialog) }
         )
         AppButton(
             "Open Screen",
-            endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+            endIcon = Icons.KeyboardArrowRight,
             onClick = { nc.navigate(AdvOverlayScreen) }
         )
     }
