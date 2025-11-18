@@ -39,12 +39,12 @@ public fun MutableSavedState(vararg pairs: Pair<String, Any?>): MutableSavedStat
 public class SavedStateRecord<T> internal constructor(
     private val savedState: MutableSavedState,
     private val key: String,
-    private val initialValue: T,
+    private val initialValueProvider: () -> T,
 ) {
-    internal val flow = MutableStateFlow(savedState.getOrPut(key) { initialValue } as T)
+    internal val flow = MutableStateFlow(savedState.getOrPut(key, initialValueProvider) as T)
 
     public var value: T
-        get() = savedState.getOrPut(key) { initialValue } as T
+        get() = savedState.getOrPut(key, initialValueProvider) as T
         set(value) {
             savedState[key] = value
             flow.value = value
@@ -55,11 +55,21 @@ public class SavedStateRecord<T> internal constructor(
  * Creates a SavedStateRecord for the given key and initial value within this mutable saved state.
  *
  * @param key The key to associate with the record
+ * @param initialValueProvider The initial value provider to use if the key doesn't exist in the saved state
+ * @return A SavedStateRecord that manages the value for the given key
+ */
+public fun <T> MutableSavedState.recordOf(key: String, initialValueProvider: () -> T): SavedStateRecord<T> =
+    SavedStateRecord(this, key, initialValueProvider)
+
+/**
+ * Creates a SavedStateRecord for the given key and initial value within this mutable saved state.
+ *
+ * @param key The key to associate with the record
  * @param initialValue The initial value to use if the key doesn't exist in the saved state
  * @return A SavedStateRecord that manages the value for the given key
  */
 public fun <T> MutableSavedState.recordOf(key: String, initialValue: T): SavedStateRecord<T> =
-    SavedStateRecord(this, key, initialValue)
+    SavedStateRecord(this, key) { initialValue }
 
 /**
  * Returns a read-only StateFlow that emits the current value of this SavedStateRecord
