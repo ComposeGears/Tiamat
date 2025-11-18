@@ -4,24 +4,20 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
-import composegears.tiamat.sample.ui.AppButton
-import composegears.tiamat.sample.ui.AppTheme
-import composegears.tiamat.sample.ui.Screen
-import composegears.tiamat.sample.ui.ScreenInfo
-import composegears.tiamat.sample.ui.VSpacer
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.ui.*
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val APRNavResult by navDestination(ScreenInfo()) {
     Screen("NavResult") {
@@ -74,7 +70,7 @@ private val APRNavResultScreen1 by navDestination {
             VSpacer()
             AppButton(
                 "Next",
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRNavResultScreen2) }
             )
         }
@@ -90,25 +86,25 @@ private val APRNavResultScreen2 by navDestination<Int> {
             AppButton(
                 "Back (Result is `String`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back(result = "Some String") }
             )
             AppButton(
                 "Back (Result is `Int`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back(result = 1) }
             )
             AppButton(
                 "Back (Result is `Class`)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back(result = SomeNavResultDataClass(1)) }
             )
             AppButton(
                 "Back (Result is nothing)",
                 modifier = Modifier.widthIn(min = 400.dp),
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

@@ -19,9 +19,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.FlipCameraAndroid
-import androidx.compose.material.icons.sharp.Lens
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -40,6 +37,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.currentStateAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.navDestination
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.platform.icons.FlipCameraAndroid
+import composegears.tiamat.sample.platform.icons.Lens
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.Screen
 import kotlinx.coroutines.awaitCancellation
@@ -131,7 +131,7 @@ private fun CameraView(viewModel: CameraPreviewViewModel) {
                     .clickable {
                         Toast.makeText(context, "Take photo", Toast.LENGTH_SHORT).show()
                     },
-                imageVector = Icons.Sharp.Lens,
+                imageVector = Icons.Lens,
                 contentDescription = null
             )
             Icon(
@@ -146,7 +146,7 @@ private fun CameraView(viewModel: CameraPreviewViewModel) {
                             else -> DEFAULT_BACK_CAMERA
                         }
                     },
-                imageVector = Icons.Sharp.FlipCameraAndroid,
+                imageVector = Icons.FlipCameraAndroid,
                 contentDescription = null
             )
         }

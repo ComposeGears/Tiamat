@@ -3,11 +3,6 @@ package composegears.tiamat.sample.content.apr
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,11 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavDestination
+import composegears.tiamat.sample.icons.*
 import composegears.tiamat.sample.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 // the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
 val APRNavArgs by navDestination(ScreenInfo("NavArgs")) {
@@ -74,19 +70,19 @@ private val APRNavArgsScreen1: NavDestination<Unit> by navDestination(ScreenInfo
                 IconButton(
                     onClick = { value-- }
                 ) {
-                    Icon(Icons.Default.Remove, "")
+                    Icon(Icons.Remove, "")
                 }
                 Text("Value: $value")
                 IconButton(
                     onClick = { value++ }
                 ) {
-                    Icon(Icons.Default.Add, "")
+                    Icon(Icons.Add, "")
                 }
             }
             VSpacer()
             AppButton(
                 "Next",
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(APRNavArgsScreen2, navArgs = value) }
             )
         }
@@ -111,7 +107,7 @@ private val APRNavArgsScreen2 by navDestination<Int>(
             VSpacer()
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

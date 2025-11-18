@@ -6,20 +6,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.SavedState
 import com.composegears.tiamat.toHumanReadableString
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 val ArchCustomSaveState by navDestination(ScreenInfo()) {
     Screen("Custom SaveState") {
@@ -82,7 +82,7 @@ private val ArchCustomSaveStateScreen1 by navDestination {
             VSpacer()
             AppButton(
                 "Next",
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(ArchCustomSaveStateScreen2) }
             )
         }
@@ -98,13 +98,13 @@ private val ArchCustomSaveStateScreen2 by navDestination {
             Row {
                 AppButton(
                     "Back",
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back() }
                 )
                 HSpacer()
                 AppButton(
                     "Next",
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(ArchCustomSaveStateScreen3) }
                 )
             }
@@ -120,7 +120,7 @@ private val ArchCustomSaveStateScreen3 by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

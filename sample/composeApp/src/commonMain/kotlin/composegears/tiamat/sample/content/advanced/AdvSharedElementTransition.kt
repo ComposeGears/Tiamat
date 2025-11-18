@@ -7,9 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +15,13 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 private val LocalSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope> { error("No scope provided") }
@@ -85,7 +85,7 @@ private val AdvSharedElementTransitionScreen1 by navDestination {
             VSpacer()
             AppButton(
                 "Next",
-                endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                endIcon = Icons.KeyboardArrowRight,
                 onClick = { nc.navigate(AdvSharedElementTransitionScreen2) }
             )
         }
@@ -120,13 +120,13 @@ private val AdvSharedElementTransitionScreen2 by navDestination {
             Row {
                 AppButton(
                     "Back",
-                    startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                    startIcon = Icons.KeyboardArrowLeft,
                     onClick = { nc.back() }
                 )
                 HSpacer()
                 AppButton(
                     "Next",
-                    endIcon = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                    endIcon = Icons.KeyboardArrowRight,
                     onClick = { nc.navigate(AdvSharedElementTransitionScreen3) }
                 )
             }
@@ -161,7 +161,7 @@ private val AdvSharedElementTransitionScreen3 by navDestination {
             VSpacer()
             AppButton(
                 "Back",
-                startIcon = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                startIcon = Icons.KeyboardArrowLeft,
                 onClick = { nc.back() }
             )
         }

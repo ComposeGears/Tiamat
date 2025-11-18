@@ -4,8 +4,8 @@ plugins {
     base // expose `clear` task, so we can modify it
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.compose.hot.reload) apply false
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -58,6 +58,12 @@ tasks.register("updateAbi") {
     dependsOn(":tiamat:updateLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
+}
+
+// run static analysis on all projects
+tasks.register("runStaticAnalysis") {
+    dependsOn("detekt")
+    dependsOn(":tiamat:lint")
 }
 
 // root `clean` task not include subprojects by default, so add them directly
