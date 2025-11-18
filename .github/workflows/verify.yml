@@ -46,8 +46,8 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v5
 
-      - name: Execute Gradle build
-        run: ./gradlew detekt
+      - name: Run static analysis (detekt, lint, etc.)
+        run: ./gradlew runStaticAnalysis
 
       - name: Test compiler plugin
         run: ./gradlew tiamat-destinations-compiler:test
