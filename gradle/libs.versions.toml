@@ -5,32 +5,38 @@ sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"
 
-camerax = "1.5.1"
-detekt = "1.23.8"
-jetbrains-compose = "1.10.0-beta01"
-lifecycle = "2.9.6"
 kotlin = "2.2.21"
+jetbrains-compose = "1.10.0-beta02"
+camerax = "1.5.1"
+lifecycle = "2.9.6"
+detekt = "1.23.8"
+hilt = "2.57.2"
+ksp = "2.3.3"
 material3 = "1.9.0"
 
 [libraries]
-androidx-activity-compose = "androidx.activity:activity-compose:1.11.0"
+androidx-activity-compose = "androidx.activity:activity-compose:1.12.0"
 
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+androidx-hilt-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version = "1.3.0" }
 
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 
-compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-beta01" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-beta02" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
 
-detekt-compose = "io.nlopez.compose.rules:detekt:0.4.27"
+detekt-compose = "io.nlopez.compose.rules:detekt:0.4.28"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
@@ -40,15 +46,17 @@ kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.0"
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.1"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-buildconfig = { id = "com.github.gmazzo.buildconfig", version = "5.7.1" }
+buildconfig = { id = "com.github.gmazzo.buildconfig", version = "6.0.4" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

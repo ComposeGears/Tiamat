@@ -15,5 +15,10 @@ actual fun Platform.platformFeatures(): List<AppFeature> = listOf(
         name = "Predictive back",
         description = "Android predictive back",
         destination = PredictiveBack
+    ),
+    AppFeature(
+        name = "Hilt",
+        description = "Hilt integration sample",
+        destination = HiltSample
     )
 )

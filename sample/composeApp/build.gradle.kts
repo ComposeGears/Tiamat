@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.tiamat.destinations.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 kotlin {
@@ -56,10 +58,11 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
-
             implementation(libs.androidx.camera.camera2)
             implementation(libs.androidx.camera.compose)
             implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.hilt.compose)
+            implementation(libs.hilt.android)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -85,6 +88,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    dependencies{
+        ksp(libs.hilt.compiler)
     }
 }
 

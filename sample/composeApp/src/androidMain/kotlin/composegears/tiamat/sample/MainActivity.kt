@@ -16,6 +16,9 @@ import com.composegears.tiamat.navigation.Route
 import composegears.tiamat.sample.content.HomeScreen
 import composegears.tiamat.sample.ui.LocalThemeConfig
 
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var deeplinkIntent by mutableStateOf<Intent?>(null)

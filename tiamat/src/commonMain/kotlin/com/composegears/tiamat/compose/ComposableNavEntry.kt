@@ -5,10 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.retain.LocalRetainedValuesStore
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.composegears.tiamat.navigation.NavEntry
@@ -27,12 +24,13 @@ internal fun <Args : Any> NavEntryContent(
     if (destination is ComposeNavDestination<Args>) Box {
         val entrySaveableStateRegistry = rememberEntrySaveableStateRegistry(entry)
         val entryContentLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
+        val entryContentViewModelStoreOwner = rememberEntryContentViewModelStoreOwner(entry)
         // display content
         CompositionLocalProvider(
             LocalSaveableStateRegistry provides entrySaveableStateRegistry,
             LocalLifecycleOwner provides entryContentLifecycleOwner,
+            LocalViewModelStoreOwner provides entryContentViewModelStoreOwner,
             LocalRetainedValuesStore provides entry.retainedValuesStore,
-            LocalViewModelStoreOwner provides entry,
             LocalNavEntry provides entry,
         ) {
             val scope = remember(entry) { NavDestinationScope(entry) }
@@ -92,6 +90,19 @@ private fun rememberEntryContentLifecycleOwner(
     val parentLifecycle = runCatching { LocalLifecycleOwner.current }.getOrNull()
     return remember(entry) {
         EntryContentLifecycleOwner(parentLifecycle?.lifecycle, entry.lifecycle)
+    }
+}
+
+@Composable
+private fun rememberEntryContentViewModelStoreOwner(
+    entry: NavEntry<*>
+): ViewModelStoreOwner {
+    val parentViewModelStoreOwner = LocalViewModelStoreOwner.current
+    return remember(entry) {
+        if (parentViewModelStoreOwner is HasDefaultViewModelProviderFactory) object :
+            ViewModelStoreOwner by entry,
+            HasDefaultViewModelProviderFactory by parentViewModelStoreOwner {}
+        else entry
     }
 }
 

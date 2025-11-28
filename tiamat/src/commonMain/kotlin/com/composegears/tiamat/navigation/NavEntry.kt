@@ -1,7 +1,7 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.retain.ControlledRetainedValuesStore
+import androidx.compose.runtime.retain.ManagedRetainedValuesStore
 import androidx.lifecycle.*
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
@@ -103,7 +103,7 @@ public class NavEntry<Args : Any> public constructor(
      */
     public override val lifecycle: Lifecycle = lifecycleRegistry
 
-    internal val retainedValuesStore: ControlledRetainedValuesStore = ControlledRetainedValuesStore()
+    internal val retainedValuesStore: ManagedRetainedValuesStore = ManagedRetainedValuesStore()
 
     /**
      * The destination this entry represents.
@@ -208,7 +208,7 @@ public class NavEntry<Args : Any> public constructor(
     internal fun attachToUI() {
         isAttachedToUI = true
         if (!retainedValuesStore.isRetainingExitedValues) {
-            retainedValuesStore.startRetainingExitedValues()
+            retainedValuesStore.enableRetainingExitedValues()
         }
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
@@ -245,7 +245,7 @@ public class NavEntry<Args : Any> public constructor(
         viewModelStore.clear()
         navControllerStore.clear()
         if (retainedValuesStore.isRetainingExitedValues) {
-            retainedValuesStore.stopRetainingExitedValues()
+            retainedValuesStore.disableRetainingExitedValues()
         }
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
