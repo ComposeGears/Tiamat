@@ -20,7 +20,11 @@ fun createTestNavController(
     config = {}
 )
 
-fun SemanticsNodeInteraction.readText() = this
+/**
+ * Extracts the first text value from a semantics node.
+ * @return The text content, or null if no text is present.
+ */
+fun SemanticsNodeInteraction.readText(): String? = this
     .fetchSemanticsNode()
     .config
     .getOrNull(SemanticsProperties.Text)

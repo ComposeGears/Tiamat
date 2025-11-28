@@ -72,6 +72,7 @@ kotlin {
 
 dependencies {
     debugImplementation(libs.compose.ui.tooling.preview)
+    add("kspAndroid", libs.hilt.compiler)
 }
 
 android {
@@ -88,9 +89,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    dependencies{
-        ksp(libs.hilt.compiler)
     }
 }
 
