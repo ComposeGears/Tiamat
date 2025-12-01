@@ -8,9 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.*
+import com.composegears.tiamat.readText
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -52,12 +51,7 @@ class RememberSaveable {
             val navController = rememberNavController(startDestination = Screen1)
             Navigation(navController = navController, destinations = arrayOf(Screen1, Screen2))
         }
-        val rememberedText = onNodeWithTag("Text")
-            .fetchSemanticsNode()
-            .config
-            .getOrNull(SemanticsProperties.Text)
-            ?.firstOrNull()
-            ?.text
+        val rememberedText = onNodeWithTag("Text").readText()
         assertNotNull(rememberedText, " remembered text should not be null")
         onNodeWithTag("S1Button").performClick()
         onNodeWithTag("S2Button").assertExists()
