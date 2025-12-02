@@ -6,7 +6,7 @@ sample-minSdk = "23"
 sample-targetSdk = "36"
 
 kotlin = "2.2.21"
-jetbrains-compose = "1.10.0-beta02"
+jetbrains-compose = "1.10.0-rc01"
 camerax = "1.5.1"
 lifecycle = "2.9.6"
 detekt = "1.23.8"
@@ -25,12 +25,14 @@ androidx-hilt-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compo
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 
-compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-beta02" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-rc01" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
+
+coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
 
 detekt-compose = "io.nlopez.compose.rules:detekt:0.4.28"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
