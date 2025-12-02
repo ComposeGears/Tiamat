@@ -97,12 +97,12 @@ private fun rememberEntryContentLifecycleOwner(
 private fun rememberEntryContentViewModelStoreOwner(
     entry: NavEntry<*>
 ): ViewModelStoreOwner {
-    val parentViewModelStoreOwner = LocalViewModelStoreOwner.current
+    //val parentViewModelStoreOwner = LocalViewModelStoreOwner.current
     return remember(entry) {
-        if (parentViewModelStoreOwner is HasDefaultViewModelProviderFactory) object :
+        /*if (parentViewModelStoreOwner is HasDefaultViewModelProviderFactory) object :
             ViewModelStoreOwner by entry,
             HasDefaultViewModelProviderFactory by parentViewModelStoreOwner {}
-        else entry
+        else */entry
     }
 }
 
