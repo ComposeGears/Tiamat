@@ -34,10 +34,8 @@ kotlin {
         compileSdk = tiamat.versions.compileSdk.get().toInt()
         minSdk = tiamat.versions.minSdk.get().toInt()
 
-        compilations.configureEach {
-            compilerOptions.configure {
-                jvmTarget = JvmTarget.JVM_1_8
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
     iosX64()
@@ -56,6 +54,7 @@ kotlin {
             implementation(libs.compose.ui)
 
             api(libs.kotlin.serialization.core)
+            api(libs.kotlin.coroutines.core)
             api(libs.compose.navigationevent)
             api(libs.lifecycle.runtime.compose)
             api(libs.lifecycle.viewmodel.compose)

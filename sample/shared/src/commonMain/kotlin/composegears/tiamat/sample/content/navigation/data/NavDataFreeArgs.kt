@@ -1,0 +1,129 @@
+package composegears.tiamat.sample.content.navigation.data
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.compose.*
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.ui.*
+import kotlinx.serialization.Serializable
+
+val NavDataFreeArgs by navDestination(ScreenInfo()) {
+    Screen("FreeArgs") {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val nc = rememberNavController(
+                key = "FreeArgs nav controller",
+                startDestination = NavDataFreeArgsScreen1,
+            )
+            Navigation(
+                navController = nc,
+                destinations = arrayOf(
+                    NavDataFreeArgsScreen1,
+                    NavDataFreeArgsScreen2,
+                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+            )
+        }
+    }
+}
+
+private val NavDataFreeArgsScreen1 by navDestination {
+    val nc = navController()
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
+            VSpacer()
+            Text(
+                text = """
+                    `FreeArgs` is a free form(type) data
+                     Expect to be used as intent/call-to-action/meta-data
+                     You can clear freeArgs after processing.
+                     freeArgs is NOT A STATE, clearing it will NOT cause recomposition
+                """.trimIndent(),
+                textAlign = TextAlign.Center
+            )
+            VSpacer()
+            Text(
+                text = "Click button to pass free-args value to next screen",
+                textAlign = TextAlign.Center
+            )
+            VSpacer()
+            AppButton(
+                "Next (Pass `String`)",
+                modifier = Modifier.widthIn(min = 400.dp),
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { nc.navigate(NavDataFreeArgsScreen2, freeArgs = "Some String") }
+            )
+            AppButton(
+                "Next (Pass `Int`)",
+                modifier = Modifier.widthIn(min = 400.dp),
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { nc.navigate(NavDataFreeArgsScreen2, freeArgs = 1) }
+            )
+            AppButton(
+                "Next (Pass `Class`)",
+                modifier = Modifier.widthIn(min = 400.dp),
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { nc.navigate(NavDataFreeArgsScreen2, freeArgs = SomeFreeArgsDataClass(1)) }
+            )
+            AppButton(
+                "Next (Pass nothing)",
+                modifier = Modifier.widthIn(min = 400.dp),
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { nc.navigate(NavDataFreeArgsScreen2) }
+            )
+        }
+    }
+}
+
+private val NavDataFreeArgsScreen2 by navDestination {
+    val nc = navController()
+    var args = freeArgs<Any>()
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
+            VSpacer()
+            AnimatedContent(args, Modifier.fillMaxWidth()) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (it != null) {
+                        Text(
+                            text = "Type: ${it::class.simpleName}\nFreeArgs value: $it",
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        Text("FreeArgs is empty")
+                    }
+                }
+            }
+            VSpacer()
+            AppButton(
+                "Back",
+                startIcon = Icons.KeyboardArrowLeft,
+                onClick = { nc.back() }
+            )
+        }
+    }
+}
+
+@Serializable
+private data class SomeFreeArgsDataClass(val t: Int)
+
+@Preview
+@Composable
+private fun NavDataFreeArgsPreview() = AppTheme {
+    TiamatPreview(destination = NavDataFreeArgs)
+}

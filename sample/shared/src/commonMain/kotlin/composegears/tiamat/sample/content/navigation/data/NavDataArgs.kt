@@ -1,0 +1,121 @@
+package composegears.tiamat.sample.content.navigation.data
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavDestination
+import composegears.tiamat.sample.icons.*
+import composegears.tiamat.sample.ui.*
+
+// the screen is not use ext `ScreenInfo` as we want one of the nested one to be opened via deeplink/url
+val NavDataArgs by navDestination(ScreenInfo("NavArgs")) {
+    Screen("NavArgs") {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            val nc = rememberNavController(
+                key = "NavArgs nav controller",
+                startDestination = NavDataArgsScreen1,
+            )
+            Navigation(
+                navController = nc,
+                destinations = arrayOf(
+                    NavDataArgsScreen1,
+                    NavDataArgsScreen2,
+                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
+            )
+        }
+    }
+}
+
+// type is specified to bypass `Type checking has run into a recursive problem` error (see readme.md)
+private val NavDataArgsScreen1: NavDestination<Unit> by navDestination(ScreenInfo("ArgsInput")) {
+    val nc = navController()
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // using rememberSaveable allow us to keep value during navigation
+            var value by rememberSaveable { mutableIntStateOf(0) }
+            Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
+            VSpacer()
+            Text(
+                text = "`NavArgs` defines a data, required by upcoming screen",
+                textAlign = TextAlign.Center
+            )
+            VSpacer()
+            Text(
+                text = "Click button to pass selected value to next screen",
+                textAlign = TextAlign.Center
+            )
+            VSpacer()
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { value-- }
+                ) {
+                    Icon(Icons.Remove, "")
+                }
+                Text("Value: $value")
+                IconButton(
+                    onClick = { value++ }
+                ) {
+                    Icon(Icons.Add, "")
+                }
+            }
+            VSpacer()
+            AppButton(
+                "Next",
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { nc.navigate(NavDataArgsScreen2, navArgs = value) }
+            )
+        }
+    }
+}
+
+// we can remove `<Int>` but it's here to show the type
+private val NavDataArgsScreen2 by navDestination<Int>(
+    ScreenInfo(
+        name = "ArgsValue",
+        argsToString = { "value=$it" },
+        stringToArgs = { it?.substringAfter("value=")?.toInt() },
+    )
+) {
+    val nc = navController()
+    val args = navArgsOrNull() // you can use `navArgs()` as unsafe option
+    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
+            VSpacer()
+            Text("Value: $args")
+            VSpacer()
+            AppButton(
+                "Back",
+                startIcon = Icons.KeyboardArrowLeft,
+                onClick = { nc.back() }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun NavDataArgsPreview() = AppTheme {
+    TiamatPreview(destination = NavDataArgs)
+}
