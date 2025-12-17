@@ -48,7 +48,7 @@ kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.11.1"
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.12.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
