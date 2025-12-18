@@ -11,11 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -28,6 +25,7 @@ import com.composegears.tiamat.compose.navController
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.compose.navigate
 import com.composegears.tiamat.navigation.NavDestination
+import composegears.tiamat.sample.LocalPlatformFeatures
 import composegears.tiamat.sample.content.layouts.LayoutAdaptiveListDetails
 import composegears.tiamat.sample.content.layouts.LayoutOverlayDestinations
 import composegears.tiamat.sample.content.layouts.LayoutTwoPane
@@ -52,9 +50,6 @@ import composegears.tiamat.sample.icons.DarkMode
 import composegears.tiamat.sample.icons.Icons
 import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.icons.KeyboardArrowUp
-import composegears.tiamat.sample.platform.Platform
-import composegears.tiamat.sample.platform.features
-import composegears.tiamat.sample.platform.name
 import composegears.tiamat.sample.ui.*
 
 internal val HomeItems =
@@ -195,16 +190,15 @@ internal val HomeItems =
                 ),
             ),
         ),
-        HomeItem(
-            "Platform ${Platform.name()}",
-            Platform.features()
-        ),
-    ).filter {
-        it.items.isNotEmpty()
-    }
+    )
 
 val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
     val navController = navController()
+    val platformFeatures = LocalPlatformFeatures.current
+    val features = remember {
+        val platformItems = platformFeatures?.let { HomeItem(it.platformName, it.features) }
+        if (platformItems == null) HomeItems else HomeItems + platformItems
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -219,7 +213,7 @@ val HomeScreen: NavDestination<Unit> by navDestination(ScreenInfo("Home")) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item { Text("Tiamat", style = MaterialTheme.typography.headlineMedium) }
-            items(HomeItems) {
+            items(features) {
                 HomeGroupItem(
                     item = it,
                     isExpanded = selectedItem == it.title,

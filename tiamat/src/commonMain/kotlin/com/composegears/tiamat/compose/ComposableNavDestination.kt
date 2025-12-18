@@ -2,13 +2,6 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.composegears.tiamat.navigation.MutableSavedState
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavEntry
 
@@ -107,23 +100,4 @@ public inline fun <reified T> NavDestinationScope<*>.navResult(): T? = remember 
  */
 public fun NavDestinationScope<*>.clearNavResult() {
     navEntry.clearNavResult()
-}
-
-// ------------- NavDestinationScope viewModels ------------------------------------------------------------------------
-
-@Composable
-public inline fun <reified VM : ViewModel> saveableViewModel(
-    viewModelStoreOwner: ViewModelStoreOwner =
-        checkNotNull(LocalViewModelStoreOwner.current) {
-            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-        },
-    key: String? = null,
-    noinline initializer: CreationExtras.(savedState: MutableSavedState) -> VM
-): VM {
-    val viewModelSavedState = rememberSaveable { MutableSavedState() }
-    return viewModel<VM>(
-        viewModelStoreOwner = viewModelStoreOwner,
-        key = key,
-        initializer = { initializer(viewModelSavedState) }
-    )
 }

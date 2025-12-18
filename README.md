@@ -155,8 +155,6 @@ Some examples:
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `clearNavResult` - clear passed nav result (eg: you want to show notification base on result and clear it not to re-show)
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
-- `rememberSharedViewModel` - create or provide view model scoped(linked) to current/provided `NavController`
-- `rememberSaveableViewModel` - create or provide saveable view model scoped(linked) to current/provided `NavController` , ViewModel should extend from `TiamatViewModel` and implements `Saveable`
 
 ### NavController
 

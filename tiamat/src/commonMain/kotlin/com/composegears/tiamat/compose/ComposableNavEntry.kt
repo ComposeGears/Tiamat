@@ -5,9 +5,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.retain.LocalRetainedValuesStore
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
+import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import com.composegears.tiamat.navigation.NavEntry
 
 /**
@@ -22,47 +27,56 @@ internal fun <Args : Any> NavEntryContent(
 ) {
     val destination = entry.destination
     if (destination is ComposeNavDestination<Args>) Box {
+        val entryLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
         val entrySaveableStateRegistry = rememberEntrySaveableStateRegistry(entry)
-        val entryContentLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
-        val entryContentViewModelStoreOwner = rememberEntryContentViewModelStoreOwner(entry)
-        // display content
+        // Lifecycle, RetainedStore and SaveableStateRegistry had no dependencies
         CompositionLocalProvider(
-            LocalSaveableStateRegistry provides entrySaveableStateRegistry,
-            LocalLifecycleOwner provides entryContentLifecycleOwner,
-            LocalViewModelStoreOwner provides entryContentViewModelStoreOwner,
-            LocalRetainedValuesStore provides entry.retainedValuesStore,
             LocalNavEntry provides entry,
+            LocalLifecycleOwner provides entryLifecycleOwner,
+            LocalRetainedValuesStore provides entry.retainedValuesStore,
+            LocalSaveableStateRegistry provides entrySaveableStateRegistry,
         ) {
-            val scope = remember(entry) { NavDestinationScope(entry) }
-            // entry content
-            with(scope) {
-                // extensions before-content
-                destination.extensions.onEach {
-                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
-                        Content()
+            // depends on LocalLifecycleOwner
+            // provides LocalSaveableStateRegistry && LocalSavedStateRegistryOwner bound to entry
+            rememberSaveableStateHolder().SaveableStateProvider(entry.uuid) {
+                // depends on LocalSavedStateRegistryOwner && Lifecycle
+                val entryViewModelStoreOwner = rememberEntryContentViewModelStoreOwner(entry)
+                CompositionLocalProvider(
+                    LocalViewModelStoreOwner provides entryViewModelStoreOwner
+                ) {
+                    val scope = remember(entry) { NavDestinationScope(entry) }
+                    // entry content
+                    with(scope) {
+                        // extensions before-content
+                        destination.extensions.onEach {
+                            if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
+                                Content()
+                            }
+                        }
+                        // destination content
+                        with(destination) {
+                            Content()
+                        }
+                        // extensions after-content
+                        destination.extensions.onEach {
+                            if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
+                                Content()
+                            }
+                        }
                     }
-                }
-                // destination content
-                with(destination) {
-                    Content()
-                }
-                // extensions after-content
-                destination.extensions.onEach {
-                    if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
-                        Content()
+                    // save state when `this entry`/`parent entry` stops being displayed
+                    DisposableEffect(entry) {
+                        entry.attachToUI()
+                        entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
+                        // save state handle
+                        onDispose {
+                            entry.setSavedStateSaver(null)
+                            entryLifecycleOwner.close()
+                            if (entry.isAttachedToNavController) entry.savedState =
+                                entrySaveableStateRegistry.performSave()
+                            entry.detachFromUI()
+                        }
                     }
-                }
-            }
-            // save state when `this entry`/`parent entry` stops being displayed
-            DisposableEffect(entry) {
-                entry.attachToUI()
-                entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
-                // save state handle
-                onDispose {
-                    entry.setSavedStateSaver(null)
-                    entryContentLifecycleOwner.close()
-                    if (entry.isAttachedToNavController) entry.savedState = entrySaveableStateRegistry.performSave()
-                    entry.detachFromUI()
                 }
             }
         }
@@ -87,22 +101,44 @@ private fun rememberEntrySaveableStateRegistry(
 private fun rememberEntryContentLifecycleOwner(
     entry: NavEntry<*>
 ): EntryContentLifecycleOwner {
-    val parentLifecycle = runCatching { LocalLifecycleOwner.current }.getOrNull()
+    val parentLifecycle = LocalLifecycleOwner.current
     return remember(entry) {
-        EntryContentLifecycleOwner(parentLifecycle?.lifecycle, entry.lifecycle)
+        EntryContentLifecycleOwner(parentLifecycle.lifecycle, entry.lifecycle)
     }
 }
 
 @Composable
 private fun rememberEntryContentViewModelStoreOwner(
-    entry: NavEntry<*>
+    entry: NavEntry<*>,
 ): ViewModelStoreOwner {
-    //val parentViewModelStoreOwner = LocalViewModelStoreOwner.current
+    val savedStateRegistryOwner = LocalSavedStateRegistryOwner.current
     return remember(entry) {
-        /*if (parentViewModelStoreOwner is HasDefaultViewModelProviderFactory) object :
-            ViewModelStoreOwner by entry,
-            HasDefaultViewModelProviderFactory by parentViewModelStoreOwner {}
-        else */entry
+        object :
+            ViewModelStoreOwner,
+            SavedStateRegistryOwner by savedStateRegistryOwner,
+            HasDefaultViewModelProviderFactory {
+            override val viewModelStore: ViewModelStore
+                get() = entry.viewModelStore
+
+            override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+                get() = SavedStateViewModelFactory()
+
+            override val defaultViewModelCreationExtras: CreationExtras
+                get() = MutableCreationExtras().also {
+                    it[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+                    it[VIEW_MODEL_STORE_OWNER_KEY] = this
+                }
+
+            init {
+                require(this.lifecycle.currentState == Lifecycle.State.INITIALIZED) {
+                    "The Lifecycle state is already beyond INITIALIZED. The " +
+                        "ViewModelStoreNavEntryDecorator requires adding the " +
+                        "SavedStateNavEntryDecorator to ensure support for " +
+                        "SavedStateHandles."
+                }
+                enableSavedStateHandles()
+            }
+        }
     }
 }
 

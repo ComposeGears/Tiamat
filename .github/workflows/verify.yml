@@ -50,16 +50,16 @@ jobs:
         run: ./gradlew runStaticAnalysis
 
       - name: Test compiler plugin
-        run: ./gradlew tiamat-destinations-compiler:test
+        run: ./gradlew tiamatJvmTests
 
       - name: Build Android target
-        run: ./gradlew sample:composeApp:assembleDebug
+        run: ./gradlew sample:app-android:assembleDebug
 
       - name: Build Jvm target
-        run: ./gradlew sample:composeApp:packageDistributionForCurrentOS
+        run: ./gradlew sample:app-jvm:packageDistributionForCurrentOS
 
       - name: Build Web target
-        run: ./gradlew sample:composeApp:wasmJsBrowserDistribution
+        run: ./gradlew sample:app-wasm:wasmJsBrowserDistribution
 
   verify-ios:
     runs-on: macos-latest
@@ -80,4 +80,4 @@ jobs:
           xcode-version: 16.4.0
 
       - name: Build iOS App
-        run: xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
+        run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build

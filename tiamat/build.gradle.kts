@@ -54,7 +54,6 @@ kotlin {
             implementation(libs.compose.ui)
 
             api(libs.kotlin.serialization.core)
-            api(libs.kotlin.coroutines.core)
             api(libs.compose.navigationevent)
             api(libs.lifecycle.runtime.compose)
             api(libs.lifecycle.viewmodel.compose)

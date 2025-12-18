@@ -23,10 +23,10 @@ android {
         compose = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin.compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
+    kotlin.compilerOptions.jvmTarget.set(JvmTarget.JVM_17)
 }
 
 
@@ -39,4 +39,5 @@ dependencies {
     implementation(libs.androidx.hilt.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.0") // hilt + android 2.3.0 workaround
 }

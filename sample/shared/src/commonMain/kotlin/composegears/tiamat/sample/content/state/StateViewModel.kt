@@ -12,13 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.navigation.MutableSavedState
-import com.composegears.tiamat.navigation.asStateFlow
-import com.composegears.tiamat.navigation.recordOf
 import composegears.tiamat.sample.icons.Icons
 import composegears.tiamat.sample.icons.KeyboardArrowLeft
 import composegears.tiamat.sample.icons.KeyboardArrowRight
@@ -56,7 +55,7 @@ private val StateViewModelScreen1 by navDestination {
     val nc = navController()
 
     // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = viewModel<StateViewModelSharedSimpleViewModel>(nc)
+    val sharedViewModel = viewModel(nc) { SharedSimpleViewModel() }
 
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -79,11 +78,11 @@ private val StateViewModelScreen1 by navDestination {
 private val StateViewModelScreen2 by navDestination {
     val nc = navController()
     // this is regular view model bound to the screen
-    val viewModel = viewModel<StateViewModelSimpleViewModel>()
+    val viewModel = viewModel { SimpleViewModel() }
     // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = viewModel<StateViewModelSharedSimpleViewModel>(nc)
+    val sharedViewModel = viewModel(nc) { SharedSimpleViewModel() }
     // this is saveable view model
-    val saveableViewModel = saveableViewModel { StateViewModelSaveableViewModel(it) }
+    val saveableViewModel = viewModel { SavedStateHandleViewModel(createSavedStateHandle()) }
 
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -128,7 +127,7 @@ private val StateViewModelScreen3 by navDestination {
     val nc = navController()
 
     // this is shared (bound to navController instead of screen) view model
-    val sharedViewModel = viewModel<StateViewModelSharedSimpleViewModel>(nc)
+    val sharedViewModel = viewModel(nc) { SharedSimpleViewModel() }
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -150,7 +149,7 @@ private val StateViewModelScreen3 by navDestination {
 
 // ---------------------- view models ---------------------------
 
-class StateViewModelSimpleViewModel : ViewModel() {
+class SimpleViewModel : ViewModel() {
     private val _counter = MutableStateFlow(0)
     val counter = _counter.asStateFlow()
 
@@ -164,7 +163,7 @@ class StateViewModelSimpleViewModel : ViewModel() {
     }
 }
 
-class StateViewModelSharedSimpleViewModel : ViewModel() {
+class SharedSimpleViewModel : ViewModel() {
     private val _counter = MutableStateFlow(0)
     val counter = _counter.asStateFlow()
 
@@ -178,17 +177,16 @@ class StateViewModelSharedSimpleViewModel : ViewModel() {
     }
 }
 
-private class StateViewModelSaveableViewModel(
-    savedState: MutableSavedState
+class SavedStateHandleViewModel(
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var _counter = savedState.recordOf("counter", 0)
-    val counter = _counter.asStateFlow()
+    var counter = savedStateHandle.getStateFlow("counter", 0)
 
     init {
         viewModelScope.launch {
             while (isActive) {
-                _counter.value++
+                savedStateHandle["counter"] = counter.value + 1
                 delay(1000)
             }
         }

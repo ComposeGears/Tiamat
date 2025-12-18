@@ -18,7 +18,7 @@ kotlin {
         minSdk = tiamat.versions.minSdk.get().toInt()
 
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -42,22 +42,10 @@ kotlin {
         commonMain.dependencies {
             api(projects.tiamat)
             api(projects.tiamatDestinations.tiamatDestinations)
-
             api(libs.compose.foundation)
             api(libs.compose.ui.tooling.preview)
             api(libs.compose.material3)
             api(libs.compose.material3.window.size)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.camera.camera2)
-            implementation(libs.androidx.camera.compose)
-            implementation(libs.androidx.camera.lifecycle)
-            implementation(libs.androidx.hilt.compose)
-            implementation(libs.hilt.android)
-        }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
         }
     }
 }

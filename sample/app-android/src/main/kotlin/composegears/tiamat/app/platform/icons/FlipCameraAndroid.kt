@@ -1,4 +1,4 @@
-package composegears.tiamat.sample.platform.icons
+package composegears.tiamat.app.platform.icons
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor

@@ -1,4 +1,4 @@
-package composegears.tiamat.sample.platform
+package composegears.tiamat.app.platform
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.PredictiveBackHandler

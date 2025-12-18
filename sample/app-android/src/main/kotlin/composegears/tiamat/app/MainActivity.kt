@@ -13,23 +13,47 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.Route
+import composegears.tiamat.app.platform.CameraXLifecycleScreen
+import composegears.tiamat.app.platform.HiltSample
+import composegears.tiamat.app.platform.PredictiveBack
 import composegears.tiamat.sample.App
+import composegears.tiamat.sample.PlatformFeatures
 import composegears.tiamat.sample.content.HomeScreen
+import composegears.tiamat.sample.ui.AppFeature
 import composegears.tiamat.sample.ui.LocalThemeConfig
-
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var deeplinkIntent by mutableStateOf<Intent?>(null)
+    private val platformFeatures = PlatformFeatures(
+        platformName = "Android",
+        features = listOf(
+            AppFeature(
+                name = "CameraX",
+                description = "CameraX + Lifecycle",
+                destination = CameraXLifecycleScreen
+            ),
+            AppFeature(
+                name = "Predictive back",
+                description = "Android predictive back",
+                destination = PredictiveBack
+            ),
+            AppFeature(
+                name = "Hilt",
+                description = "Hilt integration sample",
+                destination = HiltSample
+            )
+        )
+    )
 
     @OptIn(TiamatExperimentalApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            App { navController ->
+            App(platformFeatures) { navController ->
                 // deeplink handler
                 LaunchedEffect(deeplinkIntent) {
                     val data = deeplinkIntent?.data

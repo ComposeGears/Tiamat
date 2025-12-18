@@ -1,4 +1,4 @@
-package composegears.tiamat.sample.platform
+package composegears.tiamat.app.platform
 
 import android.Manifest
 import android.app.Activity
@@ -37,9 +37,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.currentStateAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.navDestination
+import composegears.tiamat.app.platform.icons.FlipCameraAndroid
+import composegears.tiamat.app.platform.icons.Lens
 import composegears.tiamat.sample.icons.Icons
-import composegears.tiamat.sample.platform.icons.FlipCameraAndroid
-import composegears.tiamat.sample.platform.icons.Lens
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.Screen
 import kotlinx.coroutines.awaitCancellation

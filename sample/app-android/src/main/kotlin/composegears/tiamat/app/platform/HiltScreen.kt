@@ -1,4 +1,4 @@
-package composegears.tiamat.sample.platform
+package composegears.tiamat.app.platform
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
