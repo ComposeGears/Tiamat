@@ -132,7 +132,7 @@ private fun rememberEntryContentViewModelStoreOwner(
             init {
                 require(this.lifecycle.currentState == Lifecycle.State.INITIALIZED) {
                     "The Lifecycle state is already beyond INITIALIZED. The " +
-                        "ViewModelStoreNavEntryDecorator requires adding the " +
+                        "rememberEntryContentViewModelStoreOwner requires adding the " +
                         "SavedStateNavEntryDecorator to ensure support for " +
                         "SavedStateHandles."
                 }
