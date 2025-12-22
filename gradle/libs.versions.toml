@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.2"
 #agp = "8.12.0"
 sample-compileSdk = "36"
 sample-minSdk = "23"
@@ -32,8 +32,6 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
 
-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
-
 detekt-compose = "io.nlopez.compose.rules:detekt:0.5.2"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
@@ -44,6 +42,8 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0"
+
+kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
 
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -61,6 +61,7 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }

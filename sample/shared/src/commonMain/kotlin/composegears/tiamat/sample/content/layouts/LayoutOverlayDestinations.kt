@@ -1,0 +1,189 @@
+package composegears.tiamat.sample.content.layouts
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.composegears.tiamat.compose.*
+import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavEntry
+import composegears.tiamat.sample.content.layouts.OverlayDestinationExtension.Companion.isOverlay
+import composegears.tiamat.sample.icons.Close
+import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowRight
+import composegears.tiamat.sample.ui.AppButton
+import composegears.tiamat.sample.ui.AppTheme
+import composegears.tiamat.sample.ui.Screen
+import composegears.tiamat.sample.ui.ScreenInfo
+
+val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
+    Screen("Overlay Destinations") {
+        val navController =
+            rememberNavController(
+                key = "Overlay Destinations nav controller",
+                startDestination = LayoutOverlayScreen,
+                saveable = true,
+            )
+
+        val stack by navController.navStackAsState()
+
+        // remap entries to content + overlay
+        val content by remember(stack) {
+            derivedStateOf {
+                stack.lastOrNull { !it.isOverlay() }
+            }
+        }
+        val overlays by remember(stack) {
+            derivedStateOf {
+                stack.takeLastWhile { it.isOverlay() }
+            }
+        }
+
+        NavigationScene(
+            navController = navController,
+            destinations = arrayOf(
+                LayoutOverlayScreen,
+                LayoutOverlayBottomSheet,
+                LayoutOverlayDialog,
+            ),
+        ) {
+            // animate main content
+            AnimatedContent(
+                targetState = content,
+                contentKey = { it?.contentKey() },
+                transitionSpec = {
+                    navigationSlideInOut(
+                        navController.navStateFlow.value.transitionType == NavController.TransitionType.Forward
+                    )
+                },
+            ) {
+                CompositionLocalProvider(
+                    LocalNavAnimatedVisibilityScope provides this,
+                ) {
+                    EntryContent(it)
+                }
+            }
+            // draw overlays on top of content
+            Box {
+                for (entry in overlays) {
+                    EntryContent(entry)
+                }
+            }
+        }
+    }
+}
+
+class OverlayDestinationExtension<T : Any> : NavExtension<T> {
+    companion object {
+        fun NavEntry<*>.isOverlay(): Boolean =
+            destination.ext<OverlayDestinationExtension<*>>() != null
+    }
+}
+
+private val LayoutOverlayScreen by navDestination<Unit> {
+    val navController = navController()
+
+    val stack by navController.navStackAsState()
+    val canGoBack by navController.canNavigateBackAsState()
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item { LayoutOverlayContentButtons(nc = navController) }
+        if (canGoBack) {
+            item {
+                AppButton(
+                    "Back",
+                    endIcon = Icons.Close,
+                    onClick = { navController.back() }
+                )
+            }
+        }
+        item { Text("Stack") }
+        items(stack) { entry ->
+            Text(entry.destination.name)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private val LayoutOverlayBottomSheet by navDestination<Unit>(OverlayDestinationExtension()) {
+    val navController = navController()
+    ModalBottomSheet(onDismissRequest = navController::back) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LayoutOverlayContentButtons(nc = navController)
+            AppButton(
+                "Close",
+                endIcon = Icons.Close,
+                onClick = { navController.back() }
+            )
+        }
+    }
+}
+
+private val LayoutOverlayDialog by navDestination<Unit>(OverlayDestinationExtension()) {
+    val navController = navController()
+    AlertDialog(
+        onDismissRequest = { navController.back() },
+        text = { Text("Dialog") },
+        confirmButton = {
+            AppButton(
+                "Open Screen",
+                onClick = { navController.navigate(LayoutOverlayScreen) }
+            )
+        },
+        dismissButton = {
+            AppButton(
+                "Back",
+                onClick = { navController.back() }
+            )
+        },
+    )
+}
+
+@Composable
+private fun LayoutOverlayContentButtons(
+    nc: NavController,
+) {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AppButton(
+            "Open Bottom sheet",
+            endIcon = Icons.KeyboardArrowRight,
+            onClick = { nc.navigate(LayoutOverlayBottomSheet) }
+        )
+        AppButton(
+            "Open Dialog",
+            endIcon = Icons.KeyboardArrowRight,
+            onClick = { nc.navigate(LayoutOverlayDialog) }
+        )
+        AppButton(
+            "Open Screen",
+            endIcon = Icons.KeyboardArrowRight,
+            onClick = { nc.navigate(LayoutOverlayScreen) }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LayoutOverlayDestinationsPreview() = AppTheme {
+    TiamatPreview(destination = LayoutOverlayDestinations)
+}

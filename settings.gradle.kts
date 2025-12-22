@@ -36,4 +36,7 @@ includeBuild("tiamat-destinations/gradle-plugin") {
     name = "tiamat-destinations-gradle-plugin"
 }
 
-include(":sample:composeApp")
+include(":sample:shared")
+include(":sample:app-android")
+include(":sample:app-jvm")
+include(":sample:app-wasm")

@@ -115,7 +115,7 @@ Setup
     }
    ```
 
-see example: [App.kt](sample/composeApp/src/commonMain/kotlin/composegears/tiamat/sample/App.kt)
+see example: [App.kt](sample/shared/src/commonMain/kotlin/composegears/tiamat/sample/App.kt)
 
 Overview
 --------
@@ -155,8 +155,6 @@ Some examples:
 - `navResult` - provide the data passed to `NavControllr:back(screen, navResult)` as result
 - `clearNavResult` - clear passed nav result (eg: you want to show notification base on result and clear it not to re-show)
 - `rememberViewModel` - create or provide view model scoped(linked) to current screen
-- `rememberSharedViewModel` - create or provide view model scoped(linked) to current/provided `NavController`
-- `rememberSaveableViewModel` - create or provide saveable view model scoped(linked) to current/provided `NavController` , ViewModel should extend from `TiamatViewModel` and implements `Saveable`
 
 ### NavController
 
@@ -277,7 +275,7 @@ val SomeScreen by navDestination<Args>(
 Samples
 -------
 
-See the examples [here](sample/composeApp/src/commonMain/kotlin/composegears/tiamat/sample/content)
+See the examples [here](sample/shared/src/commonMain/kotlin/composegears/tiamat/sample/content)
 
 Or try them in browser (require WASM support) [here](https://composegears.github.io/Tiamat/) 
 
@@ -465,7 +463,7 @@ Nothing specific (yet)
 
 `Tiamat` overrides `LocalLifecycleOwner` for each destination. This makes it compatible with lifecycle-aware components
 
-See an example of CameraX usage: [CameraXLifecycleScreen.kt](sample/composeApp/src/androidMain/kotlin/composegears/tiamat/sample/platform/CameraXLifecycleScreen.kt)
+See an example of CameraX usage: [CameraXLifecycleScreen.kt](sample/app-android/src/main/kotlin/composegears/tiamat/app/platform/CameraXLifecycleScreen.kt)
 
 ### iOS
 
@@ -473,13 +471,13 @@ Nothing specific (yet)
 
 ### Run/Build sample
 
-Android: `./gradlew sample:composeApp:assembleDebug`
+Android: `./gradlew sample:app-android:assembleDebug`
 
-Jvm: `./gradlew sample:composeApp:run`
+Jvm: `./gradlew sample:app-jvm:run`
 
-Jvm + hot-reload: `./gradlew sample:composeApp:hotRunJvm`
+Jvm + hot-reload: `./gradlew sample:app-jvm:hotRun`
 
-Web: `./gradlew sample:composeApp:wasmJsBrowserDevelopmentRun`
+Web: `./gradlew :sample:app-wasm:wasmJsBrowserDevelopmentRun`
 
 iOS: run XCode project or else use [KMP plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform) iOS target
 

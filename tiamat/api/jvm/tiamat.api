@@ -273,16 +273,6 @@ public abstract interface class com/composegears/tiamat/navigation/RouteElement 
 }
 
 public final class com/composegears/tiamat/navigation/SavedStateKt {
-	public static final fun MutableSavedState ([Lkotlin/Pair;)Ljava/util/Map;
 	public static final fun SavedState ([Lkotlin/Pair;)Ljava/util/Map;
-	public static final fun asStateFlow (Lcom/composegears/tiamat/navigation/SavedStateRecord;)Lkotlinx/coroutines/flow/StateFlow;
-	public static final fun recordOf (Ljava/util/Map;Ljava/lang/String;Ljava/lang/Object;)Lcom/composegears/tiamat/navigation/SavedStateRecord;
-	public static final fun recordOf (Ljava/util/Map;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Lcom/composegears/tiamat/navigation/SavedStateRecord;
-}
-
-public final class com/composegears/tiamat/navigation/SavedStateRecord {
-	public static final field $stable I
-	public final fun getValue ()Ljava/lang/Object;
-	public final fun setValue (Ljava/lang/Object;)V
 }
 

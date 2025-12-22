@@ -33,6 +33,18 @@ jobs:
       - name: Check ABI
         run: ./gradlew checkAbi
 
+  run-jvm-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v5
+      - name: Run JVM tests
+        run: ./gradlew tiamatJvmTests
+
   verify-android-jvm-wasm:
     runs-on: ubuntu-latest
 
@@ -49,17 +61,14 @@ jobs:
       - name: Run static analysis (detekt, lint, etc.)
         run: ./gradlew runStaticAnalysis
 
-      - name: Test compiler plugin
-        run: ./gradlew tiamat-destinations-compiler:test
-
       - name: Build Android target
-        run: ./gradlew sample:composeApp:assembleDebug
+        run: ./gradlew sample:app-android:assembleDebug
 
       - name: Build Jvm target
-        run: ./gradlew sample:composeApp:packageDistributionForCurrentOS
+        run: ./gradlew sample:app-jvm:packageDistributionForCurrentOS
 
       - name: Build Web target
-        run: ./gradlew sample:composeApp:wasmJsBrowserDistribution
+        run: ./gradlew sample:app-wasm:wasmJsBrowserDistribution
 
   verify-ios:
     runs-on: macos-latest
@@ -80,4 +89,4 @@ jobs:
           xcode-version: 16.4.0
 
       - name: Build iOS App
-        run: xcodebuild -project sample/iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
+        run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build

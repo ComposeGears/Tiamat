@@ -34,10 +34,8 @@ kotlin {
         compileSdk = tiamat.versions.compileSdk.get().toInt()
         minSdk = tiamat.versions.minSdk.get().toInt()
 
-        compilations.configureEach {
-            compilerOptions.configure {
-                jvmTarget = JvmTarget.JVM_1_8
-            }
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
     iosX64()
