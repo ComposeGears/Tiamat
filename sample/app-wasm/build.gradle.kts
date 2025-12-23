@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.buildconfig)
 }
 
 kotlin {
@@ -27,4 +28,11 @@ kotlin {
             implementation(projects.sample.shared)
         }
     }
+}
+
+buildConfig {
+    packageName("com.composegears.tiamat.sample")
+    buildConfigField<String>("TIAMAT_VERSION", tiamat.versions.tiamat.get())
+
+    useKotlinOutput()
 }
