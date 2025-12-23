@@ -7,12 +7,6 @@ import com.composegears.tiamat.navigation.Route
 import kotlinx.browser.window
 import org.w3c.dom.PopStateEvent
 
-// href: https://composegears.github.io/Tiamat/
-// origin: https://composegears.github.io
-// pathname: /Tiamat/
-// host: composegears.github.io
-
-
 private const val TITLE = "Tiamat Wasm"
 
 internal external fun encodeURIComponent(str: String): String
@@ -25,21 +19,10 @@ internal object Browser {
     fun bind(
         navController: NavController,
     ) {
-        println(
-            "href: ${window.location.href}\n"+
-            "origin: ${window.location.origin}\n"+
-            "pathname: ${window.location.pathname}\n"+
-            "host: ${window.location.host}\n" +
-            "CHOST: ${getCurrentHost()}\n" +
-            "CPATH: ${getCurrentPath()}\n"
-        )
-
-        addEventListener("popstate") { event ->
-            println("event: $event")
+        addEventListener("popstate") { _ ->
             flushLocation(navController)
         }
-        navController.setOnNavigationListener { _, to, _ ->
-            println("navigated to: $to")
+        navController.setOnNavigationListener { _, _, _ ->
             updateHistory(navController)
             window.document.title = titleOf(navController.getCurrentNavEntry())
 
@@ -61,7 +44,6 @@ internal object Browser {
         navController: NavController,
     ) {
         val path = getCurrentPath().takeIf { it.isNotBlank() && it != "/" }
-        println("applyState->path: $path")
         path?.let(::path2route)?.let(navController::route)
     }
 
@@ -69,7 +51,6 @@ internal object Browser {
         navController: NavController,
         forceReplace: Boolean = false,
     ) {
-        println("applyHistory: ${navController2path(navController)} | currentPath=${getCurrentPath()}")
         val title = window.document.title
         val path = navController2path(navController)
         if (forceReplace) {
@@ -80,9 +61,7 @@ internal object Browser {
     }
 
     fun path2route(path: String): Route {
-        println("path2route: $path")
         val segments = path.removePrefix("/").removePrefix("#/").split('/').filter { it.isNotBlank() }
-        println("segments: $segments")
         return Route {
             segments.onEach {
                 destination(decodeURIComponent(it))
