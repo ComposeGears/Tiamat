@@ -25,6 +25,13 @@ fun main() {
         App(
             navControllerConfig = { Browser.bind(this) },
             overlay = {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        text = "Work in progress...",
+                    )
+                }
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
                         modifier = Modifier
