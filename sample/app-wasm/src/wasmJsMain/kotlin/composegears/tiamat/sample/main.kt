@@ -14,24 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
-import kotlinx.browser.window
-
-const val TITLE = "Tiamat Wasm"
+import com.composegears.tiamat.sample.BuildConfig
 
 external fun onLoadFinished()
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport(viewportContainerId = "TiamatTarget") {
-        LaunchedEffect(Unit) {
-            onLoadFinished()
-        }
+        LaunchedEffect(Unit) { onLoadFinished() }
         App(
-            navControllerConfig = {
-                setOnNavigationListener { from, to, isForward ->
-                    window.document.title = TITLE + " / " + (to?.destination?.name ?: "")
-                }
-            },
+            navControllerConfig = { Browser.bind(this) },
             overlay = {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
@@ -40,7 +32,7 @@ fun main() {
                             .padding(16.dp),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        text = "Wasm Beta",
+                        text = "Tiamat WASM ${BuildConfig.TIAMAT_VERSION}",
                     )
                 }
             }
