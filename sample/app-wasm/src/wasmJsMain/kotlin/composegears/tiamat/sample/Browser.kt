@@ -7,6 +7,12 @@ import com.composegears.tiamat.navigation.Route
 import kotlinx.browser.window
 import org.w3c.dom.PopStateEvent
 
+// href: https://composegears.github.io/Tiamat/
+// origin: https://composegears.github.io
+// pathname: /Tiamat/
+// host: composegears.github.io
+
+
 private const val TITLE = "Tiamat Wasm"
 
 internal external fun encodeURIComponent(str: String): String
@@ -23,7 +29,9 @@ internal object Browser {
             "href: ${window.location.href}\n"+
             "origin: ${window.location.origin}\n"+
             "pathname: ${window.location.pathname}\n"+
-            "host: ${window.location.host}\n"
+            "host: ${window.location.host}\n" +
+            "CHOST: ${getCurrentHost()}\n" +
+            "CPATH: ${getCurrentPath()}\n"
         )
 
         addEventListener("popstate") { event ->
@@ -46,12 +54,13 @@ internal object Browser {
         return if (name.isEmpty()) TITLE else "$TITLE / $name"
     }
 
-    fun getCurrentPath(): String = window.location.pathname.ifBlank { "/" }
+    fun getCurrentHost(): String = window.location.origin + window.location.pathname.ifBlank { "/" }
+    fun getCurrentPath(): String = window.location.href.replace(getCurrentHost(), "")
 
     fun flushLocation(
         navController: NavController,
     ) {
-        val path = getCurrentPath().takeIf { it != "/" }
+        val path = getCurrentPath().takeIf { it.isNotBlank() && it != "/" }
         println("applyState->path: $path")
         path?.let(::path2route)?.let(navController::route)
     }
@@ -84,6 +93,10 @@ internal object Browser {
     fun navController2path(navController: NavController): String {
         val stack = navController.getNavStack()
         if (stack.isEmpty()) return "/"
-        return stack.joinToString(separator = "/", prefix = "/#/") { encodeURIComponent(it.destination.name) }
+        return buildString {
+            append(getCurrentHost())
+            append("#/")
+            append(stack.joinToString(separator = "/") { encodeURIComponent(it.destination.name) })
+        }
     }
 }
