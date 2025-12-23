@@ -19,6 +19,13 @@ internal object Browser {
     fun bind(
         navController: NavController,
     ) {
+        println(
+            "href: ${window.location.href}\n"+
+            "origin: ${window.location.origin}\n"+
+            "pathname: ${window.location.pathname}\n"+
+            "host: ${window.location.host}\n"
+        )
+
         addEventListener("popstate") { event ->
             println("event: $event")
             flushLocation(navController)
@@ -39,7 +46,7 @@ internal object Browser {
         return if (name.isEmpty()) TITLE else "$TITLE / $name"
     }
 
-    fun getCurrentPath(): String = window.location.href.replace(window.location.origin, "")
+    fun getCurrentPath(): String = window.location.pathname.ifBlank { "/" }
 
     fun flushLocation(
         navController: NavController,
