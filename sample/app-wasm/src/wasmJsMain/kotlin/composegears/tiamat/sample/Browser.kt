@@ -63,7 +63,7 @@ internal object Browser {
     fun path2route(path: String): Route {
         val segments = path.removePrefix("/").removePrefix("#/").split('/').filter { it.isNotBlank() }
         return Route {
-            segments.onEach {
+            segments.forEach {
                 destination(decodeURIComponent(it))
             }
         }
