@@ -25,7 +25,7 @@ androidx-hilt-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compo
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 
-compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0-rc02" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
