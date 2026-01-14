@@ -13,7 +13,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * runs a producer coroutine to update its value.
  *
  * The producer coroutine is launched when the composable enters the composition
- * and is cancelled when entry is removed from navigation stack.
+ * and canceled when entry is removed from navigation stack.
  *
  * @param initialValue The initial value of the state.
  * @param producer A suspend function that can update the state value.
