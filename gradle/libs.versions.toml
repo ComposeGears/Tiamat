@@ -1,6 +1,5 @@
 [versions]
-agp = "8.13.2"
-#agp = "8.12.0"
+agp = "9.0.0"
 sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"
@@ -10,7 +9,7 @@ jetbrains-compose = "1.10.0"
 camerax = "1.5.2"
 lifecycle = "2.9.6"
 detekt = "1.23.8"
-hilt = "2.57.2"
+hilt = "2.59"
 ksp = "2.3.4"
 material3 = "1.9.0"
 
@@ -61,7 +60,6 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }
