@@ -31,7 +31,7 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
 
-detekt-compose = "io.nlopez.compose.rules:detekt:0.5.3"
+detekt-compose = "io.nlopez.compose.rules:detekt:0.5.6"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
