@@ -112,44 +112,7 @@ fun NavController.currentNavDestinationAsState(): State<NavDestination<*>?>
 We decided to support official ViewModel's instead of custom solution
 
 > [!IMPORTANT]
-> Limitations: ViewModels + `SavedStateHandle` is !NOT! supported due to overengineered solution from Google:
-
-In order to support `SavedStateHandle` they did:
-- [Create custom `SavedStateRegistry` and save it via `rememberSaveable`](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation3/navigation3-runtime/src/commonMain/kotlin/androidx/navigation3/runtime/SavedStateNavEntryDecorator.kt
-  )
-```kotlin
-internal class EntrySavedStateRegistry : SavedStateRegistryOwner {/*...*/}
-```
-- [Creates a complex object that merges/uses multiple non-obvious interfaces](https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:lifecycle/lifecycle-viewmodel-navigation3/src/commonMain/kotlin/androidx/lifecycle/viewmodel/navigation3/ViewModelStoreNavEntryDecorator.kt;l=91;drc=fb6fafab43a0720b8456e164bda2748b0d29bd56;bpv=0;bpt=1)
-```kotlin
-object :
-     ViewModelStoreOwner,
-     SavedStateRegistryOwner by savedStateRegistryOwner,
-     HasDefaultViewModelProviderFactory {/*...*/}
-```
-
-- Use it as `ViewModelStoreOwner` overriding original one
-- All above bound to `Lifecycle` (why? there is `rememberSaveable` under the hood...)
-
-From our perspective, these steps introduce a significant level of complexity.
-
-In order to save ViewModel's state use:
-
-```kotlin
-// ViewModel
-private class ArchViewModelSaveableViewModel(
-    savedState: MutableSavedState
-) : ViewModel() {
-    private var _counter = savedState.recordOf("counter", 0)
-    val counter = _counter.asStateFlow()
-    /*..*/
-}
-
-// Compose
-val saveableViewModel = saveableViewModel { ArchViewModelSaveableViewModel(it) }
-```
-> [!IMPORTANT]
-> Solution/syntax may be changed depending on feedback
+> Limitations: ViewModels + `SavedStateHandle` is only supported since 2.2.0 version
 
 ### 8. Editing back stack
 
