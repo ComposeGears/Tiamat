@@ -64,7 +64,11 @@ tasks.register("updateAbi") {
 
 // run static analysis on all projects
 tasks.register("runStaticAnalysis") {
-    dependsOn("detekt")
+    allprojects {
+        tasks.matching { it.name == "detekt" }.forEach { detektTask ->
+            dependsOn(detektTask)
+        }
+    }
     dependsOn(":tiamat:lint")
 }
 

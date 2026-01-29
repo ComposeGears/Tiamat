@@ -25,7 +25,6 @@ internal object Browser {
         navController.setOnNavigationListener { _, _, _ ->
             updateHistory(navController)
             window.document.title = titleOf(navController.getCurrentNavEntry())
-
         }
         flushLocation(navController)
         window.document.title = titleOf(navController.getCurrentNavEntry())
