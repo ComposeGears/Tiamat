@@ -38,7 +38,7 @@ fun App(
                     destinations = arrayOf(
                         HomeScreen,
                         *HomeItems.flatMap { it.items }.map { it.destination }.toTypedArray(),
-                        *(platformFeatures?.features?.map { it.destination }?.toTypedArray() ?: emptyArray())
+                        *platformFeatures?.features?.map { it.destination }?.toTypedArray() ?: emptyArray()
                     ),
                     modifier = Modifier.fillMaxSize(),
                     contentTransformProvider = { navigationPlatformDefault(it) }

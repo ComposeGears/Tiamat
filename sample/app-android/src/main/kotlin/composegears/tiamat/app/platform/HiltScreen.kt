@@ -17,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 class HiltDependency @Inject constructor() {
+    @Suppress("FunctionOnlyReturningConstant")
     fun getMessage() = "Hello from Hilt VM Dependency!"
 }
 
@@ -44,4 +45,3 @@ val HiltSample by navDestination {
         }
     }
 }
-
