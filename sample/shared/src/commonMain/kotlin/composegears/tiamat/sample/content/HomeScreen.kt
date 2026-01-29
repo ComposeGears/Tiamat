@@ -43,6 +43,7 @@ import composegears.tiamat.sample.content.navigation.patterns.NavPatternTabs
 import composegears.tiamat.sample.content.other.OtherDestinationsGraph
 import composegears.tiamat.sample.content.other.OtherExtensions
 import composegears.tiamat.sample.content.other.OtherNavStackAlteration
+import composegears.tiamat.sample.content.state.KoinViewModelScreen
 import composegears.tiamat.sample.content.state.StateCustomSaveState
 import composegears.tiamat.sample.content.state.StateRetain
 import composegears.tiamat.sample.content.state.StateViewModel
@@ -137,6 +138,11 @@ internal val HomeItems =
                     name = "ViewModel",
                     description = "ViewModel usage demo",
                     destination = StateViewModel
+                ),
+                AppFeature(
+                    name = "Koin + ViewModel",
+                    description = "Example Koin integration",
+                    destination = KoinViewModelScreen
                 ),
                 AppFeature(
                     name = "Custom SaveState",

@@ -46,6 +46,7 @@ kotlin {
             api(libs.compose.ui.tooling.preview)
             api(libs.compose.material3)
             api(libs.compose.material3.window.size)
+            api(libs.koin.compose.viewmodel)
         }
     }
 }

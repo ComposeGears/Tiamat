@@ -1,15 +1,15 @@
 package composegears.tiamat.sample.content.state
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
@@ -18,10 +18,12 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.composegears.tiamat.compose.*
-import composegears.tiamat.sample.icons.Icons
-import composegears.tiamat.sample.icons.KeyboardArrowLeft
-import composegears.tiamat.sample.icons.KeyboardArrowRight
-import composegears.tiamat.sample.ui.*
+import composegears.tiamat.sample.content.state.ui.ViewModelScreen1Content
+import composegears.tiamat.sample.content.state.ui.ViewModelScreen2Content
+import composegears.tiamat.sample.content.state.ui.ViewModelScreen3Content
+import composegears.tiamat.sample.ui.AppTheme
+import composegears.tiamat.sample.ui.Screen
+import composegears.tiamat.sample.ui.ScreenInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,22 +59,10 @@ private val StateViewModelScreen1 by navDestination {
     // this is shared (bound to navController instead of screen) view model
     val sharedViewModel = viewModel(nc) { SharedSimpleViewModel() }
 
-    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
-            VSpacer()
-            Text(
-                text = "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}",
-                textAlign = TextAlign.Center
-            )
-            VSpacer()
-            AppButton(
-                "Next",
-                endIcon = Icons.KeyboardArrowRight,
-                onClick = { nc.navigate(StateViewModelScreen2) }
-            )
-        }
-    }
+    ViewModelScreen1Content(
+        sharedViewModelCounter = sharedViewModel.counter.collectAsState().value,
+        onNext = { nc.navigate(StateViewModelScreen2) }
+    )
 }
 
 private val StateViewModelScreen2 by navDestination {
@@ -84,43 +74,13 @@ private val StateViewModelScreen2 by navDestination {
     // this is saveable view model
     val saveableViewModel = viewModel { SavedStateHandleViewModel(createSavedStateHandle()) }
 
-    Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Screen 2", style = MaterialTheme.typography.headlineMedium)
-            VSpacer()
-            Text(
-                text = "viewModel \$counter = ${viewModel.counter.collectAsState().value}\n" +
-                    "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}\n" +
-                    "saveableViewModel \$counter = ${saveableViewModel.counter.collectAsState().value}",
-                textAlign = TextAlign.Center
-            )
-            VSpacer()
-            Text(
-                text = """
-                    Go next screen, then go back -> you will see that view models are restored
-                    —————
-                    Go back and reopen this screen -> view models will be recreated (except shared)
-                    —————
-                    Android: hide & re-open app -> saveableViewModel will restore it's saved state
-                """.trimIndent(),
-                textAlign = TextAlign.Center
-            )
-            VSpacer()
-            Row {
-                AppButton(
-                    "Back",
-                    startIcon = Icons.KeyboardArrowLeft,
-                    onClick = { nc.back() }
-                )
-                HSpacer()
-                AppButton(
-                    "Next",
-                    endIcon = Icons.KeyboardArrowRight,
-                    onClick = { nc.navigate(StateViewModelScreen3) }
-                )
-            }
-        }
-    }
+    ViewModelScreen2Content(
+        viewModelCounter = viewModel.counter.collectAsState().value,
+        sharedViewModelCounter = sharedViewModel.counter.collectAsState().value,
+        saveableViewModelCounter = saveableViewModel.counter.collectAsState().value,
+        onBack = { nc.back() },
+        onNext = { nc.navigate(StateViewModelScreen3) }
+    )
 }
 
 private val StateViewModelScreen3 by navDestination {
@@ -129,22 +89,10 @@ private val StateViewModelScreen3 by navDestination {
     // this is shared (bound to navController instead of screen) view model
     val sharedViewModel = viewModel(nc) { SharedSimpleViewModel() }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Screen 3", style = MaterialTheme.typography.headlineMedium)
-            VSpacer()
-            Text(
-                text = "sharedViewModel \$counter = ${sharedViewModel.counter.collectAsState().value}",
-                textAlign = TextAlign.Center
-            )
-            VSpacer()
-            AppButton(
-                "Back",
-                startIcon = Icons.KeyboardArrowLeft,
-                onClick = { nc.back() }
-            )
-        }
-    }
+    ViewModelScreen3Content(
+        sharedViewModelCounter = sharedViewModel.counter.collectAsState().value,
+        onBack = { nc.back() }
+    )
 }
 
 // ---------------------- view models ---------------------------
