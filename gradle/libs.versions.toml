@@ -10,7 +10,7 @@ camerax = "1.5.2"
 lifecycle = "2.9.6"
 detekt = "1.23.8"
 hilt = "2.59"
-ksp = "2.3.4"
+ksp = "2.3.5"
 material3 = "1.9.0"
 
 [libraries]
