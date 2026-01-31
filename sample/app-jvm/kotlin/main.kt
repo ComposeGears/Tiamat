@@ -10,9 +10,12 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import composegears.tiamat.sample.App
+import composegears.tiamat.sample.content.state.KoinInit
 
 @OptIn(ExperimentalFoundationApi::class)
 fun main() {
+    KoinInit.start()
+
     application {
         Window(
             onCloseRequest = ::exitApplication,

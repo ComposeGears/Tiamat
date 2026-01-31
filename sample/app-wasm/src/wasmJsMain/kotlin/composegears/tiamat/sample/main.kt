@@ -15,11 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.ComposeViewport
 import com.composegears.tiamat.sample.BuildConfig
+import composegears.tiamat.sample.content.state.KoinInit
 
 external fun onLoadFinished()
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
+    KoinInit.start()
+
     ComposeViewport(viewportContainerId = "TiamatTarget") {
         LaunchedEffect(Unit) { onLoadFinished() }
         App(
