@@ -6,10 +6,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-sourceSets.main {
-    java.srcDir("kotlin")
-}
-
 dependencies {
     implementation(projects.sample.shared)
     implementation(libs.kotlin.coroutines.swing)
