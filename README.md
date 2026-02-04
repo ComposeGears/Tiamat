@@ -31,10 +31,7 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 ```kotlin
 sourceSets {
     commonMain.dependencies {
-        // core library
         implementation("io.github.composegears:tiamat:$version")
-        // Koin integration (https://github.com/InsertKoinIO/koin) 
-        implementation("io.github.composegears:tiamat-koin:$version")
     }
 }
 ```
