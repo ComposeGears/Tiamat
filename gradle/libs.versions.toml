@@ -4,7 +4,7 @@ sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"
 
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 jetbrains-compose = "1.10.0"
 camerax = "1.5.3"
 lifecycle = "2.9.6"
