@@ -278,8 +278,10 @@ public fun NavigationScene(
                 if (!entry.isResolved) entry.resolveDestination(destinationResolver)
                 NavEntryContent(entry)
                 DisposableEffect(entry) {
+                    if (destinationResolver(entry.destination.name) == null)
+                        error("NavController: ${navController.key}, the destination (${entry.destination.name}) is not registered in Navigation")
                     if (visibleEntries.contains(entry))
-                        error("The same entry (${entry.destination.name}) should not be displayed twice")
+                        error("NavController: ${navController.key}, the same entry (${entry.destination.name}) should not be displayed twice")
                     visibleEntries.add(entry)
                     onDispose {
                         visibleEntries.remove(entry)
