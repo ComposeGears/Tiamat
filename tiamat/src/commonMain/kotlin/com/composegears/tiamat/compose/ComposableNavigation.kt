@@ -248,7 +248,7 @@ public fun NavigationScene(
  * @param scene Scene builder composable function that defines how navigation entries are rendered
  */
 @Composable
-@Suppress("CognitiveComplexMethod")
+@Suppress("CognitiveComplexMethod", "MaximumLineLength", "MaxLineLength")
 public fun NavigationScene(
     navController: NavController,
     destinationResolver: (name: String) -> NavDestination<*>?,
@@ -278,10 +278,12 @@ public fun NavigationScene(
                 if (!entry.isResolved) entry.resolveDestination(destinationResolver)
                 NavEntryContent(entry)
                 DisposableEffect(entry) {
-                    if (destinationResolver(entry.destination.name) == null)
-                        error("NavController: ${navController.key}, the destination (${entry.destination.name}) is not registered in Navigation")
-                    if (visibleEntries.contains(entry))
-                        error("NavController: ${navController.key}, the same entry (${entry.destination.name}) should not be displayed twice")
+                    if (destinationResolver(entry.destination.name) == null) error(
+                        "NavController: ${navController.key}, the destination (${entry.destination.name}) is not registered in Navigation"
+                    )
+                    if (visibleEntries.contains(entry)) error(
+                        "NavController: ${navController.key}, the same entry (${entry.destination.name}) should not be displayed twice"
+                    )
                     visibleEntries.add(entry)
                     onDispose {
                         visibleEntries.remove(entry)
