@@ -14,7 +14,6 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @param freeArgs Optional free-form arguments that can be passed to the destination.
  * @param navResult Optional navigation result data that would normally be received from
  *                  a previous destination in the navigation stack.
- * @param destinationLoader Optional loader for resolving navigation destinations by key.
  * @param modifier  Modifier to apply to the navigation container
  *
  * Example simple usage:
