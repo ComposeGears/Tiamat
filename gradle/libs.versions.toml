@@ -9,7 +9,7 @@ jetbrains-compose = "1.10.0"
 camerax = "1.5.3"
 lifecycle = "2.9.6"
 detekt = "1.23.8"
-hilt = "2.59"
+hilt = "2.59.2"
 ksp = "2.3.6"
 material3 = "1.9.0"
 
