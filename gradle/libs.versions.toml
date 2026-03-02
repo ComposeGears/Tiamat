@@ -1,20 +1,20 @@
 [versions]
-agp = "9.0.0"
+agp = "9.0.1"
 sample-compileSdk = "36"
 sample-minSdk = "23"
 sample-targetSdk = "36"
 
-kotlin = "2.3.0"
-jetbrains-compose = "1.10.0"
+kotlin = "2.3.10"
+jetbrains-compose = "1.10.1"
 camerax = "1.5.3"
 lifecycle = "2.9.6"
 detekt = "1.23.8"
-hilt = "2.59"
-ksp = "2.3.5"
+hilt = "2.59.2"
+ksp = "2.3.6"
 material3 = "1.9.0"
 
 [libraries]
-androidx-activity-compose = "androidx.activity:activity-compose:1.12.3"
+androidx-activity-compose = "androidx.activity:activity-compose:1.12.4"
 
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
 androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
@@ -24,7 +24,7 @@ androidx-hilt-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compo
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 
-compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.0" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.1" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
@@ -65,5 +65,5 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 tiamat-destinations-compiler = { id = "io.github.composegears.tiamat.destinations.compiler" }
-kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.5" }
+kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.9.7" }
 m2p = { id = "io.github.composegears.m2p" }
