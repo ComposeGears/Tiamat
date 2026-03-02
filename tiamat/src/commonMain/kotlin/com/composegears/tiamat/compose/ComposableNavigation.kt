@@ -14,6 +14,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import com.composegears.tiamat.TiamatUnsafeApi
 import com.composegears.tiamat.compose.TransitionController.Event.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
@@ -48,7 +49,7 @@ public fun Navigation(
 ) {
     Navigation(
         navController = navController,
-        destinationResolver = { name -> destinations.firstOrNull { it.name == name } },
+        destinationLoader = DestinationLoader.from(destinations),
         modifier = modifier,
         handleSystemBackEvent = handleSystemBackEvent,
         contentTransformProvider = contentTransformProvider
@@ -59,23 +60,27 @@ public fun Navigation(
  * The main navigation composable that displays the current destination and handles transitions.
  *
  * @param navController The NavController to use for navigation
- * @param destinationResolver A function that resolves a destination by name (used during restoration from saved state)
+ * @param destinationLoader A [DestinationLoader] that resolves navigation destinations by their unique key.
  * @param modifier Modifier to apply to the navigation container
  * @param handleSystemBackEvent Whether to handle system back events (default: true)
  * @param contentTransformProvider Provider function for content transitions based on navigation direction
+ *
+ * @see [DestinationLoader.from]
+ * @see [DestinationLoader.byKey]
+ * @see [DestinationLoader.DoNotLoad]
  */
 @Composable
 @Suppress("CognitiveComplexMethod", "CyclomaticComplexMethod")
 public fun Navigation(
     navController: NavController,
-    destinationResolver: (name: String) -> NavDestination<*>?,
+    destinationLoader: DestinationLoader,
     modifier: Modifier = Modifier,
     handleSystemBackEvent: Boolean = true,
     contentTransformProvider: (isForward: Boolean) -> ContentTransform = { navigationFadeInOut() },
 ) {
     NavigationScene(
         navController = navController,
-        destinationResolver = destinationResolver,
+        destinationLoader = destinationLoader,
         handleSystemBackEvent = handleSystemBackEvent,
     ) {
         val stubEntry = remember {
@@ -214,7 +219,7 @@ public fun NavigationScene(
 ) {
     NavigationScene(
         navController = navController,
-        destinationResolver = { name -> destinations.firstOrNull { it.name == name } },
+        destinationLoader = DestinationLoader.from(destinations),
         handleSystemBackEvent = handleSystemBackEvent,
         scene = scene
     )
@@ -230,7 +235,7 @@ public fun NavigationScene(
  *
  * Example usage:
  * ```
- * NavigationScene(navController, destinations) { // this: NavigationSceneScope
+ * NavigationScene(navController, destinationLoader) { // this: NavigationSceneScope
  *     val currentEntry by navController.currentNavEntryAsState()
  *     AnimatedContent(
  *         targetState = currentEntry,
@@ -243,21 +248,27 @@ public fun NavigationScene(
  * ```
  *
  * @param navController The NavController to use for navigation
- * @param destinationResolver A function that resolves a destination by name (used during restoration from saved state)
+ * @param destinationLoader A [DestinationLoader] that resolves navigation destinations by their unique key.
  * @param handleSystemBackEvent Whether to handle system back events (default: true)
  * @param scene Scene builder composable function that defines how navigation entries are rendered
+ *
+ * @see [DestinationLoader.from]
+ * @see [DestinationLoader.byKey]
+ * @see [DestinationLoader.DoNotLoad]
  */
 @Composable
 @Suppress("CognitiveComplexMethod", "MaximumLineLength", "MaxLineLength")
 public fun NavigationScene(
     navController: NavController,
-    destinationResolver: (name: String) -> NavDestination<*>?,
+    destinationLoader: DestinationLoader,
     handleSystemBackEvent: Boolean = true,
     scene: @Composable NavigationSceneScope.() -> Unit
 ) {
-    // resolve destinations in advance
+    // load destinations in advance
     LaunchedEffect(navController) {
-        navController.resolveNavDestinations(destinationResolver)
+        @OptIn(TiamatUnsafeApi::class)
+        if (destinationLoader != DestinationLoader.DoNotLoad)
+            navController.loadNavDestinations(destinationLoader)
     }
     // back handler
     if (handleSystemBackEvent) {
@@ -275,15 +286,21 @@ public fun NavigationScene(
     CompositionLocalProvider(LocalNavController provides navController) {
         val navScope = remember {
             NavigationSceneScope { entry ->
-                if (!entry.isResolved) entry.resolveDestination(destinationResolver)
+                if (!entry.isLoaded) entry.load(destinationLoader)
                 NavEntryContent(entry)
                 DisposableEffect(entry) {
-                    if (destinationResolver(entry.destination.name) == null) error(
-                        "NavController: ${navController.key}, the destination (${entry.destination.name}) is not registered in Navigation"
-                    )
-                    if (visibleEntries.contains(entry)) error(
+                    // verify destination is loadable or loading is not required
+                    @OptIn(TiamatUnsafeApi::class)
+                    require(
+                        destinationLoader == DestinationLoader.DoNotLoad ||
+                            destinationLoader.load(entry.destination.key) != null
+                    ) {
+                        "NavController: ${navController.key}, the destination (${entry.destination.name}) is not loadable with the provided DestinationLoader"
+                    }
+                    // verify the same entry is not displayed twice
+                    require(!visibleEntries.contains(entry)) {
                         "NavController: ${navController.key}, the same entry (${entry.destination.name}) should not be displayed twice"
-                    )
+                    }
                     visibleEntries.add(entry)
                     onDispose {
                         visibleEntries.remove(entry)

@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
 import com.composegears.tiamat.ExcludeFromTests
+import com.composegears.tiamat.compose.DestinationLoader
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
@@ -59,7 +60,7 @@ public class NavEntry<Args : Any> public constructor(
             val entrySavedState = savedState[KEY_SAVED_STATE] as? SavedState
             val navControllers = savedState[KEY_NAV_CONTROLLERS] as? SavedState
             return NavEntry(
-                destination = NavDestination.Unresolved(destination),
+                destination = NavDestination.NotLoaded(destination),
                 navArgs = navArgs,
                 freeArgs = freeArgs,
                 navResult = navResult,
@@ -79,7 +80,7 @@ public class NavEntry<Args : Any> public constructor(
         private set
     internal var isAttachedToUI = false
         private set
-    internal var isResolved = destination !is NavDestination.Unresolved
+    internal var isLoaded = destination !is NavDestination.NotLoaded
         private set
 
     @OptIn(ExperimentalUuidApi::class)
@@ -158,14 +159,14 @@ public class NavEntry<Args : Any> public constructor(
     public fun contentKey(): String = "${destination.name}-$uuid"
 
     @Suppress("UNCHECKED_CAST")
-    internal fun resolveDestination(destinationResolver: (name: String) -> NavDestination<*>?) {
-        destination = destinationResolver(destination.name)
+    internal fun load(destinationLoader: DestinationLoader) {
+        destination = destinationLoader.load(destination.key)
             ?.let { it as? NavDestination<Args> }
-            ?: error("Unable to resolve destination: ${destination.name}")
+            ?: error("Unable to load destination: ${destination.name}")
         if (navArgs != null && navArgs is SavedStateX) navArgs
             ?.fromSavedState(destination.argsType) { navArgs = it as Args }
             ?: error("NavArgs type mismatch: expected ${destination.argsType} found: ${navArgs!!::class}")
-        isResolved = true
+        isLoaded = true
     }
 
     @PublishedApi
