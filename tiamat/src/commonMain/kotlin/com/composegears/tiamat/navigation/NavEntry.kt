@@ -160,6 +160,7 @@ public class NavEntry<Args : Any> public constructor(
 
     @Suppress("UNCHECKED_CAST")
     internal fun load(destinationLoader: DestinationLoader) {
+        if (isLoaded) return
         destination = destinationLoader.load(destination.key)
             ?.let { it as? NavDestination<Args> }
             ?: error("Unable to load destination: ${destination.name}")
@@ -202,7 +203,9 @@ public class NavEntry<Args : Any> public constructor(
     }
 
     internal fun ensureDetachedAndAttach() {
-        if (isAttachedToNavController) error("NavEntry is already attached to a NavController")
+        require(!isAttachedToNavController) {
+            "NavEntry is already attached to a NavController"
+        }
         attachToNavController()
     }
 

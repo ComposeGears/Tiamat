@@ -44,7 +44,7 @@ public final class com/composegears/tiamat/compose/ComposableNavigationKt {
 }
 
 public final class com/composegears/tiamat/compose/ComposablePreviewKt {
-	public static final fun TiamatPreview (Lcom/composegears/tiamat/navigation/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Lcom/composegears/tiamat/compose/DestinationLoader;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun TiamatPreview (Lcom/composegears/tiamat/navigation/NavDestination;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class com/composegears/tiamat/compose/ComposableSingletons$ComposableNavigationKt {
