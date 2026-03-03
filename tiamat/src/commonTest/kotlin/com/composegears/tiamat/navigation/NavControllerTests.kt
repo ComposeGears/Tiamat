@@ -1,6 +1,7 @@
 package com.composegears.tiamat.navigation
 
 import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.compose.DestinationLoader
 import com.composegears.tiamat.compose.editNavStack
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.createTestNavController
@@ -522,19 +523,20 @@ class NavControllerTests {
     }
 
     @Test
-    fun `resolveNavDestinations # resolve known destinations`() {
-        val destinations = listOf(Destination1, Destination2, Destination3)
+    fun `loadNavDestinations # load known destinations`() {
+        val destinations = arrayOf<NavDestination<*>>(Destination1, Destination2, Destination3)
         val nc = createTestNavController()
-        nc.navigate(NavDestination.Unresolved(Destination1.name).toNavEntry())
-        nc.navigate(NavDestination.Unresolved(Destination2.name).toNavEntry())
-        nc.resolveNavDestinations { name -> destinations.find { it.name == name } }
-        assertTrue(nc.getNavStack()[0].isResolved)
-        assertTrue(nc.getNavStack()[1].isResolved)
-        nc.navigate(NavDestination.Unresolved("KeptUnresolved").toNavEntry())
+        nc.navigate(NavDestination.NotLoaded(Destination1.name).toNavEntry())
+        nc.navigate(NavDestination.NotLoaded(Destination2.name).toNavEntry())
+        val loader = DestinationLoader.from(destinations)
+        nc.loadNavDestinations(loader)
+        assertTrue(nc.getNavStack()[0].isLoaded)
+        assertTrue(nc.getNavStack()[1].isLoaded)
+        nc.navigate(NavDestination.NotLoaded("KeptNotLoaded").toNavEntry())
         assertFails {
-            nc.resolveNavDestinations { name -> destinations.find { it.name == name } }
+            nc.loadNavDestinations(loader)
         }
-        assertFalse(nc.getNavStack()[2].isResolved)
+        assertFalse(nc.getNavStack()[2].isLoaded)
     }
 
     @Test

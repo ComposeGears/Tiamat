@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.composegears.tiamat.ExcludeFromTests
 import com.composegears.tiamat.TiamatExperimentalApi
+import com.composegears.tiamat.compose.DestinationLoader
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,7 +70,7 @@ public class NavController internal constructor(
             val navStack = navStackItems?.map { item ->
                 NavEntry.restoreFromSavedState(navController, item)
             }
-            if (navStack != null && navStack.isNotEmpty()) {
+            if (!navStack.isNullOrEmpty()) {
                 navController.editNavStack(null, TransitionType.Instant) { _ -> navStack }
             }
             navController.parent = parent
@@ -340,7 +341,7 @@ public class NavController internal constructor(
             when (element) {
                 is NavEntry<*> -> element
                 is NavDestination<*> -> element.toNavEntry()
-                is Route.Destination -> NavDestination.Unresolved(element.name).toNavEntry()
+                is Route.Destination -> NavDestination.NotLoaded(element.name).toNavEntry()
                 is Route.NavController -> null
             }?.also { entry: NavEntry<*> ->
                 elements.removeAt(0)
@@ -364,12 +365,12 @@ public class NavController internal constructor(
 
     // ----------- internal helpers methods ------------------------------------------------------------------------------------
 
-    internal fun resolveNavDestinations(
-        destinationResolver: (name: String) -> NavDestination<*>?,
+    internal fun loadNavDestinations(
+        destinationLoader: DestinationLoader,
     ) {
         getNavStack().onEach {
-            if (!it.isResolved)
-                it.resolveDestination(destinationResolver)
+            if (!it.isLoaded)
+                it.load(destinationLoader)
         }
     }
 

@@ -2,6 +2,7 @@ package com.composegears.tiamat.navigation
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
+import com.composegears.tiamat.compose.DestinationLoader
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import kotlinx.serialization.Serializable
@@ -41,15 +42,15 @@ class NavEntryTests {
     }
 
     @Test
-    fun `isResolved # returns false for unresolved destination`() {
-        val entry = NavEntry(destination = NavDestination.Unresolved("test"))
-        assertFalse(entry.isResolved)
+    fun `isLoaded # returns false for not loaded destination`() {
+        val entry = NavEntry(destination = NavDestination.NotLoaded("test"))
+        assertFalse(entry.isLoaded)
     }
 
     @Test
-    fun `isResolved # returns true for resolved destination`() {
+    fun `isLoaded # returns true for loaded destination`() {
         val entry = NavEntry(destination = TestDestination)
-        assertTrue(entry.isResolved)
+        assertTrue(entry.isLoaded)
     }
 
     @Test
@@ -132,38 +133,41 @@ class NavEntryTests {
     }
 
     @Test
-    fun `resolveDestination # finds matching destination by name`() {
+    fun `load # finds matching destination by name`() {
         val destinationName = TestDestination.name
-        val entry = NavEntry(destination = NavDestination.Unresolved(destinationName))
+        val entry = NavEntry(destination = NavDestination.NotLoaded(destinationName))
         val destinations = arrayOf<NavDestination<*>>(
             AnotherTestDestination,
             TestDestination
         )
-        entry.resolveDestination(destinations)
-        assertTrue(entry.isResolved)
+        val loader = DestinationLoader.from(destinations)
+        entry.load(loader)
+        assertTrue(entry.isLoaded)
         assertEquals(destinationName, entry.destination.name)
     }
 
     @Test
     @Suppress("UNCHECKED_CAST")
-    fun `resolveDestination # deserialized nav args`() {
+    fun `load # deserializes nav args`() {
         val entry = SerializedNavArgsDestination.toNavEntry(navArgs = TestData("test"))
         val saved = entry.saveToSavedState()
         val restored = NavEntry.restoreFromSavedState(null, saved)
-        restored.resolveDestination(arrayOf(SerializedNavArgsDestination))
-        assertTrue(restored.isResolved)
+        val loader = DestinationLoader.from(arrayOf(SerializedNavArgsDestination))
+        restored.load(loader)
+        assertTrue(restored.isLoaded)
         assertEquals(SerializedNavArgsDestination.name, restored.destination.name)
         assertEquals("test", (restored as? NavEntry<TestData>)?.getNavArgs()?.data)
     }
 
     @Test
-    fun `resolveDestination # throws error when destination not found`() {
-        val entry = NavEntry(destination = NavDestination.Unresolved("non_existent"))
+    fun `load # throws error when destination not found`() {
+        val entry = NavEntry(destination = NavDestination.NotLoaded("non_existent"))
         val destinations = arrayOf<NavDestination<*>>(
             TestDestination,
             AnotherTestDestination
         )
-        assertFails { entry.resolveDestination(destinations) }
+        val loader = DestinationLoader.from(destinations)
+        assertFails { entry.load(loader) }
     }
 
     @Test
@@ -241,7 +245,7 @@ class NavEntryTests {
         assertEquals(entrySavedState, entry.savedState)
         assertEquals(1, entry.navControllerStore.navControllers.size)
         assertEquals(parentNC, entry.navControllerStore.navControllers[0].parent)
-        assertFalse(entry.isResolved)
+        assertFalse(entry.isLoaded)
     }
 
     @Test
@@ -280,7 +284,8 @@ class NavEntryTests {
         )
         val savedState = entry.saveToSavedState()
         val result = NavEntry.restoreFromSavedState(null, savedState)
-        result.resolveDestination(arrayOf(SerializedNavArgsDestination))
+        val loader = DestinationLoader.from(arrayOf(SerializedNavArgsDestination))
+        result.load(loader)
         assertEquals("args", result.getNavArgs().let { it as? TestData }?.data)
         assertEquals("free", result.getFreeArgs<TestData>()?.data)
         assertEquals("result", result.getNavResult<TestData>()?.data)
@@ -295,8 +300,9 @@ class NavEntryTests {
         )
         val savedState = entry.saveToSavedState()
         val result = NavEntry.restoreFromSavedState(null, savedState)
+        val loader = DestinationLoader.byKey { _ -> AnotherSerializedNavArgsDestination }
         assertFails {
-            result.resolveDestination { _ -> AnotherSerializedNavArgsDestination }
+            result.load(loader)
         }
     }
 
@@ -421,9 +427,5 @@ class NavEntryTests {
     fun `contentKey # returns correct key`() {
         val entry = NavEntry(destination = TestDestination)
         assertEquals("TestDestination-${entry.uuid}", entry.contentKey())
-    }
-
-    fun NavEntry<*>.resolveDestination(destinations: Array<NavDestination<*>>) {
-        resolveDestination { name -> destinations.firstOrNull { it.name == name } }
     }
 }

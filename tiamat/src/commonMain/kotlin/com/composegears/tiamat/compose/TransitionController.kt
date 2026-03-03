@@ -10,8 +10,16 @@ import kotlinx.coroutines.flow.update
 /**
  * A controller for managing a transition between two screens.
  *
- * @param start The start value of the transition.
- * @param end The end value of the transition.
+ * Once created, the controller is in an active state. Calling [update] allows programmatic
+ * control over the transition progress. The transition is completed by calling either [finish]
+ * or [cancel]. After either method is called, the controller becomes inactive and any further
+ * calls to [update], [cancel], or [finish] will throw an error. This is intentional to prevent
+ * stale transitions from affecting new navigation operations.
+ *
+ * @param start The start value of the transition (default: 0f, must be in 0..1)
+ * @param end The end value of the transition (default: 1f, must be in 0..1)
+ *
+ * @throws IllegalArgumentException if start or end values are outside 0..1 range or start > end
  */
 public open class TransitionController(
     private val start: Float = 0f,

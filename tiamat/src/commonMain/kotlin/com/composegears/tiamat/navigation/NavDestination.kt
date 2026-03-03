@@ -42,7 +42,12 @@ public abstract class NavDestination<Args : Any>(
         )
     }
 
-    internal class Unresolved(
+    /**
+     * A unique key for this destination, used for saving and restoring destination.
+     */
+    public val key: String = name
+
+    internal class NotLoaded(
         name: String
     ) : NavDestination<Any>(
         name = name,

@@ -112,13 +112,18 @@ public fun rememberNavController(
 
     DisposableEffect(navController) {
         onDispose {
-            // Dispose called in 2 cases
+            // Dispose is called in 2 cases:
             // 1. NavEntry is closed due to navigation (detached from UI, attached to NC)
-            // 2. `rememberNavController` composable leave entry composition (eg: switch between 2 Nav-s)
+            // 2. `rememberNavController` composable leaves entry composition (e.g., switch between 2 NavControllers)
+            // Determine if NavController should be cleared or retained
             val shouldClear = when {
-                !isSaveable -> true // not saveable -> clear
-                navControllersStorage == null -> true // no storage + dispose means root NC leave composition -> clear
-                parentNavEntry.isAttachedToUI -> true // NC leave entry composition till entry on screen -> clear
+                // Case 1: Not saveable -> always clear resources
+                !isSaveable -> true
+                // Case 2: Root NavController + no storage + dispose = leaving root composition -> clear
+                navControllersStorage == null -> true
+                // Case 3: Parent entry still visible but this NavController left composition -> clear
+                parentNavEntry.isAttachedToUI -> true
+                // Case 4: Parent entry invisible, keep for later restore when entry re-appears
                 else -> false
             }
             if (shouldClear) {

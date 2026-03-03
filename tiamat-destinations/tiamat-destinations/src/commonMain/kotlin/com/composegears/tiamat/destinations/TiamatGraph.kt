@@ -1,5 +1,6 @@
 package com.composegears.tiamat.destinations
 
+import androidx.compose.runtime.Stable
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.navigation.NavDestination
 
@@ -9,6 +10,7 @@ import com.composegears.tiamat.navigation.NavDestination
  * Graphs can be created by implementing this interface directly or by using
  * the annotation processor with the [InstallIn] annotation.
  */
+@Stable
 @SubclassOptInRequired(TiamatExperimentalApi::class)
 public interface TiamatGraph {
     /**

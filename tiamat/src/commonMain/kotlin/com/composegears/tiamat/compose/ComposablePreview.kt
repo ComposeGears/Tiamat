@@ -1,6 +1,8 @@
 package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.composegears.tiamat.TiamatUnsafeApi
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 
@@ -12,6 +14,7 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @param freeArgs Optional free-form arguments that can be passed to the destination.
  * @param navResult Optional navigation result data that would normally be received from
  *                  a previous destination in the navigation stack.
+ * @param modifier  Modifier to apply to the navigation container
  *
  * Example simple usage:
  *
@@ -51,11 +54,13 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @see NavDestination
  */
 @Composable
+@OptIn(TiamatUnsafeApi::class)
 public fun <T : Any> TiamatPreview(
     destination: NavDestination<T>,
     navArgs: T? = null,
     freeArgs: Any? = null,
-    navResult: Any? = null
+    navResult: Any? = null,
+    modifier: Modifier = Modifier,
 ) {
     Navigation(
         navController = rememberNavController(
@@ -65,6 +70,7 @@ public fun <T : Any> TiamatPreview(
                 navResult = navResult
             ),
         ),
-        destinations = arrayOf(destination)
+        destinationLoader = DestinationLoader.DoNotLoad,
+        modifier = modifier,
     )
 }
