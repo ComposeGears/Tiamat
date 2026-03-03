@@ -38,5 +38,4 @@ dependencies {
     implementation(libs.androidx.hilt.compose)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    ksp("org.jetbrains.kotlin:kotlin-metadata-jvm:2.3.10") // hilt + android 2.3.0 workaround
 }
