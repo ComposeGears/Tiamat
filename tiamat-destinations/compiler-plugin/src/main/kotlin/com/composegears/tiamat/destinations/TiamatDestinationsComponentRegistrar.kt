@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class TiamatDestinationsComponentRegistrar : CompilerPluginRegistrar() {
-    override val pluginId: String = "tiamat-destinations-compiler"
 
     override val supportsK2: Boolean = true
 

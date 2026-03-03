@@ -16,7 +16,10 @@ kotlin {
             commonWebpackConfig {
                 outputFileName = "tiamatApp.js"
                 devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static(project.projectDir.path)
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(project.projectDir.path)
+                    }
                 }
             }
         }
