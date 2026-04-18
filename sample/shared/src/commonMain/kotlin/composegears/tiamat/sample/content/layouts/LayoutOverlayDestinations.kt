@@ -69,13 +69,17 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
                 CompositionLocalProvider(
                     LocalNavAnimatedVisibilityScope provides this,
                 ) {
-                    EntryContent(it)
+                    key(overlays) {
+                        EntryContent(it)
+                    }
                 }
             }
             // draw overlays on top of content
-            Box {
-                for (entry in overlays) {
-                    EntryContent(entry)
+            key(overlays) {
+                Box {
+                    for (entry in overlays) {
+                        EntryContent(entry)
+                    }
                 }
             }
         }
