@@ -77,6 +77,7 @@ val LayoutAdaptiveListDetails by navDestination {
                                 // as for small screen -> render in 1 pane
                                 AnimatedContent(
                                     targetState = current,
+                                    contentKey = { it?.contentKey() },
                                     transitionSpec = { navigationFadeInOut() },
                                     modifier = Modifier.fillMaxSize()
                                 ) {
