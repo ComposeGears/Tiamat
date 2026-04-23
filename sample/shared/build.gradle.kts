@@ -12,7 +12,7 @@ plugins {
 
 kotlin {
     jvm()
-    androidLibrary {
+    android {
         namespace = "com.composegears.tiamat.sample"
         compileSdk = tiamat.versions.compileSdk.get().toInt()
         minSdk = tiamat.versions.minSdk.get().toInt()
@@ -28,7 +28,6 @@ kotlin {
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->

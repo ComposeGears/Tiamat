@@ -22,7 +22,7 @@ kotlin {
     }
 
     jvm()
-    androidLibrary {
+    android {
         namespace = "com.composegears.tiamat.destinations"
         compileSdk = tiamat.versions.compileSdk.get().toInt()
         minSdk = tiamat.versions.minSdk.get().toInt()
@@ -31,7 +31,6 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
-    iosX64()
     iosArm64()
     iosSimulatorArm64()
 
