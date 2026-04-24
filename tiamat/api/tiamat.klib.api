@@ -1,5 +1,5 @@
 // Klib ABI Dump
-// Targets: [iosArm64, iosSimulatorArm64, iosX64, wasmJs]
+// Targets: [iosArm64, iosSimulatorArm64, wasmJs]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -137,6 +137,13 @@ final class com.composegears.tiamat.compose/TransitionData { // com.composegears
     final fun toString(): kotlin/String // com.composegears.tiamat.compose/TransitionData.toString|toString(){}[0]
 }
 
+final class com.composegears.tiamat.navigation/DeepLink { // com.composegears.tiamat.navigation/DeepLink|null[0]
+    constructor <init>(kotlin/Function1<com.composegears.tiamat.navigation/DeepLink, kotlin/Unit>) // com.composegears.tiamat.navigation/DeepLink.<init>|<init>(kotlin.Function1<com.composegears.tiamat.navigation.DeepLink,kotlin.Unit>){}[0]
+
+    final fun bind(kotlin/Array<out kotlin/String>..., kotlin/Function2<com.composegears.tiamat.navigation/Route, kotlin.collections/List<kotlin/String>, kotlin/Unit>) // com.composegears.tiamat.navigation/DeepLink.bind|bind(kotlin.Array<out|kotlin.String>...;kotlin.Function2<com.composegears.tiamat.navigation.Route,kotlin.collections.List<kotlin.String>,kotlin.Unit>){}[0]
+    final fun parse(kotlin/String): com.composegears.tiamat.navigation/Route // com.composegears.tiamat.navigation/DeepLink.parse|parse(kotlin.String){}[0]
+}
+
 final class com.composegears.tiamat.navigation/NavController : androidx.lifecycle/ViewModelStoreOwner { // com.composegears.tiamat.navigation/NavController|null[0]
     final val key // com.composegears.tiamat.navigation/NavController.key|{}key[0]
         final fun <get-key>(): kotlin/String? // com.composegears.tiamat.navigation/NavController.key.<get-key>|<get-key>(){}[0]
@@ -242,6 +249,7 @@ final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_Transi
 final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionController_Event_Finish$stableprop // com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionController_Event_Finish$stableprop|#static{}com_composegears_tiamat_compose_TransitionController_Event_Finish$stableprop[0]
 final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionController_Event_Update$stableprop // com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionController_Event_Update$stableprop|#static{}com_composegears_tiamat_compose_TransitionController_Event_Update$stableprop[0]
 final val com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionData$stableprop // com.composegears.tiamat.compose/com_composegears_tiamat_compose_TransitionData$stableprop|#static{}com_composegears_tiamat_compose_TransitionData$stableprop[0]
+final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_DeepLink$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_DeepLink$stableprop|#static{}com_composegears_tiamat_navigation_DeepLink$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop|#static{}com_composegears_tiamat_navigation_NavController$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop|#static{}com_composegears_tiamat_navigation_NavControllerStore$stableprop[0]
 final val com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop|#static{}com_composegears_tiamat_navigation_NavController_NavState$stableprop[0]
@@ -301,6 +309,7 @@ final fun com.composegears.tiamat.compose/rememberNavController(kotlin/String?, 
 final fun com.composegears.tiamat.compose/rememberNavController(kotlin/String?, kotlin/Boolean?, kotlin.collections/Map<kotlin/String, kotlin/Any?>?, com.composegears.tiamat.navigation/NavEntry<*>?, kotlin/Function1<com.composegears.tiamat.navigation/NavController, kotlin/Unit>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int): com.composegears.tiamat.navigation/NavController // com.composegears.tiamat.compose/rememberNavController|rememberNavController(kotlin.String?;kotlin.Boolean?;kotlin.collections.Map<kotlin.String,kotlin.Any?>?;com.composegears.tiamat.navigation.NavEntry<*>?;kotlin.Function1<com.composegears.tiamat.navigation.NavController,kotlin.Unit>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
 final fun com.composegears.tiamat.compose/rememberNavController(kotlin/String?, kotlin/Boolean?, kotlin.collections/Map<kotlin/String, kotlin/Any?>?, kotlin/Function1<com.composegears.tiamat.navigation/NavController, kotlin/Unit>?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int): com.composegears.tiamat.navigation/NavController // com.composegears.tiamat.compose/rememberNavController|rememberNavController(kotlin.String?;kotlin.Boolean?;kotlin.collections.Map<kotlin.String,kotlin.Any?>?;kotlin.Function1<com.composegears.tiamat.navigation.NavController,kotlin.Unit>?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
 final fun com.composegears.tiamat.navigation/SavedState(kotlin/Array<out kotlin/Pair<kotlin/String, kotlin/Any?>>...): kotlin.collections/Map<kotlin/String, kotlin/Any?> // com.composegears.tiamat.navigation/SavedState|SavedState(kotlin.Array<out|kotlin.Pair<kotlin.String,kotlin.Any?>>...){}[0]
+final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_DeepLink$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_DeepLink$stableprop_getter|com_composegears_tiamat_navigation_DeepLink$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController$stableprop_getter|com_composegears_tiamat_navigation_NavController$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter|com_composegears_tiamat_navigation_NavControllerStore$stableprop_getter(){}[0]
 final fun com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter(): kotlin/Int // com.composegears.tiamat.navigation/com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter|com_composegears_tiamat_navigation_NavController_NavState$stableprop_getter(){}[0]

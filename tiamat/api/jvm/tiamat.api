@@ -188,6 +188,13 @@ public final class com/composegears/tiamat/compose/TransitionData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class com/composegears/tiamat/navigation/DeepLink {
+	public static final field $stable I
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public final fun bind ([Ljava/lang/String;Lkotlin/jvm/functions/Function2;)V
+	public final fun parse (Ljava/lang/String;)Lcom/composegears/tiamat/navigation/Route;
+}
+
 public final class com/composegears/tiamat/navigation/NavController : androidx/lifecycle/ViewModelStoreOwner {
 	public static final field $stable I
 	public static final field Companion Lcom/composegears/tiamat/navigation/NavController$Companion;

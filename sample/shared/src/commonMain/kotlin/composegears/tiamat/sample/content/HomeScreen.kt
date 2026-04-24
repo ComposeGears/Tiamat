@@ -38,6 +38,7 @@ import composegears.tiamat.sample.content.navigation.data.NavDataArgs
 import composegears.tiamat.sample.content.navigation.data.NavDataFreeArgs
 import composegears.tiamat.sample.content.navigation.data.NavDataResult
 import composegears.tiamat.sample.content.navigation.data.NavDataSerializable
+import composegears.tiamat.sample.content.navigation.patterns.NavPatternDeepLink
 import composegears.tiamat.sample.content.navigation.patterns.NavPatternNested
 import composegears.tiamat.sample.content.navigation.patterns.NavPatternTabs
 import composegears.tiamat.sample.content.other.OtherDestinationsGraph
@@ -113,6 +114,11 @@ internal val HomeItems =
                     name = "Nested navigation",
                     description = "Multiple nested nav controllers case",
                     destination = NavPatternNested
+                ),
+                AppFeature(
+                    name = "Deep links",
+                    description = "Example shows how to use deep links with Tiamat navigation",
+                    destination = NavPatternDeepLink
                 ),
             ),
         ),
