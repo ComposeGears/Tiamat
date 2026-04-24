@@ -57,7 +57,9 @@ object Screen3 : NavDestination<Int> {
     }
 }
 
-// NOT ALLOWED HERE
+// NOT ALLOWED — produces a compile error
+// @InstallIn on a non-object class is rejected by the compiler plugin.
+// Use a top-level property instead (see Screen4 below).
 class Screen4Class : NavDestination<Int> {
     override val name: String = "Screen4"
     override val extensions: List<Extension<Int>> = emptyList()
@@ -72,6 +74,11 @@ class Screen4Class : NavDestination<Int> {
 @InstallIn(SomneOtherGraph::class)
 val Screen4 = Screen4Class()
 ```
+
+> [!NOTE]
+> Applying duplicate `@InstallIn(SameGraph::class)` annotations on the
+> same property or object produces a compile **warning**. The destination
+> is registered only once per graph.
 
 Use graph instead of `destinations`
 
@@ -97,6 +104,17 @@ Navigation(
 )
 ```
 
+## Graph debug dump
+
+The compiler plugin can write the resolved graph as markdown for review.
+Set the Gradle property `tiamat.destinations.dumpDir` to a directory path
+(relative to the project root or absolute):
+
+```properties
+# gradle.properties
+tiamat.destinations.dumpDir=build/tiamat-graph
+```
+
 ## Emergency case
 
 In case the plugin problems, there is backport solution: override graph `destinations` function manually and disable
@@ -116,3 +134,4 @@ object Graph : TiamatGraph {
 |----------------|:--------------:|
 | 1.5.2          |     2.2.0      |
 | 2.0.0-alpha01  |     2.2.0      |
+| 2.1.0          |     2.3.21     |

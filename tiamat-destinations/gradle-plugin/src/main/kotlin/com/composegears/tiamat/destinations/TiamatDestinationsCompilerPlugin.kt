@@ -20,6 +20,14 @@ class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
-        return project.provider { emptyList() }
+        return project.provider {
+            buildList {
+                val dumpDir = project.findProperty("tiamat.destinations.dumpDir")?.toString()
+                if (!dumpDir.isNullOrBlank()) {
+                    val resolvedPath = project.file(dumpDir).absolutePath
+                    add(SubpluginOption(key = "dumpDir", value = resolvedPath))
+                }
+            }
+        }
     }
 }

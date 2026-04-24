@@ -21,7 +21,7 @@ import composegears.tiamat.sample.icons.KeyboardArrowLeft
 import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
 
-private object Graph : TiamatGraph
+private object OtherAutoDestinationGraph : TiamatGraph
 
 val OtherDestinationsGraph by navDestination(ScreenInfo()) {
     Screen("Auto destinations graph") {
@@ -31,7 +31,7 @@ val OtherDestinationsGraph by navDestination(ScreenInfo()) {
         )
         Navigation(
             navController = nc,
-            graph = Graph,
+            graph = OtherAutoDestinationGraph,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
@@ -40,7 +40,7 @@ val OtherDestinationsGraph by navDestination(ScreenInfo()) {
     }
 }
 
-@InstallIn(Graph::class)
+@InstallIn(OtherAutoDestinationGraph::class)
 private val OtherDestinationsGraphScreen1 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -56,7 +56,7 @@ private val OtherDestinationsGraphScreen1 by navDestination {
     }
 }
 
-@InstallIn(Graph::class)
+@InstallIn(OtherAutoDestinationGraph::class)
 private val OtherDestinationsGraphScreen2 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -80,7 +80,7 @@ private val OtherDestinationsGraphScreen2 by navDestination {
     }
 }
 
-@InstallIn(Graph::class)
+@InstallIn(OtherAutoDestinationGraph::class)
 private val OtherDestinationsGraphScreen3 by navDestination {
     val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {

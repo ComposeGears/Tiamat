@@ -1,4 +1,6 @@
 public final class com/composegears/tiamat/destinations/TiamatDestinationsCommandLineProcessor : org/jetbrains/kotlin/compiler/plugin/CommandLineProcessor {
+	public static final field Companion Lcom/composegears/tiamat/destinations/TiamatDestinationsCommandLineProcessor$Companion;
+	public static final field DUMP_DIR_OPTION Ljava/lang/String;
 	public fun <init> ()V
 	public fun appendList (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/lang/Object;)V
 	public fun appendList (Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;Ljava/util/List;)V
@@ -8,6 +10,9 @@ public final class com/composegears/tiamat/destinations/TiamatDestinationsComman
 	public fun processOption (Lorg/jetbrains/kotlin/compiler/plugin/AbstractCliOption;Ljava/lang/String;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 }
 
+public final class com/composegears/tiamat/destinations/TiamatDestinationsCommandLineProcessor$Companion {
+}
+
 public final class com/composegears/tiamat/destinations/TiamatDestinationsComponentRegistrar : org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar {
 	public fun <init> ()V
 	public fun getPluginId ()Ljava/lang/String;
@@ -15,8 +20,14 @@ public final class com/composegears/tiamat/destinations/TiamatDestinationsCompon
 	public fun registerExtensions (Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;Lorg/jetbrains/kotlin/config/CompilerConfiguration;)V
 }
 
+public final class com/composegears/tiamat/destinations/TiamatDestinationsConfigurationKeys {
+	public static final field INSTANCE Lcom/composegears/tiamat/destinations/TiamatDestinationsConfigurationKeys;
+	public final fun getDUMP_DIR ()Lorg/jetbrains/kotlin/config/CompilerConfigurationKey;
+}
+
 public final class com/composegears/tiamat/destinations/TiamatDestinationsIrGenerationExtension : org/jetbrains/kotlin/backend/common/extensions/IrGenerationExtension {
-	public fun <init> (Lorg/jetbrains/kotlin/util/Logger;)V
+	public fun <init> (Lorg/jetbrains/kotlin/util/Logger;Ljava/lang/String;)V
+	public synthetic fun <init> (Lorg/jetbrains/kotlin/util/Logger;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun generate (Lorg/jetbrains/kotlin/ir/declarations/IrModuleFragment;Lorg/jetbrains/kotlin/backend/common/extensions/IrPluginContext;)V
 	public final fun getLogger ()Lorg/jetbrains/kotlin/util/Logger;
 	public fun getPlatformIntrinsicExtension (Lorg/jetbrains/kotlin/backend/common/LoweringContext;)Lorg/jetbrains/kotlin/backend/common/extensions/IrIntrinsicExtension;

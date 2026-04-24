@@ -8,14 +8,19 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 @OptIn(ExperimentalCompilerApi::class)
 class TiamatDestinationsComponentRegistrar : CompilerPluginRegistrar() {
-    override val pluginId: String = "tiamat-destinations-compiler"
+
+    override val pluginId: String = "TiamatDestinationsCompiler"
 
     override val supportsK2: Boolean = true
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         configuration.getLogger().log("[TD] Registering Tiamat Destinations component")
+        val dumpDir = configuration.get(TiamatDestinationsConfigurationKeys.DUMP_DIR)
         IrGenerationExtension.registerExtension(
-            TiamatDestinationsIrGenerationExtension(configuration.getLogger())
+            TiamatDestinationsIrGenerationExtension(
+                logger = configuration.getLogger(),
+                dumpDir = dumpDir,
+            )
         )
     }
 }

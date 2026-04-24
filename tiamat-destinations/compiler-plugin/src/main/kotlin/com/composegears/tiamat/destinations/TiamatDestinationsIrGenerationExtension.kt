@@ -31,34 +31,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.Logger
+import java.io.File
 
-class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGenerationExtension {
-
-    private fun unsupportedTypeMessage(message: String) = """
-            |[TD] error
-            |
-            |Unsupported notation: $message
-            |
-            |Only objects and properties of `NavDestination` type are supported.
-            |Annotation param should be `TiamatGraph` subclass (DO NOT USE `TiamatGraph` itself)
-            |Example:
-            |
-            |object MyGraph : TiamatGraph
-            |
-            |@InstallIn(MyGraph::class)
-            |val Screen1 by navDestination<Args> { }
-            |
-            |@InstallIn(MyGraph::class)
-            |val Screen2 = NavDestination<Args>(name = "Screen2") {}
-            |
-            |@InstallIn(MyGraph::class)
-            |object Screen3 : NavDestination<Int> {}
-            |
-            |class Screen4Class : NavDestination<Int>
-            |@InstallIn(MyGraph::class)
-            |val Screen4 = Screen4Class()
-            |
-        """.trimMargin()
+class TiamatDestinationsIrGenerationExtension(
+    val logger: Logger,
+    private val dumpDir: String? = null,
+) : IrGenerationExtension {
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
 
@@ -72,22 +50,58 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
 
         // Find all variables and classes annotated with @InstallIn
         val annotatedElements = mutableMapOf<IrClassSymbol, MutableList<IrSymbol>>()
+        var hasErrors = false
 
         // Process all declarations in the module
         moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitProperty(declaration: IrProperty): IrStatement {
-                declaration.annotations
+                val graphSymbols = declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
                     .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
-                    .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
+
+                // Check for duplicate @InstallIn with the same graph
+                val seen = mutableSetOf<IrClassSymbol>()
+                for (symbol in graphSymbols) {
+                    if (!seen.add(symbol)) {
+                        logger.warning(
+                            "[TD] Duplicate @InstallIn(${symbol.owner.name}::class) " +
+                                "on property '${declaration.name}'. Each graph should appear at most once."
+                        )
+                    } else {
+                        annotatedElements.getOrPut(symbol) { mutableListOf() }.add(declaration.symbol)
+                    }
+                }
                 return super.visitProperty(declaration)
             }
 
             override fun visitClass(declaration: IrClass): IrStatement {
-                declaration.annotations
+                val graphSymbols = declaration.annotations
                     .filter { it.type.classFqName == installInAnnotation }
                     .mapNotNull { it.arguments.firstOrNull()?.extractContainerClass()?.symbol }
-                    .onEach { annotatedElements.getOrPut(it) { mutableListOf() }.add(declaration.symbol) }
+
+                if (graphSymbols.isNotEmpty() && !declaration.isObject) {
+                    // ERROR: @InstallIn on a non-object class is not allowed
+                    logger.error(
+                        "[TD] @InstallIn is not allowed on non-object class '${declaration.name}'. " +
+                            "Only objects and properties of NavDestination type are supported. " +
+                            "Use @InstallIn on a top-level property instead: " +
+                            "@InstallIn(Graph::class) val screen = ${declaration.name}()"
+                    )
+                    hasErrors = true
+                } else {
+                    // Check for duplicate @InstallIn with the same graph
+                    val seen = mutableSetOf<IrClassSymbol>()
+                    for (symbol in graphSymbols) {
+                        if (!seen.add(symbol)) {
+                            logger.warning(
+                                "[TD] Duplicate @InstallIn(${symbol.owner.name}::class) " +
+                                    "on class '${declaration.name}'. Each graph should appear at most once."
+                            )
+                        } else {
+                            annotatedElements.getOrPut(symbol) { mutableListOf() }.add(declaration.symbol)
+                        }
+                    }
+                }
                 return super.visitClass(declaration)
             }
 
@@ -109,31 +123,38 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
             }
         })
 
-        // Types validation
-        listOfNotNull(
-            annotatedElements
-                .map { it.key }
-                .filter { !it.owner.isSubclassOf(tiamatGraphClass, pluginContext) }
-                .takeIf { it.isNotEmpty() }
-                ?.joinToString(
-                    prefix = "Annotation value: [\n",
-                    separator = "\n",
-                    postfix = "\n]",
-                    transform = { "    $it" }
-                ),
-            annotatedElements
-                .flatMap { it.value }
-                .filter { !isValidAnnotationTarget(it, pluginContext) }
-                .takeIf { it.isNotEmpty() }
-                ?.joinToString(
-                    prefix = "Annotation target: [\n",
-                    separator = "\n",
-                    postfix = "\n]",
-                    transform = { "    $it" }
-                ))
-            .takeIf { it.isNotEmpty() }
-            ?.joinToString(separator = "\n")
-            ?.let { error(unsupportedTypeMessage(it)) }
+        // Validate annotation values (must be TiamatGraph subclasses)
+        val invalidGraphTargets = annotatedElements
+            .map { it.key }
+            .filter { !it.owner.isSubclassOf(tiamatGraphClass, pluginContext) }
+
+        if (invalidGraphTargets.isNotEmpty()) {
+            for (target in invalidGraphTargets) {
+                logger.error(
+                    "[TD] @InstallIn annotation value '${target.owner.name}' is not a TiamatGraph subclass. " +
+                        "Annotation parameter should be a TiamatGraph subclass (do not use TiamatGraph itself)."
+                )
+            }
+            hasErrors = true
+        }
+
+        // Validate annotation targets (must be NavDestination properties or objects)
+        val invalidAnnotationTargets = annotatedElements
+            .flatMap { it.value }
+            .filter { !isValidAnnotationTarget(it, pluginContext) }
+
+        if (invalidAnnotationTargets.isNotEmpty()) {
+            for (target in invalidAnnotationTargets) {
+                logger.error(
+                    "[TD] @InstallIn target '$target' is not a valid NavDestination. " +
+                        "Only objects and properties of NavDestination type are supported."
+                )
+            }
+            hasErrors = true
+        }
+
+        // Stop if there were errors — do not attempt code generation
+        if (hasErrors) return
 
         // Log info
         logger.log("[TD] Destinations map:")
@@ -143,6 +164,11 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
                 logger.log("[TD]   $element")
             }
             logger.log("[TD] ]")
+        }
+
+        // Dump graph to markdown if dumpDir is configured
+        if (!dumpDir.isNullOrBlank()) {
+            dumpGraphs(annotatedElements)
         }
 
         // For each TiamatGraph class, override the destinations() function
@@ -161,6 +187,30 @@ class TiamatDestinationsIrGenerationExtension(val logger: Logger) : IrGeneration
                 return super.visitClass(declaration)
             }
         })
+    }
+
+    private fun dumpGraphs(annotatedElements: Map<IrClassSymbol, List<IrSymbol>>) {
+        val dir = File(dumpDir!!)
+        dir.mkdirs()
+        val file = File(dir, "report.md")
+
+        val sb = StringBuilder()
+        for ((graphSymbol, elements) in annotatedElements) {
+            val graphName = graphSymbol.owner.name.asString()
+            sb.appendLine("## $graphName")
+            for (symbol in elements) {
+                val name = when (symbol) {
+                    is IrPropertySymbol -> symbol.owner.name.asString()
+                    is IrClassSymbol -> symbol.owner.name.asString()
+                    else -> symbol.toString()
+                }
+                sb.appendLine("- $name")
+            }
+            sb.appendLine()
+        }
+
+        file.writeText(sb.toString().trimEnd() + "\n")
+        logger.log("[TD] Dumped graph report to ${file.absolutePath}")
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)

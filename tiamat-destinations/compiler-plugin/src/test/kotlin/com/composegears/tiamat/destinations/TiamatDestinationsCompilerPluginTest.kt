@@ -4,6 +4,7 @@ import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TiamatDestinationsCompilerPluginTest {
@@ -238,6 +239,124 @@ class TiamatDestinationsCompilerPluginTest {
             messageOutputStream = System.out
         }.compile()
 
-        assertEquals(KotlinCompilation.ExitCode.INTERNAL_ERROR, result.exitCode)
+        assertEquals(KotlinCompilation.ExitCode.COMPILATION_ERROR, result.exitCode)
+    }
+
+    @Test
+    @OptIn(ExperimentalCompilerApi::class)
+    fun `compiler # error when InstallIn on non-object class`() {
+        val source = SourceFile.kotlin(
+            "Test.kt", """
+            package com.test
+            
+            import com.composegears.tiamat.navigation.*
+            import com.composegears.tiamat.destinations.*
+            
+            object MyGraph : TiamatGraph
+            
+            @InstallIn(MyGraph::class)
+            class ScreenClass : NavDestination<Unit>()
+            
+            fun main() {}
+        """.trimIndent()
+        )
+
+        val output = java.io.ByteArrayOutputStream()
+        val result = KotlinCompilation().apply {
+            sources = listOf(source, annotationSource, navDestinationSource)
+            compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
+            inheritClassPath = true
+            messageOutputStream = output
+        }.compile()
+
+        assertEquals(KotlinCompilation.ExitCode.COMPILATION_ERROR, result.exitCode)
+        val messages = output.toString()
+        assertTrue(
+            "Expected error about non-object class, got: $messages",
+            messages.contains("@InstallIn is not allowed on non-object class")
+        )
+    }
+
+    @Test
+    @OptIn(ExperimentalCompilerApi::class)
+    fun `compiler # warning on duplicate InstallIn with same graph`() {
+        val source = SourceFile.kotlin(
+            "Test.kt", """
+            package com.test
+            
+            import com.composegears.tiamat.navigation.*
+            import com.composegears.tiamat.destinations.*
+            import org.junit.Assert.assertEquals
+            
+            object MyGraph : TiamatGraph
+            
+            @InstallIn(MyGraph::class)
+            @InstallIn(MyGraph::class)
+            val Screen1 by navDestination<Unit>()
+            
+            fun main() {
+                val destinations = MyGraph.destinations()
+                assertEquals(1, destinations.size)
+                assertEquals(true, destinations.contains(Screen1))
+            }
+        """.trimIndent()
+        )
+
+        val output = java.io.ByteArrayOutputStream()
+        val result = KotlinCompilation().apply {
+            sources = listOf(source, annotationSource, navDestinationSource)
+            compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
+            inheritClassPath = true
+            messageOutputStream = output
+        }.compile()
+
+        // Should compile successfully (warning, not error)
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        val messages = output.toString()
+        assertTrue(
+            "Expected duplicate warning, got: $messages",
+            messages.contains("Duplicate @InstallIn")
+        )
+
+        // Verify the destination is still registered (only once)
+        val kClazz = result.classLoader.loadClass("com.test.TestKt")
+        val main = kClazz.declaredMethods.find { it.name == "main" }
+        val params = Array<Any?>(main?.parameterCount ?: 0) { null }
+        main?.invoke(null, *params)
+    }
+
+    @Test
+    @OptIn(ExperimentalCompilerApi::class)
+    fun `compiler # error message for non-object class includes fix suggestion`() {
+        val source = SourceFile.kotlin(
+            "Test.kt", """
+            package com.test
+            
+            import com.composegears.tiamat.navigation.*
+            import com.composegears.tiamat.destinations.*
+            
+            object MyGraph : TiamatGraph
+            
+            @InstallIn(MyGraph::class)
+            class MyScreen : NavDestination<Int>()
+            
+            fun main() {}
+        """.trimIndent()
+        )
+
+        val output = java.io.ByteArrayOutputStream()
+        val result = KotlinCompilation().apply {
+            sources = listOf(source, annotationSource, navDestinationSource)
+            compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
+            inheritClassPath = true
+            messageOutputStream = output
+        }.compile()
+
+        assertEquals(KotlinCompilation.ExitCode.COMPILATION_ERROR, result.exitCode)
+        val messages = output.toString()
+        assertTrue(
+            "Expected fix suggestion in error, got: $messages",
+            messages.contains("@InstallIn(Graph::class) val screen = MyScreen()")
+        )
     }
 }
