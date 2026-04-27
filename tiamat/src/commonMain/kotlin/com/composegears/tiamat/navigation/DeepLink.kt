@@ -65,7 +65,7 @@ public class DeepLink(builder: DeepLink.() -> Unit) {
         }
     }
 
-    private class Binding(
+    private data class Binding(
         val regexes: List<Regex>,
         val builder: Route.(List<String>) -> Unit,
     )

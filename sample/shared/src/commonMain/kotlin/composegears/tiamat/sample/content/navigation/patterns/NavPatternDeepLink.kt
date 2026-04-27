@@ -100,7 +100,6 @@ private val DeepLinkShop by navDestination {
 
 private val DeepLinkProduct by navDestination<String> {
     val id = navArgs()
-    val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Product #$id", style = MaterialTheme.typography.headlineMedium)
@@ -133,7 +132,6 @@ private val DeepLinkProductTab by navDestination {
 
 private val DeepLinkFeedback by navDestination<String> {
     val id = navArgs()
-    val nc = navController()
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Feedback #$id", style = MaterialTheme.typography.headlineMedium)
