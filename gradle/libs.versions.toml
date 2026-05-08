@@ -44,7 +44,7 @@ kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-em
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0"
 
-kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
+kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0"
 
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
