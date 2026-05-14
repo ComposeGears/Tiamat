@@ -219,7 +219,7 @@ class TiamatDestinationsIrGenerationExtension(
         elements: List<IrSymbol>,
         pluginContext: IrPluginContext
     ) {
-        val navDestinationType = pluginContext.referenceClass(
+        val navDestinationType = pluginContext.finderForBuiltins().findClass(
             ClassId(
                 FqName("com.composegears.tiamat.navigation"),
                 Name.identifier("NavDestination")
@@ -269,6 +269,7 @@ class TiamatDestinationsIrGenerationExtension(
     private fun findArrayOfSymbol(pluginContext: IrPluginContext): IrSimpleFunctionSymbol {
         val callableId = CallableId(FqName("kotlin"), Name.identifier("arrayOf"))
         // find `arrayOf<T>(vararg elements: T)`
+        // todo return pluginContext.finderForBuiltins().referenceFunctions(callableId).singleOrNull {
         return pluginContext.referenceFunctions(callableId).singleOrNull {
             val params = it.owner.parameters
             params.size == 1 && params[0].isVararg
@@ -276,7 +277,7 @@ class TiamatDestinationsIrGenerationExtension(
     }
 
     private fun isValidAnnotationTarget(symbol: IrSymbol, pluginContext: IrPluginContext): Boolean {
-        val navDestinationType = pluginContext.referenceClass(
+        val navDestinationType = pluginContext.finderForBuiltins().findClass(
             ClassId(
                 FqName("com.composegears.tiamat.navigation"),
                 Name.identifier("NavDestination")
@@ -300,7 +301,7 @@ class TiamatDestinationsIrGenerationExtension(
     }
 
     private fun IrClass.isSubclassOf(classId: ClassId, context: IrPluginContext): Boolean {
-        val classSymbol = context.referenceClass(classId) ?: return false
+        val classSymbol = context.finderForBuiltins().findClass(classId) ?: return false
         //if (this.symbol == classSymbol) return true
         return getSuperClasses().any { it.symbol == classSymbol }
     }

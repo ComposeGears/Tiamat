@@ -37,6 +37,8 @@ kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_1_8)
         }
+
+        withHostTest {}
     }
     iosArm64()
     iosSimulatorArm64()
