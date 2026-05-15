@@ -87,7 +87,7 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 16.4.0
+          xcode-version: 26.1.1
 
       - name: Build iOS App
         run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme "App iOs" -configuration Debug -sdk iphonesimulator -arch arm64 build
