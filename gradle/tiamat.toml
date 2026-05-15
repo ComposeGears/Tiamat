@@ -2,4 +2,4 @@
 tiamat = "2.3.0"
 
 minSdk = "21"
-compileSdk = "36"
+compileSdk = "37"
