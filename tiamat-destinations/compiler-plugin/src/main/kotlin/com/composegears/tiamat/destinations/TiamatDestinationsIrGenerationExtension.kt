@@ -269,8 +269,7 @@ class TiamatDestinationsIrGenerationExtension(
     private fun findArrayOfSymbol(pluginContext: IrPluginContext): IrSimpleFunctionSymbol {
         val callableId = CallableId(FqName("kotlin"), Name.identifier("arrayOf"))
         // find `arrayOf<T>(vararg elements: T)`
-        // todo return pluginContext.finderForBuiltins().referenceFunctions(callableId).singleOrNull {
-        return pluginContext.referenceFunctions(callableId).singleOrNull {
+        return pluginContext.finderForBuiltins().findFunctions(callableId).singleOrNull {
             val params = it.owner.parameters
             params.size == 1 && params[0].isVararg
         } ?: error("arrayOf function not found")
