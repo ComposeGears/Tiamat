@@ -1,7 +1,7 @@
-public abstract interface annotation class com/composegears/tiamat/TiamatExperimentalApi : java/lang/annotation/Annotation {
+public abstract interface annotation class com/composegears/tiamat/TiamatDelicateApi : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class com/composegears/tiamat/TiamatUnsafeApi : java/lang/annotation/Annotation {
+public abstract interface annotation class com/composegears/tiamat/TiamatExperimentalApi : java/lang/annotation/Annotation {
 }
 
 public final class com/composegears/tiamat/UtilsKt {

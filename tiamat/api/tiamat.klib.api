@@ -6,12 +6,12 @@
 // - Show declarations: true
 
 // Library unique name: <io.github.composegears:tiamat>
-open annotation class com.composegears.tiamat/TiamatExperimentalApi : kotlin/Annotation { // com.composegears.tiamat/TiamatExperimentalApi|null[0]
-    constructor <init>() // com.composegears.tiamat/TiamatExperimentalApi.<init>|<init>(){}[0]
+open annotation class com.composegears.tiamat/TiamatDelicateApi : kotlin/Annotation { // com.composegears.tiamat/TiamatDelicateApi|null[0]
+    constructor <init>() // com.composegears.tiamat/TiamatDelicateApi.<init>|<init>(){}[0]
 }
 
-open annotation class com.composegears.tiamat/TiamatUnsafeApi : kotlin/Annotation { // com.composegears.tiamat/TiamatUnsafeApi|null[0]
-    constructor <init>() // com.composegears.tiamat/TiamatUnsafeApi.<init>|<init>(){}[0]
+open annotation class com.composegears.tiamat/TiamatExperimentalApi : kotlin/Annotation { // com.composegears.tiamat/TiamatExperimentalApi|null[0]
+    constructor <init>() // com.composegears.tiamat/TiamatExperimentalApi.<init>|<init>(){}[0]
 }
 
 abstract interface <#A: in kotlin/Any> com.composegears.tiamat.compose/ContentExtension : com.composegears.tiamat.compose/NavExtension<#A> { // com.composegears.tiamat.compose/ContentExtension|null[0]
