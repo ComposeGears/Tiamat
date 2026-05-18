@@ -1,6 +1,6 @@
 package com.composegears.tiamat.compose
 
-import com.composegears.tiamat.TiamatUnsafeApi
+import com.composegears.tiamat.TiamatDelicateApi
 import com.composegears.tiamat.navigation.NavDestination
 
 /**
@@ -46,7 +46,7 @@ public sealed interface DestinationLoader {
      * This implementation always returns null for any destination key.
      * Useful for scenarios where destination loading is not required.
      */
-    @TiamatUnsafeApi
+    @TiamatDelicateApi
     public object DoNotLoad : DestinationLoader {
         override fun load(key: String): NavDestination<*>? = null
     }

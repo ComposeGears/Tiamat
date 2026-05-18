@@ -21,6 +21,7 @@ jobs:
       - name: Run linkspector
         uses: umbrelladocs/action-linkspector@v1
         with:
+          config_file: .github/.linkspector.yml
           reporter: github-pr-check
           fail_on_error: true
           filter_mode: nofilter
@@ -86,7 +87,7 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 16.4.0
+          xcode-version: 26.1.1
 
       - name: Build iOS App
-        run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator build
+        run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme "App iOs" -configuration Debug -sdk iphonesimulator -arch arm64 build

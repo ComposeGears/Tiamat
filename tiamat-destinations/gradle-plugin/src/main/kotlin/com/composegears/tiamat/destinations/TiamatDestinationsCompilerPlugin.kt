@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
+@Suppress("unused")
 class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun getCompilerPluginId(): String = "TiamatDestinationsCompiler"
@@ -20,6 +21,14 @@ class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun applyToCompilation(kotlinCompilation: KotlinCompilation<*>): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
-        return project.provider { emptyList() }
+        return project.provider {
+            buildList {
+                val dumpDir = project.findProperty("tiamat.destinations.dumpDir")?.toString()
+                if (!dumpDir.isNullOrBlank()) {
+                    val resolvedPath = project.file(dumpDir).absolutePath
+                    add(SubpluginOption(key = "dumpDir", value = resolvedPath))
+                }
+            }
+        }
     }
 }

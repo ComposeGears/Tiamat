@@ -75,11 +75,9 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
                 }
             }
             // draw overlays on top of content
-            key(overlays) {
-                Box {
-                    for (entry in overlays) {
-                        EntryContent(entry)
-                    }
+            Box {
+                for (entry in overlays) {
+                    EntryContent(entry)
                 }
             }
         }

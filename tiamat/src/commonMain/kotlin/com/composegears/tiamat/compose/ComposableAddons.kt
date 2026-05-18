@@ -47,7 +47,7 @@ public fun <T> produceRetainedState(
  * runs a producer coroutine to update its value.
  *
  * The producer coroutine is launched when the composable enters the composition
- * and is cancelled when entry is removed from navigation stack.
+ * and is canceled when entry is removed from navigation stack.
  *
  * @param initialValue The initial value of the state.
  * @param keys Keys that control when the producer coroutine is restarted.

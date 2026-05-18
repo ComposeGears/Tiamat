@@ -25,8 +25,6 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 
 [Tiamat Destinations README](doc/tiamat-destinations.md)
 
-[Migration Tiamat 1.* -> Tiamat 2.*](doc/migration-1.5-2.0.md)
-
 #### Multiplatform
 ```kotlin
 sourceSets {
@@ -524,7 +522,6 @@ limitations under the License.
 [badge:wasm-sample]: https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000?logo=webassembly&style=for-the-badge&color=black&logoColor=white
 
 [badge:maven-tiamat]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
-[badge:maven-tiamat-koin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-koin.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations-gradle-plugin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=for-the-badge&logo=gradle&label=&labelColor=black&color=white
 
@@ -537,6 +534,5 @@ limitations under the License.
 [url:wasm-sample]: https://composegears.github.io/Tiamat/
 
 [url:maven-tiamat]: https://central.sonatype.com/artifact/io.github.composegears/tiamat
-[url:maven-tiamat-koin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-koin
 [url:maven-tiamat-destinations]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations
 [url:maven-tiamat-destinations-gradle-plugin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations-gradle-plugin

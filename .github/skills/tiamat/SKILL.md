@@ -86,6 +86,10 @@ Code examples showcasing common patterns.
 - *[Gesture transitions](references/guide/recipes/30-gesture-transitions.md)*: Gesture-driven / seekable transitions with `TransitionController`.
 - *[Shared-element transitions](references/guide/recipes/31-shared-element-transitions.md)*: Shared-element transitions with `LocalNavAnimatedVisibilityScope`.
 
+### Deep links
+
+- *[Deep link](references/guide/recipes/34-deep-link.md)*: Parse deep-link URIs into routes using pattern-based matching with `DeepLink`.
+
 ### Extensions
 
 - *[Marker extensions](references/guide/recipes/32-marker-extensions.md)*: Attach metadata to destinations with `NavExtension`.

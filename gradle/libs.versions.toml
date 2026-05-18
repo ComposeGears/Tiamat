@@ -1,16 +1,17 @@
 [versions]
-agp = "9.2.0"
-sample-compileSdk = "36"
+#agp = "9.2.1"
+agp = "9.0.0"
+sample-compileSdk = "37"
 sample-minSdk = "23"
-sample-targetSdk = "36"
+sample-targetSdk = "37"
 
-kotlin = "2.3.21"
-jetbrains-compose = "1.10.3"
-camerax = "1.5.3"
+kotlin = "2.3.20"
+jetbrains-compose = "1.11.0"
+camerax = "1.6.1"
 lifecycle = "2.10.0"
 detekt = "1.23.8"
 hilt = "2.59.2"
-ksp = "2.3.7"
+ksp = "2.3.8"
 material3 = "1.9.0"
 
 [libraries]
@@ -24,14 +25,14 @@ androidx-hilt-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compo
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-material3-window-size = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 
-compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.0.1" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version = "1.1.0" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "jetbrains-compose" }
 
-detekt-compose = "io.nlopez.compose.rules:detekt:0.5.7"
+detekt-compose = "io.nlopez.compose.rules:detekt:0.5.8"
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -44,7 +45,7 @@ kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-em
 kotlin-gradle-plugin-api = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin-api", version.ref = "kotlin" }
 kotlin-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0"
 
-kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2"
+kotlin-coroutines-swing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0"
 
 lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }

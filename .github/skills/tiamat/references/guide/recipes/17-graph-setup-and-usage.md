@@ -89,6 +89,27 @@ fun AppNavigation() {
 }
 ```
 
+## Dump graph report
+
+Set the `tiamat.destinations.dumpDir` Gradle property to generate a `report.md` file listing all graphs and their destinations at compile time:
+
+```properties
+# gradle.properties
+tiamat.destinations.dumpDir=build/tiamat-graph
+```
+
+The generated `report.md` uses the following format:
+
+```markdown
+## MainGraph
+- OrdersListScreen
+- OrderDetailsScreen
+
+## OnboardingGraph
+- WelcomeScreen
+- SharedConfirmationScreen
+```
+
 ### Notes
 
 - Use graph mode for large projects to avoid manually maintaining `destinations = arrayOf(...)`.

@@ -255,13 +255,17 @@ public class NavController internal constructor(
     ) {
         val navStack = getNavStack()
         val entryIndex = navStack.indexOfLast { it.destination == dest }
-        if (entryIndex >= 0) updateNavState(
-            transitionData = transitionData,
-            transitionType = TransitionType.Forward,
-            stack = navStack.toMutableList().apply {
-                add(removeAt(entryIndex))
-            }
-        ) else orElse()
+        when {
+            entryIndex < 0 -> orElse()
+            entryIndex == navStack.lastIndex -> Unit // already on top, no-op
+            else -> updateNavState(
+                transitionData = transitionData,
+                transitionType = TransitionType.Forward,
+                stack = navStack.toMutableList().apply {
+                    add(removeAt(entryIndex))
+                }
+            )
+        }
     }
 
     /**
@@ -351,14 +355,12 @@ public class NavController internal constructor(
 
         if (pendingStack.isEmpty()) error("Route: no start entry for NavController:$key")
         // run route for nested NavController
-        if (elements.isNotEmpty()) elements
-            .removeAt(0)
-            .let {
-                val ncData = it as Route.NavController
-                val nc = create(ncData.key, ncData.saveable ?: saveable, this)
-                pendingStack.last().navControllerStore.add(nc)
-                nc.route(Route(elements))
-            }
+        if (elements.isNotEmpty()) {
+            val ncData = elements.removeAt(0) as Route.NavController
+            val nc = create(ncData.key, ncData.saveable ?: saveable, this)
+            pendingStack.last().navControllerStore.add(nc)
+            nc.route(Route(elements))
+        }
         // apply pending stack
         editNavStack(null, TransitionType.Forward) { _ -> pendingStack }
     }

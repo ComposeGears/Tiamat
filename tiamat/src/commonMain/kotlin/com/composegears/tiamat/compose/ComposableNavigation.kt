@@ -14,7 +14,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
-import com.composegears.tiamat.TiamatUnsafeApi
+import com.composegears.tiamat.TiamatDelicateApi
 import com.composegears.tiamat.compose.TransitionController.Event.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
@@ -266,7 +266,7 @@ public fun NavigationScene(
 ) {
     // load destinations in advance
     LaunchedEffect(navController) {
-        @OptIn(TiamatUnsafeApi::class)
+        @OptIn(TiamatDelicateApi::class)
         if (destinationLoader != DestinationLoader.DoNotLoad)
             navController.loadNavDestinations(destinationLoader)
     }
@@ -290,7 +290,7 @@ public fun NavigationScene(
                 NavEntryContent(entry)
                 DisposableEffect(entry) {
                     // verify destination is loadable or loading is not required
-                    @OptIn(TiamatUnsafeApi::class)
+                    @OptIn(TiamatDelicateApi::class)
                     require(
                         destinationLoader == DestinationLoader.DoNotLoad ||
                             destinationLoader.load(entry.destination.key) != null

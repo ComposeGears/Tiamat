@@ -2,7 +2,7 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.composegears.tiamat.TiamatUnsafeApi
+import com.composegears.tiamat.TiamatDelicateApi
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 
@@ -54,7 +54,7 @@ import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
  * @see NavDestination
  */
 @Composable
-@OptIn(TiamatUnsafeApi::class)
+@OptIn(TiamatDelicateApi::class)
 public fun <T : Any> TiamatPreview(
     destination: NavDestination<T>,
     navArgs: T? = null,
