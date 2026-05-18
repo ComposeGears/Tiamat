@@ -1,5 +1,6 @@
 [versions]
-agp = "9.2.1"
+#agp = "9.2.1"
+agp = "9.0.0"
 sample-compileSdk = "37"
 sample-minSdk = "23"
 sample-targetSdk = "37"

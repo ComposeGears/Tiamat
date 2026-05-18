@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
+@Suppress("unused")
 class TiamatDestinationsCompilerPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun getCompilerPluginId(): String = "TiamatDestinationsCompiler"

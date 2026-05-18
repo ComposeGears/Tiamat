@@ -166,7 +166,7 @@ class TiamatDestinationsIrGenerationExtension(
             logger.log("[TD] ]")
         }
 
-        // Dump graph to markdown if dumpDir is configured
+        // Dump graph into .md file when dumpDir is configured
         if (!dumpDir.isNullOrBlank()) {
             dumpGraphs(annotatedElements)
         }
