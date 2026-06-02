@@ -6,7 +6,7 @@ sample-minSdk = "23"
 sample-targetSdk = "37"
 
 kotlin = "2.3.20"
-jetbrains-compose = "1.11.0"
+jetbrains-compose = "1.11.1"
 camerax = "1.6.1"
 lifecycle = "2.10.0"
 detekt = "1.23.8"
