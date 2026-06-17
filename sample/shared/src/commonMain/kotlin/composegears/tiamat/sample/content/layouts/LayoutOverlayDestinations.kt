@@ -36,18 +36,6 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
 
         val stack by navController.navStackAsState()
 
-        // remap entries to content + overlay
-        val content by remember(stack) {
-            derivedStateOf {
-                stack.lastOrNull { !it.isOverlay() }
-            }
-        }
-        val overlays by remember(stack) {
-            derivedStateOf {
-                stack.takeLastWhile { it.isOverlay() }
-            }
-        }
-
         NavigationScene(
             navController = navController,
             destinations = arrayOf(
@@ -56,6 +44,26 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
                 LayoutOverlayDialog,
             ),
         ) {
+            // Extensions are null while destinations are loading after restore (NotLoaded state).
+            // Rendering with null extensions produces a wrong content/overlay split: an overlay
+            // entry ends up as AnimatedContent's target, then when destinations load it becomes
+            // an overlay simultaneously — crashing the duplicate-entry check.
+            // NavigationScene must still be called so its LaunchedEffect loads destinations,
+            // but we skip rendering content until all entries have their real destinations.
+            val allLoaded = stack.all { it.destination.extensions() != null }
+            if (!allLoaded) return@NavigationScene
+
+            // remap entries to content + overlay
+            val content by remember(stack) {
+                derivedStateOf {
+                    stack.lastOrNull { !it.isOverlay() }
+                }
+            }
+            val overlays by remember(stack) {
+                derivedStateOf {
+                    stack.takeLastWhile { it.isOverlay() }
+                }
+            }
             // animate main content
             AnimatedContent(
                 targetState = content,
@@ -69,9 +77,7 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
                 CompositionLocalProvider(
                     LocalNavAnimatedVisibilityScope provides this,
                 ) {
-                    key(overlays) {
-                        EntryContent(it)
-                    }
+                    EntryContent(it)
                 }
             }
             // draw overlays on top of content

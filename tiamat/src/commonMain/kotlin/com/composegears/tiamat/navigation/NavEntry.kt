@@ -1,7 +1,10 @@
 package com.composegears.tiamat.navigation
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.ManagedRetainedValuesStore
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
@@ -109,7 +112,7 @@ public class NavEntry<Args : Any> public constructor(
     /**
      * The destination this entry represents.
      */
-    public var destination: NavDestination<Args> = destination
+    public var destination: NavDestination<Args> by mutableStateOf(destination)
         private set
 
     init {
