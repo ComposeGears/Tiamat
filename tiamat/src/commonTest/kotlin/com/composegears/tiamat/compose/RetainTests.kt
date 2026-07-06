@@ -1,5 +1,5 @@
 package com.composegears.tiamat.compose
 
-class Retain {
+class RetainTests {
     // todo add Retain && ProduceRetainedState tests
 }

@@ -1,5 +1,6 @@
 package com.composegears.tiamat.navigation
 
+import androidx.lifecycle.ViewModel
 import com.composegears.tiamat.compose.navDestination
 import com.composegears.tiamat.createTestNavController
 import kotlin.test.*
@@ -141,5 +142,18 @@ class NavControllersStorageTests {
         assertTrue(storage.navControllers.isEmpty())
         assertNull(navController1.getCurrentNavEntry())
         assertNull(navController2.getCurrentNavEntry())
+    }
+
+    @Test
+    fun `clear # clears child navController scoped viewModels`() {
+        val storage = NavControllerStore()
+        val childNavController = createTestNavController("child", startDestination = TestNavDestination)
+        childNavController.viewModelStore.put("shared", object : ViewModel() {})
+        assertEquals(1, childNavController.viewModelStore.keys().size)
+
+        storage.add(childNavController)
+        storage.clear()
+
+        assertEquals(0, childNavController.viewModelStore.keys().size)
     }
 }

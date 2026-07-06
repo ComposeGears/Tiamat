@@ -169,6 +169,7 @@ class TiamatDestinationsCompilerPluginTest {
         )
 
         val result = KotlinCompilation().apply {
+            moduleName = "app"
             sources = listOf(source, annotationSource, navDestinationSource)
             compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
             inheritClassPath = true
@@ -233,6 +234,7 @@ class TiamatDestinationsCompilerPluginTest {
         )
 
         val result = KotlinCompilation().apply {
+            moduleName = "app"
             sources = listOf(source, annotationSource, navDestinationSource)
             compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
             inheritClassPath = true
@@ -263,6 +265,7 @@ class TiamatDestinationsCompilerPluginTest {
 
         val output = java.io.ByteArrayOutputStream()
         val result = KotlinCompilation().apply {
+            moduleName = "app"
             sources = listOf(source, annotationSource, navDestinationSource)
             compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
             inheritClassPath = true
@@ -304,6 +307,7 @@ class TiamatDestinationsCompilerPluginTest {
 
         val output = java.io.ByteArrayOutputStream()
         val result = KotlinCompilation().apply {
+            moduleName = "app"
             sources = listOf(source, annotationSource, navDestinationSource)
             compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
             inheritClassPath = true
@@ -346,6 +350,7 @@ class TiamatDestinationsCompilerPluginTest {
 
         val output = java.io.ByteArrayOutputStream()
         val result = KotlinCompilation().apply {
+            moduleName = "app"
             sources = listOf(source, annotationSource, navDestinationSource)
             compilerPluginRegistrars = listOf(TiamatDestinationsComponentRegistrar())
             inheritClassPath = true

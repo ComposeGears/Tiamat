@@ -23,6 +23,7 @@ import composegears.tiamat.sample.icons.KeyboardArrowLeft
 import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LayoutTwoPane by navDestination(ScreenInfo()) {
@@ -98,7 +99,7 @@ private val LayoutTwoPaneList by navDestination {
         Text("Screen 1", style = MaterialTheme.typography.headlineMedium)
         val timer by produceState(0) {
             while (true) {
-                delay(1000)
+                delay(1000.milliseconds)
                 value++
             }
         }
@@ -132,7 +133,7 @@ private val LayoutTwoPaneDetails1 by navDestination<String> {
             Text("Selected item: $args", style = MaterialTheme.typography.bodyMedium)
             val timer by produceState(0) {
                 while (true) {
-                    delay(1000)
+                    delay(1000.milliseconds)
                     value++
                 }
             }
@@ -169,7 +170,7 @@ private val LayoutTwoPaneDetails2 by navDestination<String> {
             Text("Selected item: ${navArgs()}", style = MaterialTheme.typography.bodyMedium)
             val timer by produceState(0) {
                 while (true) {
-                    delay(1000)
+                    delay(1000.milliseconds)
                     value++
                 }
             }
