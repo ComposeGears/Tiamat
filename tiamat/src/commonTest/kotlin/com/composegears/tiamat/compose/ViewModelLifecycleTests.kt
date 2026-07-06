@@ -6,12 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -295,32 +290,45 @@ class ViewModelLifecycleTests {
     }
 
     @Test
-    fun `rememberNavController restore # keeps nested shared viewModel while parent entry is detached`() = runComposeUiTest {
-        val logger = Logger()
+    fun `rememberNavController restore # keeps nested shared viewModel while parent entry is detached`() =
+        runComposeUiTest {
+            val logger = Logger()
 
-        setContent {
-            CompositionLocalProvider(LocalLogger provides logger) {
-                val rootNavController = rememberNavController(startDestination = ParentEntryWithNestedController)
-                Navigation(
-                    navController = rootNavController,
-                    destinations = arrayOf(ParentEntryWithNestedController, SiblingScreen),
-                    modifier = Modifier.fillMaxSize(),
-                )
+            setContent {
+                CompositionLocalProvider(LocalLogger provides logger) {
+                    val rootNavController = rememberNavController(startDestination = ParentEntryWithNestedController)
+                    Navigation(
+                        navController = rootNavController,
+                        destinations = arrayOf(ParentEntryWithNestedController, SiblingScreen),
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
+
+            awaitIdle()
+            assertContains(logger.messages, "nested-shared -> init")
+            assertEquals(
+                1,
+                logger.messages.size,
+                "Expected: nested shared VM initialized once\nLog: ${logger.messages}"
+            )
+            logger.clear()
+
+            onNodeWithTag("ParentToSibling").performClick()
+            awaitIdle()
+            assertEquals(
+                0,
+                logger.messages.size,
+                "Expected: nested shared VM retained while parent is detached\nLog: ${logger.messages}"
+            )
+
+            onNodeWithTag("SiblingBack").performClick()
+            awaitIdle()
+            onNodeWithTag("NestedScreen").assertExists()
+            assertEquals(
+                0,
+                logger.messages.size,
+                "Expected: no nested shared VM re-init or clear after restore\nLog: ${logger.messages}"
+            )
         }
-
-        awaitIdle()
-        assertContains(logger.messages, "nested-shared -> init")
-        assertEquals(1, logger.messages.size, "Expected: nested shared VM initialized once\nLog: ${logger.messages}")
-        logger.clear()
-
-        onNodeWithTag("ParentToSibling").performClick()
-        awaitIdle()
-        assertEquals(0, logger.messages.size, "Expected: nested shared VM retained while parent is detached\nLog: ${logger.messages}")
-
-        onNodeWithTag("SiblingBack").performClick()
-        awaitIdle()
-        onNodeWithTag("NestedScreen").assertExists()
-        assertEquals(0, logger.messages.size, "Expected: no nested shared VM re-init or clear after restore\nLog: ${logger.messages}")
-    }
 }

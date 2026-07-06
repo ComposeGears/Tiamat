@@ -18,13 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.navigation.NavEntry
 import composegears.tiamat.sample.icons.*
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.HSpacer
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * This is a simple example of adaptive screen composition.
