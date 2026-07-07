@@ -51,7 +51,7 @@ lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecyc
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 # 0.13.0 is bugged, do not update
-zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.12.1"
+zacsweers-kctfork = "dev.zacsweers.kctfork:core:0.13.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
