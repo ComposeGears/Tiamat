@@ -55,7 +55,17 @@ import composegears.tiamat.sample.icons.KeyboardArrowUp
 import composegears.tiamat.sample.ui.*
 
 internal val HomeItems =
-    listOf(
+    listOfNotNull(
+        if (TestScreenEnabled) HomeItem(
+            title = "Internal",
+            items = listOf(
+                AppFeature(
+                    name = "Internal test",
+                    description = "Tests destination",
+                    destination = InternalTestScreen
+                )
+            )
+        ) else null,
         HomeItem(
             "Getting Started",
             listOf(

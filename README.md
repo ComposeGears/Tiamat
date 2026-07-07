@@ -178,6 +178,8 @@ fun Content() {
 
 NavController will keep the screens data, view models, and states during navigation
 
+`viewModel(navController)` shared ViewModels are cleared when that NavController is destroyed (for example, when the corresponding navigation host leaves composition).
+
 > [!IMPORTANT]
 > The data may be cleared by system (eg: Android may clear memory)
 > 

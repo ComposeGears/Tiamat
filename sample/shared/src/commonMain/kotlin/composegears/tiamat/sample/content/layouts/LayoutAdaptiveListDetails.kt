@@ -23,6 +23,47 @@ import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
 import composegears.tiamat.sample.ui.HSpacer
 
+/**
+ * This is a simple example of adaptive screen composition.
+ * Whenever the layout changes, the top-level screen is recreated and the content is recomposed for the new layout.
+ *
+ * In real-world scenarios, you may need to preserve the original screen, its content, and its state.
+ * In that case, wrap `EntryContent(*)` with `movableContentOf { EntryContent(*) }` and store it in `remember`
+ * to avoid recreating the content and state.
+ *
+ * Typical approach:
+ *
+ * ```kotlin
+ * NavigationScene(
+ *     navController = nc,
+ *     destinations = arrayOf(/*...*/)
+ * ) {
+ *
+ *     val contentMap = remember { mutableMapOf<NavEntry<*>, @Composable () -> Unit>() }
+ *
+ *     @Composable
+ *     fun MovableEntryContent(navEntry: NavEntry<*>?) {
+ *         if (navEntry != null) {
+ *             contentMap.getOrPut(navEntry) {
+ *                 movableContentOf {
+ *                     EntryContent(navEntry)
+ *                     DisposableEffect(navEntry) {
+ *                         onDispose {
+ *                             contentMap.remove(navEntry)
+ *                         }
+ *                     }
+ *                 }
+ *             }.invoke()
+ *         }
+ *     }
+ *
+ *     // use MovableEntryContent instead of EntryContent
+ *
+ * ```
+ *
+ * Some components made this wrapping for you under the hood,
+ * for example `AnimatedContent` (no need for additional wrap if you only use `EntryContent` inside them)
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3WindowSizeClassApi::class)
 val LayoutAdaptiveListDetails by navDestination {
     BoxWithConstraints {

@@ -1,5 +1,6 @@
 package com.composegears.tiamat.navigation
 
+import androidx.lifecycle.ViewModel
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.DestinationLoader
 import com.composegears.tiamat.compose.editNavStack
@@ -554,5 +555,29 @@ class NavControllerTests {
         items.onEach {
             assertFalse(it.isAttachedToNavController)
         }
+    }
+
+    @Test
+    fun `close # clears navController scoped viewModels`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.viewModelStore.put("shared", object : ViewModel() {})
+        assertEquals(1, nc.viewModelStore.keys().size)
+        nc.close()
+        assertEquals(0, nc.viewModelStore.keys().size)
+    }
+
+    @Test
+    fun `close # navController remains reusable`() {
+        val nc = createTestNavController(startDestination = Destination1)
+        nc.navigate(Destination2.toNavEntry())
+        assertEquals(2, nc.getNavStack().size)
+
+        nc.close()
+        assertTrue(nc.getNavStack().isEmpty())
+        assertNull(nc.getCurrentNavEntry())
+
+        nc.navigate(Destination3.toNavEntry())
+        assertEquals(1, nc.getNavStack().size)
+        assertEquals(Destination3, nc.getCurrentNavEntry()?.destination)
     }
 }

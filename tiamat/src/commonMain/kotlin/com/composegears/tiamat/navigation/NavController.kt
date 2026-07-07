@@ -394,6 +394,8 @@ public class NavController internal constructor(
 
     internal fun close() {
         getNavStack().onEach { it.detachFromNavController() }
+        viewModelStore.clear()
+        onNavigationListener = null
         internalNavStateFlow.tryEmit(
             NavState(
                 transitionData = null,
