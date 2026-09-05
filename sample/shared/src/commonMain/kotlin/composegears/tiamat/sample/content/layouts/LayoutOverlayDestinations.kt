@@ -1,24 +1,24 @@
 package composegears.tiamat.sample.content.layouts
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
-import com.composegears.tiamat.navigation.NavEntry
-import composegears.tiamat.sample.content.layouts.OverlayDestinationExtension.Companion.isOverlay
+import com.composegears.tiamat.navigation.NavDestination
+import com.composegears.tiamat.overlay.OverlaysExtension
+import com.composegears.tiamat.overlay.overlayBack
 import composegears.tiamat.sample.icons.Close
 import composegears.tiamat.sample.icons.Icons
+import composegears.tiamat.sample.icons.KeyboardArrowLeft
 import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.AppButton
 import composegears.tiamat.sample.ui.AppTheme
@@ -31,156 +31,135 @@ val LayoutOverlayDestinations by navDestination(ScreenInfo()) {
             rememberNavController(
                 key = "Overlay Destinations nav controller",
                 startDestination = LayoutOverlayScreen,
-                saveable = true,
             )
 
-        val stack by navController.navStackAsState()
-
-        // remap entries to content + overlay
-        val content by remember(stack) {
-            derivedStateOf {
-                stack.lastOrNull { !it.isOverlay() }
-            }
-        }
-        val overlays by remember(stack) {
-            derivedStateOf {
-                stack.takeLastWhile { it.isOverlay() }
-            }
-        }
-
-        NavigationScene(
+        Navigation(
             navController = navController,
             destinations = arrayOf(
                 LayoutOverlayScreen,
-                LayoutOverlayBottomSheet,
-                LayoutOverlayDialog,
             ),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+private val LayoutOverlayBottomSheet: NavDestination<Unit> by navDestination {
+    val overlayNavController = navController()
+    val rootNavController = overlayNavController.parent ?: error("Root NavController is missing")
+
+    ModalBottomSheet(onDismissRequest = overlayNavController::overlayBack) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // animate main content
-            AnimatedContent(
-                targetState = content,
-                contentKey = { it?.contentKey() },
-                transitionSpec = {
-                    navigationSlideInOut(
-                        navController.navStateFlow.value.transitionType == NavController.TransitionType.Forward
-                    )
-                },
-            ) {
-                CompositionLocalProvider(
-                    LocalNavAnimatedVisibilityScope provides this,
-                ) {
-                    key(overlays) {
-                        EntryContent(it)
-                    }
-                }
-            }
-            // draw overlays on top of content
-            Box {
-                for (entry in overlays) {
-                    EntryContent(entry)
-                }
-            }
-        }
-    }
-}
-
-class OverlayDestinationExtension<T : Any> : NavExtension<T> {
-    companion object {
-        fun NavEntry<*>.isOverlay(): Boolean =
-            destination.ext<OverlayDestinationExtension<*>>() != null
-    }
-}
-
-private val LayoutOverlayScreen by navDestination<Unit> {
-    val navController = navController()
-
-    val stack by navController.navStackAsState()
-    val canGoBack by navController.canNavigateBackAsState()
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item { LayoutOverlayContentButtons(nc = navController) }
-        if (canGoBack) {
-            item {
-                AppButton(
-                    "Back",
-                    endIcon = Icons.Close,
-                    onClick = { navController.back() }
-                )
-            }
-        }
-        item { Text("Stack") }
-        items(stack) { entry ->
-            Text(entry.destination.name)
+            LayoutOverlayContentButtons(
+                rootNavController = rootNavController,
+                overlayNavController = overlayNavController,
+            )
+            AppButton(
+                "Close",
+                endIcon = Icons.Close,
+                onClick = overlayNavController::overlayBack,
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-private val LayoutOverlayBottomSheet by navDestination<Unit>(OverlayDestinationExtension()) {
-    val navController = navController()
-    ModalBottomSheet(onDismissRequest = navController::back) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LayoutOverlayContentButtons(nc = navController)
-            AppButton(
-                "Close",
-                endIcon = Icons.Close,
-                onClick = { navController.back() }
-            )
-        }
-    }
-}
+private val LayoutOverlayDialog: NavDestination<Unit> by navDestination {
+    val overlayNavController = navController()
+    val rootNavController = overlayNavController.parent ?: error("Root NavController is missing")
 
-private val LayoutOverlayDialog by navDestination<Unit>(OverlayDestinationExtension()) {
-    val navController = navController()
-    AlertDialog(
-        onDismissRequest = { navController.back() },
-        text = { Text("Dialog") },
-        confirmButton = {
-            AppButton(
-                "Open Screen",
-                onClick = { navController.navigate(LayoutOverlayScreen) }
-            )
-        },
-        dismissButton = {
-            AppButton(
-                "Back",
-                onClick = { navController.back() }
-            )
-        },
+    BasicAlertDialog(
+        onDismissRequest = overlayNavController::overlayBack,
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.surface),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LayoutOverlayContentButtons(
+                    rootNavController = rootNavController,
+                    overlayNavController = overlayNavController,
+                )
+                AppButton(
+                    "Close",
+                    endIcon = Icons.Close,
+                    onClick = overlayNavController::overlayBack,
+                )
+            }
+        }
     )
 }
 
 @Composable
 private fun LayoutOverlayContentButtons(
-    nc: NavController,
+    rootNavController: NavController,
+    overlayNavController: NavController,
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppButton(
-            "Open Bottom sheet",
+            "Open New Dialog",
             endIcon = Icons.KeyboardArrowRight,
-            onClick = { nc.navigate(LayoutOverlayBottomSheet) }
+            onClick = { overlayNavController.navigate(LayoutOverlayDialog) }
         )
         AppButton(
-            "Open Dialog",
+            "Open New Bottom Sheet",
             endIcon = Icons.KeyboardArrowRight,
-            onClick = { nc.navigate(LayoutOverlayDialog) }
+            onClick = { overlayNavController.navigate(LayoutOverlayBottomSheet) }
         )
         AppButton(
             "Open Screen",
             endIcon = Icons.KeyboardArrowRight,
-            onClick = { nc.navigate(LayoutOverlayScreen) }
+            onClick = { rootNavController.navigate(LayoutOverlayScreen) }
         )
+    }
+}
+
+private val LayoutOverlayScreen: NavDestination<Unit> by navDestination(
+    OverlaysExtension(
+        arrayOf(
+            LayoutOverlayBottomSheet,
+            LayoutOverlayDialog,
+        )
+    )
+) {
+    val navController = navController()
+    val overlayNavController = ext<OverlaysExtension>()?.overlayNavController() ?: error("OverlaysExtension is missing")
+
+    Box(Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.padding(16.dp).align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AppButton(
+                text = "Open overlay dialog",
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { overlayNavController.navigate(LayoutOverlayDialog) }
+            )
+            AppButton(
+                text = "Open overlay Bottom Sheet",
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { overlayNavController.navigate(LayoutOverlayBottomSheet) }
+            )
+            AppButton(
+                text = "Open new screen",
+                endIcon = Icons.KeyboardArrowRight,
+                onClick = { navController.navigate(LayoutOverlayScreen) }
+            )
+            AppButton(
+                text = "Back",
+                enabled = navController.canNavigateBack(),
+                startIcon = Icons.KeyboardArrowLeft,
+                onClick = navController::back
+            )
+        }
     }
 }
 

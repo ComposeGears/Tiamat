@@ -1,141 +1,90 @@
 # Overlay Destinations
 
-Dialogs and bottom sheets rendered in the nav stack.
+Use the `tiamat-overlay` module for a dedicated local overlay stack.
+
+## Setup
+
+```kotlin
+sourceSets {
+    commonMain.dependencies {
+        implementation("io.github.composegears:tiamat-overlay:$version")
+    }
+}
+```
 
 ## How it works
 
-Model overlays as regular destinations identified by a marker extension. Use `NavigationScene` to split the stack into a "content" layer and an "overlay" layer rendered on top. Overlay destinations handle their own dismiss logic (e.g., `onDismissRequest = nc::back`).
-
-The key idea is:
-1. Create a marker `NavExtension` to tag overlay destinations.
-2. Use `derivedStateOf` to split the stack into the last non-overlay entry (content) and trailing overlay entries.
-3. Animate the content layer normally; render overlays on top without animation (each overlay manages its own appearance).
+Attach `OverlaysExtension` to a host destination. It creates a local `NavController` that is rendered on top of the host screen, while the host content stays visible underneath. Overlay destinations are regular `navDestination` entries that are opened from that local controller and dismissed with `overlayBack()`.
 
 ```kotlin
-import com.composegears.tiamat.compose.NavExtension
-import com.composegears.tiamat.compose.ext
-import com.composegears.tiamat.navigation.NavEntry
-
-// Marker extension — no UI, just identifies overlay entries
-class OverlayExtension<T : Any> : NavExtension<T> {
-    companion object {
-        fun NavEntry<*>.isOverlay(): Boolean =
-            destination.ext<OverlayExtension<*>>() != null
-    }
-}
-```
-
-### Define overlay destinations
-
-Attach `OverlayExtension()` to any destination that should render as an overlay. The destination's composable body contains the overlay UI (bottom sheet, dialog, etc.).
-
-```kotlin
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import com.composegears.tiamat.compose.back
-import com.composegears.tiamat.compose.navController
-import com.composegears.tiamat.compose.navDestination
-import com.composegears.tiamat.compose.navigate
-
-// A regular (non-overlay) screen
-val MainScreen by navDestination<Unit> {
-    val nc = navController()
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Button(onClick = { nc.navigate(MyBottomSheet) }) { Text("Open Bottom Sheet") }
-        Button(onClick = { nc.navigate(MyDialog) }) { Text("Open Dialog") }
-    }
-}
-
-// Bottom sheet overlay
-@OptIn(ExperimentalMaterial3Api::class)
-val MyBottomSheet by navDestination<Unit>(OverlayExtension()) {
-    val nc = navController()
-    ModalBottomSheet(onDismissRequest = nc::back) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
-            Text("Sheet content")
-            Button(onClick = { nc.back() }) { Text("Close") }
-        }
-    }
-}
-
-// Dialog overlay
-val MyDialog by navDestination<Unit>(OverlayExtension()) {
-    val nc = navController()
-    AlertDialog(
-        onDismissRequest = { nc.back() },
-        text = { Text("Dialog content") },
-        confirmButton = {
-            Button(onClick = { nc.navigate(MainScreen) }) { Text("Open Screen") }
-        },
-        dismissButton = {
-            Button(onClick = { nc.back() }) { Text("Back") }
-        },
-    )
-}
-```
-
-### Wire it up with `NavigationScene`
-
-```kotlin
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.runtime.*
+import androidx.compose.material3.BasicAlertDialog
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.overlay.OverlaysExtension
+import com.composegears.tiamat.overlay.overlayBack
 
-@Composable
-fun OverlayHost() {
-    val nc = rememberNavController(
-        key = "overlay-nav",
-        startDestination = MainScreen,
-    )
-    val stack by nc.navStackAsState()
+val HostScreen by navDestination(
+    OverlaysExtension(destinations = arrayOf(EditProfileDialog))
+) {
+    val overlayNavController = ext<OverlaysExtension>()?.overlayNavController()
+        ?: error("OverlaysExtension is missing")
 
-    // Split into content + overlays
-    val content by remember(stack) {
-        derivedStateOf { stack.lastOrNull { !it.isOverlay() } }
-    }
-    val overlays by remember(stack) {
-        derivedStateOf { stack.takeLastWhile { it.isOverlay() } }
-    }
-
-    NavigationScene(
-        navController = nc,
-        destinations = arrayOf(MainScreen, MyBottomSheet, MyDialog),
-    ) {
-        // Animate main content with slide transitions
-        AnimatedContent(
-            targetState = content,
-            contentKey = { it?.contentKey() },
-            transitionSpec = {
-                navigationSlideInOut(
-                    nc.navStateFlow.value.transitionType == NavController.TransitionType.Forward
-                )
-            },
-        ) {
-            CompositionLocalProvider(
-                LocalNavAnimatedVisibilityScope provides this,
-            ) {
-                key(overlays) {
-                    EntryContent(it)
-                }
-            }
-        }
-        // Draw all overlays on top — each manages its own animation
-        key(overlays) {
-            Box {
-                for (entry in overlays) {
-                    EntryContent(entry)
-                }
-            }
+    Column {
+        Text("Settings")
+        Button(onClick = { overlayNavController.navigate(EditProfileDialog) }) {
+            Text("Edit profile")
         }
     }
 }
+
+val EditProfileDialog by navDestination {
+    val overlayNavController = navController()
+    BasicAlertDialog(
+        onDismissRequest = overlayNavController::overlayBack,
+        content = {
+            Column {
+                Text("Edit profile")
+                Button(onClick = overlayNavController::overlayBack) {
+                    Text("Close")
+                }
+            }
+        },
+    )
+}
 ```
+
+### Common pattern
+
+- Add the `tiamat-overlay` dependency.
+- Attach `OverlaysExtension(destinations = arrayOf(...))` to the host destination.
+- Access the local overlay controller with `ext<OverlaysExtension>()?.overlayNavController()`.
+- Open overlay destinations via `overlayNavController.navigate(...)`.
+- Dismiss the current overlay with `overlayNavController::overlayBack` or `NavController.overlayBack()`; this removes the last overlay entry and clears the overlay stack when it is already empty, instead of navigating the parent back.
+
+### Configuration
+
+The array constructor is shorthand for `DestinationLoader.from(destinations)`. Use the primary constructor when destinations must be resolved dynamically:
+
+```kotlin
+val overlays = OverlaysExtension(
+    destinationLoader = DestinationLoader.byKey { key ->
+        overlayDestinations.firstOrNull { it.key == key }
+    },
+    handleSystemBackEvents = false,
+    overlaysNavControllerFactory = {
+        rememberNavController(
+            key = "settings-overlays",
+            saveable = false,
+        )
+    },
+)
+```
+
+- Set `handleSystemBackEvents = false` when the containing UI owns system-back handling.
+- Use `overlaysNavControllerFactory` to customize creation of the local controller; the default controller is saveable and uses the key `OverlaysExtensionNavController`.
 
 ### Key points
 
-- Overlays can open other overlays or regular screens — the stack handles nesting naturally.
-- `key(overlays)` around `EntryContent` ensures content recomposes when the overlay list changes (e.g., to dim the background).
-- Use `CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this)` inside `AnimatedContent` to enable shared-element transitions in content destinations.
-- The `isOverlay()` check uses the companion function pattern for clean call-site syntax: `import ...OverlayExtension.Companion.isOverlay`.
+- The host content remains visible while overlays are open.
+- Overlay destinations can open each other or navigate back to the root screen.
+- `overlayNavController.parent` gives you the parent/root controller when needed.
+- This pattern is ideal for dialogs, bottom sheets, and nested modal flows.

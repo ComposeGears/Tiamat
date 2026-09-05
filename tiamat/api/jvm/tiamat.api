@@ -59,20 +59,7 @@ public final class com/composegears/tiamat/compose/ComposeNavDestination : com/c
 }
 
 public abstract interface class com/composegears/tiamat/compose/ContentExtension : com/composegears/tiamat/compose/NavExtension {
-	public abstract fun Content (Lcom/composegears/tiamat/compose/NavDestinationScope;Landroidx/compose/runtime/Composer;I)V
-	public fun getType ()Lcom/composegears/tiamat/compose/ContentExtension$Type;
-}
-
-public final class com/composegears/tiamat/compose/ContentExtension$DefaultImpls {
-	public static fun getType (Lcom/composegears/tiamat/compose/ContentExtension;)Lcom/composegears/tiamat/compose/ContentExtension$Type;
-}
-
-public final class com/composegears/tiamat/compose/ContentExtension$Type : java/lang/Enum {
-	public static final field Overlay Lcom/composegears/tiamat/compose/ContentExtension$Type;
-	public static final field Underlay Lcom/composegears/tiamat/compose/ContentExtension$Type;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lcom/composegears/tiamat/compose/ContentExtension$Type;
-	public static fun values ()[Lcom/composegears/tiamat/compose/ContentExtension$Type;
+	public abstract fun Content (Lcom/composegears/tiamat/compose/NavDestinationScope;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
 }
 
 public abstract interface class com/composegears/tiamat/compose/DestinationLoader {
@@ -153,7 +140,7 @@ public abstract interface class com/composegears/tiamat/compose/NavExtension {
 }
 
 public final class com/composegears/tiamat/compose/NavExtensionKt {
-	public static final fun extension (Lkotlin/jvm/functions/Function3;)Lcom/composegears/tiamat/compose/NavExtension;
+	public static final fun extension (Lkotlin/jvm/functions/Function4;)Lcom/composegears/tiamat/compose/NavExtension;
 	public static final fun extensions (Lcom/composegears/tiamat/navigation/NavDestination;)Ljava/util/List;
 }
 

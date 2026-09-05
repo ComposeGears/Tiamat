@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlinx.kover)
     alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.android.lint)
     alias(libs.plugins.compose.compiler)
@@ -24,13 +22,9 @@ kotlin {
         enabled = true
     }
 
-    compilerOptions {
-        freeCompilerArgs.addAll("-opt-in=androidx.compose.ui.ExperimentalComposeUiApi")
-    }
-
     jvm()
     android {
-        namespace = "com.composegears.tiamat"
+        namespace = "com.composegears.tiamat.overlay"
         compileSdk = tiamat.versions.compileSdk.get().toInt()
         minSdk = tiamat.versions.minSdk.get().toInt()
 
@@ -50,21 +44,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(project(":tiamat"))
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
+        }
 
-            api(libs.kotlin.serialization.core)
-            api(libs.compose.navigationevent)
-            api(libs.lifecycle.runtime.compose)
-            api(libs.lifecycle.viewmodel.compose)
-        }
-        androidMain.dependencies {
-            api(libs.androidx.activity.compose)
-        }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
         commonTest.dependencies {
             implementation(libs.compose.ui.test)
             implementation(libs.compose.material3)
@@ -74,15 +60,7 @@ kotlin {
 }
 
 m2p {
-    description = "Compose Multiplatform navigation library"
+    description = "Overlay navigation helpers for Tiamat"
 }
 
-kover {
-    reports {
-        filters {
-            excludes {
-                this.annotatedBy("com.composegears.tiamat.ExcludeFromTests")
-            }
-        }
-    }
-}
+

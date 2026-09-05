@@ -78,34 +78,37 @@ object GlobalExtension : ContentExtension<Any> {
     var activeDestination by mutableStateOf("")
 
     @Composable
-    override fun NavDestinationScope<out Any>.Content() {
+    override fun NavDestinationScope<out Any>.Content(
+        entryContent: @Composable (() -> Unit)
+    ) {
         val entry = navEntry()
         LaunchedEffect(Unit) {
             activeDestination = entry.destination.name
         }
+        entryContent()
     }
-
-    // optional override, default type is Overlay,
-    // Underlay means that composable content of the ext will be placed before destination content
-    override fun getType() = ContentExtension.Type.Underlay
 }
 
 class LocalExtension(val logMessage: String) : ContentExtension<Any> {
     @Composable
-    override fun NavDestinationScope<out Any>.Content() {
+    override fun NavDestinationScope<out Any>.Content(
+        entryContent: @Composable (() -> Unit)
+    ) {
         LaunchedEffect(Unit) {
             println(logMessage)
         }
+        entryContent()
     }
 }
 
 // simple extensions, you can use them
 // you will not be able to identify from the list of nav extensions
 // type of ext will always be ContentExtensionImpl
-val SimpleGlobalExtension = extension<Any> {}
+val SimpleGlobalExtension = extension<Any> { it() }
 
 // extension can also have its own UI placed over screen content
-fun mySimpleExtensionBuilder(showOverlay: Boolean) = extension<Any> {
+fun mySimpleExtensionBuilder(showOverlay: Boolean) = extension<Any> { entryContent ->
+    entryContent()
     if (showOverlay) Box(
         Modifier
             .fillMaxSize()

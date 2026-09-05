@@ -1,0 +1,14 @@
+public final class com/composegears/tiamat/overlay/OverlayNavigationKt {
+	public static final fun overlayBack (Lcom/composegears/tiamat/navigation/NavController;)V
+}
+
+public final class com/composegears/tiamat/overlay/OverlaysExtension : com/composegears/tiamat/compose/ContentExtension {
+	public static final field $stable I
+	public fun <init> (Lcom/composegears/tiamat/compose/DestinationLoader;ZLkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lcom/composegears/tiamat/compose/DestinationLoader;ZLkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> ([Lcom/composegears/tiamat/navigation/NavDestination;ZLkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> ([Lcom/composegears/tiamat/navigation/NavDestination;ZLkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun Content (Lcom/composegears/tiamat/compose/NavDestinationScope;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+	public final fun overlayNavController (Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/navigation/NavController;
+}
+

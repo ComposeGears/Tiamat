@@ -1,0 +1,20 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, wasmJs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.composegears:tiamat-overlay>
+final class com.composegears.tiamat.overlay/OverlaysExtension : com.composegears.tiamat.compose/ContentExtension<kotlin/Any> { // com.composegears.tiamat.overlay/OverlaysExtension|null[0]
+    constructor <init>(com.composegears.tiamat.compose/DestinationLoader, kotlin/Boolean = ..., kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, com.composegears.tiamat.navigation/NavController>? = ...) // com.composegears.tiamat.overlay/OverlaysExtension.<init>|<init>(com.composegears.tiamat.compose.DestinationLoader;kotlin.Boolean;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,com.composegears.tiamat.navigation.NavController>?){}[0]
+    constructor <init>(kotlin/Array<com.composegears.tiamat.navigation/NavDestination<*>>, kotlin/Boolean = ..., kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, com.composegears.tiamat.navigation/NavController>? = ...) // com.composegears.tiamat.overlay/OverlaysExtension.<init>|<init>(kotlin.Array<com.composegears.tiamat.navigation.NavDestination<*>>;kotlin.Boolean;kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,com.composegears.tiamat.navigation.NavController>?){}[0]
+
+    final fun (com.composegears.tiamat.compose/NavDestinationScope<out kotlin/Any>).Content(kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>, androidx.compose.runtime/Composer?, kotlin/Int) // com.composegears.tiamat.overlay/OverlaysExtension.Content|Content@com.composegears.tiamat.compose.NavDestinationScope<out|kotlin.Any>(kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>;androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+    final fun overlayNavController(androidx.compose.runtime/Composer?, kotlin/Int): com.composegears.tiamat.navigation/NavController // com.composegears.tiamat.overlay/OverlaysExtension.overlayNavController|overlayNavController(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+}
+
+final val com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop // com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop|#static{}com_composegears_tiamat_overlay_OverlaysExtension$stableprop[0]
+
+final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.overlay/overlayBack() // com.composegears.tiamat.overlay/overlayBack|overlayBack@com.composegears.tiamat.navigation.NavController(){}[0]
+final fun com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter(): kotlin/Int // com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter|com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter(){}[0]

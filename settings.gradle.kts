@@ -24,6 +24,7 @@ dependencyResolutionManagement {
 }
 
 include(":tiamat")
+include(":tiamat-overlay")
 include(":tiamat-destinations:tiamat-destinations")
 
 includeBuild("tiamat-destinations/compiler-plugin") {

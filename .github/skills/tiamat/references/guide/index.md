@@ -7,7 +7,8 @@ Tiamat is a Compose Multiplatform navigation library that gives you full control
 - **Typed arguments & results** — pass data between screens with `navArgs()`, `freeArgs`, `NavData`, and `navResult`
 - **ViewModel & retained state** — screen-scoped and shared ViewModels, `retain {}`, `produceRetainedState`
 - **Generated graphs** — `TiamatGraph` + `@InstallIn` compiler plugin for automatic destination registration
-- **Extensions** — `NavExtension` (marker/data) and `ContentExtension` (composable overlay/underlay) for cross-cutting concerns
+- **Extensions** — `NavExtension` (marker/data) and `ContentExtension` (composable wrapper around destination content) for cross-cutting concerns
+- **Overlay navigation** — the optional `tiamat-overlay` module adds a local overlay stack for dialogs, bottom sheets, and nested modal flows
 
 ## Getting started
 
@@ -52,4 +53,3 @@ fun App() {
 - If Kotlin reports recursive type inference for chained destinations, add an explicit type: `val ProfileScreen: NavDestination<Unit> by navDestination { … }`.
 - Pass `saveable = false` to `rememberNavController` for ephemeral sub-flows that must not survive process restart.
 - Pass `handleSystemBackEvent = false` to `Navigation` when the containing layout manages back navigation itself.
-
