@@ -16,5 +16,4 @@ final class com.composegears.tiamat.overlay/OverlaysExtension : com.composegears
 
 final val com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop // com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop|#static{}com_composegears_tiamat_overlay_OverlaysExtension$stableprop[0]
 
-final fun (com.composegears.tiamat.navigation/NavController).com.composegears.tiamat.overlay/overlayBack() // com.composegears.tiamat.overlay/overlayBack|overlayBack@com.composegears.tiamat.navigation.NavController(){}[0]
 final fun com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter(): kotlin/Int // com.composegears.tiamat.overlay/com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter|com_composegears_tiamat_overlay_OverlaysExtension$stableprop_getter(){}[0]

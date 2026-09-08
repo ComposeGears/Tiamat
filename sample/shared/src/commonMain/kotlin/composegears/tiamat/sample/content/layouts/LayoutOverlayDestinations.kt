@@ -15,7 +15,6 @@ import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.overlay.OverlaysExtension
-import com.composegears.tiamat.overlay.overlayBack
 import composegears.tiamat.sample.icons.Close
 import composegears.tiamat.sample.icons.Icons
 import composegears.tiamat.sample.icons.KeyboardArrowLeft
@@ -47,7 +46,7 @@ private val LayoutOverlayBottomSheet: NavDestination<Unit> by navDestination {
     val overlayNavController = navController()
     val rootNavController = overlayNavController.parent ?: error("Root NavController is missing")
 
-    ModalBottomSheet(onDismissRequest = overlayNavController::overlayBack) {
+    ModalBottomSheet(onDismissRequest = overlayNavController::back) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -59,7 +58,7 @@ private val LayoutOverlayBottomSheet: NavDestination<Unit> by navDestination {
             AppButton(
                 "Close",
                 endIcon = Icons.Close,
-                onClick = overlayNavController::overlayBack,
+                onClick = overlayNavController::back,
             )
         }
     }
@@ -71,7 +70,7 @@ private val LayoutOverlayDialog: NavDestination<Unit> by navDestination {
     val rootNavController = overlayNavController.parent ?: error("Root NavController is missing")
 
     BasicAlertDialog(
-        onDismissRequest = overlayNavController::overlayBack,
+        onDismissRequest = overlayNavController::back,
         content = {
             Column(
                 modifier = Modifier
@@ -87,7 +86,7 @@ private val LayoutOverlayDialog: NavDestination<Unit> by navDestination {
                 AppButton(
                     "Close",
                     endIcon = Icons.Close,
-                    onClick = overlayNavController::overlayBack,
+                    onClick = overlayNavController::back,
                 )
             }
         }

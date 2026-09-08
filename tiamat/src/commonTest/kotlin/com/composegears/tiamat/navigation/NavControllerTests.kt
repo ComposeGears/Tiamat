@@ -45,7 +45,8 @@ class NavControllerTests {
         val originalNc = createTestNavController(
             key = "testKey",
             saveable = true,
-            startDestination = Destination1
+            startDestination = Destination1,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty
         )
         originalNc.navigate(Destination2.toNavEntry())
         originalNc.navigate(Destination3.toNavEntry())
@@ -53,6 +54,7 @@ class NavControllerTests {
         val restoredNc = NavController.restoreFromSavedState(savedState = savedState)
         val restoredNavStack = restoredNc.getNavStack()
         assertTrue(restoredNc.saveable)
+        assertEquals(NavController.BackBehaviour.AllowUntilEmpty, restoredNc.backBehaviour)
         assertEquals("testKey", restoredNc.key)
         assertEquals(3, restoredNavStack.size)
         assertEquals("Destination1", restoredNavStack[0].destination.name)
@@ -70,7 +72,8 @@ class NavControllerTests {
         val restoredNc2 = NavController.restoreFromSavedState(
             savedState = SavedState(
                 "saveable" to true,
-                "navStack" to null
+                "navStack" to null,
+                "backBehaviour" to "AllowUntilRoot"
             )
         )
         val restoredNc3 = NavController.restoreFromSavedState(
@@ -82,6 +85,9 @@ class NavControllerTests {
         assertEquals(0, restoredNc1.getNavStack().size)
         assertEquals(0, restoredNc2.getNavStack().size)
         assertEquals(0, restoredNc3.getNavStack().size)
+        assertEquals(NavController.BackBehaviour.AllowUntilRoot, restoredNc1.backBehaviour)
+        assertEquals(NavController.BackBehaviour.AllowUntilRoot, restoredNc2.backBehaviour)
+        assertEquals(NavController.BackBehaviour.AllowUntilRoot, restoredNc3.backBehaviour)
     }
 
     @Test
@@ -89,13 +95,15 @@ class NavControllerTests {
         val nc = createTestNavController(
             key = "testKey",
             saveable = true,
-            startDestination = Destination1
+            startDestination = Destination1,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty
         )
         nc.navigate(Destination2.toNavEntry())
         nc.navigate(Destination3.toNavEntry())
         val savedState = nc.saveToSavedState()
         assertEquals("testKey", savedState["key"])
         assertTrue(savedState["saveable"] as Boolean)
+        assertEquals("AllowUntilEmpty", savedState["backBehaviour"])
         @Suppress("UNCHECKED_CAST")
         val navStackList = savedState["navStack"] as List<*>
         assertEquals(3, navStackList.size)
@@ -188,6 +196,16 @@ class NavControllerTests {
         val nc2 = createTestNavController(startDestination = Destination1)
         assertTrue(nc2.getNavStack().size <= 1)
         assertFalse(nc2.canNavigateBack())
+    }
+
+    @Test
+    fun `canNavigateBack # returns true with single entry when back behaviour allows empty stack`() {
+        val nc = createTestNavController(
+            startDestination = Destination1,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty
+        )
+        assertEquals(1, nc.getNavStack().size)
+        assertTrue(nc.canNavigateBack())
     }
 
     @Test
@@ -444,6 +462,19 @@ class NavControllerTests {
         val result = nc.back()
         assertFalse(result)
         assertEquals(Destination1, nc.getCurrentNavEntry()?.destination)
+    }
+
+    @Test
+    fun `back # removes last entry when back behaviour allows empty stack`() {
+        val nc = createTestNavController(
+            startDestination = Destination1,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty
+        )
+        val result = nc.back()
+        assertTrue(result)
+        assertNull(nc.getCurrentNavEntry())
+        assertTrue(nc.getNavStack().isEmpty())
+        assertFalse(nc.canNavigateBack())
     }
 
     @Test

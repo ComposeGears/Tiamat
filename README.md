@@ -215,10 +215,10 @@ Here is a simple tracker extension:
 
 ```kotlin
 // define extension
-class AnalyticsExt(private val name: String) : ContentExtension<Any?> {
+class AnalyticsExt(private val name: String) : ContentExtension<Any> {
 
     @Composable
-    override fun NavDestinationScope<out Any?>.Content(
+    override fun NavDestinationScope<out Any>.Content(
         entryContent: @Composable () -> Unit,
     ) {
         val entry = navEntry()

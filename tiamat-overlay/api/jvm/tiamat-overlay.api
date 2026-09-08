@@ -1,7 +1,3 @@
-public final class com/composegears/tiamat/overlay/OverlayNavigationKt {
-	public static final fun overlayBack (Lcom/composegears/tiamat/navigation/NavController;)V
-}
-
 public final class com/composegears/tiamat/overlay/OverlaysExtension : com/composegears/tiamat/compose/ContentExtension {
 	public static final field $stable I
 	public fun <init> (Lcom/composegears/tiamat/compose/DestinationLoader;ZLkotlin/jvm/functions/Function2;)V

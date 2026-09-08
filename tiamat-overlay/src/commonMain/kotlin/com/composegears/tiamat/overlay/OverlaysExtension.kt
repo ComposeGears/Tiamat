@@ -51,6 +51,7 @@ public class OverlaysExtension(
             ?: rememberNavController(
                 key = "OverlaysExtensionNavController",
                 saveable = true,
+                backBehaviour = NavController.BackBehaviour.AllowUntilEmpty,
             )
 
         CompositionLocalProvider(LocalOverlayNavController provides overlayNavController) {
@@ -71,12 +72,4 @@ public class OverlaysExtension(
             }
         }
     }
-}
-
-/**
- * Navigates back in the overlay navigation stack if possible, or clears the overlay stack if not.
- */
-public fun NavController.overlayBack() {
-    if (canNavigateBack()) back()
-    else editNavStack { emptyList() }
 }
