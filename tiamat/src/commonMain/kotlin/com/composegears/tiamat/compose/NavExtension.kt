@@ -16,64 +16,74 @@ public interface NavExtension<in Args>
  * Content extension base interface.
  *
  * Allows adding additional UI content to a navigation destination.
- * Default type is [ContentExtension.Type.Overlay]
+ *
+ * Implementations must call `entryContent()` to render the destination's main UI;
+ * otherwise the destination content will not be displayed.
  *
  * @param Args The type of arguments the destination accepts
  */
 public interface ContentExtension<in Args : Any> : NavExtension<Args> {
 
     /**
-     * Provides the content to be rendered for this extension.
+     * Renders extension content in the scope of the current destination.
      *
-     * This method is called within the context of a NavDestinationScope.
+     * @param entryContent The destination's primary content that the extension must wrap,
+     *   decorate, or invoke as part of its rendering.
      */
     @Composable
-    public fun NavDestinationScope<out Args>.Content()
-
-    /**
-     * Returns the type of content extension.
-     *
-     * @return The type of the content extension, defaults to [Type.Overlay]
-     */
-    public fun getType(): Type = Type.Overlay
-
-    /**
-     * Defines how the extension content should be positioned relative to the destination content.
-     */
-    public enum class Type {
-        /**
-         * Content will be rendered on top of the destination content
-         */
-        Overlay,
-
-        /**
-         * Content will be rendered behind the destination content
-         */
-        Underlay
-    }
+    public fun NavDestinationScope<out Args>.Content(
+        entryContent: @Composable () -> Unit
+    )
 }
+
+/**
+ * Combines a list of content extensions into a single composable function that wraps the destination content.
+ */
+internal fun <T : Any> List<ContentExtension<T>>.combine():
+    @Composable NavDestinationScope<out T>.(@Composable () -> Unit) -> Unit =
+    { body ->
+        var wrappedContent: @Composable () -> Unit = body
+        forEach { ext ->
+            val previousContent = wrappedContent
+            wrappedContent = {
+                with(ext) {
+                    Content(previousContent)
+                }
+            }
+        }
+        wrappedContent()
+    }
 
 /**
  * Internal simple ContentExtension impl, type = Overlay
  */
 internal open class ContentExtensionImpl<in Args : Any>(
-    private val content: @Composable NavDestinationScope<out Args>.() -> Unit
+    private val content: @Composable NavDestinationScope<out Args>.(
+        entryContent: @Composable () -> Unit
+    ) -> Unit
 ) : ContentExtension<Args> {
 
     @Composable
-    override fun NavDestinationScope<out Args>.Content() {
-        content()
+    override fun NavDestinationScope<out Args>.Content(
+        entryContent: @Composable () -> Unit
+    ) {
+        content(entryContent)
     }
 }
 
 /**
- * Create [ContentExtension.Type.Overlay] content-extension.
+ * Create a simple content-extension.
  *
- * @param content Extension content builder lambda
+ * The provided lambda is responsible for rendering the destination UI and must
+ * invoke `entryContent()` exactly once.
+ *
+ * @param content Extension content builder lambda.
  * @return A new content extension
  */
 public fun <Args : Any> extension(
-    content: @Composable NavDestinationScope<out Args>.() -> Unit
+    content: @Composable NavDestinationScope<out Args>.(
+        entryContent: @Composable () -> Unit
+    ) -> Unit
 ): NavExtension<Args> = ContentExtensionImpl(content)
 
 /**

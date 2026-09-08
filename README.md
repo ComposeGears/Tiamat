@@ -20,8 +20,11 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | Module                       |                                                       Version                                                        |
 |------------------------------|:--------------------------------------------------------------------------------------------------------------------:|
 | tiamat                       |                                  [![Tiamat][badge:maven-tiamat]][url:maven-tiamat]                                   |
+| tiamat-overlay               |                              [![Tiamat overlay][badge:maven-tiamat-overlay]][url:maven-tiamat-overlay]                  |
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
+
+[Tiamat Overlay README](doc/tiamat-overlay.md)
 
 [Tiamat Destinations README](doc/tiamat-destinations.md)
 
@@ -30,6 +33,15 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 sourceSets {
     commonMain.dependencies {
         implementation("io.github.composegears:tiamat:$version")
+    }
+}
+```
+
+#### Tiamat overlay
+```kotlin
+sourceSets {
+    commonMain.dependencies {
+        implementation("io.github.composegears:tiamat-overlay:$version")
     }
 }
 ```
@@ -176,7 +188,19 @@ fun Content() {
 }
 ```
 
-NavController will keep the screens data, view models, and states during navigation
+NavController will keep the screens data, view models, and states during navigation.
+
+`backBehaviour` controls when `back()` remains available:
+
+```kotlin
+val navController = rememberNavController(
+    startDestination = Screen,
+    backBehaviour = NavController.BackBehaviour.AllowUntilRoot,
+)
+```
+
+- `AllowUntilRoot` is the default; `back()` can remove entries until the root entry remains.
+- `AllowUntilEmpty` allows `back()` to remove the final entry too, which is useful for local stacks such as overlays.
 
 `viewModel(navController)` shared ViewModels are cleared when that NavController is destroyed (for example, when the corresponding navigation host leaves composition).
 
@@ -194,23 +218,27 @@ NavController will keep the screens data, view models, and states during navigat
 
 ### Extensions
 
-You can attach an extension to any destination<br>
-There is 2 extension types: with and without content<br>
-The content-extension allows to process content before destination body and after by specifying type (`Overlay`, `Underlay`)<br>
-Here is simple tracker extension:
+You can attach an extension to any destination. There are two kinds of extensions:
+
+- `NavExtension` — metadata or marker extensions used for routing decisions, auth checks, or feature flags.
+- `ContentExtension` — a composable wrapper around the destination content. It receives the destination body as `entryContent` and must call it exactly once.
+
+Here is a simple tracker extension:
 
 ```kotlin
-
 // define extension
-class AnalyticsExt(private val name: String) : ContentExtension<Any?>() {
+class AnalyticsExt(private val name: String) : ContentExtension<Any> {
 
     @Composable
-    override fun NavDestinationScope<out Any?>.Content() {
+    override fun NavDestinationScope<out Any>.Content(
+        entryContent: @Composable () -> Unit,
+    ) {
         val entry = navEntry()
-        LaunchedEffect(Unit) {
+        LaunchedEffect(entry.destination.name) {
             val service = /*...*/ // receive tracker
             service.trackScreen(screenName = name, destination = entry.destination.name)
         }
+        entryContent()
     }
 }
 
@@ -220,8 +248,10 @@ val SomeScreen by navDestination<Args>(
 ) {
     // screen content
 }
-
 ```
+
+`ContentExtension` is a wrapper, not a replacement. Use `entryContent()` to render the original destination body, then add your own screen-level UI or side effects around it.
+When multiple content extensions are attached, they are nested in declaration order.
 
 ### Storage mode
 
@@ -524,6 +554,7 @@ limitations under the License.
 [badge:wasm-sample]: https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000?logo=webassembly&style=for-the-badge&color=black&logoColor=white
 
 [badge:maven-tiamat]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
+[badge:maven-tiamat-overlay]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-overlay.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations-gradle-plugin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=for-the-badge&logo=gradle&label=&labelColor=black&color=white
 
@@ -536,5 +567,6 @@ limitations under the License.
 [url:wasm-sample]: https://composegears.github.io/Tiamat/
 
 [url:maven-tiamat]: https://central.sonatype.com/artifact/io.github.composegears/tiamat
+[url:maven-tiamat-overlay]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-overlay
 [url:maven-tiamat-destinations]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations
 [url:maven-tiamat-destinations-gradle-plugin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations-gradle-plugin

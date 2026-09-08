@@ -1,5 +1,5 @@
 [versions]
-tiamat = "2.4.0"
+tiamat = "3.0.0"
 
 minSdk = "21"
 compileSdk = "37"
