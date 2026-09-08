@@ -42,7 +42,7 @@ fun App() {
 ## Key concepts
 
 - **Destination** — a `ComposeNavDestination<Args>` created via the `navDestination` delegate. It defines the composable content and optional typed args.
-- **NavController** — holds the navigation stack. Created with `rememberNavController`. Supports `saveable` for process-death persistence.
+- **NavController** — holds the navigation stack. Created with `rememberNavController`. Supports `saveable` for process-death persistence and `backBehaviour` for root-vs-empty back-stack handling.
 - **Navigation / NavigationScene** — composable hosts. `Navigation` provides default `AnimatedContent` transitions. `NavigationScene` gives you raw `EntryContent(entry)` for custom layouts.
 - **NavEntry** — a single entry in the back stack, pairing a destination with its args and state.
 
@@ -52,4 +52,5 @@ fun App() {
 - Register every reachable destination in `Navigation(destinations = arrayOf(...))` unless the project uses generated graph mode.
 - If Kotlin reports recursive type inference for chained destinations, add an explicit type: `val ProfileScreen: NavDestination<Unit> by navDestination { … }`.
 - Pass `saveable = false` to `rememberNavController` for ephemeral sub-flows that must not survive process restart.
+- Pass `backBehaviour = NavController.BackBehaviour.AllowUntilEmpty` for local stacks where `back()` should be able to clear the last entry instead of bubbling to a parent controller.
 - Pass `handleSystemBackEvent = false` to `Navigation` when the containing layout manages back navigation itself.

@@ -55,18 +55,18 @@ Overlay destinations are normal `navDestination` entries, opened through the loc
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import com.composegears.tiamat.compose.back
 import com.composegears.tiamat.compose.navController
 import com.composegears.tiamat.compose.navDestination
-import com.composegears.tiamat.overlay.overlayBack
 
 val EditProfileDialog by navDestination {
     val overlayNavController = navController()
     BasicAlertDialog(
-        onDismissRequest = overlayNavController::overlayBack,
+        onDismissRequest = overlayNavController::back,
         content = {
             Column {
                 Text("Edit profile")
-                Button(onClick = overlayNavController::overlayBack) {
+                Button(onClick = overlayNavController::back) {
                     Text("Close")
                 }
             }
@@ -77,10 +77,10 @@ val EditProfileDialog by navDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 val DeleteAccountSheet by navDestination {
     val overlayNavController = navController()
-    ModalBottomSheet(onDismissRequest = overlayNavController::overlayBack) {
+    ModalBottomSheet(onDismissRequest = overlayNavController::back) {
         Column {
             Text("Delete this account?")
-            Button(onClick = overlayNavController::overlayBack) {
+            Button(onClick = overlayNavController::back) {
                 Text("Cancel")
             }
         }
@@ -92,24 +92,26 @@ Inside an overlay destination, `navController()` resolves to the local overlay c
 
 ## Closing overlays
 
-Use `overlayBack()` to dismiss the current overlay. Unlike a normal parent back navigation, it is scoped to the overlay stack: it removes the last overlay entry when one exists, and if the overlay stack is already empty it simply clears the local overlay layer instead of navigating the parent/root controller back.
+Use `back()` on the local overlay controller to dismiss the current overlay. `OverlaysExtension` creates that controller with `NavController.BackBehaviour.AllowUntilEmpty`, so back navigation removes the last overlay entry and clears the overlay layer instead of navigating the parent/root controller back.
 
 ```kotlin
 val overlays = ext<OverlaysExtension>() ?: error("OverlaysExtension is missing")
 val overlayNavController = overlays.overlayNavController()
 
-Button(onClick = overlayNavController::overlayBack) {
+Button(onClick = overlayNavController::back) {
     Text("Close")
 }
 ```
 
-This makes `overlayBack()` the standard dismiss action for a modal flow in the local overlay host: it closes the current overlay without unexpectedly leaving the host destination.
+This makes the local controller's `back()` the standard dismiss action for a modal flow in the local overlay host: it closes the current overlay without unexpectedly leaving the host destination.
 
 ## Configuration
 
 The array constructor is shorthand for `DestinationLoader.from(destinations)`. Use the primary constructor when destinations must be resolved dynamically:
 
 ```kotlin
+import com.composegears.tiamat.navigation.NavController
+
 val overlays = OverlaysExtension(
     destinationLoader = DestinationLoader.byKey { key ->
         overlayDestinations.firstOrNull { it.key == key }
@@ -119,13 +121,14 @@ val overlays = OverlaysExtension(
         rememberNavController(
             key = "settings-overlays",
             saveable = false,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty,
         )
     },
 )
 ```
 
 - Set `handleSystemBackEvents = false` when the containing UI owns system-back handling.
-- Use `overlaysNavControllerFactory` to customize creation of the local controller; the default controller is saveable and uses the key `OverlaysExtensionNavController`.
+- Use `overlaysNavControllerFactory` to customize creation of the local controller; keep `backBehaviour = NavController.BackBehaviour.AllowUntilEmpty` so closing the last overlay clears the overlay stack instead of bubbling to the parent controller. The default controller is saveable, uses the key `OverlaysExtensionNavController`, and already applies that back behaviour.
 
 ## Notes
 

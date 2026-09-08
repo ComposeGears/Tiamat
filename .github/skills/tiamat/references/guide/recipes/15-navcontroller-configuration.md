@@ -20,6 +20,19 @@ val nc = rememberNavController(
 )
 ```
 
+You can also configure when back navigation remains available with `backBehaviour`:
+
+```kotlin
+import com.composegears.tiamat.navigation.NavController
+
+val nc = rememberNavController(
+    startDestination = HomeScreen,
+    backBehaviour = NavController.BackBehaviour.AllowUntilEmpty,
+)
+```
+
+`AllowUntilRoot` is the default and only allows back navigation while there is an entry below the current root destination. `AllowUntilEmpty` lets `back()` remove the final entry too, which is useful for local stacks such as overlay hosts.
+
 This is also useful when the configuration is passed from a platform-specific layer:
 
 ```kotlin
@@ -32,4 +45,3 @@ fun App(navControllerConfig: NavController.() -> Unit = {}) {
     Navigation(navController = nc, destinations = arrayOf(HomeScreen, DetailsScreen))
 }
 ```
-

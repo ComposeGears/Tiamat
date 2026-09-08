@@ -14,13 +14,12 @@ sourceSets {
 
 ## How it works
 
-Attach `OverlaysExtension` to a host destination. It creates a local `NavController` that is rendered on top of the host screen, while the host content stays visible underneath. Overlay destinations are regular `navDestination` entries that are opened from that local controller and dismissed with `overlayBack()`.
+Attach `OverlaysExtension` to a host destination. It creates a local `NavController` that is rendered on top of the host screen, while the host content stays visible underneath. Overlay destinations are regular `navDestination` entries that are opened from that local controller and dismissed with `back()`.
 
 ```kotlin
 import androidx.compose.material3.BasicAlertDialog
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.overlay.OverlaysExtension
-import com.composegears.tiamat.overlay.overlayBack
 
 val HostScreen by navDestination(
     OverlaysExtension(destinations = arrayOf(EditProfileDialog))
@@ -39,11 +38,11 @@ val HostScreen by navDestination(
 val EditProfileDialog by navDestination {
     val overlayNavController = navController()
     BasicAlertDialog(
-        onDismissRequest = overlayNavController::overlayBack,
+        onDismissRequest = overlayNavController::back,
         content = {
             Column {
                 Text("Edit profile")
-                Button(onClick = overlayNavController::overlayBack) {
+                Button(onClick = overlayNavController::back) {
                     Text("Close")
                 }
             }
@@ -58,13 +57,15 @@ val EditProfileDialog by navDestination {
 - Attach `OverlaysExtension(destinations = arrayOf(...))` to the host destination.
 - Access the local overlay controller with `ext<OverlaysExtension>()?.overlayNavController()`.
 - Open overlay destinations via `overlayNavController.navigate(...)`.
-- Dismiss the current overlay with `overlayNavController::overlayBack` or `NavController.overlayBack()`; this removes the last overlay entry and clears the overlay stack when it is already empty, instead of navigating the parent back.
+- Dismiss the current overlay with `overlayNavController::back`; the default overlay controller uses `NavController.BackBehaviour.AllowUntilEmpty`, so closing the last overlay clears the overlay stack instead of navigating the parent back.
 
 ### Configuration
 
 The array constructor is shorthand for `DestinationLoader.from(destinations)`. Use the primary constructor when destinations must be resolved dynamically:
 
 ```kotlin
+import com.composegears.tiamat.navigation.NavController
+
 val overlays = OverlaysExtension(
     destinationLoader = DestinationLoader.byKey { key ->
         overlayDestinations.firstOrNull { it.key == key }
@@ -74,13 +75,14 @@ val overlays = OverlaysExtension(
         rememberNavController(
             key = "settings-overlays",
             saveable = false,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty,
         )
     },
 )
 ```
 
 - Set `handleSystemBackEvents = false` when the containing UI owns system-back handling.
-- Use `overlaysNavControllerFactory` to customize creation of the local controller; the default controller is saveable and uses the key `OverlaysExtensionNavController`.
+- Use `overlaysNavControllerFactory` to customize creation of the local controller; keep `backBehaviour = NavController.BackBehaviour.AllowUntilEmpty` so closing the last overlay clears the overlay stack. The default controller is saveable, uses the key `OverlaysExtensionNavController`, and already applies that back behaviour.
 
 ### Key points
 

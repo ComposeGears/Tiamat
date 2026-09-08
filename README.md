@@ -188,7 +188,19 @@ fun Content() {
 }
 ```
 
-NavController will keep the screens data, view models, and states during navigation
+NavController will keep the screens data, view models, and states during navigation.
+
+`backBehaviour` controls when `back()` remains available:
+
+```kotlin
+val navController = rememberNavController(
+    startDestination = Screen,
+    backBehaviour = NavController.BackBehaviour.AllowUntilRoot,
+)
+```
+
+- `AllowUntilRoot` is the default; `back()` can remove entries until the root entry remains.
+- `AllowUntilEmpty` allows `back()` to remove the final entry too, which is useful for local stacks such as overlays.
 
 `viewModel(navController)` shared ViewModels are cleared when that NavController is destroyed (for example, when the corresponding navigation host leaves composition).
 

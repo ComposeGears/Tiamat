@@ -30,7 +30,7 @@ class OverlaysExtensionTests {
                     Text("Open overlay 2")
                 }
                 Button(
-                    onClick = overlayNavController::overlayBack,
+                    onClick = overlayNavController::back,
                     modifier = Modifier.testTag("CloseOverlay1"),
                 ) {
                     Text("Close overlay 1")
@@ -43,7 +43,7 @@ class OverlaysExtensionTests {
             Column {
                 Text(text = "Overlay 2", modifier = Modifier.testTag("Overlay2"))
                 Button(
-                    onClick = overlayNavController::overlayBack,
+                    onClick = overlayNavController::back,
                     modifier = Modifier.testTag("CloseOverlay2"),
                 ) {
                     Text("Close overlay 2")
@@ -105,7 +105,7 @@ class OverlaysExtensionTests {
     }
 
     @Test
-    fun `overlayBack clears the last overlay without hiding the host content`() = runComposeUiTest {
+    fun `back clears the last overlay without hiding the host content`() = runComposeUiTest {
         setContent {
             val navController = rememberNavController(startDestination = HostScreen)
             Navigation(navController = navController, destinations = arrayOf(HostScreen))
