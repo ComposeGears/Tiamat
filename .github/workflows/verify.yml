@@ -41,7 +41,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 17.0.20+101
       - uses: gradle/actions/setup-gradle@v6
       - name: Run JVM tests
         run: ./gradlew tiamatJvmTests
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 17.0.20+101
 
       - uses: gradle/actions/setup-gradle@v6
 
@@ -82,7 +82,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 17.0.20+101
 
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
