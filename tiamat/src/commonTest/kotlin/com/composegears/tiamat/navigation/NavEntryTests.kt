@@ -22,7 +22,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `init # initializes with provided values`() {
+    fun `init - initializes with provided values`() {
         val destination = TestDestination
         val navArgs = "test-args"
         val freeArgs = "free-args"
@@ -42,26 +42,26 @@ class NavEntryTests {
     }
 
     @Test
-    fun `isLoaded # returns false for not loaded destination`() {
+    fun `isLoaded - returns false for not loaded destination`() {
         val entry = NavEntry(destination = NavDestination.NotLoaded("test"))
         assertFalse(entry.isLoaded)
     }
 
     @Test
-    fun `isLoaded # returns true for loaded destination`() {
+    fun `isLoaded - returns true for loaded destination`() {
         val entry = NavEntry(destination = TestDestination)
         assertTrue(entry.isLoaded)
     }
 
     @Test
-    fun `navArgs # nav args provides value when set`() {
+    fun `navArgs - nav args provides value when set`() {
         val navArgs = "new-args"
         val entry = NavEntry(destination = TestDestination, navArgs = navArgs)
         assertEquals(navArgs, entry.getNavArgs())
     }
 
     @Test
-    fun `navArgs # cleared`() {
+    fun `navArgs - cleared`() {
         val navArgs = "new-args"
         val entry = NavEntry(destination = TestDestination, navArgs = navArgs)
         entry.clearNavArgs()
@@ -69,21 +69,21 @@ class NavEntryTests {
     }
 
     @Test
-    fun `freeArgs # provides value with appropriate type when set`() {
+    fun `freeArgs - provides value with appropriate type when set`() {
         val freeArgs = "free-args"
         val entry = NavEntry(destination = TestDestination, freeArgs = freeArgs)
         assertEquals(freeArgs, entry.getFreeArgs<String>())
     }
 
     @Test
-    fun `freeArgs # provides null with incorrect type when set`() {
+    fun `freeArgs - provides null with incorrect type when set`() {
         val freeArgs = "free-args"
         val entry = NavEntry(destination = TestDestination, freeArgs = freeArgs)
         assertEquals(null, entry.getFreeArgs<Int>())
     }
 
     @Test
-    fun `freeArgs # restores from serializable with correct type`() {
+    fun `freeArgs - restores from serializable with correct type`() {
         val freeArgs = TestData("test")
         val entry = NavEntry(destination = TestDestination, freeArgs = freeArgs)
         val saved = entry.saveToSavedState()
@@ -93,7 +93,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `freeArgs # cleared`() {
+    fun `freeArgs - cleared`() {
         val freeArgs = "free-args"
         val entry = NavEntry(destination = TestDestination, freeArgs = freeArgs)
         entry.clearFreeArgs()
@@ -101,21 +101,21 @@ class NavEntryTests {
     }
 
     @Test
-    fun `navResult # provides value with appropriate type when set`() {
+    fun `navResult - provides value with appropriate type when set`() {
         val navResult = "nav-result"
         val entry = NavEntry(destination = TestDestination, navResult = navResult)
         assertEquals(navResult, entry.getNavResult<String>())
     }
 
     @Test
-    fun `navResult # provides null with incorrect type when set`() {
+    fun `navResult - provides null with incorrect type when set`() {
         val navResult = "nav-result"
         val entry = NavEntry(destination = TestDestination, navResult = navResult)
         assertEquals(null, entry.getNavResult<Int>())
     }
 
     @Test
-    fun `navResult # restores from serializable with correct type`() {
+    fun `navResult - restores from serializable with correct type`() {
         val navResult = TestData("test")
         val entry = NavEntry(destination = TestDestination, navResult = navResult)
         val saved = entry.saveToSavedState()
@@ -125,7 +125,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `navResult # cleared`() {
+    fun `navResult - cleared`() {
         val navResult = "nav-result"
         val entry = NavEntry(destination = TestDestination, navResult = navResult)
         entry.clearNavResult()
@@ -133,7 +133,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `load # finds matching destination by name`() {
+    fun `load - finds matching destination by name`() {
         val destinationName = TestDestination.name
         val entry = NavEntry(destination = NavDestination.NotLoaded(destinationName))
         val destinations = arrayOf<NavDestination<*>>(
@@ -148,7 +148,7 @@ class NavEntryTests {
 
     @Test
     @Suppress("UNCHECKED_CAST")
-    fun `load # deserializes nav args`() {
+    fun `load - deserializes nav args`() {
         val entry = SerializedNavArgsDestination.toNavEntry(navArgs = TestData("test"))
         val saved = entry.saveToSavedState()
         val restored = NavEntry.restoreFromSavedState(null, saved)
@@ -160,7 +160,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `load # throws error when destination not found`() {
+    fun `load - throws error when destination not found`() {
         val entry = NavEntry(destination = NavDestination.NotLoaded("non_existent"))
         val destinations = arrayOf<NavDestination<*>>(
             TestDestination,
@@ -171,7 +171,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `saveToSavedState # saves all entry properties`() {
+    fun `saveToSavedState - saves all entry properties`() {
         val destination = TestDestination
         val navArgs = "test-args"
         val freeArgs = "free-args"
@@ -194,7 +194,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `saveToSavedState # if savedStateSaver is not null - updates savedState`() {
+    fun `saveToSavedState - if savedStateSaver is not null - updates savedState`() {
         val destination = TestDestination
         val customSavedState = SavedState("custom" to "value")
         val entry = NavEntry(destination = destination)
@@ -205,7 +205,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `saveToSavedState # serialize NavData fields`() {
+    fun `saveToSavedState - serialize NavData fields`() {
         val entry = SerializedNavArgsDestination.toNavEntry(
             navArgs = TestData("args"),
             freeArgs = TestData("free"),
@@ -218,7 +218,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # creates entry with saved values`() {
+    fun `restoreFromSavedState - creates entry with saved values`() {
         val parentNC = NavController.create("parent", saveable = true)
         val childNC = NavController.create("child", saveable = true)
         val destinationName = "TestDestination"
@@ -249,7 +249,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # throws error when destination is null`() {
+    fun `restoreFromSavedState - throws error when destination is null`() {
         val savedState = SavedState(
             "uuid" to "some-uuid",
         )
@@ -257,7 +257,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # throws error when uuid is null`() {
+    fun `restoreFromSavedState - throws error when uuid is null`() {
         val savedState = SavedState(
             "destination" to "some-destination",
         )
@@ -265,7 +265,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # restores from minimal saved state`() {
+    fun `restoreFromSavedState - restores from minimal saved state`() {
         val savedState = SavedState(
             "uuid" to "some-uuid",
             "destination" to "some-destination",
@@ -276,7 +276,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # restore serializable fields`() {
+    fun `restoreFromSavedState - restore serializable fields`() {
         val entry = SerializedNavArgsDestination.toNavEntry(
             navArgs = TestData("args"),
             freeArgs = TestData("free"),
@@ -292,7 +292,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `restoreFromSavedState # fails to restore serializable fields with wrong destination`() {
+    fun `restoreFromSavedState - fails to restore serializable fields with wrong destination`() {
         val entry = SerializedNavArgsDestination.toNavEntry(
             navArgs = TestData("args"),
             freeArgs = TestData("free"),
@@ -307,7 +307,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `setSavedStateSaver # uses custom saver if provided`() {
+    fun `setSavedStateSaver - uses custom saver if provided`() {
         val destination = TestDestination
         val customSavedState = SavedState()
         val entry = NavEntry(destination = destination)
@@ -317,7 +317,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `lifecycle # provides appropriate state base on conditions`() {
+    fun `lifecycle - provides appropriate state base on conditions`() {
         val entry = NavEntry(TestDestination)
         assertEquals(Lifecycle.State.INITIALIZED, entry.lifecycle.currentState)
         entry.attachToNavController()
@@ -330,14 +330,14 @@ class NavEntryTests {
     }
 
     @Test
-    fun `attachToNavController # sets isAttachedToNavController to true`() {
+    fun `attachToNavController - sets isAttachedToNavController to true`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToNavController()
         assertTrue(entry.isAttachedToNavController)
     }
 
     @Test
-    fun `detachFromNavController # sets isAttachedToNavController to false`() {
+    fun `detachFromNavController - sets isAttachedToNavController to false`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToNavController()
         entry.detachFromNavController()
@@ -345,28 +345,28 @@ class NavEntryTests {
     }
 
     @Test
-    fun `ensureDetachedAndAttach # attaches if not already attached`() {
+    fun `ensureDetachedAndAttach - attaches if not already attached`() {
         val entry = NavEntry(destination = TestDestination)
         entry.ensureDetachedAndAttach()
         assertTrue(entry.isAttachedToNavController)
     }
 
     @Test
-    fun `ensureDetachedAndAttach # throws error if already attached`() {
+    fun `ensureDetachedAndAttach - throws error if already attached`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToNavController()
         assertFails { entry.ensureDetachedAndAttach() }
     }
 
     @Test
-    fun `attachToUI # sets isAttachedToUI to true`() {
+    fun `attachToUI - sets isAttachedToUI to true`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         assertTrue(entry.isAttachedToUI)
     }
 
     @Test
-    fun `detachFromUI # sets isAttachedToUI to false`() {
+    fun `detachFromUI - sets isAttachedToUI to false`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         entry.detachFromUI()
@@ -374,7 +374,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `attachToUI + detachFromUI # closes when both are false`() {
+    fun `attachToUI + detachFromUI - closes when both are false`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         entry.attachToNavController()
@@ -395,7 +395,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `attachToUI + detachFromUI # not closes when any is true`() {
+    fun `attachToUI + detachFromUI - not closes when any is true`() {
         val entry = NavEntry(destination = TestDestination)
         entry.attachToUI()
         entry.attachToNavController()
@@ -411,7 +411,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `close # clears viewModelStore and navControllersStorage`() {
+    fun `close - clears viewModelStore and navControllersStorage`() {
         val entry = NavEntry(destination = TestDestination)
         val navController = NavController.create("test", true, startEntry = entry)
         entry.navControllerStore.add(NavController.create("tmp", true))
@@ -424,7 +424,7 @@ class NavEntryTests {
     }
 
     @Test
-    fun `contentKey # returns correct key`() {
+    fun `contentKey - returns correct key`() {
         val entry = NavEntry(destination = TestDestination)
         assertEquals("TestDestination-${entry.uuid}", entry.contentKey())
     }

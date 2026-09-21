@@ -71,7 +71,7 @@ class OverlaysExtensionTests {
     }
 
     @Test
-    fun `OverlaysExtension keeps host content visible while overlay is shown`() = runComposeUiTest {
+    fun `content - OverlaysExtension keeps host content visible while overlay is shown`() = runComposeUiTest {
         setContent {
             val navController = rememberNavController(startDestination = HostScreen)
             Navigation(navController = navController, destinations = arrayOf(HostScreen))
@@ -85,7 +85,7 @@ class OverlaysExtensionTests {
     }
 
     @Test
-    fun `OverlaysExtension is visible when open and gone when closes`() = runComposeUiTest {
+    fun `content - OverlaysExtension is visible when open and gone when closes`() = runComposeUiTest {
         setContent {
             val navController = rememberNavController(startDestination = HostScreen)
             Navigation(navController = navController, destinations = arrayOf(HostScreen))
@@ -105,7 +105,7 @@ class OverlaysExtensionTests {
     }
 
     @Test
-    fun `back clears the last overlay without hiding the host content`() = runComposeUiTest {
+    fun `back - clears the last overlay without hiding the host content`() = runComposeUiTest {
         setContent {
             val navController = rememberNavController(startDestination = HostScreen)
             Navigation(navController = navController, destinations = arrayOf(HostScreen))

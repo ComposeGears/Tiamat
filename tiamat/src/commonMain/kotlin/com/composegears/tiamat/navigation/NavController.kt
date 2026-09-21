@@ -72,7 +72,8 @@ public class NavController internal constructor(
                 key = savedState[KEY_KEY] as? String,
                 saveable = savedState[KEY_SAVEABLE] as Boolean,
                 backBehaviour = savedState[KEY_BACK_BEHAVIOUR]
-                    ?.let { BackBehaviour.valueOf(it as String) }
+                    ?.runCatching { BackBehaviour.valueOf(this as String) }
+                    ?.getOrNull()
                     ?: BackBehaviour.AllowUntilRoot
             )
             val navStackItems = savedState[KEY_NAV_STACK] as? List<SavedState>
@@ -302,44 +303,33 @@ public class NavController internal constructor(
         transitionData: Any? = null,
     ): Boolean {
         val navStack = getNavStack()
-        val targetIndex =
-            if (to != null) navStack
-                .dropLast(1)
-                .indexOfLast { it.destination == to }
-                .let { if (inclusive) it - 1 else it }
-            else navStack.lastIndex - 1
-        return when {
-            targetIndex >= 0 -> {
-                navStack[targetIndex].setNavResult(result)
-                for (i in targetIndex + 1..navStack.lastIndex) {
-                    navStack[i].detachFromNavController()
-                }
-                updateNavState(
-                    transitionData = transitionData,
-                    transitionType = TransitionType.Backward,
-                    stack = navStack.subList(0, targetIndex + 1)
-                )
-                true
-            }
-            targetIndex == -1 && backBehaviour == BackBehaviour.AllowUntilEmpty -> {
-                navStack.onEach { it.detachFromNavController() }
-                updateNavState(
-                    transitionData = transitionData,
-                    transitionType = TransitionType.Backward,
-                    stack = emptyList()
-                )
-                true
-            }
-            recursive ->
-                parent?.back(
-                    to = to,
-                    result = result,
-                    inclusive = inclusive,
-                    recursive = recursive,
-                    transitionData = transitionData
-                ) ?: false
-            else -> false
+        val targetStackSize = if (to == null) {
+            if (canNavigateBack()) navStack.lastIndex else -1
+        } else {
+            navStack.indexOfLast { it.destination == to }
+                .takeIf { it >= 0 }
+                ?.let { index -> (index + 1) - (if (inclusive) 1 else 0) }
+                ?: -1
         }
+        val minimalStackSize = when (backBehaviour) {
+            BackBehaviour.AllowUntilRoot -> 1
+            BackBehaviour.AllowUntilEmpty -> 0
+        }
+        val canNavigate = targetStackSize >= minimalStackSize
+
+        if (!canNavigate) {
+            return recursive && parent?.back(to, result, inclusive, recursive, transitionData) ?: false
+        }
+
+        val targetEntry = targetStackSize.takeIf { it > 0 }?.let { navStack[it - 1] }
+        targetEntry?.setNavResult(result)
+        navStack.drop(targetStackSize).forEach { it.detachFromNavController() }
+        updateNavState(
+            transitionData = transitionData,
+            transitionType = TransitionType.Backward,
+            stack = navStack.take(targetStackSize)
+        )
+        return true
     }
 
     /**
