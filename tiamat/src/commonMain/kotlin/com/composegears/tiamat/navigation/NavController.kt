@@ -295,6 +295,7 @@ public class NavController internal constructor(
      * @param transitionData Optional data to customize the transition
      * @return True if back navigation was handled, false otherwise
      */
+    @Suppress("UnnecessaryParentheses")
     internal fun back(
         to: NavDestination<*>? = null,
         result: Any? = null,
@@ -306,11 +307,13 @@ public class NavController internal constructor(
         val targetStackSize = if (to == null) {
             if (canNavigateBack()) navStack.lastIndex else -1
         } else {
-            navStack.indexOfLast { it.destination == to }
-                .takeIf { it >= 0 }
+            // search for the last occurrence of the destination in the stack, excluding the last entry
+            (0..<navStack.lastIndex)
+                .lastOrNull { navStack[it].destination == to }
                 ?.let { index -> (index + 1) - (if (inclusive) 1 else 0) }
                 ?: -1
         }
+
         val minimalStackSize = when (backBehaviour) {
             BackBehaviour.AllowUntilRoot -> 1
             BackBehaviour.AllowUntilEmpty -> 0

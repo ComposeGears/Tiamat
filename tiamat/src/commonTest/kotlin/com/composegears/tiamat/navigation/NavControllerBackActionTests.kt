@@ -1,13 +1,9 @@
 package com.composegears.tiamat.navigation
 
-import com.composegears.tiamat.createTestNavController
 import com.composegears.tiamat.compose.navDestination
+import com.composegears.tiamat.createTestNavController
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class NavControllerBackActionTests {
 
@@ -130,7 +126,7 @@ class NavControllerBackActionTests {
     }
 
     @Test
-    fun `back - to current destination is a no-op unless inclusive`() {
+    fun `back - to current destination do nothing`() {
         val controller = controller(
             NavController.BackBehaviour.AllowUntilRoot,
             Destination1,
@@ -139,8 +135,8 @@ class NavControllerBackActionTests {
 
         assertFalse(controller.back(to = Destination2, recursive = false))
         assertDestinations(controller, Destination1, Destination2)
-        assertTrue(controller.back(to = Destination2, inclusive = true))
-        assertDestinations(controller, Destination1)
+        assertFalse(controller.back(to = Destination2, inclusive = true))
+        assertDestinations(controller, Destination1, Destination2)
     }
 
     @Test
@@ -155,6 +151,32 @@ class NavControllerBackActionTests {
 
         assertTrue(controller.back(to = Destination2))
         assertDestinations(controller, Destination1, Destination2, Destination2)
+    }
+
+    @Test
+    fun `back - to duplicate destination back for 1 step`() {
+        val controller = controller(
+            NavController.BackBehaviour.AllowUntilRoot,
+            Destination1,
+            Destination2,
+            Destination2,
+        )
+
+        assertTrue(controller.back(to = Destination2))
+        assertDestinations(controller, Destination1, Destination2)
+    }
+
+    @Test
+    fun `back - to duplicate destination back for 2 steps when inclusive`() {
+        val controller = controller(
+            NavController.BackBehaviour.AllowUntilRoot,
+            Destination1,
+            Destination2,
+            Destination2,
+        )
+
+        assertTrue(controller.back(to = Destination2, inclusive = true))
+        assertDestinations(controller, Destination1)
     }
 
     @Test
