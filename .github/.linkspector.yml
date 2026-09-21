@@ -6,3 +6,4 @@ fileExtensions:
 
 ignorePatterns:
   - pattern: "^https://join\\.slack\\.com"
+  - pattern: "^https://github\\.com/ComposeGears/Tiamat/stargazers"
