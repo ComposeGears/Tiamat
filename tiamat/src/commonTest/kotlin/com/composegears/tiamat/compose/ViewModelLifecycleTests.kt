@@ -227,7 +227,7 @@ class ViewModelLifecycleTests {
     }
 
     @Test
-    fun `rememberNavController dispose # clears root shared viewModel`() = runComposeUiTest {
+    fun `rememberNavController dispose - clears root shared viewModel`() = runComposeUiTest {
         val logger = Logger()
 
         setContent {
@@ -264,7 +264,7 @@ class ViewModelLifecycleTests {
     }
 
     @Test
-    fun `rememberNavController dispose # clears nested shared viewModel`() = runComposeUiTest {
+    fun `rememberNavController dispose - clears nested shared viewModel`() = runComposeUiTest {
         val logger = Logger()
 
         setContent {
@@ -290,7 +290,7 @@ class ViewModelLifecycleTests {
     }
 
     @Test
-    fun `rememberNavController restore # keeps nested shared viewModel while parent entry is detached`() =
+    fun `rememberNavController restore - keeps nested shared viewModel while parent entry is detached`() =
         runComposeUiTest {
             val logger = Logger()
 

@@ -4,6 +4,7 @@
 !src/**/build/
 local.properties
 .idea
+.tmp
 .fleet
 .DS_Store
 captures

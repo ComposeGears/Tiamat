@@ -18,15 +18,18 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @property key An optional identifier for this NavController
  * @property saveable Whether this NavController's state should be saved and restored
+ * @property backBehaviour Defines when back navigation remains available
  */
 public class NavController internal constructor(
     public val key: String?,
     public val saveable: Boolean,
+    public val backBehaviour: BackBehaviour,
 ) : ViewModelStoreOwner {
     public companion object {
 
         private const val KEY_KEY = "key"
         private const val KEY_SAVEABLE = "saveable"
+        private const val KEY_BACK_BEHAVIOUR = "backBehaviour"
         private const val KEY_NAV_STACK = "navStack"
 
         public fun create(
@@ -34,12 +37,14 @@ public class NavController internal constructor(
             saveable: Boolean = true,
             parent: NavController? = null,
             startDestination: NavDestination<*>,
+            backBehaviour: BackBehaviour = BackBehaviour.AllowUntilRoot,
             config: NavController.() -> Unit = {}
         ): NavController = create(
             key = key,
             saveable = saveable,
             parent = parent,
             startEntry = startDestination.toNavEntry(),
+            backBehaviour = backBehaviour,
             config = config
         )
 
@@ -48,9 +53,10 @@ public class NavController internal constructor(
             saveable: Boolean = true,
             parent: NavController? = null,
             startEntry: NavEntry<*>? = null,
+            backBehaviour: BackBehaviour = BackBehaviour.AllowUntilRoot,
             config: NavController.() -> Unit = {}
         ): NavController {
-            val navController = NavController(key, saveable)
+            val navController = NavController(key, saveable, backBehaviour)
             if (startEntry != null) navController.navigate(startEntry)
             navController.parent = parent
             navController.config()
@@ -64,7 +70,11 @@ public class NavController internal constructor(
         ): NavController {
             val navController = NavController(
                 key = savedState[KEY_KEY] as? String,
-                saveable = savedState[KEY_SAVEABLE] as Boolean
+                saveable = savedState[KEY_SAVEABLE] as Boolean,
+                backBehaviour = savedState[KEY_BACK_BEHAVIOUR]
+                    ?.runCatching { BackBehaviour.valueOf(this as String) }
+                    ?.getOrNull()
+                    ?: BackBehaviour.AllowUntilRoot
             )
             val navStackItems = savedState[KEY_NAV_STACK] as? List<SavedState>
             val navStack = navStackItems?.map { item ->
@@ -118,6 +128,7 @@ public class NavController internal constructor(
     public fun saveToSavedState(): SavedState = SavedState(
         KEY_KEY to key,
         KEY_SAVEABLE to saveable,
+        KEY_BACK_BEHAVIOUR to backBehaviour.name,
         KEY_NAV_STACK to getNavStack().map { it.saveToSavedState() }
     )
 
@@ -164,7 +175,13 @@ public class NavController internal constructor(
      *
      * @return `true` if the nav stack contains an entry to back to, `false` otherwise.
      */
-    public fun canNavigateBack(): Boolean = getNavStack().size > 1
+    public fun canNavigateBack(): Boolean {
+        val backStackSize = getNavStack().size
+        return when (backBehaviour) {
+            BackBehaviour.AllowUntilRoot -> backStackSize > 1
+            BackBehaviour.AllowUntilEmpty -> backStackSize > 0
+        }
+    }
 
     // ----------- navigation methods ----------------------------------------------------------------------------------
 
@@ -278,6 +295,7 @@ public class NavController internal constructor(
      * @param transitionData Optional data to customize the transition
      * @return True if back navigation was handled, false otherwise
      */
+    @Suppress("UnnecessaryParentheses")
     internal fun back(
         to: NavDestination<*>? = null,
         result: Any? = null,
@@ -286,35 +304,35 @@ public class NavController internal constructor(
         transitionData: Any? = null,
     ): Boolean {
         val navStack = getNavStack()
-        val targetIndex =
-            if (to != null) navStack
-                .dropLast(1)
-                .indexOfLast { it.destination == to }
-                .let { if (inclusive) it - 1 else it }
-            else navStack.lastIndex - 1
-        return when {
-            targetIndex >= 0 -> {
-                navStack[targetIndex].setNavResult(result)
-                for (i in targetIndex + 1..navStack.lastIndex) {
-                    navStack[i].detachFromNavController()
-                }
-                updateNavState(
-                    transitionData = transitionData,
-                    transitionType = TransitionType.Backward,
-                    stack = navStack.subList(0, targetIndex + 1)
-                )
-                true
-            }
-            recursive ->
-                parent?.back(
-                    to = to,
-                    result = result,
-                    inclusive = inclusive,
-                    recursive = recursive,
-                    transitionData = transitionData
-                ) ?: false
-            else -> false
+        val targetStackSize = if (to == null) {
+            if (canNavigateBack()) navStack.lastIndex else -1
+        } else {
+            // search for the last occurrence of the destination in the stack, excluding the last entry
+            (0..<navStack.lastIndex)
+                .lastOrNull { navStack[it].destination == to }
+                ?.let { index -> (index + 1) - (if (inclusive) 1 else 0) }
+                ?: -1
         }
+
+        val minimalStackSize = when (backBehaviour) {
+            BackBehaviour.AllowUntilRoot -> 1
+            BackBehaviour.AllowUntilEmpty -> 0
+        }
+        val canNavigate = targetStackSize >= minimalStackSize
+
+        if (!canNavigate) {
+            return recursive && parent?.back(to, result, inclusive, recursive, transitionData) ?: false
+        }
+
+        val targetEntry = targetStackSize.takeIf { it > 0 }?.let { navStack[it - 1] }
+        targetEntry?.setNavResult(result)
+        navStack.drop(targetStackSize).forEach { it.detachFromNavController() }
+        updateNavState(
+            transitionData = transitionData,
+            transitionType = TransitionType.Backward,
+            stack = navStack.take(targetStackSize)
+        )
+        return true
     }
 
     /**
@@ -412,6 +430,26 @@ public class NavController internal constructor(
         "NavController(key=$key, current=${getCurrentNavEntry()}, parent=${parent?.key}}"
 
     // ----------- support classes -------------------------------------------------------------------------------------
+
+    /**
+     * Defines how the navigation stack treats back navigation.
+     *
+     * - [AllowUntilEmpty]: back navigation remains available while the stack has at least one
+     *   item. Once the stack is empty, [NavController.canNavigateBack] returns `false`.
+     * - [AllowUntilRoot]: back navigation is disabled as soon as the stack contains only a
+     *   single root entry. The root is kept stable and cannot be popped away.
+     */
+    public enum class BackBehaviour {
+        /**
+         * Back navigation is blocked once the stack reaches the root entry.
+         */
+        AllowUntilRoot,
+
+        /**
+         * Back navigation is enabled until the stack becomes empty.
+         */
+        AllowUntilEmpty,
+    }
 
     public enum class TransitionType {
         Forward,

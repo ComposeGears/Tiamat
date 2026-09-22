@@ -40,6 +40,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(projects.tiamat)
+            api(projects.tiamatOverlay)
             api(projects.tiamatDestinations.tiamatDestinations)
             api(libs.compose.foundation)
             api(libs.compose.ui.tooling.preview)

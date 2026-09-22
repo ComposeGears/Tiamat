@@ -12,13 +12,13 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `init # initializes with empty list`() {
+    fun `init - initializes with empty list`() {
         val storage = NavControllerStore()
         assertTrue(storage.navControllers.isEmpty())
     }
 
     @Test
-    fun `add # stores nav controller in internal list`() {
+    fun `add - stores nav controller in internal list`() {
         val storage = NavControllerStore()
         val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
@@ -27,7 +27,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `add # throws error when adding controller with duplicate key`() {
+    fun `add - throws error when adding controller with duplicate key`() {
         val storage = NavControllerStore()
         val key = "duplicate"
         val navController1 = createTestNavController(key, startDestination = TestNavDestination)
@@ -37,13 +37,13 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `get # returns null when controller with key doesn't exist`() {
+    fun `get - returns null when controller with key doesn't exist`() {
         val storage = NavControllerStore()
         assertNull(storage.get("nonexistent"))
     }
 
     @Test
-    fun `get # returns controller when key exists`() {
+    fun `get - returns controller when key exists`() {
         val storage = NavControllerStore()
         val key = "test"
         val navController = createTestNavController(key, startDestination = TestNavDestination)
@@ -52,7 +52,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `remove # removes controller from storage`() {
+    fun `remove - removes controller from storage`() {
         val storage = NavControllerStore()
         val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
@@ -62,7 +62,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `saveToSavedState # only saves controllers that are saveable`() {
+    fun `saveToSavedState - only saves controllers that are saveable`() {
         val storage = NavControllerStore()
         val saveable = createTestNavController("save", true, startDestination = TestNavDestination)
         val notSaveable = createTestNavController("no-save", false, startDestination = TestNavDestination)
@@ -76,7 +76,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `loadFromSavedState # loads controllers from saved state`() {
+    fun `loadFromSavedState - loads controllers from saved state`() {
         val storage = NavControllerStore()
         val controller1 = createTestNavController("test1", startDestination = TestNavDestination)
         val controller2 = createTestNavController("test2", startDestination = TestNavDestination)
@@ -93,7 +93,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `loadFromSavedState # attaches parent to restored controllers`() {
+    fun `loadFromSavedState - attaches parent to restored controllers`() {
         val parent = createTestNavController("parent", startDestination = TestNavDestination)
         val storage = NavControllerStore()
         val controller1 = createTestNavController("test1", startDestination = TestNavDestination)
@@ -107,7 +107,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `loadFromSavedState # clears existing controllers before loading new ones`() {
+    fun `loadFromSavedState - clears existing controllers before loading new ones`() {
         val storage = NavControllerStore()
         val existingController = createTestNavController("existing", startDestination = TestNavDestination)
         storage.add(existingController)
@@ -122,7 +122,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `loadFromSavedState # does nothing when saved state is null`() {
+    fun `loadFromSavedState - does nothing when saved state is null`() {
         val storage = NavControllerStore()
         val navController = createTestNavController("test", startDestination = TestNavDestination)
         storage.add(navController)
@@ -131,7 +131,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `clear # closes and removes all controllers`() {
+    fun `clear - closes and removes all controllers`() {
         val storage = NavControllerStore()
         val navController1 = createTestNavController("test1", startDestination = TestNavDestination)
         val navController2 = createTestNavController("test2", startDestination = TestNavDestination)
@@ -145,7 +145,7 @@ class NavControllersStorageTests {
     }
 
     @Test
-    fun `clear # clears child navController scoped viewModels`() {
+    fun `clear - clears child navController scoped viewModels`() {
         val storage = NavControllerStore()
         val childNavController = createTestNavController("child", startDestination = TestNavDestination)
         childNavController.viewModelStore.put("shared", object : ViewModel() {})

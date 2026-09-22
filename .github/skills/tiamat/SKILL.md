@@ -80,7 +80,7 @@ Code examples showcasing common patterns.
 ### Custom layouts and transitions
 
 - *[NavigationScene basics](references/guide/recipes/26-navigationscene-basics.md)*: Full layout control with `NavigationScene`.
-- *[Overlay destinations](references/guide/recipes/27-overlay-destinations.md)*: Dialogs and bottom sheets rendered in the nav stack.
+- *[Overlay destinations](references/guide/recipes/27-overlay-destinations.md)*: Host dialogs, bottom sheets, and nested modal flows in a dedicated local overlay stack.
 - *[Two-pane layout](references/guide/recipes/28-two-pane-layout.md)*: List-detail / two-pane adaptive layout.
 - *[Adaptive list-detail](references/guide/recipes/29-adaptive-list-detail.md)*: Responsive layout that switches between single-pane and two-pane based on window size.
 - *[Gesture transitions](references/guide/recipes/30-gesture-transitions.md)*: Gesture-driven / seekable transitions with `TransitionController`.
@@ -93,4 +93,4 @@ Code examples showcasing common patterns.
 ### Extensions
 
 - *[Marker extensions](references/guide/recipes/32-marker-extensions.md)*: Attach metadata to destinations with `NavExtension`.
-- *[Content extensions](references/guide/recipes/33-content-extensions.md)*: Inject composable UI overlays/underlays with `ContentExtension`.
+- *[Content extensions](references/guide/recipes/33-content-extensions.md)*: Wrap destination content with `ContentExtension` and call `entryContent()` to render the screen.

@@ -45,25 +45,18 @@ internal fun <Args : Any> NavEntryContent(
                     LocalViewModelStoreOwner provides entryViewModelStoreOwner
                 ) {
                     val scope = remember(entry) { NavDestinationScope(entry) }
-                    // entry content
+                    val contentWrapper = remember(destination.extensions) {
+                        destination.extensions.filterIsInstance<ContentExtension<Args>>().combine()
+                    }
+
                     with(scope) {
-                        // extensions before-content
-                        destination.extensions.onEach {
-                            if (it is ContentExtension && it.getType() == ContentExtension.Type.Underlay) with(it) {
-                                Content()
-                            }
-                        }
-                        // destination content
-                        with(destination) {
-                            Content()
-                        }
-                        // extensions after-content
-                        destination.extensions.onEach {
-                            if (it is ContentExtension && it.getType() == ContentExtension.Type.Overlay) with(it) {
+                        contentWrapper {
+                            with(destination) {
                                 Content()
                             }
                         }
                     }
+
                     // save state when `this entry`/`parent entry` stops being displayed
                     DisposableEffect(entry) {
                         entry.attachToUI()

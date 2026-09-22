@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.composegears.tiamat.navigation.NavController
+import com.composegears.tiamat.navigation.NavController.BackBehaviour
 import com.composegears.tiamat.navigation.NavDestination
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
 import com.composegears.tiamat.navigation.NavEntry
@@ -22,6 +23,7 @@ internal val LocalNavController = staticCompositionLocalOf<NavController?> { nul
  * @param key Optional identifier for this NavController
  * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
  * @param savedState Optional saved state to restore from
+ * @param backBehaviour Defines when back navigation remains available
  * @param configuration Additional configuration actions to apply to the NavController
  * @return A remembered NavController instance
  */
@@ -30,12 +32,14 @@ public fun rememberNavController(
     key: String? = null,
     saveable: Boolean? = null,
     savedState: SavedState? = null,
+    backBehaviour: BackBehaviour = BackBehaviour.AllowUntilRoot,
     configuration: NavController.() -> Unit = {}
 ): NavController = rememberNavController(
     key = key,
     saveable = saveable,
     startEntry = null,
     savedState = savedState,
+    backBehaviour = backBehaviour,
     configuration = configuration,
 )
 
@@ -46,6 +50,7 @@ public fun rememberNavController(
  * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
  * @param savedState Optional saved state to restore from
  * @param startDestination The initial destination to navigate to
+ * @param backBehaviour Defines when back navigation remains available
  * @param configuration Additional configuration actions to apply to the NavController
  * @return A remembered NavController instance
  */
@@ -55,12 +60,14 @@ public fun rememberNavController(
     saveable: Boolean? = null,
     savedState: SavedState? = null,
     startDestination: NavDestination<*>? = null,
+    backBehaviour: BackBehaviour = BackBehaviour.AllowUntilRoot,
     configuration: NavController.() -> Unit = {}
 ): NavController = rememberNavController(
     key = key,
     saveable = saveable,
     startEntry = startDestination?.toNavEntry(),
     savedState = savedState,
+    backBehaviour = backBehaviour,
     configuration = configuration,
 )
 
@@ -71,6 +78,7 @@ public fun rememberNavController(
  * @param saveable Whether the NavController's state should be saved and restored (defaults to the parent's value or true)
  * @param savedState Optional saved state to restore from
  * @param startEntry The initial entry to navigate to
+ * @param backBehaviour Defines when back navigation remains available
  * @param configuration Additional configuration actions to apply to the NavController
  * @return A remembered NavController instance
  */
@@ -81,6 +89,7 @@ public fun rememberNavController(
     saveable: Boolean? = null,
     savedState: SavedState? = null,
     startEntry: NavEntry<*>? = null,
+    backBehaviour: BackBehaviour = BackBehaviour.AllowUntilRoot,
     configuration: NavController.() -> Unit = {}
 ): NavController {
     val parent = LocalNavController.current
@@ -90,7 +99,7 @@ public fun rememberNavController(
 
     fun createNavController() =
         if (savedState != null) NavController.restoreFromSavedState(parent, savedState)
-        else NavController.create(key, isSaveable, parent, startEntry, configuration)
+        else NavController.create(key, isSaveable, parent, startEntry, backBehaviour, configuration)
 
     val navController =
         if (isSaveable && navControllersStorage == null) rememberSaveable(
@@ -165,7 +174,7 @@ public fun NavController.navStackAsState(): State<List<NavEntry<*>>> {
 @Composable
 public fun NavController.canNavigateBackAsState(): State<Boolean> {
     val navState by navStateFlow.collectAsState()
-    return remember { derivedStateOf { navState.stack.size > 1 } }
+    return remember(navState) { derivedStateOf { canNavigateBack() } }
 }
 
 /**
