@@ -268,6 +268,25 @@ class NavControllerBackActionTests {
     }
 
     @Test
+    fun `back - recursively delegates when local is empty`() {
+        val parent = controller(
+            NavController.BackBehaviour.AllowUntilRoot,
+            Destination1,
+            Destination2
+        )
+        val child = NavController.create(
+            parent = parent,
+            startDestination = Destination3,
+            backBehaviour = NavController.BackBehaviour.AllowUntilEmpty
+        )
+
+        assertTrue(child.back())
+        assertTrue(child.back(to = Destination1, recursive = true))
+        assertDestinations(parent, Destination1)
+        assertDestinations(child)
+    }
+
+    @Test
     fun `back - does not delegate when recursive is false`() {
         val parent = controller(
             NavController.BackBehaviour.AllowUntilRoot,

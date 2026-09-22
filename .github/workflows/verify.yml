@@ -89,6 +89,11 @@ jobs:
         with:
           xcode-version: 26.1.1
 
+      - name: Install iOS simulator runtime
+        run: |
+          sudo xcodebuild -runFirstLaunch
+          xcodebuild -downloadPlatform iOS
+
       - name: Build iOS App
         run: |
           xcodebuild \
@@ -97,5 +102,4 @@ jobs:
             -configuration Debug \
             -sdk iphonesimulator \
             -arch arm64 \
-            ASSETCATALOG_COMPILER_THINNING=none \
             build
