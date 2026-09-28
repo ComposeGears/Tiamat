@@ -2,10 +2,10 @@ package com.composegears.tiamat.navigation
 
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import com.composegears.tiamat.ExcludeFromTests
 import com.composegears.tiamat.TiamatExperimentalApi
 import com.composegears.tiamat.compose.DestinationLoader
 import com.composegears.tiamat.navigation.NavDestination.Companion.toNavEntry
+import com.composegears.tiamat.utils.ExcludeFromTests
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

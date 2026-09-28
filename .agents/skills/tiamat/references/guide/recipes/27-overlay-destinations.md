@@ -1,16 +1,6 @@
 # Overlay Destinations
 
-Use the `tiamat-overlay` module for a dedicated local overlay stack.
-
-## Setup
-
-```kotlin
-sourceSets {
-    commonMain.dependencies {
-        implementation("io.github.composegears:tiamat-overlay:$version")
-    }
-}
-```
+Use `OverlaysExtension` for a dedicated local overlay stack.
 
 ## How it works
 
@@ -19,7 +9,7 @@ Attach `OverlaysExtension` to a host destination. It creates a local `NavControl
 ```kotlin
 import androidx.compose.material3.BasicAlertDialog
 import com.composegears.tiamat.compose.*
-import com.composegears.tiamat.overlay.OverlaysExtension
+import com.composegears.tiamat.utils.extensions.OverlaysExtension
 
 val HostScreen by navDestination(
     OverlaysExtension(destinations = arrayOf(EditProfileDialog))
@@ -53,7 +43,6 @@ val EditProfileDialog by navDestination {
 
 ### Common pattern
 
-- Add the `tiamat-overlay` dependency.
 - Attach `OverlaysExtension(destinations = arrayOf(...))` to the host destination.
 - Access the local overlay controller with `ext<OverlaysExtension>()?.overlayNavController()`.
 - Open overlay destinations via `overlayNavController.navigate(...)`.

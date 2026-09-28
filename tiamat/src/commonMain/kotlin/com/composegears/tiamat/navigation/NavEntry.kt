@@ -5,8 +5,8 @@ import androidx.compose.runtime.retain.ManagedRetainedValuesStore
 import androidx.lifecycle.*
 import androidx.savedstate.serialization.decodeFromSavedState
 import androidx.savedstate.serialization.encodeToSavedState
-import com.composegears.tiamat.ExcludeFromTests
 import com.composegears.tiamat.compose.DestinationLoader
+import com.composegears.tiamat.utils.ExcludeFromTests
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer

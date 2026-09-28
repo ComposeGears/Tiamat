@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTestApi::class)
 
-package com.composegears.tiamat.overlay
+package com.composegears.tiamat.utils.extensions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button

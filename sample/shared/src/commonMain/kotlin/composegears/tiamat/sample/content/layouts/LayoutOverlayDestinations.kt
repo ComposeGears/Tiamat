@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
-import com.composegears.tiamat.overlay.OverlaysExtension
+import com.composegears.tiamat.utils.extensions.OverlaysExtension
 import composegears.tiamat.sample.icons.Close
 import composegears.tiamat.sample.icons.Icons
 import composegears.tiamat.sample.icons.KeyboardArrowLeft

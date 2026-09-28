@@ -1,4 +1,4 @@
-package com.composegears.tiamat.overlay
+package com.composegears.tiamat.utils.extensions
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable

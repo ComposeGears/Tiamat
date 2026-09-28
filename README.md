@@ -20,11 +20,10 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 | Module                       |                                                       Version                                                        |
 |------------------------------|:--------------------------------------------------------------------------------------------------------------------:|
 | tiamat                       |                                  [![Tiamat][badge:maven-tiamat]][url:maven-tiamat]                                   |
-| tiamat-overlay               |                              [![Tiamat overlay][badge:maven-tiamat-overlay]][url:maven-tiamat-overlay]                  |
 | tiamat-destinations          |               [![Tiamat destinations][badge:maven-tiamat-destinations]][url:maven-tiamat-destinations]               |
 | tiamat-destinations (plugin) | [![Tiamat destinations][badge:maven-tiamat-destinations-gradle-plugin]][url:maven-tiamat-destinations-gradle-plugin] |
 
-[Tiamat Overlay README](doc/tiamat-overlay.md)
+[Tiamat Utils README](doc/utils.md)
 
 [Tiamat Destinations README](doc/tiamat-destinations.md)
 
@@ -33,15 +32,6 @@ Add the dependency below to your **module**'s `build.gradle.kts` file:
 sourceSets {
     commonMain.dependencies {
         implementation("io.github.composegears:tiamat:$version")
-    }
-}
-```
-
-#### Tiamat overlay
-```kotlin
-sourceSets {
-    commonMain.dependencies {
-        implementation("io.github.composegears:tiamat-overlay:$version")
     }
 }
 ```
@@ -554,7 +544,6 @@ limitations under the License.
 [badge:wasm-sample]: https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000?logo=webassembly&style=for-the-badge&color=black&logoColor=white
 
 [badge:maven-tiamat]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
-[badge:maven-tiamat-overlay]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-overlay.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
 [badge:maven-tiamat-destinations-gradle-plugin]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat-destinations-gradle-plugin.svg?style=for-the-badge&logo=gradle&label=&labelColor=black&color=white
 
@@ -567,6 +556,5 @@ limitations under the License.
 [url:wasm-sample]: https://composegears.github.io/Tiamat/
 
 [url:maven-tiamat]: https://central.sonatype.com/artifact/io.github.composegears/tiamat
-[url:maven-tiamat-overlay]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-overlay
 [url:maven-tiamat-destinations]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations
 [url:maven-tiamat-destinations-gradle-plugin]: https://central.sonatype.com/artifact/io.github.composegears/tiamat-destinations-gradle-plugin

@@ -52,7 +52,6 @@ allprojects {
 tasks.register("checkAbi") {
     description = "Check Kotlin ABIs resources"
     dependsOn(":tiamat:checkLegacyAbi")
-    dependsOn(":tiamat-overlay:checkLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":checkLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":checkLegacyAbi"))
 }
@@ -61,7 +60,6 @@ tasks.register("checkAbi") {
 tasks.register("updateAbi") {
     description = "Update Kotlin ABIs resources"
     dependsOn(":tiamat:updateLegacyAbi")
-    dependsOn(":tiamat-overlay:updateLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
 }
@@ -75,7 +73,6 @@ tasks.register("runStaticAnalysis") {
         }
     }
     dependsOn(":tiamat:lint")
-    dependsOn(":tiamat-overlay:lint")
 }
 
 // root `clean` task not include subprojects by default, so add them directly
@@ -111,14 +108,12 @@ rootProject.tasks.register("createLocalM2") {
 rootProject.tasks.register("tiamatCleanJvmTest") {
     description = "Clean JVM test results"
     dependsOn(":tiamat:cleanJvmTest")
-    dependsOn(":tiamat-overlay:cleanJvmTest")
     dependsOn("tiamat-destinations:tiamat-destinations:cleanJvmTest")
 }
 
 rootProject.tasks.register("tiamatJvmTests") {
     description = "Run JVM tests"
     dependsOn(":tiamat:jvmTest")
-    dependsOn(":tiamat-overlay:jvmTest")
     dependsOn("tiamat-destinations:tiamat-destinations:jvmTest")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))
 }

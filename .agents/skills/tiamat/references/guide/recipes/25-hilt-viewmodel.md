@@ -50,5 +50,5 @@ val MyScreen by navDestination {
 ### Notes
 
 - `hiltViewModel()` is Android-only — for multiplatform projects, use it in `androidMain` source sets or Android-specific modules.
-- For multiplatform DI, see the [Koin ViewModel](koin-viewmodel.md) recipe instead.
+- For multiplatform DI, see the [Koin ViewModel](24-koin-viewmodel.md) recipe instead.
 

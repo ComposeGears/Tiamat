@@ -4,11 +4,6 @@ public abstract interface annotation class com/composegears/tiamat/TiamatDelicat
 public abstract interface annotation class com/composegears/tiamat/TiamatExperimentalApi : java/lang/annotation/Annotation {
 }
 
-public final class com/composegears/tiamat/UtilsKt {
-	public static final fun toHumanReadableString (Ljava/util/Map;Ljava/lang/String;I)Ljava/lang/String;
-	public static synthetic fun toHumanReadableString$default (Ljava/util/Map;Ljava/lang/String;IILjava/lang/Object;)Ljava/lang/String;
-}
-
 public final class com/composegears/tiamat/compose/ComposableAddonsKt {
 	public static final fun produceRetainedState (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
 	public static final fun produceRetainedState (Ljava/lang/Object;[Ljava/lang/Object;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
@@ -309,5 +304,20 @@ public abstract interface class com/composegears/tiamat/navigation/RouteElement 
 
 public final class com/composegears/tiamat/navigation/SavedStateKt {
 	public static final fun SavedState ([Lkotlin/Pair;)Ljava/util/Map;
+}
+
+public final class com/composegears/tiamat/utils/UtilsKt {
+	public static final fun toHumanReadableString (Ljava/util/Map;Ljava/lang/String;I)Ljava/lang/String;
+	public static synthetic fun toHumanReadableString$default (Ljava/util/Map;Ljava/lang/String;IILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class com/composegears/tiamat/utils/extensions/OverlaysExtension : com/composegears/tiamat/compose/ContentExtension {
+	public static final field $stable I
+	public fun <init> (Lcom/composegears/tiamat/compose/DestinationLoader;ZLkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lcom/composegears/tiamat/compose/DestinationLoader;ZLkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> ([Lcom/composegears/tiamat/navigation/NavDestination;ZLkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> ([Lcom/composegears/tiamat/navigation/NavDestination;ZLkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun Content (Lcom/composegears/tiamat/compose/NavDestinationScope;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+	public final fun overlayNavController (Landroidx/compose/runtime/Composer;I)Lcom/composegears/tiamat/navigation/NavController;
 }
 
