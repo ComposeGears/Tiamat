@@ -52,6 +52,7 @@ allprojects {
 tasks.register("checkAbi") {
     description = "Check Kotlin ABIs resources"
     dependsOn(":tiamat:checkLegacyAbi")
+    dependsOn(":tiamat-destinations:tiamat-destinations:checkLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":checkLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":checkLegacyAbi"))
 }
@@ -60,6 +61,7 @@ tasks.register("checkAbi") {
 tasks.register("updateAbi") {
     description = "Update Kotlin ABIs resources"
     dependsOn(":tiamat:updateLegacyAbi")
+    dependsOn(":tiamat-destinations:tiamat-destinations:updateLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
 }
