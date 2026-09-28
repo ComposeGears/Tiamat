@@ -4,7 +4,9 @@
 !src/**/build/
 local.properties
 .idea
+.tmp
 .fleet
+.claude
 .DS_Store
 captures
 .externalNativeBuild
@@ -12,6 +14,7 @@ captures
 .kotlin
 publish.bat
 kotlin-js-store/
+.mcp.json
 
 # Xcode
 *.xcworkspace

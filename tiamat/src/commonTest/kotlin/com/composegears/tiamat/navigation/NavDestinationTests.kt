@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 class NavDestinationTests {
 
     @Test
-    fun `companion # toNavEntry # convert to NavEntry`() {
+    fun `companion - toNavEntry - convert to NavEntry`() {
         val intNavEntry by navDestination<Int> {}
         val intEntry = intNavEntry.toNavEntry(
             navArgs = 2,

@@ -49,7 +49,7 @@ class RememberSaveableTests {
     }
 
     @Test
-    fun `RememberSaveable # persist data during navigation`() = runComposeUiTest {
+    fun `RememberSaveable - persist data during navigation`() = runComposeUiTest {
         setContent {
             val navController = rememberNavController(startDestination = Screen1)
             Navigation(navController = navController, destinations = arrayOf(Screen1, Screen2))

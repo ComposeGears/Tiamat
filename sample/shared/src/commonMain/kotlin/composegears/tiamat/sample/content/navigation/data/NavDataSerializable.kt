@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.NavData
 import com.composegears.tiamat.navigation.SavedState
-import com.composegears.tiamat.toHumanReadableString
+import com.composegears.tiamat.utils.toHumanReadableString
 import composegears.tiamat.sample.ui.*
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable

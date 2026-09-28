@@ -89,5 +89,17 @@ jobs:
         with:
           xcode-version: 26.1.1
 
+      - name: Install iOS simulator runtime
+        run: |
+          sudo xcodebuild -runFirstLaunch
+          xcodebuild -downloadPlatform iOS
+
       - name: Build iOS App
-        run: xcodebuild -project sample/app-ios/Tiamat.xcodeproj -scheme "App iOs" -configuration Debug -sdk iphonesimulator -arch arm64 build
+        run: |
+          xcodebuild \
+            -project sample/app-ios/Tiamat.xcodeproj \
+            -scheme "App iOs" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -arch arm64 \
+            build

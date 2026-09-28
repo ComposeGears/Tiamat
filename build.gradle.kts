@@ -21,7 +21,7 @@ detekt {
     parallel = true
 }
 
-// not include `includeBuild` (tiamat-dest gradle & kotlin plugins)
+// not include `includeBuild` (tiamat-dest Gradle & kotlin plugins)
 // as they are not projects  (they are count as included-projects)
 allprojects {
     apply<DetektPlugin>()
@@ -50,20 +50,25 @@ allprojects {
 
 // check ABI
 tasks.register("checkAbi") {
+    description = "Check Kotlin ABIs resources"
     dependsOn(":tiamat:checkLegacyAbi")
+    dependsOn(":tiamat-destinations:tiamat-destinations:checkLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":checkLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":checkLegacyAbi"))
 }
 
 // update ABI
 tasks.register("updateAbi") {
+    description = "Update Kotlin ABIs resources"
     dependsOn(":tiamat:updateLegacyAbi")
+    dependsOn(":tiamat-destinations:tiamat-destinations:updateLegacyAbi")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":updateLegacyAbi"))
     dependsOn(gradle.includedBuild("tiamat-destinations-gradle-plugin").task(":updateLegacyAbi"))
 }
 
 // run static analysis on all projects
 tasks.register("runStaticAnalysis") {
+    description = "Run Kotlin Static Analysis"
     allprojects {
         tasks.matching { it.name == "detekt" }.forEach { detektTask ->
             dependsOn(detektTask)
@@ -79,6 +84,7 @@ rootProject.tasks["clean"].apply {
 }
 
 rootProject.tasks.register("createLocalM2") {
+    description = "Create local Maven repository"
     val publishTasks = allprojects
         .filter { it.extensions.findByType<M2PExtension>() != null }
         .map { it.tasks["publish"] }
@@ -102,11 +108,13 @@ rootProject.tasks.register("createLocalM2") {
 }
 
 rootProject.tasks.register("tiamatCleanJvmTest") {
+    description = "Clean JVM test results"
     dependsOn(":tiamat:cleanJvmTest")
     dependsOn("tiamat-destinations:tiamat-destinations:cleanJvmTest")
 }
 
 rootProject.tasks.register("tiamatJvmTests") {
+    description = "Run JVM tests"
     dependsOn(":tiamat:jvmTest")
     dependsOn("tiamat-destinations:tiamat-destinations:jvmTest")
     dependsOn(gradle.includedBuild("tiamat-destinations-compiler").task(":test"))

@@ -70,7 +70,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # plugin handles multiple destination types`() {
+    fun `compiler - plugin handles multiple destination types`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -132,7 +132,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # plugin handles nested objects`() {
+    fun `compiler - plugin handles nested objects`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -190,7 +190,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # plugin failed with incorrect annotation use`() {
+    fun `compiler - plugin failed with incorrect annotation use`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -246,7 +246,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # error when InstallIn on non-object class`() {
+    fun `compiler - error when InstallIn on non-object class`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -282,7 +282,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # warning on duplicate InstallIn with same graph`() {
+    fun `compiler - warning on duplicate InstallIn with same graph`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test
@@ -331,7 +331,7 @@ class TiamatDestinationsCompilerPluginTest {
 
     @Test
     @OptIn(ExperimentalCompilerApi::class)
-    fun `compiler # error message for non-object class includes fix suggestion`() {
+    fun `compiler - error message for non-object class includes fix suggestion`() {
         val source = SourceFile.kotlin(
             "Test.kt", """
             package com.test

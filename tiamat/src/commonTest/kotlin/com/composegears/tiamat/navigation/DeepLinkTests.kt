@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 class DeepLinkTests {
 
     @Test
-    fun `bind # zero params`() {
+    fun `bind - zero params`() {
         val dl = DeepLink {
             bind("home") { destination("Home") }
         }
@@ -20,7 +20,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # single anonymous param`() {
+    fun `bind - single anonymous param`() {
         val dl = DeepLink {
             bind("product/{.*}") { params -> destination("Product[${params[0]}]") }
         }
@@ -30,7 +30,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # single named param`() {
+    fun `bind - single named param`() {
         val dl = DeepLink {
             bind("product/{id}") { params -> destination("Product[${params[0]}]") }
         }
@@ -40,7 +40,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # multi param`() {
+    fun `bind - multi param`() {
         val dl = DeepLink {
             bind("product/{pid}/feedback/{fid}") { params ->
                 destination("Product[${params[0]}]")
@@ -56,7 +56,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # multiple patterns same builder`() {
+    fun `bind - multiple patterns same builder`() {
         val dl = DeepLink {
             bind("product/{id}", "product?id={id}") { params ->
                 destination("Product[${params[0]}]")
@@ -70,7 +70,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # query style param`() {
+    fun `bind - query style param`() {
         val dl = DeepLink {
             bind("product?id={.*}") { params -> destination("Product[${params[0]}]") }
         }
@@ -79,7 +79,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `parse # first registered match wins`() {
+    fun `parse - first registered match wins`() {
         val dl = DeepLink {
             bind("product/{.*}") { params -> destination("First[${params[0]}]") }
             bind("product/{.*}x") { params -> destination("Second[${params[0]}]") }
@@ -89,7 +89,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `parse # chained segments`() {
+    fun `parse - chained segments`() {
         val dl = DeepLink {
             bind("shop/product/{id}/feedback/{fid}") { params ->
                 destination("Shop")
@@ -107,7 +107,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `parse # no scheme`() {
+    fun `parse - no scheme`() {
         val dl = DeepLink {
             bind("home") { destination("Home") }
         }
@@ -117,7 +117,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `parse # unknown path throws`() {
+    fun `parse - unknown path throws`() {
         val dl = DeepLink {
             bind("home") { destination("Home") }
         }
@@ -125,7 +125,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `parse # empty uri throws`() {
+    fun `parse - empty uri throws`() {
         val dl = DeepLink {
             bind("home") { destination("Home") }
         }
@@ -134,7 +134,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `build # duplicate pattern throws`() {
+    fun `build - duplicate pattern throws`() {
         assertFailsWith<IllegalArgumentException> {
             DeepLink {
                 bind("product/{.*}") { _ -> destination("A") }
@@ -144,7 +144,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `build # duplicate across bind calls throws`() {
+    fun `build - duplicate across bind calls throws`() {
         assertFailsWith<IllegalArgumentException> {
             DeepLink {
                 bind("home", "product/{.*}") { _ -> destination("A") }
@@ -154,7 +154,7 @@ class DeepLinkTests {
     }
 
     @Test
-    fun `bind # empty params list for zero-placeholder pattern`() {
+    fun `bind - empty params list for zero-placeholder pattern`() {
         val dl = DeepLink {
             bind("shop") { params ->
                 assertEquals(0, params.size)

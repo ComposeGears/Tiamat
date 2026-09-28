@@ -7,13 +7,13 @@ import kotlin.test.assertTrue
 class RouteTests {
 
     @Test
-    fun `init # empty list`() {
+    fun `init - empty list`() {
         val route = Route(emptyList())
         assertTrue(route.elements.isEmpty())
     }
 
     @Test
-    fun `builder # with elements`() {
+    fun `builder - with elements`() {
         val route = Route {
             destination("home")
         }
@@ -23,7 +23,7 @@ class RouteTests {
     }
 
     @Test
-    fun `builder # with multiple elements`() {
+    fun `builder - with multiple elements`() {
         val route = Route {
             navController("main")
             destination("home")
@@ -44,7 +44,7 @@ class RouteTests {
     }
 
     @Test
-    fun `element # add element`() {
+    fun `element - add element`() {
         val route = Route(emptyList())
         val destination = Route.Destination("profile")
         route.element(destination)
@@ -54,7 +54,7 @@ class RouteTests {
     }
 
     @Test
-    fun `destination # add destination`() {
+    fun `destination - add destination`() {
         val route = Route(emptyList())
         route.destination("settings")
 
@@ -64,7 +64,7 @@ class RouteTests {
     }
 
     @Test
-    fun `navController # add navController`() {
+    fun `navController - add navController`() {
         val route = Route(emptyList())
         route.navController("nc1")
         route.navController("nc2", true)

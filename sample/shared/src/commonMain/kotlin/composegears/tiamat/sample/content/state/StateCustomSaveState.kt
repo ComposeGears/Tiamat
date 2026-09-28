@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composegears.tiamat.compose.*
 import com.composegears.tiamat.navigation.SavedState
-import com.composegears.tiamat.toHumanReadableString
+import com.composegears.tiamat.utils.toHumanReadableString
 import composegears.tiamat.sample.icons.Icons
 import composegears.tiamat.sample.icons.KeyboardArrowLeft
 import composegears.tiamat.sample.icons.KeyboardArrowRight

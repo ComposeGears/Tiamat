@@ -1,4 +1,4 @@
-package com.composegears.tiamat
+package com.composegears.tiamat.utils
 
 import androidx.savedstate.read
 import com.composegears.tiamat.navigation.SavedState

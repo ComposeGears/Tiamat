@@ -12,11 +12,13 @@ fun createTestNavController(
     saveable: Boolean = true,
     parent: NavController? = null,
     startDestination: NavDestination<*>? = null,
+    backBehaviour: NavController.BackBehaviour = NavController.BackBehaviour.AllowUntilRoot,
 ) = NavController.create(
     key = key,
     saveable = saveable,
     parent = parent,
     startEntry = startDestination?.toNavEntry(),
+    backBehaviour = backBehaviour,
     config = {}
 )
 
