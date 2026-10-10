@@ -2,17 +2,21 @@ package com.composegears.tiamat.compose
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
-import androidx.compose.runtime.retain.LocalRetainedValuesStore
+import androidx.compose.runtime.retain.LocalRetainedValuesStoreProvider
 import androidx.compose.runtime.saveable.LocalSaveableStateRegistry
 import androidx.compose.runtime.saveable.SaveableStateRegistry
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.savedstate.SavedState
+import androidx.savedstate.SavedStateRegistry
+import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
+import androidx.savedstate.read
+import androidx.savedstate.savedState
 import com.composegears.tiamat.navigation.NavEntry
 
 /**
@@ -21,55 +25,36 @@ import com.composegears.tiamat.navigation.NavEntry
 internal val LocalNavEntry = staticCompositionLocalOf<NavEntry<*>?> { null }
 
 @Composable
-@Suppress("CognitiveComplexMethod", "UNCHECKED_CAST")
+@Suppress("UNCHECKED_CAST")
 internal fun <Args : Any> NavEntryContent(
     entry: NavEntry<Args>
 ) {
     val destination = entry.destination
     if (destination is ComposeNavDestination<Args>) Box {
-        val entryLifecycleOwner = rememberEntryContentLifecycleOwner(entry)
-        val entrySaveableStateRegistry = rememberEntrySaveableStateRegistry(entry)
-        // Lifecycle, RetainedStore and SaveableStateRegistry had no dependencies
-        CompositionLocalProvider(
-            LocalNavEntry provides entry,
-            LocalLifecycleOwner provides entryLifecycleOwner,
-            LocalRetainedValuesStore provides entry.retainedValuesStore,
-            LocalSaveableStateRegistry provides entrySaveableStateRegistry,
-        ) {
-            // depends on LocalLifecycleOwner
-            // provides LocalSaveableStateRegistry && LocalSavedStateRegistryOwner bound to entry
-            rememberSaveableStateHolder().SaveableStateProvider(entry.uuid) {
-                // depends on LocalSavedStateRegistryOwner && Lifecycle
-                val entryViewModelStoreOwner = rememberEntryContentViewModelStoreOwner(entry)
-                CompositionLocalProvider(
-                    LocalViewModelStoreOwner provides entryViewModelStoreOwner
-                ) {
-                    val scope = remember(entry) { NavDestinationScope(entry) }
-                    val contentWrapper = remember(destination.extensions) {
-                        destination.extensions.filterIsInstance<ContentExtension<Args>>().combine()
-                    }
-
-                    with(scope) {
-                        contentWrapper {
-                            with(destination) {
-                                Content()
-                            }
-                        }
-                    }
-
-                    // save state when `this entry`/`parent entry` stops being displayed
-                    DisposableEffect(entry) {
-                        entry.attachToUI()
-                        entry.setSavedStateSaver(entrySaveableStateRegistry::performSave)
-                        // save state handle
-                        onDispose {
-                            entry.setSavedStateSaver(null)
-                            entryLifecycleOwner.close()
-                            if (entry.isAttachedToNavController) entry.savedState =
-                                entrySaveableStateRegistry.performSave()
-                            entry.detachFromUI()
-                        }
-                    }
+        val host = rememberNavEntryHost(entry)
+        // `LocalRetainedValuesStoreProvider` notifies the store about content enter/exit composition,
+        // so values exited while content is displayed (e.g. retain key change) are retired immediately
+        // and values exited along with the content (e.g. entry goes to backstack) are retained
+        LocalRetainedValuesStoreProvider(entry.retainedValuesStore) {
+            CompositionLocalProvider(
+                LocalNavEntry provides entry,
+                LocalLifecycleOwner provides host,
+                LocalSaveableStateRegistry provides host,
+                LocalSavedStateRegistryOwner provides host,
+                LocalViewModelStoreOwner provides host,
+            ) {
+                EntryDestinationContent(entry, destination)
+            }
+            // save state when `this entry`/`parent entry` stops being displayed
+            // note: must be declared after the content, so it is disposed before the content
+            DisposableEffect(entry) {
+                entry.attachToUI()
+                entry.setSavedStateSaver(host::performSave)
+                onDispose {
+                    entry.setSavedStateSaver(null)
+                    host.close()
+                    if (entry.isAttachedToNavController) entry.savedState = host.performSave()
+                    entry.detachFromUI()
                 }
             }
         }
@@ -77,91 +62,109 @@ internal fun <Args : Any> NavEntryContent(
 }
 
 @Composable
-@Suppress("UNCHECKED_CAST")
-private fun rememberEntrySaveableStateRegistry(
-    entry: NavEntry<*>
-): SaveableStateRegistry {
-    val parentRegistry = LocalSaveableStateRegistry.current
+private fun <Args : Any> EntryDestinationContent(
+    entry: NavEntry<Args>,
+    destination: ComposeNavDestination<Args>,
+) {
+    val scope = remember(entry) { NavDestinationScope(entry) }
+    val contentWrapper = remember(destination.extensions) {
+        destination.extensions.filterIsInstance<ContentExtension<Args>>().combine()
+    }
+    with(scope) {
+        contentWrapper {
+            with(destination) {
+                Content()
+            }
+        }
+    }
+}
+
+@Composable
+private fun rememberNavEntryHost(entry: NavEntry<*>): NavEntryHost {
+    val parentLifecycle = LocalLifecycleOwner.current.lifecycle
+    val parentSaveableStateRegistry = LocalSaveableStateRegistry.current
     return remember(entry) {
-        SaveableStateRegistry(
-            restoredValues = entry.savedState as? Map<String, List<Any?>>?,
-            canBeSaved = { parentRegistry?.canBeSaved(it) ?: true }
+        NavEntryHost(
+            entry = entry,
+            parentLifecycle = parentLifecycle,
+            parentSaveableStateRegistry = parentSaveableStateRegistry,
         )
     }
 }
 
-@Composable
-private fun rememberEntryContentLifecycleOwner(
-    entry: NavEntry<*>
-): EntryContentLifecycleOwner {
-    val parentLifecycle = LocalLifecycleOwner.current
-    return remember(entry) {
-        EntryContentLifecycleOwner(parentLifecycle.lifecycle, entry.lifecycle)
+/**
+ * Hosts the entry content: provides entry bound lifecycle, saveable state, saved state registry and view models.
+ *
+ * - lifecycle - the min state of parent and entry lifecycles
+ * - saveable state - restored from & saved to [NavEntry.savedState], also holds [savedStateRegistry] state
+ * - view models - stored in [NavEntry.viewModelStore], `SavedStateHandle` is supported
+ */
+@Suppress("UNCHECKED_CAST")
+private class NavEntryHost(
+    private val entry: NavEntry<*>,
+    private val parentLifecycle: Lifecycle,
+    parentSaveableStateRegistry: SaveableStateRegistry?,
+) : LifecycleOwner,
+    SavedStateRegistryOwner,
+    ViewModelStoreOwner,
+    HasDefaultViewModelProviderFactory,
+    SaveableStateRegistry by SaveableStateRegistry(
+        restoredValues = entry.savedState as? Map<String, List<Any?>>?,
+        canBeSaved = { parentSaveableStateRegistry?.canBeSaved(it) ?: true }
+    ) {
+
+    private companion object {
+        const val SAVED_STATE_REGISTRY_KEY = "tiamat:savedStateRegistry"
     }
-}
 
-@Composable
-private fun rememberEntryContentViewModelStoreOwner(
-    entry: NavEntry<*>,
-): ViewModelStoreOwner {
-    val savedStateRegistryOwner = LocalSavedStateRegistryOwner.current
-    return remember(entry) {
-        object :
-            ViewModelStoreOwner,
-            SavedStateRegistryOwner by savedStateRegistryOwner,
-            HasDefaultViewModelProviderFactory {
-            override val viewModelStore: ViewModelStore
-                get() = entry.viewModelStore
-
-            override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-                get() = SavedStateViewModelFactory()
-
-            override val defaultViewModelCreationExtras: CreationExtras
-                get() = MutableCreationExtras().also {
-                    it[SAVED_STATE_REGISTRY_OWNER_KEY] = this
-                    it[VIEW_MODEL_STORE_OWNER_KEY] = this
-                }
-
-            init {
-                require(this.lifecycle.currentState == Lifecycle.State.INITIALIZED) {
-                    "The Lifecycle state is already beyond INITIALIZED. The " +
-                        "rememberEntryContentViewModelStoreOwner requires adding the " +
-                        "SavedStateNavEntryDecorator to ensure support for " +
-                        "SavedStateHandles."
-                }
-                enableSavedStateHandles()
-            }
-        }
-    }
-}
-
-private class EntryContentLifecycleOwner(
-    private val parentLifecycle: Lifecycle?,
-    private val entryLifecycle: Lifecycle,
-) : LifecycleOwner {
     private val lifecycleRegistry = LifecycleRegistry(this)
-    private val lifecycleStateObserver = LifecycleEventObserver { _, _ -> updateState() }
+    private val lifecycleStateObserver = LifecycleEventObserver { _, _ -> updateLifecycleState() }
+    private val savedStateRegistryController = SavedStateRegistryController.create(this)
 
-    override val lifecycle: Lifecycle = lifecycleRegistry
+    override val lifecycle: Lifecycle
+        get() = lifecycleRegistry
+
+    override val savedStateRegistry: SavedStateRegistry
+        get() = savedStateRegistryController.savedStateRegistry
+
+    override val viewModelStore: ViewModelStore
+        get() = entry.viewModelStore
+
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() = SavedStateViewModelFactory()
+
+    override val defaultViewModelCreationExtras: CreationExtras
+        get() = MutableCreationExtras().also {
+            it[SAVED_STATE_REGISTRY_OWNER_KEY] = this
+            it[VIEW_MODEL_STORE_OWNER_KEY] = this
+        }
 
     init {
-        lifecycleRegistry.currentState = Lifecycle.State.INITIALIZED
-        parentLifecycle?.addObserver(lifecycleStateObserver)
-        entryLifecycle.addObserver(lifecycleStateObserver)
+        // saved state registry and saved state handles must be set up while lifecycle is INITIALIZED
+        savedStateRegistryController.performRestore(consumeRestored(SAVED_STATE_REGISTRY_KEY) as? SavedState)
+        registerProvider(SAVED_STATE_REGISTRY_KEY) {
+            val state = savedState()
+            savedStateRegistryController.performSave(state)
+            if (state.read { isEmpty() }) null else state
+        }
+        enableSavedStateHandles()
+        // start following parent & entry lifecycles
+        parentLifecycle.addObserver(lifecycleStateObserver)
+        entry.lifecycle.addObserver(lifecycleStateObserver)
     }
 
-    fun updateState() {
-        val parentState = parentLifecycle?.currentState ?: Lifecycle.State.RESUMED
-        val entryState = entryLifecycle.currentState
+    private fun updateLifecycleState() {
+        val parentState = parentLifecycle.currentState
+        val entryState = entry.lifecycle.currentState
         val targetState = if (parentState.ordinal < entryState.ordinal) parentState else entryState
-        if (lifecycle.currentState != targetState) {
+        if (lifecycleRegistry.currentState != targetState) {
             lifecycleRegistry.currentState = targetState
         }
     }
 
     fun close() {
-        parentLifecycle?.removeObserver(lifecycleStateObserver)
-        entryLifecycle.removeObserver(lifecycleStateObserver)
+        parentLifecycle.removeObserver(lifecycleStateObserver)
+        entry.lifecycle.removeObserver(lifecycleStateObserver)
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
     }
 }

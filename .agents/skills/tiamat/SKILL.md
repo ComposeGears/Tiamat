@@ -68,7 +68,7 @@ Code examples showcasing common patterns.
 - *[Screen-scoped ViewModel](references/guide/recipes/18-screen-scoped-viewmodel.md)*: Scope a ViewModel to a single screen.
 - *[Shared ViewModel](references/guide/recipes/19-shared-viewmodel.md)*: Share a ViewModel across all destinations under a NavController.
 - *[Retain](references/guide/recipes/20-retain.md)*: Retain objects across backward navigation with `retain {}`.
-- *[Produce retained state](references/guide/recipes/21-produce-retained-state.md)*: Coroutine-driven retained state with `produceRetainedState`.
+- *[Produce retained state](references/guide/recipes/21-produce-retained-state.md)*: Coroutine-driven retained state with `produceRetainedState` and retained coroutine scope with `retainCoroutineScope`.
 - *[SavedStateHandle ViewModel](references/guide/recipes/22-savedstatehandle-viewmodel.md)*: ViewModel with `SavedStateHandle` for process-death survival.
 - *[Custom save and restore state](references/guide/recipes/23-custom-save-restore-state.md)*: Manually save and restore a NavController's state with `saveToSavedState()`.
 

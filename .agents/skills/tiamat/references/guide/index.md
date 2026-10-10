@@ -5,7 +5,7 @@ Tiamat is a Compose Multiplatform navigation library that gives you full control
 - **`Navigation`** — a composable host that observes the `NavController` and renders the current destination with animated transitions
 - **`NavigationScene`** — a lower-level host for full layout control (two-pane, overlays, adaptive layouts)
 - **Typed arguments & results** — pass data between screens with `navArgs()`, `freeArgs`, `NavData`, and `navResult`
-- **ViewModel & retained state** — screen-scoped and shared ViewModels, `retain {}`, `produceRetainedState`
+- **ViewModel & retained state** — screen-scoped and shared ViewModels, `retain {}`, `produceRetainedState`, `retainCoroutineScope`
 - **Generated graphs** — `TiamatGraph` + `@InstallIn` compiler plugin for automatic destination registration
 - **Extensions** — `NavExtension` (marker/data) and `ContentExtension` (composable wrapper around destination content) for cross-cutting concerns
 - **Overlay navigation** — `OverlaysExtension` (in `com.composegears.tiamat.utils.extensions`) adds a local overlay stack for dialogs, bottom sheets, and nested modal flows

@@ -2,6 +2,8 @@ package com.composegears.tiamat
 
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import com.composegears.tiamat.navigation.NavController
 import com.composegears.tiamat.navigation.NavDestination
@@ -32,3 +34,12 @@ fun SemanticsNodeInteraction.readText(): String? = this
     .getOrNull(SemanticsProperties.Text)
     ?.firstOrNull()
     ?.text
+
+/**
+ * Runs the [action] on the UI thread and waits until the UI is idle.
+ */
+@OptIn(ExperimentalTestApi::class)
+fun ComposeUiTest.act(action: () -> Unit) {
+    runOnIdle(action)
+    waitForIdle()
+}

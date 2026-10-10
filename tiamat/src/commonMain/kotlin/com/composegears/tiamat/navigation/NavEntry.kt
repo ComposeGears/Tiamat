@@ -211,9 +211,7 @@ public class NavEntry<Args : Any> public constructor(
 
     internal fun attachToUI() {
         isAttachedToUI = true
-        if (!retainedValuesStore.isRetainingExitedValues) {
-            retainedValuesStore.enableRetainingExitedValues()
-        }
+        retainedValuesStore.enableRetainingExitedValues()
         lifecycleRegistry.currentState = Lifecycle.State.RESUMED
     }
 
@@ -248,9 +246,7 @@ public class NavEntry<Args : Any> public constructor(
     private fun close() {
         viewModelStore.clear()
         navControllerStore.clear()
-        if (retainedValuesStore.isRetainingExitedValues) {
-            retainedValuesStore.disableRetainingExitedValues()
-        }
+        retainedValuesStore.disableRetainingExitedValues()
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
     }
 

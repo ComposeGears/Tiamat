@@ -10,9 +10,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -26,7 +29,9 @@ import composegears.tiamat.sample.icons.KeyboardArrowRight
 import composegears.tiamat.sample.ui.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 
 val StateRetain by navDestination(ScreenInfo()) {
     Screen("Retain") {
@@ -58,16 +63,22 @@ private val StateRetainScreen1 by navDestination {
 
     val producedState by produceState(0) {
         while (isActive) {
-            delay(1000)
+            delay(1.seconds)
             value++
         }
     }
     val retainedState by produceRetainedState(0) {
         while (isActive) {
-            delay(1000)
+            delay(1.seconds)
             value++
         }
     }
+
+    // counters are retained so only the scopes lifecycle differs
+    val rememberedScope = rememberCoroutineScope()
+    val retainedScope = retainCoroutineScope()
+    var rememberedScopeCounter by retain { mutableIntStateOf(0) }
+    var retainedScopeCounter by retain { mutableIntStateOf(0) }
 
     Box(Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -83,6 +94,27 @@ private val StateRetainScreen1 by navDestination {
             )
             Text("Produced State: $producedState", textAlign = TextAlign.Center)
             Text("Retained State: $retainedState", textAlign = TextAlign.Center)
+            VSpacer()
+            Text("Remembered scope counter: $rememberedScopeCounter", textAlign = TextAlign.Center)
+            Text("Retained scope counter: $retainedScopeCounter", textAlign = TextAlign.Center)
+            VSpacer()
+            AppButton(
+                "Launch 10s counters",
+                onClick = {
+                    rememberedScope.launch {
+                        repeat(10) {
+                            delay(1.seconds)
+                            rememberedScopeCounter++
+                        }
+                    }
+                    retainedScope.launch {
+                        repeat(10) {
+                            delay(1.seconds)
+                            retainedScopeCounter++
+                        }
+                    }
+                }
+            )
             VSpacer()
             AppButton(
                 "Next",
