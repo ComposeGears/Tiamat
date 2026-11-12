@@ -9,6 +9,8 @@
 [![Telegram][badge:telegram-invite]][url:telegram-invite]
 [![Slack][badge:slack-invite]][url:slack-invite]
 
+[![Agent skill][badge:agent-skill]][url:agent-skill]
+
 [![Slack][badge:wasm-sample]][url:wasm-sample]
 
 </div>
@@ -510,6 +512,24 @@ other commands:
 
 - run detekt checks: `./gradlew detekt`
 
+## Tiamat agent skill
+
+The repo ships a `tiamat` agent skill that teaches AI coding agents (Claude Code, Cursor, ZCode, etc.) how to use Tiamat
+correctly — instead of guessing the API. The skill covers the core navigation library and the `tiamat-destinations`
+compiler plugin: destinations and navigation actions, typed/serializable arguments, back results, tab navigation,
+generated graphs, ViewModel (screen-scoped / shared / Hilt / Koin) and retained state, custom layouts, transitions
+and extension APIs.
+
+It comes with 34 step-by-step recipes that agents load on demand — from a simple screen to deep links, overlay
+destinations, adaptive list-detail, gesture and shared-element transitions.
+See [SKILL.md](https://github.com/ComposeGears/Tiamat/blob/main/.agents/skills/tiamat/SKILL.md) for the full index.
+
+If your project depends on Tiamat, install the skill into it with:
+
+```bash
+npx skills add ComposeGears/Tiamat
+```
+
 ## Contributors
 
 Thank you for your help! ❤️
@@ -541,6 +561,7 @@ limitations under the License.
 
 [badge:slack-invite]: https://img.shields.io/badge/slack-blue.svg?logo=slack&style=for-the-badge&labelColor=black&color=white
 [badge:telegram-invite]: https://img.shields.io/badge/Telegram-2CA5E0?logo=telegram&style=for-the-badge&labelColor=black&color=white&logoColor=white
+[badge:agent-skill]: https://img.shields.io/badge/agent_skill-npx_skills-blue?style=for-the-badge&labelColor=black&color=white
 [badge:wasm-sample]: https://img.shields.io/badge/Kotlin%2FWASM%20%7C%20Online%20demo-000000?logo=webassembly&style=for-the-badge&color=black&logoColor=white
 
 [badge:maven-tiamat]: https://img.shields.io/maven-central/v/io.github.composegears/tiamat.svg?style=for-the-badge&logo=apachemaven&label=&labelColor=black&color=white
@@ -553,6 +574,7 @@ limitations under the License.
 
 [url:telegram-invite]: https://t.me/composegears
 [url:slack-invite]: https://join.slack.com/t/composegears/shared_invite/zt-2noleve52-D~zrFPmC1cdhThsuQUW61A
+[url:agent-skill]: #tiamat-agent-skill
 [url:wasm-sample]: https://composegears.github.io/Tiamat/
 
 [url:maven-tiamat]: https://central.sonatype.com/artifact/io.github.composegears/tiamat
